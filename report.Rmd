@@ -1,0 +1,383 @@
+---
+title: "Diagnostic Results"
+output: html_document
+params:
+  options: NA
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(dplyr)
+library(diagnosticSummary)
+library(showtext)
+```
+
+```{css}
+table {
+
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+table td, table th {
+  padding-left: 18px;
+}
+table thead tr {
+  height: 45px;
+  background: #337ab7;
+  color: white;
+}
+table tbody tr {
+  height: 35px;
+}
+
+table td, table th {
+  text-align: left;
+}
+
+
+#right,
+.table td + td,
+.table th + th {
+    text-align:center;
+}
+
+
+tbody tr:nth-child(even) {
+  background-color: #f5f5f5;
+}
+
+tbody tr {
+  font-size: 15px;
+  color: #808080;
+  line-height: 1.2;
+  font-weight: unset;
+}
+
+tbody tr:hover {
+  color: #555555;
+  background-color: #f5f5f5;
+  cursor: pointer;
+}
+
+thead th { 
+  vertical-align: middle !important;
+}
+```
+
+
+```{r}
+ai_result_file <- "/projects.auto/infra5_proj_bsi/cv/general/s115398.ECG_K/2019_AS_paper/data/AS_ef_age_gender_prob_results_valid_firstTTE_09282019_0917.csv" 
+
+working_df <- read.csv(ai_result_file, stringsAsFactors = FALSE)
+
+validcodes <- c(0,1)  # should be binary for this program 
+
+## Select only observations with a valid code
+working_df <- working_df %>% dplyr::filter(AS_label_gen %in% validcodes)
+
+#derive factors for stratification analysis 
+working_df$AgeGroup <- cut(working_df$PATIENTAGE_at_ECG, breaks=c(NA,40,50, 60,70,80, Inf), right=FALSE)
+working_df$Sex <- factor(working_df$PATIENT_GENDER)
+working_df$AgeSex <- factor(paste0(working_df$AgeGroup, " - ", working_df$Sex))
+
+```
+
+
+```{r}
+params2 <- dx_set_options(
+  data = working_df,
+  study_name = "Demo Analysis",
+  data_description = "Validation Data",
+  true_varname = "AS_label_gen",
+  pred_varname = "est_AS_pos",
+  outcome_label = "EF <= 35%",
+  threshold_range = seq(.3, .6, .1),
+  grouping_variables = c("AgeGroup", "Sex", "AgeSex")
+)
+```
+
+```{r}
+diagsummary_resultsdf <- dx_summary(params2$data,
+                                     pred_varname = params2$pred_varname,
+                                     threshold = params2$setthreshold, 
+                                     true_varname = params2$true_varname,
+                                     poslabel = params2$poslabel,
+                                     citype = params2$citype,
+                                     bootreps = params2$bootreps,
+                                     bootseed = params2$bootseed,
+                                     doboot = params2$doboot)
+```
+
+```{r}
+diag_print <- diagsummary_resultsdf %>% select(-rawestime, -rawlci, -rawuci) %>% rename(`CI Type` = CI_Type)
+
+
+knitr::kable(diag_print)
+```
+
+```{r eval = F}
+## Confusion Matrix Results
+# caret::confusionMatrix(params2$data$test_binaryf, params2$data$true_binaryf, positive=params2$classlabels[2])
+```
+
+
+```{r echo=FALSE, fig.height=6, fig.width=6, warning=FALSE, message=FALSE}
+auc_results<- pROC::roc(eval(parse(text=paste0("params2$data$",params2$true_varname))),
+                        eval(parse(text=paste0("params2$data$",params2$pred_varname ))) , 
+                        ci=T, quite=TRUE)
+
+# pROC::auc(auc_results)
+
+# plot(auc_results,percent = TRUE, 
+#      main = paste0("ROC ", params2$data_description), 
+#      col = params2$roc_curve_color, 
+#      grid=T, 
+#      print.auc = T,
+#      ci = T, 
+#      print.auc.x = .5, 
+#      print.auc.y = .1)
+
+cistring_v <- auc_results$ci
+citxt_v <- paste0("AUC: ", diagnosticSummary:::conf_int(cistring_v[2],cistring_v[1],cistring_v[3], accuracy = .001))
+
+```
+
+```{r}
+dx_roc_plot <- function() {
+  
+}
+```
+
+
+
+```{r include=FALSE, fig.height=7, fig.width=7}
+sensdf <- working_df %>% 
+  filter(!!as.name(params2$true_varname) == 1) %>% 
+  summarize(sens = mean(ifelse( !!as.name(params2$pred_varname)<=params2$setthreshold,0,1) ) ) %>% 
+  as.vector()
+
+specdf <- working_df %>% 
+  filter(!!as.name(params2$true_varname) == 0) %>% 
+  summarize(spec =1-mean( ifelse(!!as.name(params2$pred_varname)<=params2$setthreshold,0,1)) ) %>% 
+  as.vector()
+
+pdf(NULL)
+dev.control(displaylist="enable")
+# pdf(params2$roc_filename)
+plot(auc_results, 
+     main=params2$outcome_label, 
+     print.auc=FALSE, 
+     ci=FALSE, 
+     col=params2$roc_curve_color,
+     grid=T)
+
+if (params2$roc_add_ref_lines){
+  abline(h=sensdf[1], lty=2)
+  abline(v=specdf[1], lty=2)
+}
+
+
+if (params2$roc_add_text){
+  showtext_begin()
+  numsummary <- length(params2$roc_summary_stats)
+  ystart <-0.05
+  yend <- ystart + (numsummary-1)*0.05
+  location_vector <- seq(yend,ystart,-0.05)
+  
+  
+  
+  for (i in params2$roc_summary_stats){  
+    
+    if (nchar(diagsummary_resultsdf[i,3])>0){
+      numden <- paste0("(", diagsummary_resultsdf[i,3], ")")
+    } else {
+      numden <- ""
+    }
+    
+    if (!params2$roc_add_fractions) numden <- ""
+    
+    text(.01,
+         location_vector[i], 
+         paste0(diagsummary_resultsdf[i,1],":  ", diagsummary_resultsdf[i,2], numden),
+         cex=1,adj=c(1,1), 
+         col=params2$roc_text_color)
+  }  
+  
+  showtext_end()
+}
+
+roc_plot <- recordPlot()
+invisible(dev.off())
+
+```
+
+
+```{r include=FALSE}
+png("plot.png", width = 1500, height = 1500, res = 200)
+roc_plot
+dev.off()
+```
+
+
+```{r, eval = F, out.width='600px', out.height='600px', fig.align="center"}
+pdf(params2$roc_filename)
+roc_plot
+dev.off()
+knitr::include_graphics(params2$roc_filename)
+```
+
+
+
+```{r message=FALSE, warning=FALSE, results = 'asis'}
+
+if (!identical(params2$threshold_range, NA)) {
+  
+  cat('# Thresholds {.tabset .tabset-pills} \n')
+  
+  for (i in params2$threshold_range){
+    
+    cat("## Threshold: ", i, '<br>', '\n')
+    
+    working_temp <- dx_summary(params2$data,
+                               pred_varname = params2$pred_varname,
+                               threshold = i, 
+                               true_varname = params2$true_varname,
+                               poslabel = params2$poslabel,
+                               citype = params2$citype,
+                               bootreps = params2$bootreps,
+                               bootseed = params2$bootseed,
+                               doboot = params2$doboot)
+    # print(paste0("Results for threshold ", i))
+    print(knitr::kable(working_temp, caption = paste0("Threshold: ", i)))
+    cat('\n', '<br>', '\n\n')
+  }
+}
+```
+
+# Subgroup Analysis
+
+```{r}
+datalist = list()
+i <- 1
+for (var in params2$grouping_variables){
+   # print(paste0("Grouping Variable: ", var))  
+   #  
+   # print(with(working_df, table(eval(parse(text=var)))))
+  
+  temp_results<- dx_grouped_summary(data = params2$data,
+                                    group_varname = var,
+                                 pred_varname = params2$pred_varname,
+                                 threshold = params2$setthreshold, 
+                                 true_varname = params2$true_varname,
+                                 poslabel = params2$poslabel,
+                                 citype = params2$citype,
+                                 bootreps = params2$bootreps,
+                                 bootseed = params2$bootseed,
+                                 doboot = params2$doboot)
+  datalist[[i]] <- temp_results
+  i <- i + 1
+  
+  # print(knitr::kable(temp_results))
+}
+
+res <- do.call(rbind, datalist)
+
+```
+
+
+```{r}
+dx_prep_forrest <- function(data = res) {
+  if ("Variable" %in% names(data)) {
+    tmp <- data %>% mutate(Group = paste(Variable, Group))
+  } else {
+    tmp <- data %>% mutate(Group = "Overall")
+  }
+  tmp <- tmp %>% filter(Measure %in% c("Sensitivity", "Specificity", "Odds Ratio"))
+  tmp <- tmp %>% filter(!stringr::str_detect(Group, "AgeSex NA"))
+  # tmp$Group <- paste0("   ", tmp$Group)
+  res_sel <- tmp %>% select(Group, Measure, Estimate)
+  rawdata <- tmp %>% select(Group, starts_with("raw")) %>% filter(!is.na(rawestime))
+  
+  res_sel %>% 
+    tidyr::spread(key = Measure, value = Estimate) %>% 
+    left_join(rawdata, by = "Group")
+}
+
+grouped <- dx_prep_forrest(res)
+overall <- dx_prep_forrest(diagsummary_resultsdf)
+
+data <- rbind(grouped, overall)
+
+g <- dx_forrest(data)
+
+```
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+library(gridExtra)
+library(grid)
+library(gtable)
+
+
+pdf("table.pdf")
+grid.draw(g)
+dev.off()
+
+```
+
+
+```{r inlcude=FALSE, message=FALSE}
+ggplot2::ggsave(plot = g, filename = "table.png")
+```
+
+<div class = "row">
+<div class = "col-md-7">
+```{r cars, warning = FALSE, echo = FALSE}
+# grid.draw(g)
+
+knitr::include_graphics("table.png")
+```
+</div>
+<div class = "col-md-5">
+```{r pressure, warning = FALSE, echo=FALSE}
+knitr::include_graphics("plot.png")
+```
+</div>
+</div>
+
+
+```{css,echo=FALSE}
+button.btn.collapsed:before
+{
+    content:'Show PDF file' ;
+    display:block;
+}
+button.btn:before
+{
+    content:'Hide PDF file-' ;
+    display:block;
+}
+```
+
+```{r,echo=FALSE,results='hide'}
+knitr::knit_hooks$set(drop1=function(before, options, envir) {
+    if (before) {
+        paste(
+            '<p>',
+'<button class="btn btn-primary collapsed" data-toggle="collapse" data-target="#ce1">',
+'</button>',
+'</p>',
+'<div class="collapse" id="ce1">',
+'<div class="card card-body">',  sep = "\n")
+    } else {
+        paste("</div>", "</div>", sep = "\n")
+    }
+})
+```
+
+```{r,drop1=TRUE, drop1 = TRUE, out.width='600px', out.height='600px', fig.align="center"}
+knitr::include_graphics("table.pdf")
+```
+
+
+

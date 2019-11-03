@@ -14,4 +14,8 @@ LazyData: true
 Imports: 
     dplyr,
     scales,
-    pROC
+    pROC,
+    knitr
+Suggests: 
+    boot
+RoxygenNote: 6.1.1

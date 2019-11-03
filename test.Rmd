@@ -1,0 +1,56 @@
+---
+title: "Test"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+source("R/dx_summary.R")
+source("R/dx_tools.R")
+load("sample_data.Rda")
+```
+
+```{r}
+
+true_varname <- "AS_label_gen"  # text string with variable name for the reference standard
+pred_varname <- "est_AS_pos"  # text string for the AI prediction
+outcomelabel <- "EF <= 35%"
+classlabels <- c("Negative", "Positive")  ## needs to be 0, 1 order
+## ~~~~~~~~~~~~~~~~~~ Set some Program Parameters ~~~~~~~~~~~~~~~~~~~~~~~ ##
+## Set confidence interval type and postive class value
+
+setthreshold <- .5
+generaterange<-TRUE  # use the start and stop values below to generate sub tables
+startthreshold <- .3
+stopthreshold <- .6
+bythreshold <- .1 #Have numboot, below, small if using a range of thresholds and bootstrapping F1
+
+confinttype<- "exact"  # Just leave this as exact
+posclass <- 1  # Data should be coded 0/1 with 1 being the event
+validcodes <- c(0,1)  # should be binary for this program
+numboot <- 2000 # number of bootstrap samples used to generate F1 score CI
+bootseed <- 20191015
+bootf1 <-FALSE
+doboot <- FALSE
+
+citype=confinttype
+
+threshold <- .3
+poslabel <- posclass
+
+data <- working_df
+```
+
+```{r}
+dx_summary(working_df,
+           pred_varname=pred_varname,
+           threshold=setthreshold,
+           true_varname=true_varname,
+           poslabel=posclass,
+           citype=confinttype,
+           bootreps=numboot,
+           bootseed=bootseed,
+           doboot=doboot)
+```
+
+
