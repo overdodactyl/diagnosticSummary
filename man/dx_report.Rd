@@ -4,7 +4,7 @@
 \alias{dx_report}
 \title{Render diagnostic report}
 \usage{
-dx_report(dx_obj, roc_options = list(), forrest_options = list(),
+dx_report(dx_obj, roc_options = list(), forest_options = list(),
   output_dir = getwd(), output_file = "test.html")
 }
 \arguments{
@@ -12,7 +12,7 @@ dx_report(dx_obj, roc_options = list(), forrest_options = list(),
 
 \item{roc_options}{Arguments to be passed to dx_rox}
 
-\item{forrest_options}{Arguments to be passed to dx_forrest}
+\item{forest_options}{Arguments to be passed to dx_forest}
 
 \item{output_dir}{Directory to output report into}
 

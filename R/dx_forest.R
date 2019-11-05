@@ -22,11 +22,11 @@
 #'   setthreshold = .3,
 #'   grouping_variables = c("AgeGroup", "Sex", "AgeSex")
 #' )
-#' dx_forrest(dx_obj)
+#' dx_forest(dx_obj)
 
-dx_forrest <- function(dx_obj, breaks = NA, limits = NA, tick_label_size = 6.5, return_grid = FALSE) {
+dx_forest <- function(dx_obj, breaks = NA, limits = NA, tick_label_size = 6.5, return_grid = FALSE) {
 
-  data <- dx_prep_forrest(dx_obj)
+  data <- dx_prep_forest(dx_obj)
 
   overall_or <- data %>% dplyr::filter(Group == "Overall") %>% dplyr::pull(rawestime)
 
@@ -92,12 +92,12 @@ dx_forrest <- function(dx_obj, breaks = NA, limits = NA, tick_label_size = 6.5, 
 
   # Add OR's
   for (i in seq_along(estimate)) {
-    g <- dx_forrest_add_or(g, i+1, lower[i], estimate[i], upper[i])
+    g <- dx_forest_add_or(g, i+1, lower[i], estimate[i], upper[i])
   }
 
   # Add ticks and lables
   for (i in seq_along(ticks)) {
-    g <- dx_forrest_add_tick(g, ticks_scaled[i], ticks[i], nrows = nrows, tick_label_size = tick_label_size)
+    g <- dx_forest_add_tick(g, ticks_scaled[i], ticks[i], nrows = nrows, tick_label_size = tick_label_size)
   }
 
   # Bold bottom row
@@ -152,11 +152,11 @@ dx_vline <- function(table, x, y0, y1, t, b = t, l, r = l, name, gp = gpar(lwd =
                   clip = clip)
 }
 
-#' Edit a cell within an object returned from dx_forrest
+#' Edit a cell within an object returned from dx_forest
 #'
 #' A convenient wrapper used to edit cells of a gtable.
 #'
-#' @param table a table returned from dx_forrest
+#' @param table a table returned from dx_forest
 #' @param row Numeric vector of rows to edit
 #' @param col Numeric vector of columns to edit
 #' @param name Name of table layer to edit
@@ -173,7 +173,7 @@ dx_edit_cell <- function(table, row, col, name="core-fg", ...){
 }
 
 
-dx_forrest_add_or <- function(grob, row, low, est, high, or_col = 4) {
+dx_forest_add_or <- function(grob, row, low, est, high, or_col = 4) {
   i <- sample(1:100000,1)
 
   tmp <- dx_hline(grob, y = .5, x0 = low, x1 = high, t = row, l = or_col, name = paste0("or", i), clip = "on")
@@ -191,7 +191,7 @@ dx_forrest_add_or <- function(grob, row, low, est, high, or_col = 4) {
 }
 
 
-dx_forrest_add_tick <- function(grob, tick_scaled, tick, nrows, or_col = 4, tick_label_size) {
+dx_forest_add_tick <- function(grob, tick_scaled, tick, nrows, or_col = 4, tick_label_size) {
 
   tmp <- dx_vline(grob, x = tick_scaled, y0 = .8, y1 = 1, t = nrows+1, l = or_col, name = paste0("tick_", tick))
 
@@ -208,7 +208,7 @@ dx_forrest_add_tick <- function(grob, tick_scaled, tick, nrows, or_col = 4, tick
 }
 
 
-dx_prep_forrest <- function(dx_obj) {
+dx_prep_forest <- function(dx_obj) {
 
   tmp <- dx_obj$measures %>% dplyr::filter(threshold == dx_obj$options$setthreshold)
 

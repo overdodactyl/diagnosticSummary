@@ -1,6 +1,6 @@
 Package: diagnosticSummary
 Title: Diagnostic Summaries
-Version: 0.0.0.9000
+Version: 0.0.0.9001
 Authors@R: as.person(c(
     "Pat Johnson <Johnson.Patrick3@mayo.edu> [aut, cre]", 
     "Rickey Carter <Carter.Rickey@mayo.edu> [aut]"
