@@ -33,6 +33,5 @@ dx_obj <- dx(
   setthreshold = .3,
   grouping_variables = c("AgeGroup", "Sex", "AgeSex")
 )
-grDevices::png(width=9, height=12)
 dx_forrest(dx_obj)
 }

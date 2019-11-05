@@ -1,2 +1,8 @@
 ^diagnosticSummary\.Rproj$
 ^\.Rproj\.user$
+^LICENSE\.md$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^data-raw$
+^\.travis\.yml$

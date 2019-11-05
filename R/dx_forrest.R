@@ -22,7 +22,6 @@
 #'   setthreshold = .3,
 #'   grouping_variables = c("AgeGroup", "Sex", "AgeSex")
 #' )
-#' grDevices::png(width=9, height=12)
 #' dx_forrest(dx_obj)
 
 dx_forrest <- function(dx_obj, breaks = NA, limits = NA, tick_label_size = 6.5, return_grid = FALSE) {
