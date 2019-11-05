@@ -5,7 +5,7 @@ Authors@R: as.person(c(
     "Pat Johnson <Johnson.Patrick3@mayo.edu> [aut, cre]", 
     "Rickey Carter <Carter.Rickey@mayo.edu> [aut]"
   ))
-Description:  Quickley and easily create diagnostic summaries for binary classification data.
+Description:  Quickly and easily create diagnostic summaries for binary classification data.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
