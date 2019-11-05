@@ -57,20 +57,33 @@ summary(dx_obj, variable = "Overall", show_var = F, show_label = F)
 ```
 
 
-```{r}
+```{r eval = F}
+dx_forrest(dx_obj)
+```
+
+
+```{r, echo=FALSE}
 g <- dx_forrest(dx_obj, return_grid = T)
 ggplot2::ggsave(plot = g, height = 3, width = 6, filename = "man/figures/forrest_plot.png")
 ```
+
 
 ```{r echo=FALSE}
 knitr::include_graphics("man/figures/forrest_plot.png")
 ```
 
-```{r message=FALSE}
+
+```{r eval = F}
+dx_roc(dx_obj)
+```
+
+
+```{r echo=F, include=F, message=FALSE}
 png("man/figures/roc_plot.png",width = 900, height = 900, res = 180)
 dx_roc(dx_obj)
 dev.off()
 ```
+
 
 ```{r out.width="50%", echo=FALSE, fig.align="center"}
 knitr::include_graphics("man/figures/roc_plot.png")

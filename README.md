@@ -66,21 +66,17 @@ summary(dx_obj, variable = "Overall", show_var = F, show_label = F)
 | Odds Ratio                | 17.6 (9.1, 33.9)     |          | Large sample |        |
 | F1 Score                  | 75.5                 |          |              |        |
 
-Threshold: 0.3
+Threshold:
+0.3
 
 ``` r
-g <- dx_forrest(dx_obj, return_grid = T)
-ggplot2::ggsave(plot = g, height = 3, width = 6, filename = "man/figures/forrest_plot.png")
+dx_forrest(dx_obj)
 ```
 
 <img src="man/figures/forrest_plot.png" width="100%" />
 
 ``` r
-png("man/figures/roc_plot.png",width = 900, height = 900, res = 180)
 dx_roc(dx_obj)
-dev.off()
-#> png 
-#>   2
 ```
 
 <img src="man/figures/roc_plot.png" width="50%" style="display: block; margin: auto;" />
