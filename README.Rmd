@@ -58,18 +58,18 @@ summary(dx_obj, variable = "Overall", show_var = F, show_label = F)
 
 
 ```{r eval = F}
-dx_forrest(dx_obj)
+dx_forest(dx_obj)
 ```
 
 
 ```{r, echo=FALSE}
-g <- dx_forrest(dx_obj, return_grid = T)
-ggplot2::ggsave(plot = g, height = 3, width = 6, filename = "man/figures/forrest_plot.png")
+g <- dx_forest(dx_obj, return_grid = T)
+ggplot2::ggsave(plot = g, height = 3, width = 6, filename = "man/figures/forest_plot.png")
 ```
 
 
 ```{r echo=FALSE}
-knitr::include_graphics("man/figures/forrest_plot.png")
+knitr::include_graphics("man/figures/forest_plot.png")
 ```
 
 

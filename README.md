@@ -70,10 +70,10 @@ Threshold:
 0.3
 
 ``` r
-dx_forrest(dx_obj)
+dx_forest(dx_obj)
 ```
 
-<img src="man/figures/forrest_plot.png" width="100%" />
+<img src="man/figures/forest_plot.png" width="100%" />
 
 ``` r
 dx_roc(dx_obj)
