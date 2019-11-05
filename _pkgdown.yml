@@ -18,3 +18,12 @@ reference:
   contents:
   - as.data.frame.dx
   - summary.dx
+figures:
+  dev: grDevices::png
+  dpi: 96
+  dev.args: []
+  fig.ext: png
+  fig.width: 6
+  fig.height: ~
+  fig.retina: 2
+  fig.asp: 1
