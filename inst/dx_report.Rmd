@@ -1,0 +1,199 @@
+---
+output: html_document
+params:
+  dx_obj: NA
+  forrest_options: NA
+  roc_options: NA
+title: "`r paste0('Diagnostic Summary Report: ', params$dx_obj$options$study_name)`"
+author: "`r params$dx_obj$options$data_description`"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(dplyr)
+library(diagnosticSummary)
+library(showtext)
+dx_obj <- params$dx_obj
+```
+
+```{css}
+table {
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+table td, table th {
+  padding-left: 18px;
+}
+table thead tr {
+  height: 45px;
+  background: #337ab7;
+  color: white;
+}
+table tbody tr {
+  height: 35px;
+}
+
+table td, table th {
+  text-align: left;
+}
+
+#right,
+.table td + td,
+.table th + th {
+    text-align:center;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #f5f5f5;
+}
+
+tbody tr {
+  font-size: 15px;
+  color: #808080;
+  line-height: 1.2;
+  font-weight: unset;
+}
+
+tbody tr:hover {
+  color: #555555;
+  background-color: #f5f5f5;
+  cursor: pointer;
+}
+
+thead th { 
+  vertical-align: middle !important;
+}
+
+button.btn.collapsed:before {
+    content:'Show PDF file' ;
+    display:block;
+}
+
+button.btn:before {
+    content:'Hide PDF file' ;
+    display:block;
+}
+
+.nav-pills > li {
+    float:none;
+    display:inline-block;
+    zoom:1;
+}
+
+.nav-pills { text-align:center; }
+
+#pdf, #images { padding-bottom: 40px; }
+
+input:focus, 
+a:active, 
+a:focus {outline: none}
+
+h1 {
+    color:#01579b;
+}
+#header h1 {
+  line-height: 43px;
+  font-size: 275%;
+  font-weight: 600;
+}
+
+h1 {
+  font-size: 200%;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+#header {
+    margin-bottom: 50px;
+}
+
+#header h4 {
+    font-style: italic;
+}
+
+
+```
+
+```{r create_hooks, echo=FALSE, results='hide'}
+knitr::knit_hooks$set(drop1=function(before, options, envir) {
+    if (before) {
+        paste(
+            '<p>',
+'<button class="btn btn-primary collapsed" data-toggle="collapse" data-target="#ce1">',
+'</button>',
+'</p>',
+'<div class="collapse" id="ce1">',
+'<div class="card card-body">',  sep = "\n")
+    } else {
+        paste("</div>", "</div>", sep = "\n")
+    }
+})
+```
+
+```{r roc-plot, include=FALSE, dpi = 600}
+png("plot.png", width = 900, height = 900, res = 180)
+do.call(dx_roc,c(list(dx_obj=dx_obj),params$roc_options)) 
+dev.off()
+```
+
+# Overview
+
+- Number of Observations: `r scales::comma(nrow(dx_obj$data))`
+
+# Results {.tabset .tabset-pills}
+
+```{r threshold-tables, message=FALSE, warning=FALSE, results = 'asis'}
+thresholds <- sort(unique(dx_obj$measures$threshold))
+
+for (t in thresholds) {
+  
+  cat("## Threshold: ", t, '<br>', '\n')
+  
+  print(summary(dx_obj, thresh = t, variable = "Overall", show_var = F, show_label = F))
+  
+  cat('\n', '<br>', '\n\n')
+  
+}
+```
+
+# Figures {.tabset .tabset-pills}
+
+- Postive Screen Definition: `r paste0(dx_obj$options$pred_varname, " >= ", dx_obj$options$setthreshold)`
+
+
+
+```{r save-table, inlcude=FALSE, message=FALSE}
+height = dx_obj$n_levels*.33
+g <- do.call(dx_forrest,c(list(dx_obj=dx_obj, return_grid = T), params$forrest_options)) 
+# g <- dx_forrest(dx_obj, return_grid = T)
+ggplot2::ggsave(plot = g, height = height, width = 8, filename = "table.png")
+```
+
+## Images
+
+```{r include-table, warning = FALSE, echo = FALSE}
+knitr::include_graphics("table.png")
+```
+
+```{r include-roc, warning = FALSE, echo=FALSE, fig.align="center"}
+knitr::include_graphics("plot.png")
+```
+
+## PDF
+
+```{r generate-pdf, include=FALSE, message=FALSE, warning=FALSE}
+pdf(dx_obj$options$roc_filename)
+do.call(dx_roc,c(list(dx_obj=dx_obj),params$roc_options)) 
+plot.new()
+do.call(dx_forrest,c(list(dx_obj=dx_obj),params$forrest_options)) 
+dev.off()
+```
+
+
+```{r, include-pdf, out.width='600px', out.height='600px', fig.align="center"}
+knitr::include_graphics(dx_obj$options$roc_filename)
+```
+
+
+

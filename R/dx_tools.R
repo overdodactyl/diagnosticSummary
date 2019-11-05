@@ -12,7 +12,7 @@ conf_int <- function(est, lower, upper, accuracy = .1, percent = F) {
   paste0(est, " (", lower, ", ", upper, ")")
 }
 
-# Compute TP, FN, TN, and FP
+
 dx_confusion_core <- function(predprob, truth, threshold, poslabel) {
   pred <- ifelse(predprob >= threshold, 1, 0)
 
@@ -36,14 +36,14 @@ dx_confusion_core <- function(predprob, truth, threshold, poslabel) {
   fp_1 <- dplyr::ungroup(speccount) %>% dplyr::filter(testresult ==1) %>% dplyr::select(counts) %>% as.vector()
   fp <- ifelse(length(fp_1[,1]) == 0, 0, fp_1[1,1]) %>% as.numeric()
 
-  perfdf <- data.frame(tp, fn, tn, fp)
+  perfdf <- data.frame(tp, fn, tn, fp) %>% dplyr::mutate_all(~ifelse(is.na(.), 0, .))
 
-  dispos <- tp + fn # Actaul positives
-  disneg <- tn + fp # Actual negatives
+  dispos <- perfdf$tp + perfdf$fn # Actaul positives
+  disneg <- perfdf$tn + perfdf$fp # Actual negatives
   n <- dispos + disneg # Total observations
-  correct <- tp + tn # Correct
-  testpos <- tp + fp # Predicted positive
-  testneg <- tn + fn # Predicted negative
+  correct <- perfdf$tp + perfdf$tn # Correct
+  testpos <- perfdf$tp + perfdf$fp # Predicted positive
+  testneg <- perfdf$tn + perfdf$fn # Predicted negative
 
   perfdf <- cbind(perfdf, dispos, disneg, n, correct, testpos, testneg)
 
@@ -65,8 +65,8 @@ dx_odds_ratio <- function(tp, tn, fp, fn) {
   }
 
   lnor <- log(or_raw)
-  lnor_l <- lnor - qnorm(.975) * sqrtsdlnor
-  lnor_u <- lnor + qnorm(.975) * sqrtsdlnor
+  lnor_l <- lnor - stats::qnorm(.975) * sqrtsdlnor
+  lnor_u <- lnor + stats::qnorm(.975) * sqrtsdlnor
   or <- conf_int(or_raw, exp(lnor_l), exp(lnor_u))
 
   # data.frame(or, or_raw, sqrtsdlnor, ornote, lnor_l, lnor_u)
@@ -167,6 +167,8 @@ dx_f1 <- function(predprob, truth, precision, recall, bootreps, doboot) {
 
   #### Generate bootstrap estimate of F1 confidence interval
   if (doboot){
+    set.seed(bootseed)
+
     pred <- ifelse(predprob >= threshold, 1, 0)
     tempmat <- data.frame(pred, truth)
 

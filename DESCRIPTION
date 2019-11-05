@@ -1,21 +1,27 @@
 Package: diagnosticSummary
-Title: What the Package Does (One Line, Title Case)
+Title: Diagnostic Summaries
 Version: 0.0.0.9000
-Authors@R: 
-    person(given = "First",
-           family = "Last",
-           role = c("aut", "cre"),
-           email = "first.last@example.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: What license it uses
+Authors@R: as.person(c(
+    "Pat Johnson <Johnson.Patrick3@mayo.edu> [aut, cre]", 
+    "Rickey Carter <Carter.Rickey@mayo.edu> [aut]"
+  ))
+Description:  Quickley and easily create diagnostic summaries for binary classification data.
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
+Depends: R (>= 2.10)
 Imports: 
     dplyr,
     scales,
     pROC,
-    knitr
+    gtable,
+    grid,
+    gridExtra,
+    binom,
+    stats,
+    showtext
 Suggests: 
-    boot
+    boot,
+    rmarkdown,
+    knitr,
 RoxygenNote: 6.1.1

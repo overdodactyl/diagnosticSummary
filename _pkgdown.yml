@@ -1,0 +1,20 @@
+reference:
+- title: Construction
+  desc:  Generate a dx object
+  contents:
+  - dx
+- title: Reports
+  desc: Generate diagnostic summary reports
+  contents:
+  - dx_report
+- title: Figures
+  desc: Figures summarizing diagnostic statistics
+  contents:
+  - dx_roc
+  - dx_forrest
+  - dx_edit_cell
+- title: Utilities
+  desc: Helper functions and S3 methods
+  contents:
+  - as.data.frame.dx
+  - summary.dx

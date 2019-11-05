@@ -15,27 +15,18 @@
 #' @param outcome_label Label for outcome (string)
 #' @param grouping_variables Character vector of variable names to be summarized by.
 #' These variables should all be factors.
-#' @param citpye Confidence interval type.
+#' @param citype Confidence interval type.
 #' @param bootreps Number of bootstrap samples used to generate F1 score CI
 #' @param bootseed Seed value to be used when calculating bootsraped CI's
 #' @param doboot Logical.  Generate bootstrap estimate of F1 confidence interval?
-#' @param roc_curve_color Color of ROC curve
-#' @param roc_text_color Color of text on ROC curve
-#' @param roc_add_text (Logical) Include stats on ROC curve?
-#' @param roc_add_ref_lines (Logical) Include reference lines on ROC curve?
-#' @param roc_add_fractions (Logical) Include fractions on ROC curve?
-#' @param roc_summary_stats Statistics to include on ROC curve
 #' @param roc_filename Name of file output for ROC pdf file
 #'
 #' @export
 
-dx_set_options <- function(data, study_name, data_description, classlabels = c("Negative", "Positive"),
+dx <- function(data, study_name, data_description, classlabels = c("Negative", "Positive"),
                            threshold_range = NA, outcome_label,
                            pred_varname, true_varname, setthreshold = .5, poslabel = 1, grouping_variables = NA,
                            citype = "exact", bootreps = 2000, bootseed = 20191015, doboot = FALSE,
-                           roc_curve_color = "red", roc_text_color = "black", roc_add_text = TRUE,
-                           roc_add_ref_lines = TRUE, roc_add_fractions = TRUE,
-                           roc_summary_stats = c(1,2,3,4,5,6,7,8),
                            roc_filename = paste0(study_name, "_ROC", data_description,".pdf")) {
 
 
@@ -57,7 +48,7 @@ dx_set_options <- function(data, study_name, data_description, classlabels = c("
   # Check if grouping variables are factors
   if (!identical(grouping_variables,NA)) {
     for(f in grouping_variables) {
-      if (!is.factor(working_df[[f]])) {
+      if (!is.factor(data[[f]])) {
         stop("All variables in `grouping_variables` should be a factor.")
       }
     }
@@ -68,7 +59,7 @@ dx_set_options <- function(data, study_name, data_description, classlabels = c("
     stop(paste(pred_varname, "should be numeric"))
   }
 
-  # Check if true_varname is consists of only c(0,1)
+  # Check if true_varname consists of only c(0,1)
   if (!all(data[[true_varname]] %in% c(0,1))) {
     stop(paste(true_varname, "should be numeric vector consisting of only 0's and 1's"))
   }
@@ -78,9 +69,55 @@ dx_set_options <- function(data, study_name, data_description, classlabels = c("
   data$true_binaryf <- factor(eval(parse(text=paste0("data$", true_varname))),
                               levels=c(0,1), labels=classlabels)
 
+  options <- list(
+    study_name = study_name,
+    data_description = data_description,
+    classlabels = classlabels,
+    threshold_range = threshold_range,
+    outcome_label = outcome_label,
+    pred_varname = pred_varname,
+    true_varname = true_varname,
+    setthreshold = setthreshold,
+    poslabel = poslabel,
+    grouping_variables = grouping_variables,
+    citype = citype,
+    bootreps = bootreps,
+    bootseed = bootseed,
+    doboot  = doboot,
+    roc_filename = roc_filename
+  )
+
+  # Get all unique thresholds
+  # Set thresholds may not be in threshold_range
+  all_thresholds <- unique(c(options$setthreshold, options$threshold_range))
+  all_thresholds <- all_thresholds[!is.na(all_thresholds)]
+
+  # Loop through all thresholds and get measures
+  threshold_measures <-  list()
+
+  for (i in seq_along(all_thresholds)) {
+    threshold_measures[[i]] <- dx_measure(data, threshold = all_thresholds[i], options = options)
+  }
+
+  threshold_measures <- do.call(rbind, threshold_measures)
+
+  ####### Subgroup Analysis
+
+  if (!identical(grouping_variables, NA)) {
+    subgroups <- list()
+    for (i in seq_along(options$grouping_variables)) {
+      subgroups[[i]] <- dx_group_measure(data = data, options = options,
+                                         group_varname = options$grouping_variables[i])
+    }
+    subgroups <- do.call(rbind, subgroups)
+
+    threshold_measures <- rbind(subgroups, threshold_measures)
+  }
+
+  # Number of unique levels
+  n_levels <- length(unique(threshold_measures$Label))
 
 
-
-  c(as.list(environment()))
+  structure(list(data = data, options = options, measures = threshold_measures, n_levels = n_levels), class = "dx")
 
 }
