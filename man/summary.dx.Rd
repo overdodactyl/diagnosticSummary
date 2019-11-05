@@ -4,7 +4,7 @@
 \alias{summary.dx}
 \title{Summary}
 \usage{
-\method{summary}{dx}(object, thresh = obj$options$setthreshold,
+\method{summary}{dx}(object, thresh = object$options$setthreshold,
   variable = NA, level = NA, show_var = T, show_label = T, ...)
 }
 \arguments{

@@ -18,7 +18,7 @@
 <![endif]-->
 </head>
 <body>
-    <div class="container template-home">
+    <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
@@ -56,8 +56,127 @@
 
       
       </header><div class="row">
-  <div class="contents col-md-9">
-Quickly and easily create diagnostic summaries for binary classification data.
+  <div class="col-md-9 contents">
+    
+
+    
+    
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+<div id="diagnosticsummary" class="section level1">
+<div class="page-header"><h1 class="hasAnchor">
+<a href="#diagnosticsummary" class="anchor"></a>diagnosticSummary</h1></div>
+<!-- badges: start -->
+
+<p><code>diagnosticSummary</code> is designed to quickly create diagnostic summaries and reports for binary classification data.</p>
+<div id="installation" class="section level2">
+<h2 class="hasAnchor">
+<a href="#installation" class="anchor"></a>Installation</h2>
+<p>You can install the development version from <a href="https://github.com/">GitHub</a> with:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="co"># install.packages("devtools")</span></a>
+<a class="sourceLine" id="cb1-2" data-line-number="2">devtools<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/devtools/topics/reexports">install_github</a></span>(<span class="st">"overdodactyl/diagnosticSummary"</span>)</a></code></pre></div>
+</div>
+<div id="example" class="section level2">
+<h2 class="hasAnchor">
+<a href="#example" class="anchor"></a>Example</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(diagnosticSummary)</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="co"># Load sample data</span></a>
+<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/data">data</a></span>(<span class="st">"dx_heart_failure"</span>)</a>
+<a class="sourceLine" id="cb2-4" data-line-number="4"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(dx_heart_failure)</a>
+<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="co">#&gt;   AgeGroup    Sex truth   predicted           AgeSex</span></a>
+<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="co">#&gt; 1  (20,50]   Male     0 0.016164112   (20,50] - Male</span></a>
+<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="co">#&gt; 2  (20,50]   Male     0 0.074193671   (20,50] - Male</span></a>
+<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co">#&gt; 3  (20,50] Female     0 0.004677979 (20,50] - Female</span></a>
+<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="co">#&gt; 4  (20,50] Female     0 0.017567313 (20,50] - Female</span></a>
+<a class="sourceLine" id="cb2-10" data-line-number="10"><span class="co">#&gt; 5  (20,50] Female     0 0.017517025 (20,50] - Female</span></a>
+<a class="sourceLine" id="cb2-11" data-line-number="11"><span class="co">#&gt; 6  (20,50]   Male     0 0.051570734   (20,50] - Male</span></a>
+<a class="sourceLine" id="cb2-12" data-line-number="12"></a>
+<a class="sourceLine" id="cb2-13" data-line-number="13"><span class="co"># Create dx object</span></a>
+<a class="sourceLine" id="cb2-14" data-line-number="14">dx_obj &lt;-<span class="st"> </span><span class="kw"><a href="reference/dx.html">dx</a></span>(</a>
+<a class="sourceLine" id="cb2-15" data-line-number="15">  <span class="dt">data =</span> dx_heart_failure,</a>
+<a class="sourceLine" id="cb2-16" data-line-number="16">  <span class="dt">study_name =</span> <span class="st">"Heart Attack Prediction"</span>,</a>
+<a class="sourceLine" id="cb2-17" data-line-number="17">  <span class="dt">data_description =</span> <span class="st">"Validation Data"</span>,</a>
+<a class="sourceLine" id="cb2-18" data-line-number="18">  <span class="dt">true_varname =</span> <span class="st">"truth"</span>,</a>
+<a class="sourceLine" id="cb2-19" data-line-number="19">  <span class="dt">pred_varname =</span> <span class="st">"predicted"</span>,</a>
+<a class="sourceLine" id="cb2-20" data-line-number="20">  <span class="dt">outcome_label =</span> <span class="st">"Heart Attack"</span>,</a>
+<a class="sourceLine" id="cb2-21" data-line-number="21">  <span class="dt">threshold_range =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(.<span class="dv">1</span>,.<span class="dv">2</span>,.<span class="dv">3</span>),</a>
+<a class="sourceLine" id="cb2-22" data-line-number="22">  <span class="dt">setthreshold =</span> <span class="fl">.3</span>,</a>
+<a class="sourceLine" id="cb2-23" data-line-number="23">  <span class="dt">grouping_variables =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"AgeGroup"</span>, <span class="st">"Sex"</span>, <span class="st">"AgeSex"</span>)</a>
+<a class="sourceLine" id="cb2-24" data-line-number="24">)</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/summary">summary</a></span>(dx_obj, <span class="dt">variable =</span> <span class="st">"Overall"</span>, <span class="dt">show_var =</span> F, <span class="dt">show_label =</span> F)</a></code></pre></div>
+<table class="table table">
+<caption>Threshold: 0.3</caption>
+<thead><tr class="header">
+<th align="left">Measure</th>
+<th align="left">Estimate</th>
+<th align="left">Fraction</th>
+<th align="left">CI Type</th>
+<th align="left">Notes</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">AUC</td>
+<td align="left">0.904 (0.864, 0.943)</td>
+<td align="left"></td>
+<td align="left">DeLong</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">Accuracy</td>
+<td align="left">79.3% (73.9%, 84.1%)</td>
+<td align="left">207/261</td>
+<td align="left">exact</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Sensitivity</td>
+<td align="left">84.7% (76.0%, 91.2%)</td>
+<td align="left">83/98</td>
+<td align="left">exact</td>
+<td align="left">&gt;=0.3</td>
+</tr>
+<tr class="even">
+<td align="left">Specificity</td>
+<td align="left">76.1% (68.8%, 82.4%)</td>
+<td align="left">124/163</td>
+<td align="left">exact</td>
+<td align="left">&lt;0.3</td>
+</tr>
+<tr class="odd">
+<td align="left">Positive Predictive Value</td>
+<td align="left">0.7 (0.6, 0.8)</td>
+<td align="left">83/122</td>
+<td align="left">exact</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">Negative Predictive Value</td>
+<td align="left">89.2% (82.8%, 93.8%)</td>
+<td align="left">124/139</td>
+<td align="left">exact</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Odds Ratio</td>
+<td align="left">17.6 (9.1, 33.9)</td>
+<td align="left"></td>
+<td align="left">Large sample</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">F1 Score</td>
+<td align="left">75.5</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw"><a href="reference/dx_forrest.html">dx_forrest</a></span>(dx_obj)</a></code></pre></div>
+<p><img src="reference/figures/forrest_plot.png" width="100%"></p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw"><a href="reference/dx_roc.html">dx_roc</a></span>(dx_obj)</a></code></pre></div>
+<p><img src="reference/figures/roc_plot.png" width="50%" style="display: block; margin: auto;"></p>
+</div>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -76,8 +195,16 @@ Quickly and easily create diagnostic summaries for binary classification data.
 </ul>
 </div>
 
-  </div>
+      <div class="dev-status">
+<h2>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://travis-ci.org/overdodactyl/diagnosticSummary"><img src="https://travis-ci.org/overdodactyl/diagnosticSummary.svg?branch=master" alt="Build Status"></a></li>
+</ul>
 </div>
+</div>
+
+</div>
+
 
       <footer><div class="copyright">
   <p>Developed by Pat Johnson, Rickey Carter.</p>
