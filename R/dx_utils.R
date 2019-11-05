@@ -7,7 +7,7 @@
 #' @param show_label Include label in returned data?
 #' @param ... additional arguments to be passed to or from methods
 #' @export
-summary.dx <- function(object, thresh = obj$options$setthreshold,
+summary.dx <- function(object, thresh = object$options$setthreshold,
                        variable = NA, level = NA, show_var = T, show_label = T, ...) {
 
   if (is.na(thresh) | length(thresh) > 1) {

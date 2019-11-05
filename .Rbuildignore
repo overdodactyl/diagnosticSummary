@@ -6,3 +6,4 @@
 ^pkgdown$
 ^data-raw$
 ^\.travis\.yml$
+^README\.Rmd$

@@ -1,0 +1,77 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+# diagnosticSummary
+
+<!-- badges: start -->
+[![Build Status](https://travis-ci.org/overdodactyl/diagnosticSummary.svg?branch=master)](https://travis-ci.org/overdodactyl/diagnosticSummary)
+<!-- badges: end -->
+
+`diagnosticSummary` is designed to quickly create diagnostic summaries and reports for binary classification data.
+
+## Installation
+
+You can install the development version from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("overdodactyl/diagnosticSummary")
+```
+## Example
+
+
+```{r example}
+library(diagnosticSummary)
+# Load sample data
+data("dx_heart_failure")
+head(dx_heart_failure)
+
+# Create dx object
+dx_obj <- dx(
+  data = dx_heart_failure,
+  study_name = "Heart Attack Prediction",
+  data_description = "Validation Data",
+  true_varname = "truth",
+  pred_varname = "predicted",
+  outcome_label = "Heart Attack",
+  threshold_range = c(.1,.2,.3),
+  setthreshold = .3,
+  grouping_variables = c("AgeGroup", "Sex", "AgeSex")
+)
+```
+
+
+```{r dpi = 600}
+summary(dx_obj, variable = "Overall", show_var = F, show_label = F)
+```
+
+
+```{r}
+g <- dx_forrest(dx_obj, return_grid = T)
+ggplot2::ggsave(plot = g, height = 3, width = 6, filename = "man/figures/forrest_plot.png")
+```
+
+```{r echo=FALSE}
+knitr::include_graphics("man/figures/forrest_plot.png")
+```
+
+```{r message=FALSE}
+png("man/figures/roc_plot.png",width = 900, height = 900, res = 180)
+dx_roc(dx_obj)
+dev.off()
+```
+
+```{r out.width="50%", echo=FALSE, fig.align="center"}
+knitr::include_graphics("man/figures/roc_plot.png")
+```
