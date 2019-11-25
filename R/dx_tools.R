@@ -87,7 +87,7 @@ dx_sensitivity <- function(tp, dispos, citype, threshold) {
   sens_frac <- paste0(scales::comma(tp), "/", scales::comma(dispos))
   senres <- binom::binom.confint(tp, dispos, conf.level = 0.95, methods = citype)
   senres <- dplyr::rename(senres, y1_check = x, n1_check = n, p1_check = mean, sens_lci = lower, sens_uci = upper)
-  sensitivity <- conf_int(sensitivity_raw, senres$sens_lci, senres$sens_uci, percent = T)
+  sensitivity <- conf_int(sensitivity_raw, senres$sens_lci, senres$sens_uci, percent = TRUE)
   dx_measure_df(measure = "Sensitivity",
                 estimate = sensitivity,
                 fraction = sens_frac,
@@ -101,7 +101,7 @@ dx_specificity <- function(tn, disneg, citype, threshold) {
   spec_frac <- paste0(scales::comma(tn), "/", scales::comma(disneg))
   specres <- binom::binom.confint(tn, disneg, conf.level = 0.95, methods = citype)
   specres <- dplyr::rename(specres, y2_check = x, n2_check = n, p2_check = mean, spec_lci = lower, spec_uci = upper)
-  specificity <- conf_int(specificity_raw, specres$spec_lci, specres$spec_uci, percent = T)
+  specificity <- conf_int(specificity_raw, specres$spec_lci, specres$spec_uci, percent = TRUE)
   dx_measure_df(measure = "Specificity",
                 estimate = specificity,
                 fraction = spec_frac,
@@ -114,7 +114,7 @@ dx_accuracy <- function(correct, n, citype) {
   acc_frac <- paste0(scales::comma(correct), "/", scales::comma(n))
   accres <- binom::binom.confint(correct, n, conf.level = 0.95, methods = citype)
   accres <- dplyr::rename(accres, y3_check = x, n3_check = n, p3_check = mean, acc_lci = lower, acc_uci = upper)
-  accuracy <- conf_int(accuracy_raw, accres$acc_lci, accres$acc_uci, percent = T)
+  accuracy <- conf_int(accuracy_raw, accres$acc_lci, accres$acc_uci, percent = TRUE)
   # cbind(accuracy, accuracy_raw, accres, acc_frac)
   dx_measure_df(measure = "Accuracy",
                 estimate = accuracy,
@@ -127,7 +127,7 @@ dx_ppv <- function(tp, testpos, citype) {
   ppv_frac <- paste0(scales::comma(tp), "/", scales::comma(testpos))
   ppvres <- binom::binom.confint(tp, testpos, conf.level = 0.95, methods = citype)
   ppvres <- dplyr::rename(ppvres, y4_check = x, n4_check = n, p4_check = mean, ppv_lci = lower, ppv_uci = upper)
-  ppv <- conf_int(ppv_raw, ppvres$ppv_lci, ppvres$ppv_uci)
+  ppv <- conf_int(ppv_raw, ppvres$ppv_lci, ppvres$ppv_uci, percent=TRUE)
   # cbind(ppv, ppv_raw, ppvres, ppv_frac)
   dx_measure_df(measure = "Positive Predictive Value",
                 estimate = ppv,
@@ -140,7 +140,7 @@ dx_npv <- function(tn, testneg, citype) {
   npv_frac <- paste0(scales::comma(tn), "/",scales::comma(testneg))
   npvres <- binom::binom.confint(tn, testneg, conf.level = 0.95, methods = citype)
   npvres <- dplyr::rename(npvres, y5_check = x, n5_check = n, p5_check = mean, npv_lci = lower, npv_uci = upper)
-  npv <- conf_int(npv_raw, npvres$npv_lci, npvres$npv_uci, percent = T)
+  npv <- conf_int(npv_raw, npvres$npv_lci, npvres$npv_uci, percent = TRUE)
   # cbind(npv, npv_raw, npvres, npv_frac)
   dx_measure_df(measure = "Negative Predictive Value",
                 estimate = npv,
