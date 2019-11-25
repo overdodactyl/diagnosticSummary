@@ -39,7 +39,7 @@ dx_roc <- function(dx_obj, curve_color = "red", text_color = "black", add_text =
 
   specdf <- dx_obj$data %>%
     dplyr::filter(!!as.name(dx_obj$options$true_varname) == 0) %>%
-    dplyr::summarize(spec =1-mean( ifelse(!!as.name(dx_obj$options$pred_varname)<=dx_obj$options$setthreshold,0,1)) ) %>%
+    dplyr::summarize(spec =1-mean(ifelse(!!as.name(dx_obj$options$pred_varname)<=dx_obj$options$setthreshold, 0, 1))) %>%
     as.vector()
 
   graphics::plot(auc_results,
