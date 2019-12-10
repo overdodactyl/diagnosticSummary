@@ -1,3 +1,7 @@
 .Rproj.user
 .Rhistory
 .RData
+rsconnect
+sessionInfoLog
+._.DS_Store
+.DS_Store

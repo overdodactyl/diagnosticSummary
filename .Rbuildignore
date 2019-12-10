@@ -7,3 +7,5 @@
 ^data-raw$
 ^\.travis\.yml$
 ^README\.Rmd$
+^rsconnect$
+^sessionInfoLog$
