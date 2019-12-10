@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Edit a cell within an object returned from dx_forest — dx_edit_cell • diagnosticSummary</title>
+<title>Create table with odds ratios displayed graphically — dx_forest • diagnosticSummary</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="Edit a cell within an object returned from dx_forest — dx_edit_cell" />
+<meta property="og:title" content="Create table with odds ratios displayed graphically — dx_forest" />
 
-<meta property="og:description" content="A convenient wrapper used to edit cells of a gtable." />
+<meta property="og:description" content="Generate a table of diagnostic measures" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -94,51 +94,77 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Edit a cell within an object returned from dx_forest</h1>
+    <h1>Create table with odds ratios displayed graphically</h1>
     
-    <div class="hidden name"><code>dx_edit_cell.Rd</code></div>
+    <div class="hidden name"><code>dx_forest.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>A convenient wrapper used to edit cells of a gtable.</p>
+    <p>Generate a table of diagnostic measures</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>dx_edit_cell</span>(<span class='no'>table</span>, <span class='no'>row</span>, <span class='no'>col</span>, <span class='kw'>name</span> <span class='kw'>=</span> <span class='st'>"core-fg"</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>dx_forest</span>(
+  <span class='no'>dx_obj</span>,
+  <span class='kw'>breaks</span> <span class='kw'>=</span> <span class='fl'>NA</span>,
+  <span class='kw'>limits</span> <span class='kw'>=</span> <span class='fl'>NA</span>,
+  <span class='kw'>tick_label_size</span> <span class='kw'>=</span> <span class='fl'>6.5</span>,
+  <span class='kw'>trans</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>NA</span>, <span class='st'>"log10"</span>),
+  <span class='kw'>return_grid</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>table</th>
-      <td><p>a table returned from dx_forest</p></td>
+      <th>dx_obj</th>
+      <td><p>An object of class dx</p></td>
     </tr>
     <tr>
-      <th>row</th>
-      <td><p>Numeric vector of rows to edit</p></td>
+      <th>breaks</th>
+      <td><p>A numeric vector of breaks to include on axis ticks.  If left empty, breaks will be determined using the min and max value from 95% CIs.</p></td>
     </tr>
     <tr>
-      <th>col</th>
-      <td><p>Numeric vector of columns to edit</p></td>
+      <th>limits</th>
+      <td><p>Limits for axis ticks.  Ticks will be generates using base::breaks.  Ignored if breaks are passed.</p></td>
     </tr>
     <tr>
-      <th>name</th>
-      <td><p>Name of table layer to edit</p></td>
+      <th>tick_label_size</th>
+      <td><p>Font size for axis labels.</p></td>
     </tr>
     <tr>
-      <th>...</th>
-      <td><p>Parameters passed to editGrob such as gpar or hjust.</p></td>
+      <th>trans</th>
+      <td><p>Method to transform the odds ratio by.  Currently, only log10 is supported.</p></td>
+    </tr>
+    <tr>
+      <th>return_grid</th>
+      <td><p>Should a grid object be returned? If FALSE, grid is drawn using grid.draw.</p></td>
     </tr>
     </table>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='no'>dx_obj</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='dx.html'>dx</a></span>(
+  <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>dx_heart_failure</span>,
+  <span class='kw'>study_name</span> <span class='kw'>=</span> <span class='st'>"Heart Attack Prediction"</span>,
+  <span class='kw'>data_description</span> <span class='kw'>=</span> <span class='st'>"Validation Data"</span>,
+  <span class='kw'>true_varname</span> <span class='kw'>=</span> <span class='st'>"truth"</span>,
+  <span class='kw'>pred_varname</span> <span class='kw'>=</span> <span class='st'>"predicted"</span>,
+  <span class='kw'>outcome_label</span> <span class='kw'>=</span> <span class='st'>"Heart Attack"</span>,
+  <span class='kw'>threshold_range</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>.1</span>,<span class='fl'>.2</span>,<span class='fl'>.3</span>),
+  <span class='kw'>setthreshold</span> <span class='kw'>=</span> <span class='fl'>.3</span>,
+  <span class='kw'>grouping_variables</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"AgeGroup"</span>, <span class='st'>"Sex"</span>, <span class='st'>"AgeSex"</span>)
+)
+<span class='fu'>dx_forest</span>(<span class='no'>dx_obj</span>)</div><div class='input'><span class='fu'>dx_forest</span>(<span class='no'>dx_obj</span>, <span class='kw'>trans</span> <span class='kw'>=</span> <span class='st'>"log10"</span>)</div><div class='img'><img src='dx_forest-1.png' alt='' width='576' height='576' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+            
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>

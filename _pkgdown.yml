@@ -11,7 +11,7 @@ reference:
   desc: Figures summarizing diagnostic statistics
   contents:
   - dx_roc
-  - dx_forrest
+  - dx_forest
   - dx_edit_cell
 - title: Utilities
   desc: Helper functions and S3 methods
