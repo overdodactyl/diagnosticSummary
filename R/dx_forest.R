@@ -12,6 +12,7 @@
 #' @importFrom grid grobTree unit gpar editGrob segmentsGrob pointsGrob textGrob
 #' @export
 #' @examples
+#'
 #' dx_obj <- dx(
 #'   data = dx_heart_failure,
 #'   study_name = "Heart Attack Prediction",
@@ -273,9 +274,21 @@ dx_prep_variable <- function(data) {
   res %>% dplyr::mutate_if(is.factor, as.character)
 }
 
+label_df <- function(data) {
+  x <- labels(dx_obj$data)
+  x <- lapply(x, function(x) ifelse(is.null(x), NA, x))
+  data.frame(Variable = names(x), VariableLabel = unlist(x,use.names=F), stringsAsFactors = FALSE)
+}
+
 dx_prep_forest2 <- function(dx_obj) {
 
   tmp <- dx_obj$measures %>% dplyr::filter(threshold == dx_obj$options$setthreshold)
+
+  labs <- label_df(dx_obj$data)
+
+  tmp <- dplyr::left_join(tmp, labs, by = "Variable")
+
+  tmp <- mutate(tmp, Variable = coalesce(VariableLabel, Variable))
 
   tmp_split <- tmp %>% dplyr::group_by(Variable) %>% dplyr::group_split()
 

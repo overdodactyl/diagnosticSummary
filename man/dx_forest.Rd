@@ -30,6 +30,7 @@ dx_forest(
 Generate a table of diagnostic measures
 }
 \examples{
+
 dx_obj <- dx(
   data = dx_heart_failure,
   study_name = "Heart Attack Prediction",
