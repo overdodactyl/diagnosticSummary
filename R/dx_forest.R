@@ -93,7 +93,7 @@ dx_forest <- function(dx_obj, breaks = NA, limits = NA, tick_label_size = 6.5, t
   ncols <- ncol(tbl_data)
 
   # Convert df to grob
-  g <- gridExtra::tableGrob(tbl_data, theme=table_theme, rows = NULL)
+  g <- gridExtra::tableGrob(tbl_data, theme=table_theme, rows = NULL, widths = unit(c(rep(5, 5)), c("cm")))
 
   # Add border under header
   g <- dx_hline(g, y = 0, x0 = 0, x1 = 1, t = 1, l = 1, r = ncols, name = "header_border")
@@ -134,6 +134,9 @@ dx_forest <- function(dx_obj, breaks = NA, limits = NA, tick_label_size = 6.5, t
 
   # Last row should be white (ticks and lables)
   g <- dx_edit_cell(g, nrow(g), seq_len(ncol(g)), "core-bg", gp=gpar(fill="#ffffff"))
+
+  # Adjust width of plot - some fine tunining here in the future woud be nice
+  g$widths <- unit(rep(1/ncol(g), ncol(g)), "npc")
 
   if(return_grid) {
     return(g)
