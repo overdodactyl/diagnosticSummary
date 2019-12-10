@@ -70,7 +70,7 @@ dx_roc <- function(dx_obj, curve_color = "red", text_color = "black", add_text =
     for (i in summary_stats){
 
       if (nchar(diagsummary_resultsdf[i,3])>0){
-        numden <- paste0("(", diagsummary_resultsdf[i,3], ")")
+        numden <- paste0(" (", diagsummary_resultsdf[i,3], ")")
       } else {
         numden <- ""
       }
