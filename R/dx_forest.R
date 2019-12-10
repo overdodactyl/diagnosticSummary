@@ -7,6 +7,7 @@
 #' @param limits Limits for axis ticks.  Ticks will be generates using base::breaks.  Ignored if breaks are passed.
 #' @param tick_label_size Font size for axis labels.
 #' @param return_grid Should a grid object be returned? If FALSE, grid is drawn using grid.draw.
+#' @param trans Method to transform the odds ratio by.  Currently, only log10 is supported.
 #' @importFrom gtable gtable_add_grob
 #' @importFrom grid grobTree unit gpar editGrob segmentsGrob pointsGrob textGrob
 #' @export
@@ -23,10 +24,17 @@
 #'   grouping_variables = c("AgeGroup", "Sex", "AgeSex")
 #' )
 #' dx_forest(dx_obj)
+#' dx_forest(dx_obj, trans = "log10")
 
-dx_forest <- function(dx_obj, breaks = NA, limits = NA, tick_label_size = 6.5, return_grid = FALSE) {
+dx_forest <- function(dx_obj, breaks = NA, limits = NA, tick_label_size = 6.5, trans = c(NA, "log10"), return_grid = FALSE) {
 
-  data <- dx_prep_forest(dx_obj)
+  trans = match.arg(trans)
+
+  data <- dx_prep_forest2(dx_obj)
+
+  indent_rows <- which(!is.na(data$rawestime))
+  bold_rows <- setdiff(1:(nrow(data)),indent_rows)
+  indent_rows <- indent_rows[indent_rows != nrow(data)]
 
   overall_or <- data %>% dplyr::filter(Group == "Overall") %>% dplyr::pull(rawestime)
 
@@ -34,25 +42,30 @@ dx_forest <- function(dx_obj, breaks = NA, limits = NA, tick_label_size = 6.5, r
   estimate <- data$rawestime
   upper <- data$rawuci
 
-  #### Ticks and scaling
+  # Find range of OR's
+  min_or <- min(data$rawlci, na.rm = T)
+  max_or <- max(data$rawuci, na.rm = T)
 
-  if (!identical(breaks, NA)) { # Breaks provided
-    ticks <- breaks
-  } else if (!identical(limits, NA)) { # Only limits provided
-    ticks <- pretty(limits, n = 6)
-  } else { # Default tick behavior
-    min_or <- min(data$rawlci, na.rm = T)
-    max_or <- max(data$rawuci, na.rm = T)
-    ticks <- pretty(c(min_or, max_or), n = 6)
+  # Get plot range, breaks, and labels
+  range <- plot_range(limits = limits, breaks = breaks, trans = trans, min_or = min_or, max_or = max_or)
+  breaks <- plot_breaks(range = range, breaks = breaks, trans = trans)
+  labels <- plot_labels(breaks = breaks, trans = trans)
+
+  ### Transform data
+  if (!is.na(trans) & trans == "log10") {
+    lower <- log10(lower)
+    estimate <- log10(estimate)
+    upper <- log10(upper)
+    overall_or <- log10(overall_or)
+    range = log10(range)
   }
 
-  # Rescale ticks between 0 and 1
-  ticks_scaled <- scales::rescale(ticks)
-
-  lower <- scales::rescale(lower, from = c(min(ticks), max(ticks)))
-  estimate <- scales::rescale(estimate, from = c(min(ticks), max(ticks)))
-  upper <- scales::rescale(upper, from = c(min(ticks), max(ticks)))
-  overall_or <- scales::rescale(overall_or, from = c(min(ticks), max(ticks)))
+  # Rescale data between 0 and 1
+  breaks_scaled <- scales::rescale(breaks)
+  lower <- scales::rescale(lower, from = range)
+  estimate <- scales::rescale(estimate, from = range)
+  upper <- scales::rescale(upper, from = range)
+  overall_or <- scales::rescale(overall_or, from = range)
 
   or_data <- data %>% dplyr::select(dplyr::starts_with("raw"))
 
@@ -64,6 +77,9 @@ dx_forest <- function(dx_obj, breaks = NA, limits = NA, tick_label_size = 6.5, r
 
   # tbl_data <- tbl_data %>% dplyr::mutate_all(tidyr::replace_na, replace = "")
   tbl_data[is.na(tbl_data)] <- ""
+
+  tbl_data <- tbl_data %>%
+    dplyr::mutate(Group = ifelse(dplyr::row_number() %in% indent_rows, paste("   ", Group), Group))
 
   table_theme <- gridExtra::ttheme_minimal(
     core=list(margin=unit(c(1, 1), "mm"),
@@ -89,6 +105,8 @@ dx_forest <- function(dx_obj, breaks = NA, limits = NA, tick_label_size = 6.5, r
   g <- dx_vline(g, x = 0, y0 = 0, y1 = 1, t = 2, b = nrows, l = or_col, name = "left_or_border")
   g <- dx_vline(g, x = 1, y0 = 0, y1 = 1, t = 2, b = nrows, l = or_col, name = "right_or_border")
 
+  # Add dashed line for overall OR
+  g <- dx_vline(g, x = overall_or, y0 = 0, y1 = 1, t = 2, b = nrows, l = or_col, name = "overall_or", gp = gpar(lwd = .8, lty = 2))
 
   # Add OR's
   for (i in seq_along(estimate)) {
@@ -96,12 +114,15 @@ dx_forest <- function(dx_obj, breaks = NA, limits = NA, tick_label_size = 6.5, r
   }
 
   # Add ticks and lables
-  for (i in seq_along(ticks)) {
-    g <- dx_forest_add_tick(g, ticks_scaled[i], ticks[i], nrows = nrows, tick_label_size = tick_label_size)
+  for (i in seq_along(breaks)) {
+    g <- dx_forest_add_tick(g, breaks_scaled[i], labels[i], nrows = nrows, tick_label_size = tick_label_size)
   }
 
   # Bold bottom row
   g <- dx_edit_cell(g, nrow(g)-1, seq_len(ncol(g)), "core-fg", gp=gpar(fontface="bold"))
+
+  # Bold levels
+  g <- dx_edit_cell(g, bold_rows + 1, 1, "core-fg", gp=gpar(fontface="bold"))
 
   # Left align first column
   g <- dx_edit_cell(g, seq_len(nrow(g)), 1, "core-fg", x=unit(.05, "npc"), hjust=0)
@@ -214,16 +235,15 @@ dx_prep_forest <- function(dx_obj) {
 
   tmp <- tmp %>% dplyr::mutate(Group = ifelse(Variable == "Overall", "Overall",  paste(Variable, Label)))
 
-
   tmp <- tmp %>% dplyr::filter(Measure %in% c("Sensitivity", "Specificity", "Odds Ratio"))
   res_sel <- tmp %>% dplyr::select(Group, Measure, Estimate)
   rawdata <- tmp %>% dplyr::select(Group, dplyr::starts_with("raw")) %>% dplyr::filter(!is.na(rawestime))
 
   res <- stats::reshape(data = res_sel,
-                 idvar= "Group",
-                 v.names= c("Estimate"),
-                 timevar= "Measure",
-                 direction = "wide")
+                        idvar= "Group",
+                        v.names= c("Estimate"),
+                        timevar= "Measure",
+                        direction = "wide")
 
   names(res) <- gsub("Estimate\\.", "", names(res))
 
@@ -234,4 +254,94 @@ dx_prep_forest <- function(dx_obj) {
 
   rbind(subgroups, overall)
 
+}
+
+dx_prep_variable <- function(data) {
+  var <- data$Variable[[1]]
+  tmp <- data %>% dplyr::filter(Measure %in% c("Sensitivity", "Specificity", "Odds Ratio"))
+  res_sel <- tmp %>% dplyr::select(Group = Label, Measure, Estimate)
+  rawdata <- tmp %>% dplyr::select(Group = Label, dplyr::starts_with("raw")) %>% dplyr::filter(!is.na(rawestime))
+  res <- utils::unstack(res_sel, form = Estimate ~ Measure)
+  names(res) <- gsub("\\.", " ", names(res) )
+  if (var == "Overall") res <- as.data.frame(t(res))
+  res$Group <- unique(res_sel$Group)
+  res <- dplyr::left_join(res, rawdata, by = "Group")
+  if (var != "Overall") {
+    empty_df <- data.frame(Group = var, stringsAsFactors = FALSE)
+    res <- dplyr::bind_rows(empty_df, res)
+  }
+  res %>% dplyr::mutate_if(is.factor, as.character)
+}
+
+dx_prep_forest2 <- function(dx_obj) {
+
+  tmp <- dx_obj$measures %>% dplyr::filter(threshold == dx_obj$options$setthreshold)
+
+  tmp_split <- tmp %>% dplyr::group_by(Variable) %>% dplyr::group_split()
+
+  for (i in seq_along(tmp_split)) {
+    tmp_split[[i]] <- dx_prep_variable(tmp_split[[i]])
+  }
+
+  tmp <- do.call("rbind", tmp_split)
+
+  subgroups <- tmp %>% dplyr::filter(Group != "Overall")
+  overall <- tmp %>% dplyr::filter(Group == "Overall")
+
+  rbind(subgroups, overall)
+
+}
+
+
+### Find limits of plot
+# Limits: use these
+# Breaks: use min(breaks) - max(breaks)
+# No trans: use pretty()
+# Trans: find min/max pos that contains
+plot_range <- function(limits = NA, breaks = NA, trans = NA, min_or = NA, max_or = NA) {
+  if (!identical(limits, NA)) {
+    res <- limits
+  } else if (!identical(breaks, NA)) {
+    res <- c(min(breaks), max(breaks))
+  } else {
+    if (is.na(trans)) {
+      pretty <- pretty(c(min_or, max_or), n = 6)
+      res <- c(min(pretty), max(pretty))
+    } else {
+      high <- ceiling(log10(max_or))
+      low <- max(c(0, floor(log10(min_or))))
+      res <- 10^(c(low, high))
+    }
+  }
+  res
+}
+
+
+### Find breaks
+# Breaks: use these
+# No trans: use pretty()
+# Trans: use 0:pos within limits
+plot_breaks <- function(range, breaks = NA, trans = NA) {
+  if (!identical(breaks, NA)) {
+    res <- breaks
+  } else if (is.na(trans)) {
+    res <- pretty(c(range[1], range[2]), n = 6)
+  } else {
+    first <- log10(range[1])
+    last <- log10(range[2])
+    res <- first:last
+  }
+  res
+}
+
+
+### Find labels
+# No trans: breaks
+# Trans: use 10^breaks
+plot_labels <- function(breaks, trans) {
+  if (is.na(trans)) {
+    breaks
+  } else {
+    10^breaks
+  }
 }

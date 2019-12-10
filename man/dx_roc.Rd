@@ -4,9 +4,15 @@
 \alias{dx_roc}
 \title{Plot ROC curve for a dx object}
 \usage{
-dx_roc(dx_obj, curve_color = "red", text_color = "black",
-  add_text = TRUE, add_ref_lines = TRUE, add_fractions = TRUE,
-  summary_stats = c(1, 2, 3, 4, 5, 6, 7, 8))
+dx_roc(
+  dx_obj,
+  curve_color = "red",
+  text_color = "black",
+  add_text = TRUE,
+  add_ref_lines = TRUE,
+  add_fractions = TRUE,
+  summary_stats = c(1, 2, 3, 4, 5, 6, 7, 8)
+)
 }
 \arguments{
 \item{dx_obj}{An object of class dx}

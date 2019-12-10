@@ -3,7 +3,6 @@
 \docType{package}
 \name{diagnosticSummary}
 \alias{diagnosticSummary}
-\alias{diagnosticSummary-package}
 \title{\code{diagnosticSummary} package}
 \description{
 Diagnostic Summaries

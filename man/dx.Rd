@@ -4,12 +4,24 @@
 \alias{dx}
 \title{Set options for diagnostic analysis}
 \usage{
-dx(data, study_name, data_description, classlabels = c("Negative",
-  "Positive"), threshold_range = NA, outcome_label, pred_varname,
-  true_varname, setthreshold = 0.5, poslabel = 1,
-  grouping_variables = NA, citype = "exact", bootreps = 2000,
-  bootseed = 20191015, doboot = FALSE,
-  roc_filename = paste0(study_name, "_ROC", data_description, ".pdf"))
+dx(
+  data,
+  study_name,
+  data_description,
+  classlabels = c("Negative", "Positive"),
+  threshold_range = NA,
+  outcome_label,
+  pred_varname,
+  true_varname,
+  setthreshold = 0.5,
+  poslabel = 1,
+  grouping_variables = NA,
+  citype = "exact",
+  bootreps = 2000,
+  bootseed = 20191015,
+  doboot = FALSE,
+  roc_filename = paste0(study_name, "_ROC", data_description, ".pdf")
+)
 }
 \arguments{
 \item{data}{A tbl.}

@@ -4,8 +4,15 @@
 \alias{as.data.frame.dx}
 \title{Convert to a data frame}
 \usage{
-\method{as.data.frame}{dx}(x, row.names = NULL, optional = TRUE,
-  thresh = NA, variable = NA, level = NA, ...)
+\method{as.data.frame}{dx}(
+  x,
+  row.names = NULL,
+  optional = TRUE,
+  thresh = NA,
+  variable = NA,
+  level = NA,
+  ...
+)
 }
 \arguments{
 \item{x}{An object of class "dx"}

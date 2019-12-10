@@ -4,8 +4,14 @@
 \alias{dx_forest}
 \title{Create table with odds ratios displayed graphically}
 \usage{
-dx_forest(dx_obj, breaks = NA, limits = NA, tick_label_size = 6.5,
-  return_grid = FALSE)
+dx_forest(
+  dx_obj,
+  breaks = NA,
+  limits = NA,
+  tick_label_size = 6.5,
+  trans = c(NA, "log10"),
+  return_grid = FALSE
+)
 }
 \arguments{
 \item{dx_obj}{An object of class dx}
@@ -15,6 +21,8 @@ dx_forest(dx_obj, breaks = NA, limits = NA, tick_label_size = 6.5,
 \item{limits}{Limits for axis ticks.  Ticks will be generates using base::breaks.  Ignored if breaks are passed.}
 
 \item{tick_label_size}{Font size for axis labels.}
+
+\item{trans}{Method to transform the odds ratio by.  Currently, only log10 is supported.}
 
 \item{return_grid}{Should a grid object be returned? If FALSE, grid is drawn using grid.draw.}
 }
@@ -34,4 +42,5 @@ dx_obj <- dx(
   grouping_variables = c("AgeGroup", "Sex", "AgeSex")
 )
 dx_forest(dx_obj)
+dx_forest(dx_obj, trans = "log10")
 }

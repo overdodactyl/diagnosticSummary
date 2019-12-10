@@ -4,8 +4,13 @@
 \alias{dx_report}
 \title{Render diagnostic report}
 \usage{
-dx_report(dx_obj, roc_options = list(), forest_options = list(),
-  output_dir = getwd(), output_file = "test.html")
+dx_report(
+  dx_obj,
+  roc_options = list(),
+  forest_options = list(),
+  output_dir = getwd(),
+  output_file = "test.html"
+)
 }
 \arguments{
 \item{dx_obj}{An object of class dx}
