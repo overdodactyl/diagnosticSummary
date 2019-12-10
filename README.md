@@ -61,7 +61,7 @@ summary(dx_obj, variable = "Overall", show_var = F, show_label = F)
 | Accuracy                  | 79.3% (73.9%, 84.1%) | 207/261  | exact        |        |
 | Sensitivity               | 84.7% (76.0%, 91.2%) | 83/98    | exact        | \>=0.3 |
 | Specificity               | 76.1% (68.8%, 82.4%) | 124/163  | exact        | \<0.3  |
-| Positive Predictive Value | 0.7 (0.6, 0.8)       | 83/122   | exact        |        |
+| Positive Predictive Value | 68.0% (59.0%, 76.2%) | 83/122   | exact        |        |
 | Negative Predictive Value | 89.2% (82.8%, 93.8%) | 124/139  | exact        |        |
 | Odds Ratio                | 17.6 (9.1, 33.9)     |          | Large sample |        |
 | F1 Score                  | 75.5                 |          |              |        |

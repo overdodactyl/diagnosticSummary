@@ -64,7 +64,7 @@ dx_forest(dx_obj)
 
 ```{r, echo=FALSE}
 g <- dx_forest(dx_obj, return_grid = T)
-ggplot2::ggsave(plot = g, height = 3, width = 6, filename = "man/figures/forest_plot.png")
+ggplot2::ggsave(plot = g, height = 3.3, width = 6, filename = "man/figures/forest_plot.png")
 ```
 
 
