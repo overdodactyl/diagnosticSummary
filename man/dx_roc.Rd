@@ -29,6 +29,8 @@ dx_roc(
 \item{add_fractions}{(Logical) Include fractions on ROC curve?}
 
 \item{summary_stats}{Statistics to include on ROC curve}
+
+\item{filename}{File bane to create on disk.  If left NA, no file will be created.}
 }
 \description{
 Plot ROC curve for a dx object

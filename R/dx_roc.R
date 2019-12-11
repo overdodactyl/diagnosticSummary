@@ -7,6 +7,9 @@
 #' @param add_ref_lines (Logical) Include reference lines on ROC curve?
 #' @param add_fractions (Logical) Include fractions on ROC curve?
 #' @param summary_stats Statistics to include on ROC curve
+#' @param filename File bane to create on disk.  If left NA, no file will be created.
+#' @importFrom grDevices dev.control dev.off pdf recordPlot
+#' @importFrom graphics par
 #' @export
 #' @examples
 #' dx_obj <- dx(
@@ -97,7 +100,7 @@ dx_roc <- function(dx_obj, curve_color = "red", text_color = "black", add_text =
   invisible(dev.off())
 
   if (!is.na(filename)) {
-    pdf("blah_base2.pdf")
+    pdf(filename)
     plot
     dev.off()
   }
