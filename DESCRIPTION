@@ -24,4 +24,5 @@ Suggests:
     boot,
     rmarkdown,
     knitr,
+    ggplot2
 RoxygenNote: 7.0.2

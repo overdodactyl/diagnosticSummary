@@ -8,6 +8,7 @@
 #' @param tick_label_size Font size for axis labels.
 #' @param return_grid Should a grid object be returned? If FALSE, grid is drawn using grid.draw.
 #' @param trans Method to transform the odds ratio by.  Currently, only log10 is supported.
+#' @param filename File bane to create on disk.  If left NA, no file will be created.
 #' @importFrom gtable gtable_add_grob
 #' @importFrom grid grobTree unit gpar editGrob segmentsGrob pointsGrob textGrob
 #' @export
@@ -27,7 +28,7 @@
 #' dx_forest(dx_obj)
 #' dx_forest(dx_obj, trans = "log10")
 
-dx_forest <- function(dx_obj, breaks = NA, limits = NA, tick_label_size = 6.5, trans = c(NA, "log10"), return_grid = FALSE) {
+dx_forest <- function(dx_obj, breaks = NA, limits = NA, tick_label_size = 6.5, trans = c(NA, "log10"), return_grid = FALSE, filename = NA) {
 
   trans = match.arg(trans)
 
@@ -137,6 +138,17 @@ dx_forest <- function(dx_obj, breaks = NA, limits = NA, tick_label_size = 6.5, t
 
   # Adjust width of plot - some fine tunining here in the future woud be nice
   g$widths <- unit(rep(1/ncol(g), ncol(g)), "npc")
+
+  if (!is.na(filename)) {
+    if (requireNamespace("ggplot2", quietly = TRUE)) {
+      g2 <- g
+      g2$widths <- grid::unit(rep(1/(ncol(g2)+1), ncol(g2)), "npc")
+      ggplot2::ggsave(g2, width = 8.5, height = 11, dpi = 600, filename = filename)
+    } else {
+      warning("ggplot2 needs to be installed to save a plot. No file was generated.")
+    }
+
+  }
 
   if(return_grid) {
     return(g)
