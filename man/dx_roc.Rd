@@ -11,7 +11,8 @@ dx_roc(
   add_text = TRUE,
   add_ref_lines = TRUE,
   add_fractions = TRUE,
-  summary_stats = c(1, 2, 3, 4, 5, 6, 7, 8)
+  summary_stats = c(1, 2, 3, 4, 5, 6, 7, 8),
+  filename = NA
 )
 }
 \arguments{

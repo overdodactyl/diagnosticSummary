@@ -10,7 +10,8 @@ dx_forest(
   limits = NA,
   tick_label_size = 6.5,
   trans = c(NA, "log10"),
-  return_grid = FALSE
+  return_grid = FALSE,
+  filename = NA
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ dx_forest(
 \item{trans}{Method to transform the odds ratio by.  Currently, only log10 is supported.}
 
 \item{return_grid}{Should a grid object be returned? If FALSE, grid is drawn using grid.draw.}
+
+\item{filename}{File bane to create on disk.  If left NA, no file will be created.}
 }
 \description{
 Generate a table of diagnostic measures
