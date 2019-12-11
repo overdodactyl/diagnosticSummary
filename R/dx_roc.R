@@ -22,7 +22,7 @@
 #' )
 #' dx_roc(dx_obj)
 dx_roc <- function(dx_obj, curve_color = "red", text_color = "black", add_text = TRUE,
-                   add_ref_lines = TRUE, add_fractions = TRUE, summary_stats = c(1,2,3,4,5,6,7,8)) {
+                   add_ref_lines = TRUE, add_fractions = TRUE, summary_stats = c(1,2,3,4,5,6,7,8), filename = NA) {
 
   auc_results<- pROC::roc(eval(parse(text=paste0("dx_obj$data$",dx_obj$options$true_varname))),
                           eval(parse(text=paste0("dx_obj$data$",dx_obj$options$pred_varname ))),
@@ -42,6 +42,12 @@ dx_roc <- function(dx_obj, curve_color = "red", text_color = "black", add_text =
     dplyr::summarize(spec =1-mean(ifelse(!!as.name(dx_obj$options$pred_varname)<=dx_obj$options$setthreshold, 0, 1))) %>%
     as.vector()
 
+
+
+  # Save plot to an object using a null PDF device
+  pdf(NULL)
+  dev.control(displaylist="enable")
+  par(bg = "white")
   graphics::plot(auc_results,
        main=dx_obj$options$outcome_label,
        print.auc=FALSE,
@@ -86,6 +92,17 @@ dx_roc <- function(dx_obj, curve_color = "red", text_color = "black", add_text =
 
     showtext::showtext_end()
   }
+
+  plot <- recordPlot()
+  invisible(dev.off())
+
+  if (!is.na(filename)) {
+    pdf("blah_base2.pdf")
+    plot
+    dev.off()
+  }
+
+  plot
 
 
 }

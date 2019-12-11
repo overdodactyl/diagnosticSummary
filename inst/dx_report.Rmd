@@ -2,7 +2,7 @@
 output: html_document
 params:
   dx_obj: NA
-  forrest_options: NA
+  forest_options: NA
   roc_options: NA
 title: "`r paste0('Diagnostic Summary Report: ', params$dx_obj$options$study_name)`"
 author: "`r params$dx_obj$options$data_description`"
@@ -132,9 +132,9 @@ knitr::knit_hooks$set(drop1=function(before, options, envir) {
 ```
 
 ```{r roc-plot, include=FALSE, dpi = 600}
-png("plot.png", width = 900, height = 900, res = 180)
-do.call(dx_roc,c(list(dx_obj=dx_obj),params$roc_options)) 
-dev.off()
+# png("plot.png", width = 900, height = 900, res = 180)
+# do.call(dx_roc,c(list(dx_obj=dx_obj),params$roc_options)) 
+# dev.off()
 ```
 
 # Overview
@@ -162,38 +162,33 @@ for (t in thresholds) {
 - Postive Screen Definition: `r paste0(dx_obj$options$pred_varname, " >= ", dx_obj$options$setthreshold)`
 
 
-
-```{r save-table, inlcude=FALSE, message=FALSE}
-height = dx_obj$n_levels*.33
-g <- do.call(dx_forrest,c(list(dx_obj=dx_obj, return_grid = T), params$forrest_options)) 
-# g <- dx_forrest(dx_obj, return_grid = T)
-ggplot2::ggsave(plot = g, height = height, width = 8, filename = "table.png")
-```
-
 ## Images
 
-```{r include-table, warning = FALSE, echo = FALSE}
-knitr::include_graphics("table.png")
+```{r include-table, warning = FALSE, echo = FALSE, out.width='100%', dpi=600}
+do.call(dx_forest,c(list(dx_obj=dx_obj), params$forest_options)) 
 ```
 
-```{r include-roc, warning = FALSE, echo=FALSE, fig.align="center"}
-knitr::include_graphics("plot.png")
+```{r include-roc, warning=FALSE, message=FALSE, warning = FALSE, echo=FALSE, fig.align="center", fig.width=7, fig.height=7}
+do.call(dx_roc,c(list(dx_obj=dx_obj),params$roc_options)) 
 ```
 
 ## PDF
 
 ```{r generate-pdf, include=FALSE, message=FALSE, warning=FALSE}
+p1 <- do.call(dx_roc,c(list(dx_obj=dx_obj),params$roc_options)) 
+p2 <- do.call(dx_forest,c(list(dx_obj=dx_obj, return_grid = T), params$forest_options))  
+p2$widths <- grid::unit(rep(1/(ncol(p2)+1), ncol(p2)), "npc")
+
+
 pdf(dx_obj$options$roc_filename)
-do.call(dx_roc,c(list(dx_obj=dx_obj),params$roc_options)) 
+p1
 plot.new()
-do.call(dx_forrest,c(list(dx_obj=dx_obj),params$forrest_options)) 
-dev.off()
+grid::grid.draw(p2)
+dev.off()  
 ```
 
 
 ```{r, include-pdf, out.width='600px', out.height='600px', fig.align="center"}
 knitr::include_graphics(dx_obj$options$roc_filename)
 ```
-
-
 
