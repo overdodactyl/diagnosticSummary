@@ -272,8 +272,9 @@ dx_prep_forest <- function(dx_obj) {
 
 }
 
-dx_prep_variable <- function(data) {
+dx_prep_variable <- function(dx_obj, data) {
   var <- data$Variable[[1]]
+  orig_var <- data$original_variable[[1]]
   tmp <- data %>% dplyr::filter(Measure %in% c("Sensitivity", "Specificity", "Odds Ratio"))
   res_sel <- tmp %>% dplyr::select(Group = Label, Measure, Estimate)
   rawdata <- tmp %>% dplyr::select(Group = Label, dplyr::starts_with("raw")) %>% dplyr::filter(!is.na(rawestime))
@@ -283,6 +284,9 @@ dx_prep_variable <- function(data) {
   res$Group <- unique(res_sel$Group)
   res <- dplyr::left_join(res, rawdata, by = "Group")
   if (var != "Overall") {
+    res$Group <- factor(res$Group, levels = levels(dx_obj$data[[orig_var]]))
+    res <- dplyr::arrange(res, Group)
+    res$Group <- as.character(res$Group)
     empty_df <- data.frame(Group = var, stringsAsFactors = FALSE)
     res <- dplyr::bind_rows(empty_df, res)
   }
@@ -305,12 +309,14 @@ dx_prep_forest2 <- function(dx_obj) {
 
   tmp <- dplyr::left_join(tmp, labs, by = "Variable")
 
-  tmp <- dplyr::mutate(tmp, Variable = dplyr::coalesce(VariableLabel, Variable))
+  tmp <- dplyr::mutate(tmp,
+                       original_variable = Variable,
+                       Variable = dplyr::coalesce(VariableLabel, Variable))
 
   tmp_split <- tmp %>% dplyr::group_by(Variable) %>% dplyr::group_split()
 
   for (i in seq_along(tmp_split)) {
-    tmp_split[[i]] <- dx_prep_variable(tmp_split[[i]])
+    tmp_split[[i]] <- dx_prep_variable(dx_obj, tmp_split[[i]])
   }
 
   tmp <- do.call("rbind", tmp_split)
