@@ -6,6 +6,7 @@
 \usage{
 dx_forest(
   dx_obj,
+  fraction = FALSE,
   breaks = NA,
   limits = NA,
   tick_label_size = 6.5,
@@ -16,6 +17,8 @@ dx_forest(
 }
 \arguments{
 \item{dx_obj}{An object of class dx}
+
+\item{fraction}{Logical.  Should the fraction for sensitivity and specificity be shown?}
 
 \item{breaks}{A numeric vector of breaks to include on axis ticks.  If left empty, breaks will be determined using the min and max value from 95\% CIs.}
 

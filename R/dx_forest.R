@@ -3,6 +3,7 @@
 #' Generate a table of diagnostic measures
 #'
 #' @param dx_obj An object of class dx
+#' @param fraction Logical.  Should the fraction for sensitivity and specificity be shown?
 #' @param breaks A numeric vector of breaks to include on axis ticks.  If left empty, breaks will be determined using the min and max value from 95\% CIs.
 #' @param limits Limits for axis ticks.  Ticks will be generates using base::breaks.  Ignored if breaks are passed.
 #' @param tick_label_size Font size for axis labels.
@@ -28,11 +29,11 @@
 #' dx_forest(dx_obj)
 #' dx_forest(dx_obj, trans = "log10")
 
-dx_forest <- function(dx_obj, breaks = NA, limits = NA, tick_label_size = 6.5, trans = c(NA, "log10"), return_grid = FALSE, filename = NA) {
+dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA, tick_label_size = 6.5, trans = c(NA, "log10"), return_grid = FALSE, filename = NA) {
 
   trans = match.arg(trans)
 
-  data <- dx_prep_forest2(dx_obj)
+  data <- dx_prep_forest2(dx_obj, fraction = fraction)
 
   indent_rows <- which(!is.na(data$rawestime))
   bold_rows <- setdiff(1:(nrow(data)),indent_rows)
@@ -244,10 +245,15 @@ dx_forest_add_tick <- function(grob, tick_scaled, tick, nrows, or_col = 4, tick_
                   clip = "off")
 }
 
-dx_prep_variable <- function(dx_obj, data) {
+dx_prep_variable <- function(dx_obj, data, fraction = FALSE) {
   var <- data$Variable[[1]]
   orig_var <- data$original_variable[[1]]
   tmp <- data %>% dplyr::filter(Measure %in% c("AUC", "Sensitivity", "Specificity", "Odds Ratio"))
+
+  if (fraction) {
+    tmp$Estimate <- ifelse(tmp$Fraction == "", tmp$Estimate, paste0(tmp$Estimate, " (",tmp$Fraction, ")"))
+  }
+
   res_sel <- tmp %>% dplyr::select(Group = Label, Measure, Estimate)
   rawdata <- tmp %>% dplyr::select(Group = Label, dplyr::starts_with("raw")) %>% dplyr::filter(!is.na(rawestime))
   res <- utils::unstack(res_sel, form = Estimate ~ Measure)
@@ -273,7 +279,7 @@ label_df <- function(data) {
              stringsAsFactors = FALSE)
 }
 
-dx_prep_forest2 <- function(dx_obj) {
+dx_prep_forest2 <- function(dx_obj, fraction = fraction) {
 
   tmp <- dx_obj$measures %>% dplyr::filter(threshold == dx_obj$options$setthreshold)
 
@@ -288,7 +294,7 @@ dx_prep_forest2 <- function(dx_obj) {
   tmp_split <- tmp %>% dplyr::group_by(Variable) %>% dplyr::group_split()
 
   for (i in seq_along(tmp_split)) {
-    tmp_split[[i]] <- dx_prep_variable(dx_obj, tmp_split[[i]])
+    tmp_split[[i]] <- dx_prep_variable(dx_obj, tmp_split[[i]], fraction = fraction)
   }
 
   tmp <- do.call("rbind", tmp_split)
