@@ -73,7 +73,7 @@ dx_forest <- function(dx_obj, breaks = NA, limits = NA, tick_label_size = 6.5, t
 
   tbl_data <- data %>%
     dplyr::mutate(` ` = "                                          ") %>%
-    dplyr::select(Group, Sensitivity, Specificity, ` `, `Odds Ratio`)
+    dplyr::select(Group, AUC, Sensitivity, Specificity, ` `, `Odds Ratio`)
 
   tbl_data <- tbl_data %>% dplyr::add_row()
 
@@ -89,12 +89,12 @@ dx_forest <- function(dx_obj, breaks = NA, limits = NA, tick_label_size = 6.5, t
               fg_params=list(fontface=1, cex = .6)),
     colhead=list(fg_params=list(col="black", fontface=1, cex = .7)))
 
-  or_col <- 4
+  or_col <- 5
   nrows <- nrow(tbl_data)
   ncols <- ncol(tbl_data)
 
   # Convert df to grob
-  g <- gridExtra::tableGrob(tbl_data, theme=table_theme, rows = NULL, widths = unit(c(rep(5, 5)), c("cm")))
+  g <- gridExtra::tableGrob(tbl_data, theme=table_theme, rows = NULL, widths = unit(c(rep(5, 6)), c("cm")))
 
   # Add border under header
   g <- dx_hline(g, y = 0, x0 = 0, x1 = 1, t = 1, l = 1, r = ncols, name = "header_border")
@@ -112,7 +112,7 @@ dx_forest <- function(dx_obj, breaks = NA, limits = NA, tick_label_size = 6.5, t
 
   # Add OR's
   for (i in seq_along(estimate)) {
-    g <- dx_forest_add_or(g, i+1, lower[i], estimate[i], upper[i])
+    g <- dx_forest_add_or(g, i+1, lower[i], estimate[i], upper[i], or_col = or_col)
   }
 
   # Add ticks and lables
@@ -244,38 +244,10 @@ dx_forest_add_tick <- function(grob, tick_scaled, tick, nrows, or_col = 4, tick_
                   clip = "off")
 }
 
-
-dx_prep_forest <- function(dx_obj) {
-
-  tmp <- dx_obj$measures %>% dplyr::filter(threshold == dx_obj$options$setthreshold)
-
-  tmp <- tmp %>% dplyr::mutate(Group = ifelse(Variable == "Overall", "Overall",  paste(Variable, Label)))
-
-  tmp <- tmp %>% dplyr::filter(Measure %in% c("Sensitivity", "Specificity", "Odds Ratio"))
-  res_sel <- tmp %>% dplyr::select(Group, Measure, Estimate)
-  rawdata <- tmp %>% dplyr::select(Group, dplyr::starts_with("raw")) %>% dplyr::filter(!is.na(rawestime))
-
-  res <- stats::reshape(data = res_sel,
-                        idvar= "Group",
-                        v.names= c("Estimate"),
-                        timevar= "Measure",
-                        direction = "wide")
-
-  names(res) <- gsub("Estimate\\.", "", names(res))
-
-  res <- dplyr::left_join(res, rawdata, by = "Group")
-
-  subgroups <- res %>% dplyr::filter(Group != "Overall")
-  overall <- res %>% dplyr::filter(Group == "Overall")
-
-  rbind(subgroups, overall)
-
-}
-
 dx_prep_variable <- function(dx_obj, data) {
   var <- data$Variable[[1]]
   orig_var <- data$original_variable[[1]]
-  tmp <- data %>% dplyr::filter(Measure %in% c("Sensitivity", "Specificity", "Odds Ratio"))
+  tmp <- data %>% dplyr::filter(Measure %in% c("AUC", "Sensitivity", "Specificity", "Odds Ratio"))
   res_sel <- tmp %>% dplyr::select(Group = Label, Measure, Estimate)
   rawdata <- tmp %>% dplyr::select(Group = Label, dplyr::starts_with("raw")) %>% dplyr::filter(!is.na(rawestime))
   res <- utils::unstack(res_sel, form = Estimate ~ Measure)
