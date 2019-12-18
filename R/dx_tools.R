@@ -92,7 +92,10 @@ dx_sensitivity <- function(tp, dispos, citype, threshold) {
                 estimate = sensitivity,
                 fraction = sens_frac,
                 ci_type = citype,
-                notes = paste0(">=", threshold))
+                notes = paste0(">=", threshold),
+                estimate_raw = sensitivity_raw,
+                lci_raw = senres$sens_lci,
+                uci_raw = senres$sens_uci)
 
 }
 
@@ -106,7 +109,10 @@ dx_specificity <- function(tn, disneg, citype, threshold) {
                 estimate = specificity,
                 fraction = spec_frac,
                 ci_type = citype,
-                notes = paste0("<", threshold))
+                notes = paste0("<", threshold),
+                estimate_raw = specificity_raw,
+                lci_raw = specres$spec_lci,
+                uci_raw = specres$spec_uci)
 }
 
 dx_accuracy <- function(correct, n, citype) {
@@ -119,7 +125,10 @@ dx_accuracy <- function(correct, n, citype) {
   dx_measure_df(measure = "Accuracy",
                 estimate = accuracy,
                 fraction = acc_frac,
-                ci_type = citype)
+                ci_type = citype,
+                estimate_raw = accuracy_raw,
+                lci_raw = accres$acc_lci,
+                uci_raw = accres$acc_uci)
 }
 
 dx_ppv <- function(tp, testpos, citype) {
@@ -132,7 +141,10 @@ dx_ppv <- function(tp, testpos, citype) {
   dx_measure_df(measure = "Positive Predictive Value",
                 estimate = ppv,
                 fraction = ppv_frac,
-                ci_type = citype)
+                ci_type = citype,
+                estimate_raw = ppv_raw,
+                lci_raw = ppvres$ppv_lci,
+                uci_raw = ppvres$ppv_uci)
 }
 
 dx_npv <- function(tn, testneg, citype) {
@@ -145,7 +157,10 @@ dx_npv <- function(tn, testneg, citype) {
   dx_measure_df(measure = "Negative Predictive Value",
                 estimate = npv,
                 fraction = npv_frac,
-                ci_type = citype)
+                ci_type = citype,
+                estimate_raw = npv_raw,
+                lci_raw = npvres$npv_lci,
+                uci_raw = npvres$npv_uci)
 }
 
 dx_precision <- function(tp, fp) {
@@ -239,7 +254,10 @@ dx_auc <- function(truth, predprob) {
   # data.frame(cbind(auc, auc_raw, auc_lci, auc_uci))
   dx_measure_df(measure = "AUC",
                 estimate = auc,
-                ci_type = "DeLong")
+                ci_type = "DeLong",
+                estimate_raw = auc_raw,
+                lci_raw = auc_lci,
+                uci_raw = auc_uci)
 }
 
 
