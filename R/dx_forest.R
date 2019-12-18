@@ -118,7 +118,7 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA, tick_l
 
   # Add ticks and lables
   for (i in seq_along(breaks)) {
-    g <- dx_forest_add_tick(g, breaks_scaled[i], labels[i], nrows = nrows, tick_label_size = tick_label_size)
+    g <- dx_forest_add_tick(g, breaks_scaled[i], labels[i], or_col = or_col, nrows = nrows, tick_label_size = tick_label_size)
   }
 
   # Bold bottom row
