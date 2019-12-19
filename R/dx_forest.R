@@ -255,7 +255,7 @@ dx_prep_variable <- function(dx_obj, data, fraction = FALSE) {
   }
 
   res_sel <- tmp %>% dplyr::select(Group = Label, Measure, Estimate)
-  rawdata <- tmp %>% dplyr::select(Group = Label, dplyr::starts_with("raw")) %>% dplyr::filter(!is.na(rawestime))
+  rawdata <- tmp %>% dplyr::filter(Measure == "Odds Ratio") %>% dplyr::select(Group = Label, dplyr::starts_with("raw")) %>% dplyr::filter(!is.na(rawestime))
   res <- utils::unstack(res_sel, form = Estimate ~ Measure)
   names(res) <- gsub("\\.", " ", names(res) )
   if (var == "Overall") res <- as.data.frame(t(res))
