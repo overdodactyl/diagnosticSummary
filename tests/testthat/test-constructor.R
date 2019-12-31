@@ -34,7 +34,7 @@ test_that("Assemble dx object", {
 
   # Grouping variable not a factor
   not_factor <- dx_heart_failure
-  not_factor$AgeGroup <- as.character(not_factor$AgeGroup)
+  not_factor[1] <- as.character(not_factor[1])
   expect_error(
     dx(
       data = not_factor,

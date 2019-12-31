@@ -10,3 +10,4 @@
 ^rsconnect$
 ^sessionInfoLog$
 ^codecov\.yml$
+^\.lintr$

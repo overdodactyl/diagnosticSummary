@@ -80,7 +80,7 @@ get_measures <- function(dx, caret) {
     filter(measure == dx) %>%
     pull(rawestime)
 
-  expect_equal(dx_res, caret_res)
+  testthat::expect_equal(dx_res, caret_res)
 }
 
 test_that("Sensitivity", {
