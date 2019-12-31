@@ -35,11 +35,11 @@ dx_measure <- function(data, threshold, options, var = "Overall",
     ppvres, npvres, dx_or, f1
   )
   results$threshold <- threshold
-  results$Variable <- var
-  results$Label <- label
+  results$variable <- var
+  results$label <- label
 
   # Adjust column order
-  to_first <- c("Variable", "Label")
+  to_first <- c("variable", "label")
   results[c(to_first, setdiff(names(results), to_first))]
 }
 

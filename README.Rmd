@@ -16,6 +16,7 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![Build Status](https://travis-ci.org/overdodactyl/diagnosticSummary.svg?branch=master)](https://travis-ci.org/overdodactyl/diagnosticSummary)
+[![Codecov test coverage](https://codecov.io/gh/overdodactyl/diagnosticSummary/branch/master/graph/badge.svg)](https://codecov.io/gh/overdodactyl/diagnosticSummary?branch=master)
 <!-- badges: end -->
 
 `diagnosticSummary` is designed to quickly create diagnostic summaries and reports for binary classification data.
@@ -64,7 +65,7 @@ dx_forest(dx_obj)
 
 ```{r, echo=FALSE}
 g <- dx_forest(dx_obj, return_grid = T)
-ggplot2::ggsave(plot = g, height = 3.3, width = 6, filename = "man/figures/forest_plot.png")
+ggplot2::ggsave(plot = g, height = 3.3, width = 7, filename = "man/figures/forest_plot.png")
 ```
 
 

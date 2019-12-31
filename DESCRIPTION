@@ -24,5 +24,7 @@ Suggests:
     boot,
     rmarkdown,
     knitr,
-    ggplot2
+    ggplot2,
+    testthat (>= 2.1.0),
+    covr
 RoxygenNote: 7.0.2

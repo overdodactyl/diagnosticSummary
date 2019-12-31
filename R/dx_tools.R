@@ -265,6 +265,7 @@ dx_f1 <- function(predprob, truth, precision, recall, bootreps, doboot) {
   dx_measure_df(
     measure = "F1 Score",
     estimate = f1,
+    estimate_raw = f1_raw,
     ci_type = if (doboot) "Bootstrapped" else "",
     notes = if (doboot) paste0("B=", bootreps, "") else ""
   )
@@ -347,11 +348,11 @@ dx_measure_df <- function(measure = "", estimate = "", fraction = "",
                           ci_type = "", notes = "", estimate_raw = NA,
                           lci_raw = NA, uci_raw = NA) {
   tmp <- data.frame(
-    Measure = measure,
-    Estimate = estimate,
-    Fraction = fraction,
-    CI_Type = ci_type,
-    Notes = notes,
+    measure = measure,
+    estimate = estimate,
+    fraction = fraction,
+    ci_type = ci_type,
+    notes = notes,
     rawestime = estimate_raw,
     rawlci = lci_raw,
     rawuci = uci_raw,

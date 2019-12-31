@@ -7,6 +7,8 @@
 
 [![Build
 Status](https://travis-ci.org/overdodactyl/diagnosticSummary.svg?branch=master)](https://travis-ci.org/overdodactyl/diagnosticSummary)
+[![Codecov test
+coverage](https://codecov.io/gh/overdodactyl/diagnosticSummary/branch/master/graph/badge.svg)](https://codecov.io/gh/overdodactyl/diagnosticSummary?branch=master)
 <!-- badges: end -->
 
 `diagnosticSummary` is designed to quickly create diagnostic summaries
@@ -55,7 +57,7 @@ dx_obj <- dx(
 summary(dx_obj, variable = "Overall", show_var = F, show_label = F)
 ```
 
-| Measure                   | Estimate             | Fraction | CI Type      | Notes  |
+| measure                   | estimate             | fraction | CI Type      | notes  |
 | :------------------------ | :------------------- | :------- | :----------- | :----- |
 | AUC                       | 0.904 (0.864, 0.943) |          | DeLong       |        |
 | Accuracy                  | 79.3% (73.9%, 84.1%) | 207/261  | exact        |        |

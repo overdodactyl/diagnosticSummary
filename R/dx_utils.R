@@ -21,9 +21,9 @@ summary.dx <- function(object, thresh = object$options$setthreshold,
   )
 
   tmp <- dplyr::select(tmp, -rawestime, -rawlci, -rawuci)
-  tmp <- dplyr::rename(tmp, `CI Type` = CI_Type)
-  if (!show_var) tmp <- subset(tmp, select = -c(Variable))
-  if (!show_label) tmp <- subset(tmp, select = -c(Label))
+  tmp <- dplyr::rename(tmp, `CI Type` = ci_type)
+  if (!show_var) tmp <- subset(tmp, select = -c(variable))
+  if (!show_label) tmp <- subset(tmp, select = -c(label))
   tmp <- subset(tmp, select = -c(threshold))
   knitr::kable(tmp, caption = paste0("Threshold: ", thresh))
 }
@@ -41,15 +41,17 @@ summary.dx <- function(object, thresh = object$options$setthreshold,
 #' @export
 as.data.frame.dx <- function(x, row.names = NULL, optional = TRUE, thresh = NA,
                              variable = NA, level = NA, ...) {
+
   tmp <- x$measures
+  filter_var <- variable
   if (!is.na(thresh)) {
     tmp <- dplyr::filter(tmp, threshold %in% thresh)
   }
   if (!is.na(variable)) {
-    tmp <- dplyr::filter(tmp, Variable %in% variable)
+    tmp <- dplyr::filter(tmp, variable %in% filter_var)
   }
   if (!is.na(level)) {
-    tmp <- dplyr::filter(tmp, Level %in% level)
+    tmp <- dplyr::filter(tmp, level %in% level)
   }
   tmp
 }
