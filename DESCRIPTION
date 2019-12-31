@@ -26,5 +26,8 @@ Suggests:
     knitr,
     ggplot2,
     testthat (>= 2.1.0),
-    covr
+    covr,
+    caret,
+    broom,
+    e1071
 RoxygenNote: 7.0.2
