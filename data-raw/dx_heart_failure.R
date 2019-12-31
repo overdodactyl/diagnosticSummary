@@ -21,8 +21,8 @@ dx_heart_failure <- data.frame(
   stringsAsFactors = FALSE
 )
 
-dx_heart_failure$AgeGroup <- cut(dx_heart_failure$AgeGroup, breaks=c(20,50,80))
-dx_heart_failure$Sex <- factor(dx_heart_failure$Sex, levels = c(0,1), labels = c("Female", "Male"))
+dx_heart_failure$AgeGroup <- cut(dx_heart_failure$AgeGroup, breaks = c(20, 50, 80))
+dx_heart_failure$Sex <- factor(dx_heart_failure$Sex, levels = c(0, 1), labels = c("Female", "Male"))
 dx_heart_failure$AgeSex <- factor(paste0(dx_heart_failure$AgeGroup, " - ", dx_heart_failure$Sex))
 
 

@@ -30,7 +30,8 @@ dx_roc(
 
 \item{summary_stats}{Statistics to include on ROC curve}
 
-\item{filename}{File bane to create on disk.  If left NA, no file will be created.}
+\item{filename}{File bane to create on disk.
+If left NA, no file will be created.}
 }
 \description{
 Plot ROC curve for a dx object
@@ -43,7 +44,7 @@ dx_obj <- dx(
   true_varname = "truth",
   pred_varname = "predicted",
   outcome_label = "Heart Attack",
-  threshold_range = c(.1,.2,.3),
+  threshold_range = c(.1, .2, .3),
   setthreshold = .3,
   grouping_variables = c("AgeGroup", "Sex", "AgeSex")
 )

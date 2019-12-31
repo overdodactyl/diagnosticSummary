@@ -17,9 +17,11 @@
 \arguments{
 \item{x}{An object of class "dx"}
 
-\item{row.names}{NULL or a character vector giving the row names for the data frame. Missing values are not allowed.}
+\item{row.names}{NULL or a character vector giving the row names for the
+data frame. Missing values are not allowed.}
 
-\item{optional}{logical. If TRUE, setting row names and converting column names (to syntactic names: see make.names) is optional.}
+\item{optional}{logical. If TRUE, setting row names and converting column
+names (to syntactic names: see make.names) is optional.}
 
 \item{thresh}{The threshold to return values from}
 
