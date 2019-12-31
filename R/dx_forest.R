@@ -41,14 +41,14 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
                       return_grid = FALSE, filename = NA) {
   trans <- match.arg(trans)
 
-  data <- dx_prep_forest2(dx_obj, fraction = fraction)
+  data <- dx_prep_forest(dx_obj, fraction = fraction)
 
   indent_rows <- which(!is.na(data$rawestime))
   bold_rows <- setdiff(1:(nrow(data)), indent_rows)
   indent_rows <- indent_rows[indent_rows != nrow(data)]
 
   overall_or <- data %>%
-    dplyr::filter(Group == "Overall") %>%
+    dplyr::filter(group == "Overall") %>%
     dplyr::pull(rawestime)
 
   lower <- data$rawlci
@@ -85,16 +85,18 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
 
   tbl_data <- data %>%
     dplyr::mutate(` ` = "                                          ") %>%
-    dplyr::select(Group, AUC, Sensitivity, Specificity, ` `, `Odds Ratio`)
+    dplyr::select(group, AUC, Sensitivity, Specificity, ` `, `Odds Ratio`)
 
   tbl_data <- tbl_data %>% dplyr::add_row()
 
   tbl_data[is.na(tbl_data)] <- ""
 
   tbl_data <- tbl_data %>%
-    dplyr::mutate(Group = ifelse(dplyr::row_number() %in% indent_rows,
-      paste("   ", Group), Group
+    dplyr::mutate(group = ifelse(dplyr::row_number() %in% indent_rows,
+      paste("   ", group), group
     ))
+
+  tbl_data <- dplyr::rename(tbl_data, Group = "group")
 
   table_theme <- gridExtra::ttheme_minimal(
     core = list(
@@ -327,34 +329,34 @@ dx_forest_add_tick <- function(grob, tick_scaled, tick, nrows,
 }
 
 dx_prep_variable <- function(dx_obj, data, fraction = FALSE) {
-  var <- data$Variable[[1]]
+  var <- data$variable[[1]]
   orig_var <- data$original_variable[[1]]
-  tmp <- data %>% dplyr::filter(Measure %in% c(
+  tmp <- data %>% dplyr::filter(measure %in% c(
     "AUC", "Sensitivity",
     "Specificity", "Odds Ratio"
   ))
 
   if (fraction) {
-    tmp$Estimate <- ifelse(tmp$Fraction == "", tmp$Estimate,
-      paste0(tmp$Estimate, " (", tmp$Fraction, ")")
+    tmp$estimate <- ifelse(tmp$fraction == "", tmp$estimate,
+      paste0(tmp$estimate, " (", tmp$fraction, ")")
     )
   }
 
-  res_sel <- tmp %>% dplyr::select(Group = Label, Measure, Estimate)
+  res_sel <- tmp %>% dplyr::select(group = label, measure, estimate)
   rawdata <- tmp %>%
-    dplyr::filter(Measure == "Odds Ratio") %>%
-    dplyr::select(Group = Label, dplyr::starts_with("raw")) %>%
+    dplyr::filter(measure == "Odds Ratio") %>%
+    dplyr::select(group = label, dplyr::starts_with("raw")) %>%
     dplyr::filter(!is.na(rawestime))
-  res <- utils::unstack(res_sel, form = Estimate ~ Measure)
+  res <- utils::unstack(res_sel, form = estimate ~ measure)
   names(res) <- gsub("\\.", " ", names(res))
   if (var == "Overall") res <- as.data.frame(t(res))
-  res$Group <- unique(res_sel$Group)
-  res <- dplyr::left_join(res, rawdata, by = "Group")
+  res$group <- unique(res_sel$group)
+  res <- dplyr::left_join(res, rawdata, by = "group")
   if (var != "Overall") {
-    res$Group <- factor(res$Group, levels = levels(dx_obj$data[[orig_var]]))
-    res <- dplyr::arrange(res, Group)
-    res$Group <- as.character(res$Group)
-    empty_df <- data.frame(Group = var, stringsAsFactors = FALSE)
+    res$group <- factor(res$group, levels = levels(dx_obj$data[[orig_var]]))
+    res <- dplyr::arrange(res, group)
+    res$group <- as.character(res$group)
+    empty_df <- data.frame(group = var, stringsAsFactors = FALSE)
     res <- dplyr::bind_rows(empty_df, res)
   }
   res %>% dplyr::mutate_if(is.factor, as.character)
@@ -364,27 +366,27 @@ label_df <- function(data) {
   x <- lapply(data, attr, which = "label", exact = TRUE)
   x <- lapply(x, function(x) ifelse(is.null(x), NA, x))
   data.frame(
-    Variable = names(x),
-    VariableLabel = as.character(unlist(x, use.names = F)),
+    variable = names(x),
+    variable_label = as.character(unlist(x, use.names = F)),
     stringsAsFactors = FALSE
   )
 }
 
-dx_prep_forest2 <- function(dx_obj, fraction = fraction) {
+dx_prep_forest <- function(dx_obj, fraction = fraction) {
   tmp <- dx_obj$measures %>%
     dplyr::filter(threshold == dx_obj$options$setthreshold)
 
   labs <- label_df(data = dx_obj$data)
 
-  tmp <- dplyr::left_join(tmp, labs, by = "Variable")
+  tmp <- dplyr::left_join(tmp, labs, by = "variable")
 
   tmp <- dplyr::mutate(tmp,
-    original_variable = Variable,
-    Variable = dplyr::coalesce(VariableLabel, Variable)
+    original_variable = variable,
+    variable = dplyr::coalesce(variable_label, variable)
   )
 
   tmp_split <- tmp %>%
-    dplyr::group_by(Variable) %>%
+    dplyr::group_by(variable) %>%
     dplyr::group_split()
 
   for (i in seq_along(tmp_split)) {
@@ -395,8 +397,8 @@ dx_prep_forest2 <- function(dx_obj, fraction = fraction) {
 
   tmp <- do.call("rbind", tmp_split)
 
-  subgroups <- tmp %>% dplyr::filter(Group != "Overall")
-  overall <- tmp %>% dplyr::filter(Group == "Overall")
+  subgroups <- tmp %>% dplyr::filter(group != "Overall")
+  overall <- tmp %>% dplyr::filter(group == "Overall")
 
   rbind(subgroups, overall)
 }

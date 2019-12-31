@@ -80,7 +80,7 @@ dx_roc <- function(dx_obj, curve_color = "red", text_color = "black",
     )
 
     diagsummary_resultsdf <- subset(diagsummary_resultsdf,
-      select = -c(Variable, Label)
+      select = -c(variable, label)
     )
 
     for (i in summary_stats) {
