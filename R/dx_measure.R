@@ -1,27 +1,39 @@
-dx_measure <- function(data, threshold, options, var = "Overall", label = "Overall") {
+dx_measure <- function(data, threshold, options, var = "Overall",
+                       label = "Overall") {
 
   # create vector for the prediction
   predprob <- data[[options$pred_varname]]
   truth <- data[[options$true_varname]]
 
-  perfdf <- dx_confusion_core(predprob = predprob,
-                              truth = truth,
-                              threshold = threshold,
-                              poslabel = options$poslabel)
+  perfdf <- dx_confusion_core(
+    predprob = predprob,
+    truth = truth,
+    threshold = threshold,
+    poslabel = options$poslabel
+  )
 
   dx_or <- dx_odds_ratio(perfdf$tp, perfdf$tn, perfdf$fp, perfdf$fn)
-  senres <- dx_sensitivity(tp = perfdf$tp, dispos = perfdf$dispos, options$citype, threshold)
+  senres <- dx_sensitivity(
+    tp = perfdf$tp, dispos = perfdf$dispos,
+    options$citype, threshold
+  )
   specres <- dx_specificity(perfdf$tn, perfdf$disneg, options$citype, threshold)
   accres <- dx_accuracy(perfdf$correct, perfdf$n, options$citype)
   ppvres <- dx_ppv(perfdf$tp, perfdf$testpos, options$citype)
   npvres <- dx_npv(perfdf$tn, perfdf$testneg, options$citype)
   precision <- dx_precision(perfdf$tp, perfdf$fp)
   recall <- dx_recall(perfdf$tp, perfdf$fn)
-  f1 <- dx_f1(predprob, truth, precision, recall, options$bootreps, options$doboot)
+  f1 <- dx_f1(
+    predprob, truth, precision, recall, options$bootreps,
+    options$doboot
+  )
   auc <- dx_auc(truth, predprob)
 
-  #set data in order we want to appear
-  results <- dplyr::bind_rows(auc, accres, senres, specres, ppvres, npvres, dx_or, f1)
+  # set data in order we want to appear
+  results <- dplyr::bind_rows(
+    auc, accres, senres, specres,
+    ppvres, npvres, dx_or, f1
+  )
   results$threshold <- threshold
   results$Variable <- var
   results$Label <- label
@@ -29,28 +41,30 @@ dx_measure <- function(data, threshold, options, var = "Overall", label = "Overa
   # Adjust column order
   to_first <- c("Variable", "Label")
   results[c(to_first, setdiff(names(results), to_first))]
-
 }
 
 
 dx_group_measure <- function(data, options, group_varname) {
-
-  grouped_df <- data %>% dplyr::select(group_varname) %>% dplyr::distinct()
-  group_labels <- as.vector(grouped_df[,1])
+  grouped_df <- data %>%
+    dplyr::select(group_varname) %>%
+    dplyr::distinct()
+  group_labels <- as.vector(grouped_df[, 1])
   group_labels <- group_labels[!is.na(group_labels)]
 
-  datalist = list()
+  datalist <- list()
 
-  for (i in seq_along(group_labels)){
-    subsetdata <- data %>% dplyr::filter(!!as.name(group_varname) == group_labels[i])
-    if (dim(subsetdata)[1] > 0 ) {
-      datalist[[i]] <- dx_measure(data = subsetdata,
-                         threshold = options$setthreshold,
-                         options = options,
-                         var = group_varname,
-                         label = group_labels[i])
+  for (i in seq_along(group_labels)) {
+    subsetdata <- data %>%
+      dplyr::filter(!!as.name(group_varname) == group_labels[i])
+    if (dim(subsetdata)[1] > 0) {
+      datalist[[i]] <- dx_measure(
+        data = subsetdata,
+        threshold = options$setthreshold,
+        options = options,
+        var = group_varname,
+        label = group_labels[i]
+      )
     }
-
   }
   do.call(rbind, datalist)
 }

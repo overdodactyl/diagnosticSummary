@@ -18,19 +18,27 @@ dx_forest(
 \arguments{
 \item{dx_obj}{An object of class dx}
 
-\item{fraction}{Logical.  Should the fraction for sensitivity and specificity be shown?}
+\item{fraction}{Logical.  Should the fraction for sensitivity
+and specificity be shown?}
 
-\item{breaks}{A numeric vector of breaks to include on axis ticks.  If left empty, breaks will be determined using the min and max value from 95\% CIs.}
+\item{breaks}{A numeric vector of breaks to include on axis ticks.
+If left empty, breaks will be determined using
+the min and max value from 95\% CIs.}
 
-\item{limits}{Limits for axis ticks.  Ticks will be generates using base::breaks.  Ignored if breaks are passed.}
+\item{limits}{Limits for axis ticks.
+Ticks will be generates using base::breaks.
+Ignored if breaks are passed.}
 
 \item{tick_label_size}{Font size for axis labels.}
 
-\item{trans}{Method to transform the odds ratio by.  Currently, only log10 is supported.}
+\item{trans}{Method to transform the odds ratio by.
+Currently, only log10 is supported.}
 
-\item{return_grid}{Should a grid object be returned? If FALSE, grid is drawn using grid.draw.}
+\item{return_grid}{Should a grid object be returned?
+If FALSE, grid is drawn using grid.draw.}
 
-\item{filename}{File bane to create on disk.  If left NA, no file will be created.}
+\item{filename}{File bane to create on disk.
+If left NA, no file will be created.}
 }
 \description{
 Generate a table of diagnostic measures
@@ -44,7 +52,7 @@ dx_obj <- dx(
   true_varname = "truth",
   pred_varname = "predicted",
   outcome_label = "Heart Attack",
-  threshold_range = c(.1,.2,.3),
+  threshold_range = c(.1, .2, .3),
   setthreshold = .3,
   grouping_variables = c("AgeGroup", "Sex", "AgeSex")
 )

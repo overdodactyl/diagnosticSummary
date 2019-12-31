@@ -14,7 +14,7 @@
 #'   true_varname = "truth",
 #'   pred_varname = "predicted",
 #'   outcome_label = "Heart Attack",
-#'   threshold_range = c(.1,.2,.3),
+#'   threshold_range = c(.1, .2, .3),
 #'   setthreshold = .3,
 #'   grouping_variables = c("AgeGroup", "Sex", "AgeSex")
 #' )
@@ -26,7 +26,10 @@ dx_report <- function(dx_obj, roc_options = list(), forest_options = list(),
     input = system.file("dx_report.Rmd", package = "diagnosticSummary"),
     output_dir = output_dir,
     output_file = output_file,
-    params = list(dx_obj = dx_obj, roc_options = roc_options, forest_options = forest_options),
+    params = list(
+      dx_obj = dx_obj, roc_options = roc_options,
+      forest_options = forest_options
+    ),
     envir = new.env(parent = globalenv())
   )
   utils::browseURL(paste0(output_dir, "/", output_file))

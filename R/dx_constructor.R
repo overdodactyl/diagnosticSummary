@@ -8,35 +8,39 @@
 #' @param data_description Description of data to be used in the report (string)
 #' @param classlabels Labels for predicted variable.  Needs to be 0, 1 order.
 #' @param pred_varname Colomn name containing AI prediction (string)
-#' @param setthreshold A numeric value represnting the threshold used to identify AI prediction
+#' @param setthreshold A numeric value represnting the threshold used
+#'     to identify AI prediction
 #' @param threshold_range Optional. A numeric vector of thresholds to loop over.
 #' @param true_varname Column name containt AI reference standard (string)
-#' @param poslabel Positive class.  Variable should be coded as 0/1 with 1 being the event
+#' @param poslabel Positive class.  Variable should be coded as 0/1
+#'     with 1 being the event
 #' @param outcome_label Label for outcome (string)
-#' @param grouping_variables Character vector of variable names to be summarized by.
-#' These variables should all be factors.
+#' @param grouping_variables Character vector of variable names to
+#'     be summarized by.  These variables should all be factors.
 #' @param citype Confidence interval type.
 #' @param bootreps Number of bootstrap samples used to generate F1 score CI
 #' @param bootseed Seed value to be used when calculating bootsraped CI's
-#' @param doboot Logical.  Generate bootstrap estimate of F1 confidence interval?
+#' @param doboot Logical. Generate bootstrap estimate of F1 confidence interval?
 #' @param roc_filename Name of file output for ROC pdf file
 #'
 #' @export
 
-dx <- function(data, study_name, data_description, classlabels = c("Negative", "Positive"),
-                           threshold_range = NA, outcome_label,
-                           pred_varname, true_varname, setthreshold = .5, poslabel = 1, grouping_variables = NA,
-                           citype = "exact", bootreps = 2000, bootseed = 20191015, doboot = FALSE,
-                           roc_filename = paste0(study_name, "_ROC", data_description,".pdf")) {
+dx <- function(data, study_name, data_description,
+               classlabels = c("Negative", "Positive"),
+               threshold_range = NA, outcome_label, pred_varname, true_varname,
+               setthreshold = .5, poslabel = 1, grouping_variables = NA,
+               citype = "exact", bootreps = 2000, bootseed = 20191015,
+               doboot = FALSE, roc_filename =
+                 paste0(study_name, "_ROC", data_description, ".pdf")) {
 
 
   # Check if pred_varname in data
-  if (! pred_varname %in% names(data)) {
+  if (!pred_varname %in% names(data)) {
     stop(paste(pred_varname, "was not found in `data`"))
   }
 
   # Check if true_varname in data
-  if (! true_varname %in% names(data)) {
+  if (!true_varname %in% names(data)) {
     stop(paste(true_varname, "was not found in `data`"))
   }
 
@@ -46,8 +50,8 @@ dx <- function(data, study_name, data_description, classlabels = c("Negative", "
   }
 
   # Check if grouping variables are factors
-  if (!identical(grouping_variables,NA)) {
-    for(f in grouping_variables) {
+  if (!identical(grouping_variables, NA)) {
+    for (f in grouping_variables) {
       if (!is.factor(data[[f]])) {
         stop("All variables in `grouping_variables` should be a factor.")
       }
@@ -60,14 +64,23 @@ dx <- function(data, study_name, data_description, classlabels = c("Negative", "
   }
 
   # Check if true_varname consists of only c(0,1)
-  if (!all(data[[true_varname]] %in% c(0,1))) {
-    stop(paste(true_varname, "should be numeric vector consisting of only 0's and 1's"))
+  if (!all(data[[true_varname]] %in% c(0, 1))) {
+    stop(paste(
+      true_varname,
+      "should be numeric vector consisting of only 0's and 1's"
+    ))
   }
 
-  data$test_binary <- ifelse(eval(parse(text=paste0("data$", pred_varname))) < setthreshold, 0, 1)
-  data$test_binaryf <- factor(data$test_binary, levels =  c(0,1), labels=classlabels)
-  data$true_binaryf <- factor(eval(parse(text=paste0("data$", true_varname))),
-                              levels=c(0,1), labels=classlabels)
+  data$test_binary <- ifelse(
+    eval(parse(text = paste0("data$", pred_varname))) < setthreshold, 0, 1
+  )
+  data$test_binaryf <- factor(data$test_binary,
+    levels = c(0, 1),
+    labels = classlabels
+  )
+  data$true_binaryf <- factor(eval(parse(text = paste0("data$", true_varname))),
+    levels = c(0, 1), labels = classlabels
+  )
 
   options <- list(
     study_name = study_name,
@@ -83,7 +96,7 @@ dx <- function(data, study_name, data_description, classlabels = c("Negative", "
     citype = citype,
     bootreps = bootreps,
     bootseed = bootseed,
-    doboot  = doboot,
+    doboot = doboot,
     roc_filename = roc_filename
   )
 
@@ -93,10 +106,13 @@ dx <- function(data, study_name, data_description, classlabels = c("Negative", "
   all_thresholds <- all_thresholds[!is.na(all_thresholds)]
 
   # Loop through all thresholds and get measures
-  threshold_measures <-  list()
+  threshold_measures <- list()
 
   for (i in seq_along(all_thresholds)) {
-    threshold_measures[[i]] <- dx_measure(data, threshold = all_thresholds[i], options = options)
+    threshold_measures[[i]] <- dx_measure(data,
+      threshold = all_thresholds[i],
+      options = options
+    )
   }
 
   threshold_measures <- do.call(rbind, threshold_measures)
@@ -106,8 +122,10 @@ dx <- function(data, study_name, data_description, classlabels = c("Negative", "
   if (!identical(grouping_variables, NA)) {
     subgroups <- list()
     for (i in seq_along(options$grouping_variables)) {
-      subgroups[[i]] <- dx_group_measure(data = data, options = options,
-                                         group_varname = options$grouping_variables[i])
+      subgroups[[i]] <- dx_group_measure(
+        data = data, options = options,
+        group_varname = options$grouping_variables[i]
+      )
     }
     subgroups <- do.call(rbind, subgroups)
 
@@ -118,6 +136,8 @@ dx <- function(data, study_name, data_description, classlabels = c("Negative", "
   n_levels <- length(unique(threshold_measures$Label))
 
 
-  structure(list(data = data, options = options, measures = threshold_measures, n_levels = n_levels), class = "dx")
-
+  structure(list(
+    data = data, options = options, measures = threshold_measures,
+    n_levels = n_levels
+  ), class = "dx")
 }

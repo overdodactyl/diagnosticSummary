@@ -40,12 +40,14 @@ dx(
 
 \item{true_varname}{Column name containt AI reference standard (string)}
 
-\item{setthreshold}{A numeric value represnting the threshold used to identify AI prediction}
+\item{setthreshold}{A numeric value represnting the threshold used
+to identify AI prediction}
 
-\item{poslabel}{Positive class.  Variable should be coded as 0/1 with 1 being the event}
+\item{poslabel}{Positive class.  Variable should be coded as 0/1
+with 1 being the event}
 
-\item{grouping_variables}{Character vector of variable names to be summarized by.
-These variables should all be factors.}
+\item{grouping_variables}{Character vector of variable names to
+be summarized by.  These variables should all be factors.}
 
 \item{citype}{Confidence interval type.}
 
@@ -53,7 +55,7 @@ These variables should all be factors.}
 
 \item{bootseed}{Seed value to be used when calculating bootsraped CI's}
 
-\item{doboot}{Logical.  Generate bootstrap estimate of F1 confidence interval?}
+\item{doboot}{Logical. Generate bootstrap estimate of F1 confidence interval?}
 
 \item{roc_filename}{Name of file output for ROC pdf file}
 }
