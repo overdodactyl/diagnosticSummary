@@ -9,6 +9,8 @@
 Status](https://travis-ci.org/overdodactyl/diagnosticSummary.svg?branch=master)](https://travis-ci.org/overdodactyl/diagnosticSummary)
 [![Codecov test
 coverage](https://codecov.io/gh/overdodactyl/diagnosticSummary/branch/master/graph/badge.svg)](https://codecov.io/gh/overdodactyl/diagnosticSummary?branch=master)
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 <!-- badges: end -->
 
 `diagnosticSummary` is designed to quickly create diagnostic summaries

@@ -6,6 +6,9 @@ cache: packages
 r_github_packages:
   - jimhester/lintr
 
+r_packages:
+  - e1071
+
 after_success:
   - R CMD INSTALL $PKG_TARBALL
   - Rscript -e 'lintr::lint_package()'
@@ -16,6 +19,7 @@ jobs:
   - r: release
     before_cache:
     - Rscript -e 'remotes::install_cran("pkgdown")'
+    - Rscript -e 'remotes::install_github("overdodactyl/mayotemplate")'
     deploy:
       provider: script
       script: Rscript -e 'pkgdown::deploy_site_github(verbose = TRUE)'

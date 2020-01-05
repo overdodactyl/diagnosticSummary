@@ -6,7 +6,7 @@
 \title{Heart attack outcomes and predictions}
 \format{A data frame with 261 rows and 5 variables:
 \describe{
-  \item{AgeGroup}{Age groupe}
+  \item{AgeGroup}{Age group}
   \item{Sex}{sex}
   \item{truth}{Heart failure (outcome)}
   \item{predicted}{Predicted outcome from model}

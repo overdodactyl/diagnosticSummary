@@ -36,11 +36,11 @@ dx(
 
 \item{outcome_label}{Label for outcome (string)}
 
-\item{pred_varname}{Colomn name containing AI prediction (string)}
+\item{pred_varname}{Column name containing AI prediction (string)}
 
-\item{true_varname}{Column name containt AI reference standard (string)}
+\item{true_varname}{Column name containing AI reference standard (string)}
 
-\item{setthreshold}{A numeric value represnting the threshold used
+\item{setthreshold}{A numeric value representing the threshold used
 to identify AI prediction}
 
 \item{poslabel}{Positive class.  Variable should be coded as 0/1

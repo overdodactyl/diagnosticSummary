@@ -20,7 +20,7 @@ Imports:
     binom,
     stats,
     showtext
-Suggests: 
+Suggests:
     boot,
     rmarkdown,
     knitr,
@@ -28,6 +28,8 @@ Suggests:
     testthat (>= 2.1.0),
     covr,
     caret,
-    broom,
-    e1071
+    e1071,
+    broom
 RoxygenNote: 7.0.2
+Language: en-US
+URL: https://overdodactyl.github.io/diagnosticSummary/, https://github.com/overdodactyl/diagnosticSummary/

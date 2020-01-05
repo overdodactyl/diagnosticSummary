@@ -7,11 +7,11 @@
 #' @param study_name Name of study to be used in the report (string)
 #' @param data_description Description of data to be used in the report (string)
 #' @param classlabels Labels for predicted variable.  Needs to be 0, 1 order.
-#' @param pred_varname Colomn name containing AI prediction (string)
-#' @param setthreshold A numeric value represnting the threshold used
+#' @param pred_varname Column name containing AI prediction (string)
+#' @param setthreshold A numeric value representing the threshold used
 #'     to identify AI prediction
 #' @param threshold_range Optional. A numeric vector of thresholds to loop over.
-#' @param true_varname Column name containt AI reference standard (string)
+#' @param true_varname Column name containing AI reference standard (string)
 #' @param poslabel Positive class.  Variable should be coded as 0/1
 #'     with 1 being the event
 #' @param outcome_label Label for outcome (string)

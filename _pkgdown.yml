@@ -1,3 +1,6 @@
+template:
+  package: mayotemplate
+
 reference:
 - title: Construction
   desc:  Generate a dx object
