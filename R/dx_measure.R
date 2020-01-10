@@ -45,10 +45,11 @@ dx_measure <- function(data, threshold, options, var = "Overall",
 
 
 dx_group_measure <- function(data, options, group_varname) {
-  grouped_df <- data %>%
+  group_labels <- data %>%
     dplyr::select(group_varname) %>%
-    dplyr::distinct()
-  group_labels <- as.vector(grouped_df[, 1])
+    dplyr::distinct() %>%
+    dplyr::mutate_all(as.character) %>%
+    dplyr::pull(group_varname)
   group_labels <- group_labels[!is.na(group_labels)]
 
   datalist <- list()
