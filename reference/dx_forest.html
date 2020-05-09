@@ -53,7 +53,7 @@
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -67,7 +67,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">diagnosticSummary</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9003</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9100</span>
       </span>
     </div>
 
@@ -85,7 +85,7 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/overdodactyl/diagnosticSummary">
+  <a href="https://github.com/overdodactyl/diagnosticSummary/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -120,7 +120,14 @@
   <span class='kw'>tick_label_size</span> <span class='kw'>=</span> <span class='fl'>6.5</span>,
   <span class='kw'>trans</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>NA</span>, <span class='st'>"log10"</span>),
   <span class='kw'>return_grid</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>filename</span> <span class='kw'>=</span> <span class='fl'>NA</span>
+  <span class='kw'>filename</span> <span class='kw'>=</span> <span class='fl'>NA</span>,
+  <span class='kw'>header_bg</span> <span class='kw'>=</span> <span class='st'>"white"</span>,
+  <span class='kw'>header_col</span> <span class='kw'>=</span> <span class='st'>"black"</span>,
+  <span class='kw'>body_bg</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"#e6e4e2"</span>, <span class='st'>"#ffffff"</span>),
+  <span class='kw'>footer_bg</span> <span class='kw'>=</span> <span class='st'>"#b8b6b4"</span>,
+  <span class='kw'>footer_col</span> <span class='kw'>=</span> <span class='st'>"black"</span>,
+  <span class='kw'>body_or_col</span> <span class='kw'>=</span> <span class='st'>"black"</span>,
+  <span class='kw'>footer_or_col</span> <span class='kw'>=</span> <span class='no'>footer_col</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -166,6 +173,35 @@ If FALSE, grid is drawn using grid.draw.</p></td>
       <td><p>File bane to create on disk.
 If left NA, no file will be created.</p></td>
     </tr>
+    <tr>
+      <th>header_bg</th>
+      <td><p>Background color of the header</p></td>
+    </tr>
+    <tr>
+      <th>header_col</th>
+      <td><p>Color of text in the header</p></td>
+    </tr>
+    <tr>
+      <th>body_bg</th>
+      <td><p>Background color of table rows.  If values are less than total
+number of rows, values are repeated.</p></td>
+    </tr>
+    <tr>
+      <th>footer_bg</th>
+      <td><p>Background color if the footer row.</p></td>
+    </tr>
+    <tr>
+      <th>footer_col</th>
+      <td><p>Color of the footer row.</p></td>
+    </tr>
+    <tr>
+      <th>body_or_col</th>
+      <td><p>Color of odds ratios in the table body</p></td>
+    </tr>
+    <tr>
+      <th>footer_or_col</th>
+      <td><p>Color of odds ratios in the table footer</p></td>
+    </tr>
     </table>
 
 
@@ -184,13 +220,10 @@ If left NA, no file will be created.</p></td>
 )
 <span class='fu'>dx_forest</span>(<span class='no'>dx_obj</span>)</div><div class='input'><span class='fu'>dx_forest</span>(<span class='no'>dx_obj</span>, <span class='kw'>trans</span> <span class='kw'>=</span> <span class='st'>"log10"</span>)</div><div class='img'><img src='dx_forest-1.png' alt='' width='576' height='576' /></div></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -201,7 +234,7 @@ If left NA, no file will be created.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>

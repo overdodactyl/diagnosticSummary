@@ -53,7 +53,7 @@
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -67,7 +67,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">diagnosticSummary</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9003</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9100</span>
       </span>
     </div>
 
@@ -85,7 +85,7 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/overdodactyl/diagnosticSummary">
+  <a href="https://github.com/overdodactyl/diagnosticSummary/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -114,11 +114,16 @@
 
     <pre class="usage"><span class='fu'>dx_roc</span>(
   <span class='no'>dx_obj</span>,
-  <span class='kw'>curve_color</span> <span class='kw'>=</span> <span class='st'>"red"</span>,
+  <span class='kw'>curve_color</span> <span class='kw'>=</span> <span class='st'>"#0057B8"</span>,
+  <span class='kw'>fill_color</span> <span class='kw'>=</span> <span class='st'>"#cfcdcb"</span>,
   <span class='kw'>text_color</span> <span class='kw'>=</span> <span class='st'>"black"</span>,
   <span class='kw'>add_text</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>add_ref_lines</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>add_fractions</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>axis_color</span> <span class='kw'>=</span> <span class='st'>"#333333"</span>,
+  <span class='kw'>add_ref_circle</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>ref_lines_color</span> <span class='kw'>=</span> <span class='st'>"#8a8887"</span>,
+  <span class='kw'>circle_ref_color</span> <span class='kw'>=</span> <span class='st'>"#E4002B"</span>,
   <span class='kw'>summary_stats</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>, <span class='fl'>3</span>, <span class='fl'>4</span>, <span class='fl'>5</span>, <span class='fl'>6</span>, <span class='fl'>7</span>, <span class='fl'>8</span>),
   <span class='kw'>filename</span> <span class='kw'>=</span> <span class='fl'>NA</span>
 )</pre>
@@ -133,6 +138,11 @@
     <tr>
       <th>curve_color</th>
       <td><p>Color of ROC curve</p></td>
+    </tr>
+    <tr>
+      <th>fill_color</th>
+      <td><p>Color to be filled in under the ROC curve.
+Use "transparent" if you do not want a color to show.</p></td>
     </tr>
     <tr>
       <th>text_color</th>
@@ -151,12 +161,29 @@
       <td><p>(Logical) Include fractions on ROC curve?</p></td>
     </tr>
     <tr>
+      <th>axis_color</th>
+      <td><p>Color of x and y axis</p></td>
+    </tr>
+    <tr>
+      <th>add_ref_circle</th>
+      <td><p>(Logical) Include a circle around specificity and
+sensitivity at the specified threshold?</p></td>
+    </tr>
+    <tr>
+      <th>ref_lines_color</th>
+      <td><p>Color for reference lines</p></td>
+    </tr>
+    <tr>
+      <th>circle_ref_color</th>
+      <td><p>Color of reference circle</p></td>
+    </tr>
+    <tr>
       <th>summary_stats</th>
       <td><p>Statistics to include on ROC curve</p></td>
     </tr>
     <tr>
       <th>filename</th>
-      <td><p>File bane to create on disk.
+      <td><p>File name to create on disk using ggplot2::ggsave.
 If left NA, no file will be created.</p></td>
     </tr>
     </table>
@@ -176,13 +203,10 @@ If left NA, no file will be created.</p></td>
 )
 <span class='fu'>dx_roc</span>(<span class='no'>dx_obj</span>)</div><div class='output co'>#&gt; <span class='message'>Setting levels: control = 0, case = 1</span></div><div class='output co'>#&gt; <span class='message'>Setting direction: controls &lt; cases</span></div><div class='img'><img src='dx_roc-1.png' alt='' width='576' height='576' /></div></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -193,7 +217,7 @@ If left NA, no file will be created.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>

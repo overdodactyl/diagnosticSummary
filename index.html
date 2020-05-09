@@ -19,7 +19,7 @@
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 </head>
-<body>
+<body data-spy="scroll" data-target="#toc">
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">diagnosticSummary</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9003</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9100</span>
       </span>
     </div>
 
@@ -50,7 +50,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/overdodactyl/diagnosticSummary">
+  <a href="https://github.com/overdodactyl/diagnosticSummary/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -77,37 +77,37 @@
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
 <p>You can install the development version from <a href="https://github.com/">GitHub</a> with:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="co"># install.packages("devtools")</span></a>
-<a class="sourceLine" id="cb1-2" data-line-number="2">devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">"overdodactyl/diagnosticSummary"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="r"><span class="co"># install.packages("devtools")</span>
+<span class="kw pkg">devtools</span><span class="kw ns">::</span><span class="fu">install_github</span>(<span class="st">"overdodactyl/diagnosticSummary"</span>)</pre></div>
 </div>
 <div id="example" class="section level2">
 <h2 class="hasAnchor">
 <a href="#example" class="anchor"></a>Example</h2>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(diagnosticSummary)</a>
-<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="co"># Load sample data</span></a>
-<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="kw"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">"dx_heart_failure"</span>)</a>
-<a class="sourceLine" id="cb2-4" data-line-number="4"><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(dx_heart_failure)</a>
-<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="co">#&gt;   AgeGroup    Sex truth   predicted           AgeSex</span></a>
-<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="co">#&gt; 1  (20,50]   Male     0 0.016164112   (20,50] - Male</span></a>
-<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="co">#&gt; 2  (20,50]   Male     0 0.074193671   (20,50] - Male</span></a>
-<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co">#&gt; 3  (20,50] Female     0 0.004677979 (20,50] - Female</span></a>
-<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="co">#&gt; 4  (20,50] Female     0 0.017567313 (20,50] - Female</span></a>
-<a class="sourceLine" id="cb2-10" data-line-number="10"><span class="co">#&gt; 5  (20,50] Female     0 0.017517025 (20,50] - Female</span></a>
-<a class="sourceLine" id="cb2-11" data-line-number="11"><span class="co">#&gt; 6  (20,50]   Male     0 0.051570734   (20,50] - Male</span></a>
-<a class="sourceLine" id="cb2-12" data-line-number="12"></a>
-<a class="sourceLine" id="cb2-13" data-line-number="13"><span class="co"># Create dx object</span></a>
-<a class="sourceLine" id="cb2-14" data-line-number="14">dx_obj &lt;-<span class="st"> </span><span class="kw"><a href="reference/dx.html">dx</a></span>(</a>
-<a class="sourceLine" id="cb2-15" data-line-number="15">  <span class="dt">data =</span> dx_heart_failure,</a>
-<a class="sourceLine" id="cb2-16" data-line-number="16">  <span class="dt">study_name =</span> <span class="st">"Heart Attack Prediction"</span>,</a>
-<a class="sourceLine" id="cb2-17" data-line-number="17">  <span class="dt">data_description =</span> <span class="st">"Validation Data"</span>,</a>
-<a class="sourceLine" id="cb2-18" data-line-number="18">  <span class="dt">true_varname =</span> <span class="st">"truth"</span>,</a>
-<a class="sourceLine" id="cb2-19" data-line-number="19">  <span class="dt">pred_varname =</span> <span class="st">"predicted"</span>,</a>
-<a class="sourceLine" id="cb2-20" data-line-number="20">  <span class="dt">outcome_label =</span> <span class="st">"Heart Attack"</span>,</a>
-<a class="sourceLine" id="cb2-21" data-line-number="21">  <span class="dt">threshold_range =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(.<span class="dv">1</span>,.<span class="dv">2</span>,.<span class="dv">3</span>),</a>
-<a class="sourceLine" id="cb2-22" data-line-number="22">  <span class="dt">setthreshold =</span> <span class="fl">.3</span>,</a>
-<a class="sourceLine" id="cb2-23" data-line-number="23">  <span class="dt">grouping_variables =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"AgeGroup"</span>, <span class="st">"Sex"</span>, <span class="st">"AgeSex"</span>)</a>
-<a class="sourceLine" id="cb2-24" data-line-number="24">)</a></code></pre></div>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(dx_obj, <span class="dt">variable =</span> <span class="st">"Overall"</span>, <span class="dt">show_var =</span> F, <span class="dt">show_label =</span> F)</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">diagnosticSummary</span>)
+<span class="co"># Load sample data</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">"dx_heart_failure"</span>)
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">dx_heart_failure</span>)
+<span class="co">#&gt;   AgeGroup    Sex truth   predicted           AgeSex</span>
+<span class="co">#&gt; 1  (20,50]   Male     0 0.016164112   (20,50] - Male</span>
+<span class="co">#&gt; 2  (20,50]   Male     0 0.074193671   (20,50] - Male</span>
+<span class="co">#&gt; 3  (20,50] Female     0 0.004677979 (20,50] - Female</span>
+<span class="co">#&gt; 4  (20,50] Female     0 0.017567313 (20,50] - Female</span>
+<span class="co">#&gt; 5  (20,50] Female     0 0.017517025 (20,50] - Female</span>
+<span class="co">#&gt; 6  (20,50]   Male     0 0.051570734   (20,50] - Male</span>
+
+<span class="co"># Create dx object</span>
+<span class="no">dx_obj</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/dx.html">dx</a></span>(
+  <span class="kw">data</span> <span class="kw">=</span> <span class="no">dx_heart_failure</span>,
+  <span class="kw">study_name</span> <span class="kw">=</span> <span class="st">"Heart Attack Prediction"</span>,
+  <span class="kw">data_description</span> <span class="kw">=</span> <span class="st">"Validation Data"</span>,
+  <span class="kw">true_varname</span> <span class="kw">=</span> <span class="st">"truth"</span>,
+  <span class="kw">pred_varname</span> <span class="kw">=</span> <span class="st">"predicted"</span>,
+  <span class="kw">outcome_label</span> <span class="kw">=</span> <span class="st">"Heart Attack"</span>,
+  <span class="kw">threshold_range</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">.1</span>,<span class="fl">.2</span>,<span class="fl">.3</span>),
+  <span class="kw">setthreshold</span> <span class="kw">=</span> <span class="fl">.3</span>,
+  <span class="kw">grouping_variables</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"AgeGroup"</span>, <span class="st">"Sex"</span>, <span class="st">"AgeSex"</span>)
+)</pre></div>
+<div class="sourceCode" id="cb3"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="no">dx_obj</span>, <span class="kw">variable</span> <span class="kw">=</span> <span class="st">"Overall"</span>, <span class="kw">show_var</span> <span class="kw">=</span> <span class="no">F</span>, <span class="kw">show_label</span> <span class="kw">=</span> <span class="no">F</span>)</pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">measure</th>
@@ -176,19 +176,19 @@
 </tbody>
 </table>
 <p>Threshold: 0.3</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw"><a href="reference/dx_forest.html">dx_forest</a></span>(dx_obj)</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="r"><span class="fu"><a href="reference/dx_forest.html">dx_forest</a></span>(<span class="no">dx_obj</span>)</pre></div>
 <p><img src="reference/figures/forest_plot.png" width="100%"></p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw"><a href="reference/dx_roc.html">dx_roc</a></span>(dx_obj)</a></code></pre></div>
-<p><img src="reference/figures/roc_plot.png" width="50%" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb5"><pre class="r"><span class="fu"><a href="reference/dx_roc.html">dx_roc</a></span>(<span class="no">dx_obj</span>)</pre></div>
+<p><img src="reference/figures/roc_plot.png" width="60%" style="display: block; margin: auto;"></p>
 </div>
 </div>
   </div>
 
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
 <h2>Links</h2>
 <ul class="list-unstyled">
-<li>Browse source code at <br><a href="https://github.com/overdodactyl/diagnosticSummary">https://​github.com/​overdodactyl/​diagnosticSummary</a>
+<li>Browse source code at <br><a href="https://github.com/overdodactyl/diagnosticSummary/">https://​github.com/​overdodactyl/​diagnosticSummary/​</a>
 </li>
 </ul>
 </div>
@@ -224,7 +224,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>
