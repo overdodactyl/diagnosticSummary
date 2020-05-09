@@ -18,6 +18,14 @@
 #'     Currently, only log10 is supported.
 #' @param filename File bane to create on disk.
 #'     If left NA, no file will be created.
+#' @param header_bg Background color of the header
+#' @param header_col Color of text in the header
+#' @param body_bg Background color of table rows.  If values are less than total
+#'     number of rows, values are repeated.
+#' @param footer_bg Background color if the footer row.
+#' @param footer_col Color of the footer row.
+#' @param body_or_col Color of odds ratios in the table body
+#' @param footer_or_col Color of odds ratios in the table footer
 #' @importFrom gtable gtable_add_grob
 #' @importFrom grid grobTree unit gpar editGrob segmentsGrob pointsGrob textGrob
 #' @export
@@ -38,7 +46,11 @@
 #' dx_forest(dx_obj, trans = "log10")
 dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
                       tick_label_size = 6.5, trans = c(NA, "log10"),
-                      return_grid = FALSE, filename = NA) {
+                      return_grid = FALSE, filename = NA,
+                      header_bg = "white", header_col = "black",
+                      body_bg = c("#e6e4e2", "#ffffff"),
+                      footer_bg = "#b8b6b4", footer_col = "black",
+                      body_or_col = "black", footer_or_col = footer_col) {
   trans <- match.arg(trans)
 
   data <- dx_prep_forest(dx_obj, fraction = fraction)
@@ -101,10 +113,13 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
   table_theme <- gridExtra::ttheme_minimal(
     core = list(
       margin = unit(c(1, 1), "mm"),
-      bg_params = list(fill = rep(c("#e6e4e2", "#ffffff")), col = NA),
+      bg_params = list(fill = rep(body_bg), col = NA),
       fg_params = list(fontface = 1, cex = .6)
     ),
-    colhead = list(fg_params = list(col = "black", fontface = 1, cex = .7))
+    colhead = list(
+      fg_params = list(col = header_col, fontface = 1, cex = .7),
+      bg_params = list(fill = header_bg, col = NA)
+    )
   )
 
   or_col <- 5
@@ -151,8 +166,10 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
 
   # Add OR's
   for (i in seq_along(estimate)) {
-    g <- dx_forest_add_or(g, i + 1, lower[i], estimate[i], upper[i],
-      or_col = or_col
+    col <- ifelse(i == length(estimate), footer_or_col, body_or_col)
+    g <- dx_forest_add_or(
+      g, i + 1, lower[i], estimate[i], upper[i],
+      or_col = or_col, col = col
     )
   }
 
@@ -183,8 +200,15 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
   )
 
   # Darken total row
-  g <- dx_edit_cell(g, nrow(g) - 1, seq_len(ncol(g)), "core-bg",
-    gp = gpar(fill = "#b8b6b4")
+  g <- dx_edit_cell(
+    g, nrow(g) - 1, seq_len(ncol(g)), "core-bg",
+    gp = gpar(fill = footer_bg)
+  )
+
+  # Color total row
+  g <- dx_edit_cell(
+    g, nrow(g) - 1, seq_len(ncol(g)), "core-fg",
+    gp = gpar(col = footer_col)
   )
 
   # Last row should be white (ticks and lables)
@@ -237,7 +261,7 @@ dx_hline <- function(table, y, x0, x1, t, b = t, l, r = l, name,
 }
 
 dx_vline <- function(table, x, y0, y1, t, b = t, l, r = l, name,
-                     gp = gpar(lwd = .8), clip = "off") {
+                     gp = gpar(lwd = .8, col = "black"), clip = "off") {
   gtable_add_grob(table,
     grobs = grobTree(
       segmentsGrob(
@@ -276,18 +300,21 @@ dx_edit_cell <- function(table, row, col, name = "core-fg", ...) {
 }
 
 
-dx_forest_add_or <- function(grob, row, low, est, high, or_col = 4) {
+dx_forest_add_or <- function(grob, row, low, est, high, or_col = 4, col = "black") {
   i <- sample(1:100000, 1)
 
-  tmp <- dx_hline(grob,
+  tmp <- dx_hline(
+    grob, gp = gpar(lwd = .8, col = col),
     y = .5, x0 = low, x1 = high, t = row, l = or_col,
     name = paste0("or", i), clip = "on"
   )
-  tmp <- dx_vline(tmp,
+  tmp <- dx_vline(
+    tmp, gp = gpar(lwd = .8, col = col),
     x = low, y0 = .35, y1 = .65, t = row, l = or_col,
     name = paste0("left_or_cap_", i), clip = "on"
   )
-  tmp <- dx_vline(tmp,
+  tmp <- dx_vline(
+    tmp, gp = gpar(lwd = .8, col = col),
     x = high, y0 = .35, y1 = .65, t = row, l = or_col,
     name = paste0("right_or_cap_", i), clip = "on"
   )
@@ -298,6 +325,7 @@ dx_forest_add_or <- function(grob, row, low, est, high, or_col = 4) {
         x = est,
         y = .5,
         pch = 16,
+        gp = gpar(col = col),
         size = unit(.35, "char")
       )
     ),

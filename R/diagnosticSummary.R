@@ -36,5 +36,7 @@ utils::globalVariables(c(
   "upper",
   "counts",
   " ",
-  "x"
+  "x",
+  "numden",
+  "y"
 ))

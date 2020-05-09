@@ -6,11 +6,16 @@
 \usage{
 dx_roc(
   dx_obj,
-  curve_color = "red",
+  curve_color = "#0057B8",
+  fill_color = "#cfcdcb",
   text_color = "black",
   add_text = TRUE,
   add_ref_lines = TRUE,
   add_fractions = TRUE,
+  axis_color = "#333333",
+  add_ref_circle = TRUE,
+  ref_lines_color = "#8a8887",
+  circle_ref_color = "#E4002B",
   summary_stats = c(1, 2, 3, 4, 5, 6, 7, 8),
   filename = NA
 )
@@ -20,6 +25,9 @@ dx_roc(
 
 \item{curve_color}{Color of ROC curve}
 
+\item{fill_color}{Color to be filled in under the ROC curve.
+Use "transparent" if you do not want a color to show.}
+
 \item{text_color}{Color of text on ROC curve}
 
 \item{add_text}{(Logical) Include stats on ROC curve?}
@@ -28,9 +36,18 @@ dx_roc(
 
 \item{add_fractions}{(Logical) Include fractions on ROC curve?}
 
+\item{axis_color}{Color of x and y axis}
+
+\item{add_ref_circle}{(Logical) Include a circle around specificity and
+sensitivity at the specified threshold?}
+
+\item{ref_lines_color}{Color for reference lines}
+
+\item{circle_ref_color}{Color of reference circle}
+
 \item{summary_stats}{Statistics to include on ROC curve}
 
-\item{filename}{File bane to create on disk.
+\item{filename}{File name to create on disk using ggplot2::ggsave.
 If left NA, no file will be created.}
 }
 \description{

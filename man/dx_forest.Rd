@@ -12,7 +12,14 @@ dx_forest(
   tick_label_size = 6.5,
   trans = c(NA, "log10"),
   return_grid = FALSE,
-  filename = NA
+  filename = NA,
+  header_bg = "white",
+  header_col = "black",
+  body_bg = c("#e6e4e2", "#ffffff"),
+  footer_bg = "#b8b6b4",
+  footer_col = "black",
+  body_or_col = "black",
+  footer_or_col = footer_col
 )
 }
 \arguments{
@@ -39,6 +46,21 @@ If FALSE, grid is drawn using grid.draw.}
 
 \item{filename}{File bane to create on disk.
 If left NA, no file will be created.}
+
+\item{header_bg}{Background color of the header}
+
+\item{header_col}{Color of text in the header}
+
+\item{body_bg}{Background color of table rows.  If values are less than total
+number of rows, values are repeated.}
+
+\item{footer_bg}{Background color if the footer row.}
+
+\item{footer_col}{Color of the footer row.}
+
+\item{body_or_col}{Color of odds ratios in the table body}
+
+\item{footer_or_col}{Color of odds ratios in the table footer}
 }
 \description{
 Generate a table of diagnostic measures

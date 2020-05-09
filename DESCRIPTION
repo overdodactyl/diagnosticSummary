@@ -1,6 +1,6 @@
 Package: diagnosticSummary
 Title: Diagnostic Summaries
-Version: 0.0.0.9003
+Version: 0.0.0.9100
 Authors@R: as.person(c(
     "Pat Johnson <Johnson.Patrick3@mayo.edu> [aut, cre]", 
     "Rickey Carter <Carter.Rickey@mayo.edu> [aut]"
@@ -30,6 +30,6 @@ Suggests:
     caret,
     e1071,
     broom
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 Language: en-US
 URL: https://overdodactyl.github.io/diagnosticSummary/, https://github.com/overdodactyl/diagnosticSummary/

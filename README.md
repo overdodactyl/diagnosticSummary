@@ -83,4 +83,4 @@ dx_forest(dx_obj)
 dx_roc(dx_obj)
 ```
 
-<img src="man/figures/roc_plot.png" width="50%" style="display: block; margin: auto;" />
+<img src="man/figures/roc_plot.png" width="60%" style="display: block; margin: auto;" />
