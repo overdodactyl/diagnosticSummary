@@ -11,3 +11,4 @@
 ^sessionInfoLog$
 ^codecov\.yml$
 ^\.lintr$
+^test_cases\.R$

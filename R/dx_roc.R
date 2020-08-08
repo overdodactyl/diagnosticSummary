@@ -104,7 +104,6 @@ dx_roc <- function(dx_obj, curve_color = "#0057B8", fill_color = "#cfcdcb",
 
   if (add_ref_lines) {
     p <- p +
-      # spec = sens
       ggplot2::geom_segment(
         ggplot2::aes(x = 1, y = 0, xend = 0, yend = 1),
         size = .2,
@@ -234,6 +233,3 @@ dx_roc_ggtheme <- function() {
     axis.title = ggplot2::element_text(size = 14)
   )
 }
-
-
-

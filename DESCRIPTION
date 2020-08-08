@@ -1,10 +1,16 @@
 Package: diagnosticSummary
 Title: Diagnostic Summaries
-Version: 0.0.0.9100
-Authors@R: as.person(c(
-    "Pat Johnson <Johnson.Patrick3@mayo.edu> [aut, cre]", 
-    "Rickey Carter <Carter.Rickey@mayo.edu> [aut]"
-  ))
+Version: 0.0.0.9200
+Authors@R: 
+  c(person(given = "Pat",
+           family = "Johnson",
+           role = c("aut", "cre"),
+           email = "Johnson.Patrick3@mayo.edu",
+           comment = c(ORCID = "0000-0001-8365-1375")),
+    person(given = "Rickey",
+           family = "Carter",
+           role = c("aut"),
+           email = "Carter.Rickey@mayo.edu"))
 Description: Quickly and easily create diagnostic summaries for binary classification data.
 License: MIT + file LICENSE
 Encoding: UTF-8

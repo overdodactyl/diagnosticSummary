@@ -300,7 +300,9 @@ dx_edit_cell <- function(table, row, col, name = "core-fg", ...) {
 }
 
 
-dx_forest_add_or <- function(grob, row, low, est, high, or_col = 4, col = "black") {
+dx_forest_add_or <- function(grob, row, low, est, high,
+                             or_col = 4, col = "black") {
+
   i <- sample(1:100000, 1)
 
   tmp <- dx_hline(
@@ -387,7 +389,9 @@ dx_prep_variable <- function(dx_obj, data, fraction = FALSE) {
     empty_df <- data.frame(group = var, stringsAsFactors = FALSE)
     res <- dplyr::bind_rows(empty_df, res)
   }
-  res %>% dplyr::mutate_if(is.factor, as.character)
+  res %>%
+    dplyr::mutate_if(is.factor, as.character) %>%
+    dplyr::as_tibble()
 }
 
 label_df <- function(data) {
@@ -415,12 +419,13 @@ dx_prep_forest <- function(dx_obj, fraction = fraction) {
 
   tmp_split <- tmp %>%
     dplyr::group_by(variable) %>%
-    dplyr::group_split()
+    dplyr::group_split() %>%
+    as.list()
+
 
   for (i in seq_along(tmp_split)) {
-    tmp_split[[i]] <- dx_prep_variable(dx_obj, tmp_split[[i]],
-      fraction = fraction
-    )
+    tmp_split[[i]] <-
+      dx_prep_variable(dx_obj, tmp_split[[i]], fraction = fraction)
   }
 
   tmp <- do.call("rbind", tmp_split)
