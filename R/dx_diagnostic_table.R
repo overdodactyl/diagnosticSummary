@@ -5,7 +5,7 @@
 #' @param includeAUC Logical to include AUC in data frame
 #' @param includeAccuracy Logical to include Accuracy in data frame
 #' @param includeSensitivity Logical to include sensitivity in data frame
-#' @param includeSpecificity Logical to include specificity in data frame
+#' @param includeSpecificity Logical to include Specificity in data frame
 #' @param includePPV Logical to include Positive predictive value in data frame
 #' @param includeNPV Logical to include Negative predictive value in data frame
 #' @param includeOR Logical to include Odds Ratio in data frame
