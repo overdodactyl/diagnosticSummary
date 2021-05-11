@@ -48,7 +48,7 @@ dx_diagnostic_table <- function(dx_obj,
  if (includeF1) {select_string <- c(select_string, "F1 Score")}
 
 
- operatingdata <- dxobj$measures   %>%
+ operatingdata <- dx_obj$measures   %>%
    filter(variable=="Overall")
 
  if (includeFractions) {
