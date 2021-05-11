@@ -7,7 +7,7 @@
 #' @param includeSensitivity Logical to include sensitivity in data frame
 #' @param includeSpecificity Logical to include specificity in data frame
 #' @param includePPV Logical to include positive predictive value in data frame
-#' @param includeNPV Logical to include negative predictive value in data frame
+#' @param includeNPV Logical to include Negative predictive value in data frame
 #' @param includeOR Logical to include Odds Ratio in data frame
 #' @param includeF1 Logical to include F1 in data frame
 #' @export
