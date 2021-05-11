@@ -36,6 +36,6 @@ Suggests:
     caret,
     e1071,
     broom
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Language: en-US
 URL: https://overdodactyl.github.io/diagnosticSummary/, https://github.com/overdodactyl/diagnosticSummary/

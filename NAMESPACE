@@ -3,6 +3,7 @@
 S3method(as.data.frame,dx)
 S3method(summary,dx)
 export(dx)
+export(dx_diagnostic_table)
 export(dx_edit_cell)
 export(dx_forest)
 export(dx_report)
