@@ -38,5 +38,7 @@ utils::globalVariables(c(
   " ",
   "x",
   "numden",
-  "y"
+  "y",
+  "fraction",
+  "combined_summary"
 ))

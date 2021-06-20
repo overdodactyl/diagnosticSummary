@@ -23,50 +23,65 @@
 #'   setthreshold = .3,
 #'   grouping_variables = c("AgeGroup", "Sex", "AgeSex")
 #' )
-#' dx_diagnostic_table(dx_obj, includeOR=FALSE, includeF1=FALSE)
-
-
+#' dx_diagnostic_table(dx_obj, includeOR = FALSE, includeF1 = FALSE)
 dx_diagnostic_table <- function(dx_obj,
-                             includeFractions = TRUE,
-                             includeAUC=TRUE,
-                             includeAccuracy = TRUE,
-                             includeSensitivity = TRUE,
-                             includeSpecificity = TRUE,
-                             includePPV = TRUE,
-                             includeNPV = TRUE,
-                             includeOR = TRUE,
-                             includeF1 = TRUE){
+                                includeFractions = TRUE,
+                                includeAUC = TRUE,
+                                includeAccuracy = TRUE,
+                                includeSensitivity = TRUE,
+                                includeSpecificity = TRUE,
+                                includePPV = TRUE,
+                                includeNPV = TRUE,
+                                includeOR = TRUE,
+                                includeF1 = TRUE) {
 
- select_string <- c("threshold")
- if (includeAUC) {select_string <- c(select_string, "AUC")}
- if (includeAccuracy) {select_string <- c(select_string, "Accuracy")}
- if (includeSensitivity) {select_string <- c(select_string, "Sensitivity")}
- if (includeSpecificity) {select_string <- c(select_string, "Specificity")}
- if (includePPV) {select_string <- c(select_string, "Positive Predictive Value")}
- if (includeNPV) {select_string <- c(select_string, "Negative Predictive Value")}
- if (includeOR) {select_string <- c(select_string, "Odds Ratio")}
- if (includeF1) {select_string <- c(select_string, "F1 Score")}
+  select_string <- c("threshold")
+
+  if (includeAUC) {
+    select_string <- c(select_string, "AUC")
+  }
+  if (includeAccuracy) {
+    select_string <- c(select_string, "Accuracy")
+  }
+  if (includeSensitivity) {
+    select_string <- c(select_string, "Sensitivity")
+  }
+  if (includeSpecificity) {
+    select_string <- c(select_string, "Specificity")
+  }
+  if (includePPV) {
+    select_string <- c(select_string, "Positive Predictive Value")
+  }
+  if (includeNPV) {
+    select_string <- c(select_string, "Negative Predictive Value")
+  }
+  if (includeOR) {
+    select_string <- c(select_string, "Odds Ratio")
+  }
+  if (includeF1) {
+    select_string <- c(select_string, "F1 Score")
+  }
 
 
- operatingdata <- dx_obj$measures   %>%
-   filter(variable=="Overall")
+  operatingdata <- dx_obj$measures %>%
+    dplyr::filter(variable == "Overall")
 
- if (includeFractions) {
+  if (includeFractions) {
+    operatingdata <- operatingdata %>%
+      dplyr::mutate(
+        fraction = dplyr::case_when(
+          nchar(fraction) == 0 ~ fraction,
+          TRUE ~ paste("", fraction, sep = " ")
+        )
+      )
+  }
 
-operatingdata <- operatingdata %>%
-   mutate(
-     fraction = case_when(
-       nchar(fraction) == 0 ~ fraction,
-       TRUE ~ paste("", fraction, sep=" ")
-     )
-   )
- }
+  operatingdata <- operatingdata %>%
+    tidyr::unite("combined_summary", estimate, fraction, na.rm = TRUE, remove = TRUE, sep = "") %>%
+    dplyr::select(threshold, measure, combined_summary) %>%
+    tidyr::spread(key = measure, value = combined_summary) %>%
+    dplyr::select(dplyr::all_of(select_string))
 
-operatingdata <- operatingdata  %>%
-   unite("combined_summary",estimate, fraction, na.rm=TRUE, remove=TRUE, sep="") %>%
-   select(threshold, measure, combined_summary) %>%
-   spread(key = measure, value = combined_summary) %>%
-   select(all_of(select_string))
+  return(operatingdata)
 
- return(operatingdata)
 }

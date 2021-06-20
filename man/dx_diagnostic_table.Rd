@@ -28,11 +28,11 @@ dx_diagnostic_table(
 
 \item{includeSensitivity}{Logical to include sensitivity in data frame}
 
-\item{includeSpecificity}{Logical to include specificity in data frame}
+\item{includeSpecificity}{Logical to include Specificity in data frame}
 
-\item{includePPV}{Logical to include positive predictive value in data frame}
+\item{includePPV}{Logical to include Positive predictive value in data frame}
 
-\item{includeNPV}{Logical to include negative predictive value in data frame}
+\item{includeNPV}{Logical to include Negative predictive value in data frame}
 
 \item{includeOR}{Logical to include Odds Ratio in data frame}
 
@@ -53,5 +53,5 @@ dx_obj <- dx(
   setthreshold = .3,
   grouping_variables = c("AgeGroup", "Sex", "AgeSex")
 )
-dx_diagnostic_table(dx_obj, includeOR=FALSE, includeF1=FALSE)
+dx_diagnostic_table(dx_obj, includeOR = FALSE, includeF1 = FALSE)
 }

@@ -1,6 +1,6 @@
 Package: diagnosticSummary
 Title: Diagnostic Summaries
-Version: 0.0.0.9200
+Version: 0.0.0.9300
 Authors@R: 
   c(person(given = "Pat",
            family = "Johnson",
@@ -25,7 +25,8 @@ Imports:
     gridExtra,
     binom,
     stats,
-    showtext
+    showtext,
+    tidyr
 Suggests:
     boot,
     rmarkdown,
