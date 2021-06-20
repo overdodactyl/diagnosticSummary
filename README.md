@@ -5,12 +5,9 @@
 
 <!-- badges: start -->
 
-[![Build
-Status](https://travis-ci.org/overdodactyl/diagnosticSummary.svg?branch=master)](https://travis-ci.org/overdodactyl/diagnosticSummary)
-[![Codecov test
-coverage](https://codecov.io/gh/overdodactyl/diagnosticSummary/branch/master/graph/badge.svg)](https://codecov.io/gh/overdodactyl/diagnosticSummary?branch=master)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![R-CMD-check](https://github.com/overdodactyl/diagnosticSummary/workflows/R-CMD-check/badge.svg)](https://github.com/overdodactyl/diagnosticSummary/actions)
 <!-- badges: end -->
 
 `diagnosticSummary` is designed to quickly create diagnostic summaries
@@ -59,19 +56,18 @@ dx_obj <- dx(
 summary(dx_obj, variable = "Overall", show_var = F, show_label = F)
 ```
 
-| measure                   | estimate             | fraction | CI Type      | notes  |
-| :------------------------ | :------------------- | :------- | :----------- | :----- |
-| AUC                       | 0.904 (0.864, 0.943) |          | DeLong       |        |
-| Accuracy                  | 79.3% (73.9%, 84.1%) | 207/261  | exact        |        |
-| Sensitivity               | 84.7% (76.0%, 91.2%) | 83/98    | exact        | \>=0.3 |
-| Specificity               | 76.1% (68.8%, 82.4%) | 124/163  | exact        | \<0.3  |
-| Positive Predictive Value | 68.0% (59.0%, 76.2%) | 83/122   | exact        |        |
-| Negative Predictive Value | 89.2% (82.8%, 93.8%) | 124/139  | exact        |        |
-| Odds Ratio                | 17.6 (9.1, 33.9)     |          | Large sample |        |
-| F1 Score                  | 75.5                 |          |              |        |
+| measure                   | estimate             | fraction | CI Type      | notes    |
+|:--------------------------|:---------------------|:---------|:-------------|:---------|
+| AUC                       | 0.904 (0.864, 0.943) |          | DeLong       |          |
+| Accuracy                  | 79.3% (73.9%, 84.1%) | 207/261  | exact        |          |
+| Sensitivity               | 84.7% (76.0%, 91.2%) | 83/98    | exact        | &gt;=0.3 |
+| Specificity               | 76.1% (68.8%, 82.4%) | 124/163  | exact        | &lt;0.3  |
+| Positive Predictive Value | 68.0% (59.0%, 76.2%) | 83/122   | exact        |          |
+| Negative Predictive Value | 89.2% (82.8%, 93.8%) | 124/139  | exact        |          |
+| Odds Ratio                | 17.6 (9.1, 33.9)     |          | Large sample |          |
+| F1 Score                  | 75.5                 |          |              |          |
 
-Threshold:
-0.3
+Threshold: 0.3
 
 ``` r
 dx_forest(dx_obj)
