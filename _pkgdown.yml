@@ -8,10 +8,6 @@ reference:
   desc:  Generate a dx object
   contents:
   - dx
-- title: Reports
-  desc: Generate diagnostic summary reports
-  contents:
-  - dx_report
 - title: Figures
   desc: Figures summarizing diagnostic statistics
   contents:

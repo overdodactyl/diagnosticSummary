@@ -1,6 +1,6 @@
 Package: diagnosticSummary
 Title: Diagnostic Summaries
-Version: 0.0.0.9300
+Version: 0.0.0.9310
 Authors@R: 
   c(person(given = "Pat",
            family = "Johnson",
@@ -11,7 +11,7 @@ Authors@R:
            family = "Carter",
            role = c("aut"),
            email = "Carter.Rickey@mayo.edu"))
-Description: Quickly and easily create diagnostic summaries for binary classification data.
+Description: Quickly create diagnostic summaries for binary classification data.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -25,7 +25,6 @@ Imports:
     gridExtra,
     binom,
     stats,
-    showtext,
     tidyr
 Suggests:
     boot,
@@ -33,7 +32,6 @@ Suggests:
     knitr,
     ggplot2,
     testthat (>= 2.1.0),
-    covr,
     caret,
     e1071,
     broom
