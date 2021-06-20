@@ -21,6 +21,7 @@ reference:
 - title: Utilities
   desc: Helper functions and S3 methods
   contents:
+  - dx_diagnostic_table
   - as.data.frame.dx
   - summary.dx
 figures:
