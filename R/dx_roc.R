@@ -43,6 +43,7 @@ dx_roc <- function(dx_obj, curve_color = "#0057B8", fill_color = "#cfcdcb",
   auc_results <- pROC::roc(
     eval(parse(text = paste0("dx_obj$data$", dx_obj$options$true_varname))),
     eval(parse(text = paste0("dx_obj$data$", dx_obj$options$pred_varname))),
+    direction=">",
     ci = T, quite = TRUE
   )
 
