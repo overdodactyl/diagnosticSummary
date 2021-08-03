@@ -20,6 +20,7 @@ dx(
   bootreps = 2000,
   bootseed = 20191015,
   doboot = FALSE,
+  direction = "auto",
   roc_filename = paste0(study_name, "_ROC", data_description, ".pdf")
 )
 }
@@ -56,6 +57,8 @@ be summarized by.  These variables should all be factors.}
 \item{bootseed}{Seed value to be used when calculating bootsraped CI's}
 
 \item{doboot}{Logical. Generate bootstrap estimate of F1 confidence interval?}
+
+\item{direction}{Direction for roc comparison.  See ?pROC::roc}
 
 \item{roc_filename}{Name of file output for ROC pdf file}
 }

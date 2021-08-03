@@ -1,3 +1,18 @@
+#' Return an pROC::roc object for a dx object
+#' @param true_varname Column name containing AI reference standard (string)
+#' @param pred_varname Column name containing AI prediction (string)
+#' @param data A tbl.
+#' @param direction Direction for roc comparison.  See ?pROC::roc
+get_roc <- function(true_varname, pred_varname, data, direction) {
+  # truth ~ predicted
+  f <- stats::as.formula(paste0(true_varname, "~", pred_varname))
+  # Use eval and bquote so the "Call" output of the model is human readable
+  eval(bquote(
+    pROC::roc(.(f), data = data, ci = TRUE, direction = .(direction), quiet = TRUE)
+  ))
+}
+
+
 #' Plot ROC curve for a dx object
 #'
 #' @param dx_obj An object of class dx
@@ -33,19 +48,13 @@
 #' )
 #' dx_roc(dx_obj)
 dx_roc <- function(dx_obj, curve_color = "#0057B8", fill_color = "#cfcdcb",
-                    text_color = "black", add_text = TRUE, add_ref_lines = TRUE,
-                    add_fractions = TRUE, axis_color = "#333333",
-                    add_ref_circle = TRUE, ref_lines_color = "#8a8887",
-                    circle_ref_color = "#E4002B",
-                    summary_stats = c(1, 2, 3, 4, 5, 6, 7, 8), filename = NA) {
+                   text_color = "black", add_text = TRUE, add_ref_lines = TRUE,
+                   add_fractions = TRUE, axis_color = "#333333",
+                   add_ref_circle = TRUE, ref_lines_color = "#8a8887",
+                   circle_ref_color = "#E4002B",
+                   summary_stats = c(1, 2, 3, 4, 5, 6, 7, 8), filename = NA) {
 
 
-  auc_results <- pROC::roc(
-    eval(parse(text = paste0("dx_obj$data$", dx_obj$options$true_varname))),
-    eval(parse(text = paste0("dx_obj$data$", dx_obj$options$pred_varname))),
-    #direction=">",
-    ci = T, quite = TRUE
-  )
 
   sensdf <- dx_obj$data %>%
     dplyr::filter(!!as.name(dx_obj$options$true_varname) == 1) %>%
@@ -63,30 +72,24 @@ dx_roc <- function(dx_obj, curve_color = "#0057B8", fill_color = "#cfcdcb",
     )) %>%
     as.vector()
 
-  # get and sort the sensitivities and specificities
-  se <- sort(auc_results$se, decreasing = FALSE)
-  sp <- sort(auc_results$sp, decreasing = TRUE)
+  auc_df <- pROC::coords(dx_obj$roc, "all", transpose = FALSE)
+  auc_df <- auc_df[rev(seq(nrow(auc_df))),]
 
-  auc_df <- data.frame(
-    se = se,
-    sp = sp
-  )
-
-
-  auc_poly <- auc_df %>%
-    dplyr::group_by(sp) %>%
-    dplyr::summarise(se = max(se))
-
-
-  p <- ggplot2::ggplot(auc_df, ggplot2::aes(sp, se)) +
-    ggplot2::geom_area(
-      data = auc_poly,
-      mapping = ggplot2::aes(sp, se),
+  p <- ggplot2::ggplot(auc_df) +
+    ggplot2::geom_rect(
+      ggplot2::aes(
+        xmin = specificity,
+        xmax = dplyr::lead(specificity),
+        ymin = 0,
+        ymax = sensitivity
+      ),
       fill = fill_color,
       colour = NA,
-      alpha = 0.5
+      alpha = 0.5,
+      na.rm = TRUE
     ) +
     ggplot2::geom_line(
+      ggplot2::aes(specificity, sensitivity),
       color = curve_color,
       size = 1
     ) +
