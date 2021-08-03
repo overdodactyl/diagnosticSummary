@@ -68,7 +68,7 @@ diagnostic test" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">diagnosticSummary</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9310</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9400</span>
       </span>
     </div>
 
@@ -130,6 +130,7 @@ diagnostic test</p>
   bootreps <span class='op'>=</span> <span class='fl'>2000</span>,
   bootseed <span class='op'>=</span> <span class='fl'>20191015</span>,
   doboot <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  direction <span class='op'>=</span> <span class='st'>"auto"</span>,
   roc_filename <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span><span class='va'>study_name</span>, <span class='st'>"_ROC"</span>, <span class='va'>data_description</span>, <span class='st'>".pdf"</span><span class='op'>)</span>
 <span class='op'>)</span></pre>
 
@@ -198,6 +199,10 @@ be summarized by.  These variables should all be factors.</p></td>
     <tr>
       <th>doboot</th>
       <td><p>Logical. Generate bootstrap estimate of F1 confidence interval?</p></td>
+    </tr>
+    <tr>
+      <th>direction</th>
+      <td><p>Direction for roc comparison.  See ?pROC::roc</p></td>
     </tr>
     <tr>
       <th>roc_filename</th>
