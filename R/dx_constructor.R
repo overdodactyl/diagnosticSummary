@@ -21,6 +21,7 @@
 #' @param bootreps Number of bootstrap samples used to generate F1 score CI
 #' @param bootseed Seed value to be used when calculating bootsraped CI's
 #' @param doboot Logical. Generate bootstrap estimate of F1 confidence interval?
+#' @param direction Direction for roc comparison.  See ?pROC::roc
 #' @param roc_filename Name of file output for ROC pdf file
 #'
 #' @export
@@ -30,8 +31,8 @@ dx <- function(data, study_name, data_description,
                threshold_range = NA, outcome_label, pred_varname, true_varname,
                setthreshold = .5, poslabel = 1, grouping_variables = NA,
                citype = "exact", bootreps = 2000, bootseed = 20191015,
-               doboot = FALSE, roc_filename =
-                 paste0(study_name, "_ROC", data_description, ".pdf")) {
+               doboot = FALSE, direction = "auto",
+               roc_filename = paste0(study_name, "_ROC", data_description, ".pdf")) {
 
 
   # Check if pred_varname in data
@@ -135,9 +136,11 @@ dx <- function(data, study_name, data_description,
   # Number of unique levels
   n_levels <- length(unique(threshold_measures$Label))
 
+  roc <- get_roc(true_varname, pred_varname, data, direction)
+
 
   structure(list(
     data = data, options = options, measures = threshold_measures,
-    n_levels = n_levels
+    n_levels = n_levels, roc = roc
   ), class = "dx")
 }

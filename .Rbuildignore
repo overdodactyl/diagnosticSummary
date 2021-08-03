@@ -3,6 +3,7 @@
 ^LICENSE\.md$
 ^_pkgdown\.yml$
 ^docs$
+^test_cases$
 ^pkgdown$
 ^data-raw$
 ^\.travis\.yml$

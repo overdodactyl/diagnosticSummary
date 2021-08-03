@@ -19,6 +19,8 @@ utils::globalVariables(c(
   "Odds Ratio",
   "Sensitivity",
   "Specificity",
+  "sensitivity",
+  "specificity",
   "variable",
   "variable_label",
   "Level",
