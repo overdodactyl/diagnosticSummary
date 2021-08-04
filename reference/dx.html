@@ -68,7 +68,7 @@ diagnostic test" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">diagnosticSummary</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9400</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9401</span>
       </span>
     </div>
 
@@ -116,8 +116,6 @@ diagnostic test</p>
 
     <pre class="usage"><span class='fu'>dx</span><span class='op'>(</span>
   <span class='va'>data</span>,
-  <span class='va'>study_name</span>,
-  <span class='va'>data_description</span>,
   classlabels <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Negative"</span>, <span class='st'>"Positive"</span><span class='op'>)</span>,
   threshold_range <span class='op'>=</span> <span class='cn'>NA</span>,
   <span class='va'>outcome_label</span>,
@@ -130,8 +128,7 @@ diagnostic test</p>
   bootreps <span class='op'>=</span> <span class='fl'>2000</span>,
   bootseed <span class='op'>=</span> <span class='fl'>20191015</span>,
   doboot <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  direction <span class='op'>=</span> <span class='st'>"auto"</span>,
-  roc_filename <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span><span class='va'>study_name</span>, <span class='st'>"_ROC"</span>, <span class='va'>data_description</span>, <span class='st'>".pdf"</span><span class='op'>)</span>
+  direction <span class='op'>=</span> <span class='st'>"auto"</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -140,14 +137,6 @@ diagnostic test</p>
     <tr>
       <th>data</th>
       <td><p>A tbl.</p></td>
-    </tr>
-    <tr>
-      <th>study_name</th>
-      <td><p>Name of study to be used in the report (string)</p></td>
-    </tr>
-    <tr>
-      <th>data_description</th>
-      <td><p>Description of data to be used in the report (string)</p></td>
     </tr>
     <tr>
       <th>classlabels</th>
@@ -205,8 +194,8 @@ be summarized by.  These variables should all be factors.</p></td>
       <td><p>Direction for roc comparison.  See ?pROC::roc</p></td>
     </tr>
     <tr>
-      <th>roc_filename</th>
-      <td><p>Name of file output for ROC pdf file</p></td>
+      <th>...</th>
+      <td><p>currently unused</p></td>
     </tr>
     </table>
 
