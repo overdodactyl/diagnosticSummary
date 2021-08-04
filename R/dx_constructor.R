@@ -29,7 +29,7 @@ dx <- function(data,
                threshold_range = NA, outcome_label, pred_varname, true_varname,
                setthreshold = .5, poslabel = 1, grouping_variables = NA,
                citype = "exact", bootreps = 2000, bootseed = 20191015,
-               doboot = FALSE, direction = "auto") {
+               doboot = FALSE, direction = "auto", ...) {
 
 
   # Check if pred_varname in data

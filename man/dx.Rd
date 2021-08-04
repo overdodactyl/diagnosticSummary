@@ -18,7 +18,8 @@ dx(
   bootreps = 2000,
   bootseed = 20191015,
   doboot = FALSE,
-  direction = "auto"
+  direction = "auto",
+  ...
 )
 }
 \arguments{
