@@ -44,8 +44,6 @@ Generate a dataframe of diagnostic performance over the range of thresholds spec
 \examples{
 dx_obj <- dx(
   data = dx_heart_failure,
-  study_name = "Heart Attack Prediction",
-  data_description = "Validation Data",
   true_varname = "truth",
   pred_varname = "predicted",
   outcome_label = "Heart Attack",

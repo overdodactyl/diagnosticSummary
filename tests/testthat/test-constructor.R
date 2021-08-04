@@ -4,8 +4,6 @@ test_that("Assemble dx object", {
   expect_error(
     dx(
       data = dx_heart_failure,
-      study_name = "Heart Attack Prediction",
-      data_description = "Validation Data",
       true_varname = "not_truth",
       pred_varname = "predicted",
       outcome_label = "Heart Attack",
@@ -20,8 +18,6 @@ test_that("Assemble dx object", {
   expect_error(
     dx(
       data = dx_heart_failure,
-      study_name = "Heart Attack Prediction",
-      data_description = "Validation Data",
       true_varname = "truth",
       pred_varname = "not_predicted",
       outcome_label = "Heart Attack",
@@ -38,8 +34,6 @@ test_that("Assemble dx object", {
   expect_error(
     dx(
       data = not_factor,
-      study_name = "Heart Attack Prediction",
-      data_description = "Validation Data",
       true_varname = "truth",
       pred_varname = "predicted",
       outcome_label = "Heart Attack",
@@ -56,8 +50,6 @@ test_that("Assemble dx object", {
   expect_error(
     dx(
       data = not_numeric,
-      study_name = "Heart Attack Prediction",
-      data_description = "Validation Data",
       true_varname = "truth",
       pred_varname = "predicted",
       outcome_label = "Heart Attack",
@@ -74,8 +66,6 @@ test_that("Assemble dx object", {
   expect_error(
     dx(
       data = not_binary,
-      study_name = "Heart Attack Prediction",
-      data_description = "Validation Data",
       true_varname = "truth",
       pred_varname = "predicted",
       outcome_label = "Heart Attack",
@@ -90,8 +80,6 @@ test_that("Assemble dx object", {
   expect_s3_class(
     dx(
       data = dx_heart_failure,
-      study_name = "Heart Attack Prediction",
-      data_description = "Validation Data",
       true_varname = "truth",
       pred_varname = "predicted",
       outcome_label = "Heart Attack",
