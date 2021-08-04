@@ -56,8 +56,6 @@ Plot ROC curve for a dx object
 \examples{
 dx_obj <- dx(
   data = dx_heart_failure,
-  study_name = "Heart Attack Prediction",
-  data_description = "Validation Data",
   true_varname = "truth",
   pred_varname = "predicted",
   outcome_label = "Heart Attack",

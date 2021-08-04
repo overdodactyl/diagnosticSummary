@@ -6,8 +6,6 @@
 \usage{
 dx(
   data,
-  study_name,
-  data_description,
   classlabels = c("Negative", "Positive"),
   threshold_range = NA,
   outcome_label,
@@ -20,16 +18,11 @@ dx(
   bootreps = 2000,
   bootseed = 20191015,
   doboot = FALSE,
-  direction = "auto",
-  roc_filename = paste0(study_name, "_ROC", data_description, ".pdf")
+  direction = "auto"
 )
 }
 \arguments{
 \item{data}{A tbl.}
-
-\item{study_name}{Name of study to be used in the report (string)}
-
-\item{data_description}{Description of data to be used in the report (string)}
 
 \item{classlabels}{Labels for predicted variable.  Needs to be 0, 1 order.}
 
@@ -60,7 +53,7 @@ be summarized by.  These variables should all be factors.}
 
 \item{direction}{Direction for roc comparison.  See ?pROC::roc}
 
-\item{roc_filename}{Name of file output for ROC pdf file}
+\item{...}{currently unused}
 }
 \description{
 Use this function to return a list of tuning parameters to analyze your

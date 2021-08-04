@@ -4,8 +4,6 @@
 #' diagnostic test
 #'
 #' @param data A tbl.
-#' @param study_name Name of study to be used in the report (string)
-#' @param data_description Description of data to be used in the report (string)
 #' @param classlabels Labels for predicted variable.  Needs to be 0, 1 order.
 #' @param pred_varname Column name containing AI prediction (string)
 #' @param setthreshold A numeric value representing the threshold used
@@ -22,17 +20,16 @@
 #' @param bootseed Seed value to be used when calculating bootsraped CI's
 #' @param doboot Logical. Generate bootstrap estimate of F1 confidence interval?
 #' @param direction Direction for roc comparison.  See ?pROC::roc
-#' @param roc_filename Name of file output for ROC pdf file
+#' @param ... currently unused
 #'
 #' @export
 
-dx <- function(data, study_name, data_description,
+dx <- function(data,
                classlabels = c("Negative", "Positive"),
                threshold_range = NA, outcome_label, pred_varname, true_varname,
                setthreshold = .5, poslabel = 1, grouping_variables = NA,
                citype = "exact", bootreps = 2000, bootseed = 20191015,
-               doboot = FALSE, direction = "auto",
-               roc_filename = paste0(study_name, "_ROC", data_description, ".pdf")) {
+               doboot = FALSE, direction = "auto") {
 
 
   # Check if pred_varname in data
@@ -84,8 +81,6 @@ dx <- function(data, study_name, data_description,
   )
 
   options <- list(
-    study_name = study_name,
-    data_description = data_description,
     classlabels = classlabels,
     threshold_range = threshold_range,
     outcome_label = outcome_label,
@@ -97,8 +92,7 @@ dx <- function(data, study_name, data_description,
     citype = citype,
     bootreps = bootreps,
     bootseed = bootseed,
-    doboot = doboot,
-    roc_filename = roc_filename
+    doboot = doboot
   )
 
   # Get all unique thresholds
