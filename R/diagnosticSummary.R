@@ -42,5 +42,8 @@ utils::globalVariables(c(
   "numden",
   "y",
   "fraction",
-  "combined_summary"
+  "combined_summary",
+  "count",
+  "truth",
+  "predicted"
 ))
