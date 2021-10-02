@@ -13,6 +13,7 @@ reference:
   contents:
   - dx_roc
   - dx_forest
+  - dx_cm
   - dx_edit_cell
 - title: Utilities
   desc: Helper functions and S3 methods
