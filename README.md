@@ -78,3 +78,9 @@ dx_roc(dx_obj)
 ```
 
 <img src="man/figures/roc_plot.png" width="60%" style="display: block; margin: auto;" />
+
+``` r
+dx_cm(dx_obj)
+```
+
+<img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />

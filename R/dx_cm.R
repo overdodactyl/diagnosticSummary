@@ -15,7 +15,7 @@
 #'   grouping_variables = c("AgeGroup", "Sex", "AgeSex")
 #' )
 #' dx_cm(dx_obj)
-dx_cm <- function(dx_obj, palette = c("#FFFFFF", "#D8823C"), levels = c("-", "+")) {
+dx_cm <- function(dx_obj, palette = c("#FFFFFF", "#0057B8"), levels = c("-", "+")) {
 
   mat <- as.data.frame(table(dx_obj$data$true_binaryf, dx_obj$data$test_binaryf))
   names(mat) <- c("truth", "predicted", "count")
@@ -25,8 +25,8 @@ dx_cm <- function(dx_obj, palette = c("#FFFFFF", "#D8823C"), levels = c("-", "+"
   ggplot2::ggplot(mat, mapping = ggplot2::aes(x = truth, y = predicted)) +
     ggplot2::geom_tile(ggplot2::aes(fill = count), colour = "white") +
     ggplot2::geom_text(ggplot2::aes(label = scales::comma(count)), vjust = 1, size = 6) +
-    ggplot2::scale_fill_gradient(low = "#FFFFFF", high = "#D8823C") +
     ggplot2::theme_bw() +
+    ggplot2::scale_fill_gradient(low = palette[1], high = palette[2]) +
     ggplot2::scale_y_discrete(expand = c(0.2, 0), breaks = c(0, 1), labels = levels) +
     ggplot2::scale_x_discrete(expand = c(0.2, 0), breaks = c(0, 1), labels = levels) +
     ggplot2::theme(
