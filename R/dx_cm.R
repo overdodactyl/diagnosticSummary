@@ -19,7 +19,8 @@ dx_cm <- function(dx_obj, palette = c("#FFFFFF", "#0057B8"), levels = c("-", "+"
 
   mat <- as.data.frame(table(dx_obj$data$true_binaryf, dx_obj$data$test_binaryf))
   names(mat) <- c("truth", "predicted", "count")
-  mat <- dplyr::mutate_at(mat, 1:2, ~factor(., c("Negative", "Positive"),  0:1))
+  mat$count <- round(mat$count, 0)
+  mat <- dplyr::mutate_at(mat, 1:2, ~factor(., dx_obj$options$classlabels,  0:1))
 
 
   ggplot2::ggplot(mat, mapping = ggplot2::aes(x = truth, y = predicted)) +
