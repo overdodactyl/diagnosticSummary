@@ -15,7 +15,7 @@
 #'   grouping_variables = c("AgeGroup", "Sex", "AgeSex")
 #' )
 #' dx_cm(dx_obj)
-dx_cm <- function(dx_obj, palette = c("#FFFFFF", "#0057B8"), levels = c("-", "+")) {
+dx_cm <- function(dx_obj, palette = c("#e5eef7", "#0057B8"), levels = c("-", "+")) {
 
   mat <- as.data.frame(table(dx_obj$data$true_binaryf, dx_obj$data$test_binaryf))
   names(mat) <- c("truth", "predicted", "count")
@@ -23,20 +23,48 @@ dx_cm <- function(dx_obj, palette = c("#FFFFFF", "#0057B8"), levels = c("-", "+"
   mat <- dplyr::mutate_at(mat, 1:2, ~factor(., dx_obj$options$classlabels,  0:1))
 
 
+  metrics <- as.data.frame(dx_obj, thresh = dx_obj$options$setthreshold, variable = "Overall")
+
+  mat <- dplyr::mutate(
+    mat,
+    label = dplyr::case_when(
+      truth == 1 & predicted == 1 ~ "True Positive (TP)",
+      truth == 0 & predicted == 0 ~ "True Negative (TN)",
+      truth == 1 & predicted == 0 ~ "False Negative (FN)",
+      truth == 0 & predicted == 1 ~ "False Positive (FP)"
+    )
+  )
+
+
+  sens_label <- paste0("Sensitivity", "\n", metrics[metrics$measure == "Sensitivity", "estimate"])
+  spec_label <- paste0("Specificity", "\n", metrics[metrics$measure == "Specificity", "estimate"])
+  npv_label <- paste0("NPV", "\n", metrics[metrics$measure == "Negative Predictive Value", "estimate"])
+  ppv_label <- paste0("PPV", "\n", metrics[metrics$measure == "Positive Predictive Value", "estimate"])
+
+
   ggplot2::ggplot(mat, mapping = ggplot2::aes(x = truth, y = predicted)) +
     ggplot2::geom_tile(ggplot2::aes(fill = count), colour = "white") +
-    ggplot2::geom_text(ggplot2::aes(label = scales::comma(count)), vjust = 1, size = 6) +
+    ggplot2::geom_text(ggplot2::aes(label = scales::comma(count)), vjust = 0, size = 6) +
+    ggplot2::geom_text(ggplot2::aes(label = label), vjust = 2, size = 6) +
     ggplot2::theme_bw() +
     ggplot2::scale_fill_gradient(low = palette[1], high = palette[2]) +
     ggplot2::scale_y_discrete(expand = c(0.2, 0), breaks = c(0, 1), labels = levels) +
     ggplot2::scale_x_discrete(expand = c(0.2, 0), breaks = c(0, 1), labels = levels) +
     ggplot2::theme(
       legend.position = "none",
-      panel.border = ggplot2::element_rect(fill = NA, colour = "black", size = 1.5),
+      # panel.border = ggplot2::element_rect(fill = NA, colour = "black", size = 1.5),
+      panel.grid.major = ggplot2::element_blank(),
+      panel.grid.minor = ggplot2::element_blank(),
+      panel.border = ggplot2::element_blank(),
       axis.text = ggplot2::element_text(size = 20),
       axis.ticks = ggplot2::element_blank(),
       axis.title = ggplot2::element_text(size = 20)
     ) +
+    ggplot2::annotate("text", x = 2, y = 2.55, vjust = 0 , size = 5, label = sens_label, fontface = 'italic') +
+    ggplot2::annotate("text", x = 1, y = 2.55, vjust = 0 , size = 5, label = spec_label, fontface = 'italic') +
+    ggplot2::annotate("text", x = 2.55, y = 2, hjust = 0, vjust = 1, size = 5, label = ppv_label, fontface = 'italic') +
+    ggplot2::annotate("text", x = 2.55, y = 1, hjust = 0, vjust = 1, size = 5, label = npv_label, fontface = 'italic') +
+    ggplot2::coord_cartesian(clip = "off", ylim = c(.8, 2.5), xlim = c(.8, 3)) +
     ggplot2::labs(x = "\nTruth", y = "Predicted\n")
 
 }
