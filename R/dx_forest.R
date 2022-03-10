@@ -95,7 +95,8 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
 
   tbl_data <- data %>%
     dplyr::mutate(` ` = "                                          ") %>%
-    dplyr::select(group, AUC, Sensitivity, Specificity, ` `, `Odds Ratio`)
+    dplyr::mutate(n = scales::comma(n, 1)) %>%
+    dplyr::select(group, N = n, AUC, Sensitivity, Specificity, ` `, `Odds Ratio`)
 
   tbl_data <- tbl_data %>% dplyr::add_row()
 
@@ -120,14 +121,14 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
     )
   )
 
-  or_col <- 5
+  or_col <- 6
   nrows <- nrow(tbl_data)
   ncols <- ncol(tbl_data)
 
   # Convert df to grob
   g <- gridExtra::tableGrob(tbl_data,
     theme = table_theme, rows = NULL,
-    widths = unit(c(rep(5, 6)), c("cm"))
+    widths = unit(c(rep(5, 7)), c("cm"))
   )
 
   # Add border under header
@@ -373,7 +374,7 @@ dx_prep_variable <- function(dx_obj, data, fraction = FALSE) {
   res_sel <- tmp %>% dplyr::select(group = label, measure, estimate)
   rawdata <- tmp %>%
     dplyr::filter(measure == "Odds Ratio") %>%
-    dplyr::select(group = label, dplyr::starts_with("raw")) %>%
+    dplyr::select(group = label, n, dplyr::starts_with("raw")) %>%
     dplyr::filter(!is.na(rawestime))
   res <- utils::unstack(res_sel, form = estimate ~ measure)
   names(res) <- gsub("\\.", " ", names(res))

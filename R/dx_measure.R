@@ -37,6 +37,7 @@ dx_measure <- function(data, threshold, options, var = "Overall",
   results$threshold <- threshold
   results$variable <- var
   results$label <- label
+  results$n <- nrow(data)
 
   # Adjust column order
   to_first <- c("variable", "label")
