@@ -21,6 +21,15 @@ reference:
   - dx_diagnostic_table
   - as.data.frame.dx
   - summary.dx
+- title: Data
+  desc: Test data sets
+  contents:
+  - dx_heart_failure
+- title: internal
+  contents:
+  - diagnosticSummary
+  - dx_roc_ggtheme
+  - get_roc
 figures:
   dev: grDevices::png
   dpi: 96
