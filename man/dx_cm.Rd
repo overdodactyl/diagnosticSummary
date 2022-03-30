@@ -4,7 +4,7 @@
 \alias{dx_cm}
 \title{Plot ROC curve for a dx object}
 \usage{
-dx_cm(dx_obj, palette = c("#FFFFFF", "#0057B8"), levels = c("-", "+"))
+dx_cm(dx_obj, palette = c("#e5eef7", "#0057B8"), levels = c("-", "+"))
 }
 \arguments{
 \item{dx_obj}{An object of class dx}

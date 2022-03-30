@@ -344,6 +344,91 @@ dx_auc <- function(truth, predprob) {
 }
 
 
+dx_lrtneg <- function(tp, tn, fp, fn) {
+  ## account for zero cells if present
+  if (tp != 0 & tn != 0 & fp != 0 & fn != 0) {
+    citype <- "Large sample"
+  } else {
+    tp <- tp + .5
+    fp <- fp + .5
+    tn <- tn + .5
+    fn <- fn + .5
+    citype <- "Large sample plus 0.5 for all cells"
+  }
+
+
+  ## Estimate the LRT-
+  lrtneg <- (fn / (tp + fn)) / ( tn / (fp + tn))
+
+  ## Estimate the CI
+  zcritical <- stats::qnorm(.975)
+
+  ## Derived based on the delta method and log LRT
+  lrtneg_sd <- sqrt( 1/fn - 1/(tp + fn) + 1/tn - 1/(fp + tn) )
+
+  lrtneg_ci_l <- lrtneg * exp( -zcritical * lrtneg_sd)
+  lrtneg_ci_u <- lrtneg * exp( zcritical * lrtneg_sd)
+
+
+  ## Save the estimates
+  lrtneg_est <- conf_int(lrtneg, lrtneg_ci_l,lrtneg_ci_u, accuracy = .01)
+  # print(lrtneg_est)
+  dx_measure_df(
+    measure = "LRT-",
+    estimate = lrtneg_est,
+    fraction = "",
+    ci_type = citype,
+    estimate_raw = lrtneg,
+    lci_raw = lrtneg_ci_l,
+    uci_raw = lrtneg_ci_u
+  )
+}
+
+
+dx_lrtpos <- function(tp, tn, fp, fn) {
+  ## account for zero cells if present
+  if (tp != 0 & tn != 0 & fp != 0 & fn != 0) {
+    citype <- "Large sample"
+  } else {
+    tp <- tp + .5
+    fp <- fp + .5
+    tn <- tn + .5
+    fn <- fn + .5
+    citype <- "Large sample plus 0.5 for all cells"
+  }
+
+
+  ## Estimate the LRT+
+  lrtpos <- (tp / (tp + fn)) / ( fp / (fp + tn))
+
+  ## Estimate the CI
+  zcritical <- stats::qnorm(.975)
+  lrtpos_sd <- sqrt(1/tp - 1/(tp + fn) + 1/fp - 1/(fp + tn) )
+
+
+
+  lrtpos_ci_l <- lrtpos * exp( -zcritical * lrtpos_sd)
+  lrtpos_ci_u <- lrtpos * exp( zcritical * lrtpos_sd)
+
+
+
+  ## Save the estimates
+  lrtpos_est <- conf_int(lrtpos, lrtpos_ci_l,lrtpos_ci_u, accuracy = .01)
+  # print(lrtpos_est)
+  dx_measure_df(
+    measure = "LRT+",
+    estimate = lrtpos_est,
+    fraction = "",
+    ci_type = citype,
+    estimate_raw = lrtpos,
+    lci_raw = lrtpos_ci_l,
+    uci_raw = lrtpos_ci_u
+  )
+}
+
+
+
+
 dx_measure_df <- function(measure = "", estimate = "", fraction = "",
                           ci_type = "", notes = "", estimate_raw = NA,
                           lci_raw = NA, uci_raw = NA) {

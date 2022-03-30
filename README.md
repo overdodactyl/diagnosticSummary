@@ -1,18 +1,22 @@
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 # diagnosticSummary
 
 <!-- badges: start -->
 
-[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental) [![R-CMD-check](https://github.com/overdodactyl/diagnosticSummary/workflows/R-CMD-check/badge.svg)](https://github.com/overdodactyl/diagnosticSummary/actions)
-
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![R-CMD-check](https://github.com/overdodactyl/diagnosticSummary/workflows/R-CMD-check/badge.svg)](https://github.com/overdodactyl/diagnosticSummary/actions)
 <!-- badges: end -->
 
-`diagnosticSummary` is designed to quickly create diagnostic summaries and reports for binary classification data.
+`diagnosticSummary` is designed to quickly create diagnostic summaries
+and reports for binary classification data.
 
 ## Installation
 
-You can install the development version from [GitHub](https://github.com/) with:
+You can install the development version from
+[GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
@@ -50,16 +54,18 @@ dx_obj <- dx(
 summary(dx_obj, variable = "Overall", show_var = F, show_label = F)
 ```
 
-| measure                   | estimate             | fraction | CI Type      | notes  |
-|:--------------------------|:---------------------|:---------|:-------------|:-------|
-| AUC                       | 0.904 (0.864, 0.943) |          | DeLong       |        |
-| Accuracy                  | 79.3% (73.9%, 84.1%) | 207/261  | exact        |        |
-| Sensitivity               | 84.7% (76.0%, 91.2%) | 83/98    | exact        | \>=0.3 |
-| Specificity               | 76.1% (68.8%, 82.4%) | 124/163  | exact        | \<0.3  |
-| Positive Predictive Value | 68.0% (59.0%, 76.2%) | 83/122   | exact        |        |
-| Negative Predictive Value | 89.2% (82.8%, 93.8%) | 124/139  | exact        |        |
-| Odds Ratio                | 17.6 (9.1, 33.9)     |          | Large sample |        |
-| F1 Score                  | 75.5                 |          |              |        |
+| measure                   | estimate             | fraction | CI Type      | notes  |   n |
+|:--------------------------|:---------------------|:---------|:-------------|:-------|----:|
+| AUC                       | 0.904 (0.864, 0.943) |          | DeLong       |        | 261 |
+| Accuracy                  | 79.3% (73.9%, 84.1%) | 207/261  | exact        |        | 261 |
+| Sensitivity               | 84.7% (76.0%, 91.2%) | 83/98    | exact        | \>=0.3 | 261 |
+| Specificity               | 76.1% (68.8%, 82.4%) | 124/163  | exact        | \<0.3  | 261 |
+| Positive Predictive Value | 68.0% (59.0%, 76.2%) | 83/122   | exact        |        | 261 |
+| Negative Predictive Value | 89.2% (82.8%, 93.8%) | 124/139  | exact        |        | 261 |
+| LRT+                      | 3.54 (2.66, 4.71)    |          | Large sample |        | 261 |
+| LRT-                      | 0.20 (0.13, 0.32)    |          | Large sample |        | 261 |
+| Odds Ratio                | 17.6 (9.1, 33.9)     |          | Large sample |        | 261 |
+| F1 Score                  | 75.5                 |          |              |        | 261 |
 
 Threshold: 0.3
 
@@ -67,16 +73,16 @@ Threshold: 0.3
 dx_forest(dx_obj)
 ```
 
-<img src="man/figures/forest_plot.png" width="100%"/>
+<img src="man/figures/forest_plot.png" width="100%" />
 
 ``` r
 dx_roc(dx_obj)
 ```
 
-<img src="man/figures/roc_plot.png" width="60%" style="display: block; margin: auto;"/>
+<img src="man/figures/roc_plot.png" width="60%" style="display: block; margin: auto;" />
 
 ``` r
 dx_cm(dx_obj)
 ```
 
-<img src="man/figures/README-unnamed-chunk-9-1.png" width="60%" style="display: block; margin: auto;"/>
+<img src="man/figures/README-unnamed-chunk-9-1.png" width="60%" style="display: block; margin: auto;" />

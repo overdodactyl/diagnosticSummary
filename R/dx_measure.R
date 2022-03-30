@@ -12,6 +12,10 @@ dx_measure <- function(data, threshold, options, var = "Overall",
     poslabel = options$poslabel
   )
 
+
+
+  lrt_neg <- dx_lrtneg(tp = perfdf$tp, tn = perfdf$tn, fp = perfdf$fp, fn = perfdf$fn)
+  lrt_pos <- dx_lrtpos(tp = perfdf$tp, tn = perfdf$tn, fp = perfdf$fp, fn = perfdf$fn)
   dx_or <- dx_odds_ratio(perfdf$tp, perfdf$tn, perfdf$fp, perfdf$fn)
   senres <- dx_sensitivity(
     tp = perfdf$tp, dispos = perfdf$dispos,
@@ -32,7 +36,7 @@ dx_measure <- function(data, threshold, options, var = "Overall",
   # set data in order we want to appear
   results <- dplyr::bind_rows(
     auc, accres, senres, specres,
-    ppvres, npvres, dx_or, f1
+    ppvres, npvres, lrt_pos, lrt_neg, dx_or, f1
   )
   results$threshold <- threshold
   results$variable <- var
