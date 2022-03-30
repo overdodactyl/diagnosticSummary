@@ -86,7 +86,7 @@ dx_roc(dx_obj, filename = "man/figures/roc_plot.png")
 knitr::include_graphics("man/figures/roc_plot.png")
 ```
 
-```{r fig.width=6, fig.height=6, dpi = 600, fig.align='center', out.width="60%", fig.align="center"}
+```{r fig.width=8, fig.height=6, dpi = 600, fig.align='center', out.width="60%", fig.align="center"}
 dx_cm(dx_obj)
 ```
 
