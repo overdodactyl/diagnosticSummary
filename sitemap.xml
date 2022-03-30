@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://overdodactyl.github.io/diagnosticSummary/404.html</loc>
+  </url>
+  <url>
+    <loc>https://overdodactyl.github.io/diagnosticSummary/LICENSE-text.html</loc>
+  </url>
+  <url>
+    <loc>https://overdodactyl.github.io/diagnosticSummary/LICENSE.html</loc>
+  </url>
+  <url>
+    <loc>https://overdodactyl.github.io/diagnosticSummary/authors.html</loc>
+  </url>
+  <url>
     <loc>https://overdodactyl.github.io/diagnosticSummary/index.html</loc>
   </url>
   <url>
@@ -35,6 +47,9 @@
   </url>
   <url>
     <loc>https://overdodactyl.github.io/diagnosticSummary/reference/get_roc.html</loc>
+  </url>
+  <url>
+    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/index.html</loc>
   </url>
   <url>
     <loc>https://overdodactyl.github.io/diagnosticSummary/reference/summary.dx.html</loc>
