@@ -11,6 +11,7 @@ dx_forest(
   limits = NA,
   tick_label_size = 6.5,
   trans = c(NA, "log10"),
+  measures = c("AUC", "Sensitivity", "Specificity", "Odds Ratio"),
   return_grid = FALSE,
   filename = NA,
   header_bg = "white",
@@ -40,6 +41,8 @@ Ignored if breaks are passed.}
 
 \item{trans}{Method to transform the odds ratio by.
 Currently, only log10 is supported.}
+
+\item{measures}{Measures to be included in the plot}
 
 \item{return_grid}{Should a grid object be returned?
 If FALSE, grid is drawn using grid.draw.}

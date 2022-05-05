@@ -16,6 +16,7 @@
 #'     If FALSE, grid is drawn using grid.draw.
 #' @param trans Method to transform the odds ratio by.
 #'     Currently, only log10 is supported.
+#' @param measures Measures to be included in the plot
 #' @param filename File bane to create on disk.
 #'     If left NA, no file will be created.
 #' @param header_bg Background color of the header
@@ -44,6 +45,7 @@
 #' dx_forest(dx_obj, trans = "log10")
 dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
                       tick_label_size = 6.5, trans = c(NA, "log10"),
+                      measures = c("AUC", "Sensitivity", "Specificity","Odds Ratio"),
                       return_grid = FALSE, filename = NA,
                       header_bg = "white", header_col = "black",
                       body_bg = c("#e6e4e2", "#ffffff"),
@@ -51,7 +53,9 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
                       body_or_col = "black", footer_or_col = footer_col) {
   trans <- match.arg(trans)
 
-  data <- dx_prep_forest(dx_obj, fraction = fraction)
+  stopifnot("Odds Ratio" %in% measures)
+
+  data <- dx_prep_forest(dx_obj, fraction = fraction, measures = measures)
 
   indent_rows <- which(!is.na(data$rawestime))
   bold_rows <- setdiff(1:(nrow(data)), indent_rows)
@@ -96,7 +100,9 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
   tbl_data <- data %>%
     dplyr::mutate(` ` = "                                          ") %>%
     dplyr::mutate(n = scales::comma(n, 1)) %>%
-    dplyr::select(group, N = n, AUC, Sensitivity, Specificity, ` `, `Odds Ratio`)
+    dplyr::select(group, N = n, dplyr::one_of(measures), ` `) %>%
+    dplyr::relocate(` `, .before = `Odds Ratio`)
+    # dplyr::select(group, N = n, AUC, Sensitivity, Specificity, ` `, `Odds Ratio`)
 
   tbl_data <- tbl_data %>% dplyr::add_row()
 
@@ -121,14 +127,14 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
     )
   )
 
-  or_col <- 6
+  or_col <- which(names(tbl_data) == " ")
   nrows <- nrow(tbl_data)
   ncols <- ncol(tbl_data)
 
   # Convert df to grob
   g <- gridExtra::tableGrob(tbl_data,
     theme = table_theme, rows = NULL,
-    widths = unit(c(rep(5, 7)), c("cm"))
+    widths = unit(c(rep(5, ncols)), c("cm"))
   )
 
   # Add border under header
@@ -357,13 +363,12 @@ dx_forest_add_tick <- function(grob, tick_scaled, tick, nrows,
   )
 }
 
-dx_prep_variable <- function(dx_obj, data, fraction = FALSE) {
+dx_prep_variable <- function(dx_obj, data,
+                             measures = c("AUC", "Sensitivity", "Specificity","Odds Ratio"),
+                             fraction = FALSE) {
   var <- data$variable[[1]]
   orig_var <- data$original_variable[[1]]
-  tmp <- data %>% dplyr::filter(measure %in% c(
-    "AUC", "Sensitivity",
-    "Specificity", "Odds Ratio"
-  ))
+  tmp <- data %>% dplyr::filter(measure %in% measures)
 
   if (fraction) {
     tmp$estimate <- ifelse(tmp$fraction == "", tmp$estimate,
@@ -403,7 +408,7 @@ label_df <- function(data) {
   )
 }
 
-dx_prep_forest <- function(dx_obj, fraction = fraction) {
+dx_prep_forest <- function(dx_obj, fraction = fraction, measures) {
   tmp <- dx_obj$measures %>%
     dplyr::filter(threshold == dx_obj$options$setthreshold)
 
@@ -423,8 +428,12 @@ dx_prep_forest <- function(dx_obj, fraction = fraction) {
 
 
   for (i in seq_along(tmp_split)) {
-    tmp_split[[i]] <-
-      dx_prep_variable(dx_obj, tmp_split[[i]], fraction = fraction)
+    tmp_split[[i]] <- dx_prep_variable(
+      dx_obj,
+      tmp_split[[i]],
+      fraction = fraction,
+      measures = measures
+    )
   }
 
   tmp <- do.call("rbind", tmp_split)
