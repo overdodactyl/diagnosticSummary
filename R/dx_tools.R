@@ -40,13 +40,11 @@ dx_confusion_core <- function(predprob, truth, threshold, poslabel) {
   fn <- ifelse(length(fn_1[, 1]) == 0, 0, fn_1[1, 1]) %>% as.numeric()
   tn_1 <- dplyr::ungroup(speccount) %>%
     dplyr::filter(testresult == 0) %>%
-    dplyr::select(counts) %>%
-    as.vector()
+    dplyr::select(counts)
   tn <- ifelse(length(tn_1[, 1]) == 0, 0, tn_1[1, 1]) %>% as.numeric()
   fp_1 <- dplyr::ungroup(speccount) %>%
     dplyr::filter(testresult == 1) %>%
-    dplyr::select(counts) %>%
-    as.vector()
+    dplyr::select(counts)
   fp <- ifelse(length(fp_1[, 1]) == 0, 0, fp_1[1, 1]) %>% as.numeric()
 
   perfdf <- data.frame(tp, fn, tn, fp) %>%
@@ -298,20 +296,16 @@ f1boot <- function(data, indices, poslabel = 1) {
 
   tp <- dplyr::ungroup(senscount) %>%
     dplyr::filter(testresult == 1) %>%
-    dplyr::select(counts) %>%
-    as.vector()
+    dplyr::select(counts)
   fn <- dplyr::ungroup(senscount) %>%
     dplyr::filter(testresult == 0) %>%
-    dplyr::select(counts) %>%
-    as.vector()
+    dplyr::select(counts)
   tn <- dplyr::ungroup(speccount) %>%
     dplyr::filter(testresult == 0) %>%
-    dplyr::select(counts) %>%
-    as.vector()
+    dplyr::select(counts)
   fp <- dplyr::ungroup(speccount) %>%
     dplyr::filter(testresult == 1) %>%
-    dplyr::select(counts) %>%
-    as.vector()
+    dplyr::select(counts)
   perfdf <- data.frame(tp, fn, tn, fp)
   names(perfdf) <- c("tp", "fn", "tn", "fp")
   precision <- perfdf$tp / (perfdf$tp + perfdf$fp)
