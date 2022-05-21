@@ -1,6 +1,6 @@
 Package: diagnosticSummary
 Title: Diagnostic Summaries
-Version: 0.0.0.9405
+Version: 0.0.0.9406
 Authors@R: 
   c(person(given = "Pat",
            family = "Johnson",

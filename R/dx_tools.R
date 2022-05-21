@@ -32,13 +32,11 @@ dx_confusion_core <- function(predprob, truth, threshold, poslabel) {
 
   tp_1 <- dplyr::ungroup(senscount) %>%
     dplyr::filter(testresult == 1) %>%
-    dplyr::select(counts) %>%
-    as.vector()
+    dplyr::select(counts)
   tp <- ifelse(length(tp_1[, 1]) == 0, 0, tp_1[1, 1]) %>% as.numeric()
   fn_1 <- dplyr::ungroup(senscount) %>%
     dplyr::filter(testresult == 0) %>%
-    dplyr::select(counts) %>%
-    as.vector()
+    dplyr::select(counts)
   fn <- ifelse(length(fn_1[, 1]) == 0, 0, fn_1[1, 1]) %>% as.numeric()
   tn_1 <- dplyr::ungroup(speccount) %>%
     dplyr::filter(testresult == 0) %>%
