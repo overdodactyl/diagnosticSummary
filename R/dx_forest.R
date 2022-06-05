@@ -427,7 +427,13 @@ dx_prep_forest <- function(dx_obj, fraction = fraction, measures) {
     as.list()
 
 
+  # Vector to store the current order of our split list
+  # Alphabetical by label/variable
+  var_order <- vector(mode = "character", length = length(tmp_split))
+
   for (i in seq_along(tmp_split)) {
+    var_order[[i]] <- tmp_split[[i]]$original_variable[1]
+
     tmp_split[[i]] <- dx_prep_variable(
       dx_obj,
       tmp_split[[i]],
@@ -436,12 +442,21 @@ dx_prep_forest <- function(dx_obj, fraction = fraction, measures) {
     )
   }
 
-  tmp <- do.call("rbind", tmp_split)
+  # Order based on dx input, plus Overall
+  final_order <- c(dx_obj$options$grouping_variables, "Overall")
 
-  subgroups <- tmp %>% dplyr::filter(group != "Overall")
-  overall <- tmp %>% dplyr::filter(group == "Overall")
+  # Numeric current order
+  current_order <- vector(mode = "numeric", length = length(final_order))
 
-  rbind(subgroups, overall)
+  for (i in seq_along(final_order)) {
+    current_order[[i]] <- which(var_order[[i]] == final_order)
+  }
+
+  # Re-order back to input
+  tmp_split <- tmp_split[order(current_order)]
+
+
+  do.call("rbind", tmp_split)
 }
 
 
