@@ -12,7 +12,7 @@ dx_measure <- function(data, threshold, options, var = "Overall",
     poslabel = options$poslabel
   )
 
-
+  prevalence  <- dx_prevalence(pos = perfdf$dispos, perfdf$n, options$citype)
 
   lrt_neg <- dx_lrtneg(tp = perfdf$tp, tn = perfdf$tn, fp = perfdf$fp, fn = perfdf$fn)
   lrt_pos <- dx_lrtpos(tp = perfdf$tp, tn = perfdf$tn, fp = perfdf$fp, fn = perfdf$fn)
@@ -36,7 +36,8 @@ dx_measure <- function(data, threshold, options, var = "Overall",
   # set data in order we want to appear
   results <- dplyr::bind_rows(
     auc, accres, senres, specres,
-    ppvres, npvres, lrt_pos, lrt_neg, dx_or, f1
+    ppvres, npvres, lrt_pos, lrt_neg, dx_or, f1,
+    prevalence
   )
   results$threshold <- threshold
   results$variable <- var

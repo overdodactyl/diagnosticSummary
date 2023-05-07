@@ -92,6 +92,41 @@ dx_odds_ratio <- function(tp, tn, fp, fn) {
   )
 }
 
+dx_prevalence <- function(pos, n, citype) {
+
+  prev_raw <- pos / n
+  prev_frac <-  paste0(scales::comma(pos), "/", scales::comma(n))
+  prevres <- binom::binom.confint(pos, n, conf.level = 0.95, methods = citype)
+  prevres <- dplyr::rename(
+    prevres,
+    y1_check = x,
+    n1_check = n,
+    p1_check = mean,
+    sens_lci = lower,
+    sens_uci = upper
+  )
+  prev <- conf_int(
+    prev_raw,
+    prevres$sens_lci,
+    prevres$sens_uci,
+    percent = TRUE
+  )
+
+  dx_measure_df(
+    measure = "Prevalence",
+    estimate = prev,
+    fraction = prev_frac,
+    ci_type = citype,
+    estimate_raw = prev_raw,
+    lci_raw = prevres$sens_lci,
+    uci_raw = prevres$sens_uci
+  )
+
+
+}
+
+
+
 dx_sensitivity <- function(tp, dispos, citype, threshold) {
   sensitivity_raw <- tp / dispos
   sens_frac <- paste0(scales::comma(tp), "/", scales::comma(dispos))
@@ -450,10 +485,13 @@ dx_breslow_day <- function(data, options, group_varname) {
 
   if (requireNamespace("DescTools", quietly = TRUE))  {
 
+    predprob = data[[options$pred_varname]]
+    pred = ifelse(predprob >= options$setthreshold, 1, 0)
+
     tmp <- data.frame(
-      predprob = data[[options$pred_varname]],
+      predprob = predprob,
       truth = data[[options$true_varname]],
-      pred = ifelse(predprob >= options$setthreshold, 1, 0),
+      pred = pred,
       group = data[[group_varname]]
     )
 
