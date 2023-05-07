@@ -438,3 +438,56 @@ dx_measure_df <- function(measure = "", estimate = "", fraction = "",
 
   tmp %>% dplyr::mutate_if(is.factor, as.character)
 }
+
+check_package <- function(pkg) {
+  if (!requireNamespace(pkg, quietly = TRUE))  {
+      cli::cli_abort("{.pkg {pkg}} must be must be installed to use {.code mayodb::{func}}.")
+  }
+}
+
+
+dx_breslow_day <- function(data, options, group_varname) {
+
+  if (requireNamespace("DescTools", quietly = TRUE))  {
+
+    tmp <- data.frame(
+      predprob = data[[options$pred_varname]],
+      truth = data[[options$true_varname]],
+      pred = ifelse(predprob >= options$setthreshold, 1, 0),
+      group = data[[group_varname]]
+    )
+
+    tmp <- dplyr::filter(tmp, !is.na(group))
+
+    tab <- table(tmp$pred, tmp$truth, tmp$group)
+
+    suppressWarnings({
+      bd <- DescTools::BreslowDayTest(tab, OR = NA, correct = FALSE)
+    })
+
+
+    measure <- dx_measure_df(
+      measure = "Breslow-Day",
+      estimate = scales::pvalue(bd$p.value, accuracy = 0.01, add_p = TRUE),
+      fraction = "",
+      ci_type = "",
+      notes = "Mantel-Haenszel OR estimate",
+      estimate_raw = bd$p.value,
+      lci_raw = NA,
+      uci_raw = NA
+    )
+
+    measure$variable <- group_varname
+    measure$label <- "Overall"
+    measure$threshold <- options$setthreshold
+    measure$n <- nrow(tmp)
+
+    return(measure)
+
+  }
+
+
+}
+
+
+

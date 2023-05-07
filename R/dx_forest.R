@@ -97,10 +97,13 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
   upper <- scales::rescale(upper, from = range)
   overall_or <- scales::rescale(overall_or, from = range)
 
+
+  select_measuers <- measures[!measures %in% c("Breslow-Day")]
+
   tbl_data <- data %>%
     dplyr::mutate(` ` = "                                          ") %>%
     dplyr::mutate(n = scales::comma(n, 1)) %>%
-    dplyr::select(group, N = n, dplyr::one_of(measures), ` `) %>%
+    dplyr::select(group, N = n, dplyr::one_of(select_measuers), ` `) %>%
     dplyr::relocate(` `, .before = `Odds Ratio`)
     # dplyr::select(group, N = n, AUC, Sensitivity, Specificity, ` `, `Odds Ratio`)
 
@@ -220,6 +223,17 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
   g <- dx_edit_cell(g, nrow(g), seq_len(ncol(g)), "core-bg",
     gp = gpar(fill = "#ffffff")
   )
+
+  if (all(c("Odds Ratio", "Breslow-Day") %in% measures)) {
+
+    col <- which(names(tbl_data) == "Odds Ratio")
+
+    g <- dx_edit_cell(
+      g, bold_rows + 1, col, "core-fg",
+      gp = gpar(fontface = "italic")
+    )
+  }
+
 
   # Adjust width of plot - some fine tunining here in the future woud be nice
   g$widths <- unit(rep(1 / ncol(g), ncol(g)), "npc")
@@ -366,9 +380,17 @@ dx_forest_add_tick <- function(grob, tick_scaled, tick, nrows,
 dx_prep_variable <- function(dx_obj, data,
                              measures = c("AUC", "Sensitivity", "Specificity","Odds Ratio"),
                              fraction = FALSE) {
+
+
   var <- data$variable[[1]]
   orig_var <- data$original_variable[[1]]
   tmp <- data %>% dplyr::filter(measure %in% measures)
+
+
+  # Breslow-Day test will be added separately
+  bd_test <- dplyr::filter(tmp, measure == "Breslow-Day")
+  tmp <- dplyr::filter(tmp, measure != "Breslow-Day")
+
 
   if (fraction) {
     tmp$estimate <- ifelse(tmp$fraction == "", tmp$estimate,
@@ -392,6 +414,11 @@ dx_prep_variable <- function(dx_obj, data,
     res$group <- as.character(res$group)
     empty_df <- data.frame(group = var, stringsAsFactors = FALSE)
     res <- dplyr::bind_rows(empty_df, res)
+
+    if (nrow(bd_test) == 1) {
+      res$`Odds Ratio`[res$group == var] <- bd_test$estimate
+    }
+
   }
   res %>%
     dplyr::mutate_if(is.factor, as.character) %>%
@@ -435,8 +462,8 @@ dx_prep_forest <- function(dx_obj, fraction = fraction, measures) {
     var_order[[i]] <- tmp_split[[i]]$original_variable[1]
 
     tmp_split[[i]] <- dx_prep_variable(
-      dx_obj,
-      tmp_split[[i]],
+      dx_obj = dx_obj,
+      data = tmp_split[[i]],
       fraction = fraction,
       measures = measures
     )

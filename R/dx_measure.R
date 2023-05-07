@@ -72,5 +72,9 @@ dx_group_measure <- function(data, options, group_varname) {
       )
     }
   }
-  do.call(rbind, datalist)
+  res <- do.call(rbind, datalist)
+  bd <- dx_breslow_day(data, options, group_varname)
+
+  dplyr::bind_rows(res, bd)
+
 }
