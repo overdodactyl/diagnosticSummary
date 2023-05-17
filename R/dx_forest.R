@@ -254,8 +254,6 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
     }
   }
 
-  grid::grid.draw(g)
-
   if (return_type == "ggplot") {
     g <- dx_forest_to_gg(g)
     print(g)
