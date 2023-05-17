@@ -12,7 +12,7 @@ dx_forest(
   tick_label_size = 6.5,
   trans = c(NA, "log10"),
   measures = c("AUC", "Sensitivity", "Specificity", "Odds Ratio"),
-  return_grid = FALSE,
+  return = c("ggplot", "grid"),
   filename = NA,
   header_bg = "white",
   header_col = "black",
@@ -44,8 +44,7 @@ Currently, only log10 is supported.}
 
 \item{measures}{Measures to be included in the plot}
 
-\item{return_grid}{Should a grid object be returned?
-If FALSE, grid is drawn using grid.draw.}
+\item{return}{Should a grid or ggplot object be returned?}
 
 \item{filename}{File bane to create on disk.
 If left NA, no file will be created.}

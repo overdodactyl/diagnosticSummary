@@ -12,8 +12,7 @@
 #'     Ticks will be generates using base::breaks.
 #'     Ignored if breaks are passed.
 #' @param tick_label_size Font size for axis labels.
-#' @param return_grid Should a grid object be returned?
-#'     If FALSE, grid is drawn using grid.draw.
+#' @param return Should a grid or ggplot object be returned?
 #' @param trans Method to transform the odds ratio by.
 #'     Currently, only log10 is supported.
 #' @param measures Measures to be included in the plot
@@ -46,12 +45,15 @@
 dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
                       tick_label_size = 6.5, trans = c(NA, "log10"),
                       measures = c("AUC", "Sensitivity", "Specificity","Odds Ratio"),
-                      return_grid = FALSE, filename = NA,
+                      return = c("ggplot", "grid"),
+                      filename = NA,
                       header_bg = "white", header_col = "black",
                       body_bg = c("#e6e4e2", "#ffffff"),
                       footer_bg = "#b8b6b4", footer_col = "black",
                       body_or_col = "black", footer_or_col = footer_col) {
+
   trans <- match.arg(trans)
+  return_type <- match.arg(return)
 
   stopifnot("Odds Ratio" %in% measures)
 
@@ -252,11 +254,17 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
     }
   }
 
-  if (return_grid) {
-    return(g)
+  grid::grid.draw(g)
+
+  if (return_type == "ggplot") {
+    g <- dx_forest_to_gg(g)
+    print(g)
   } else {
     grid::grid.draw(g)
   }
+
+  return(g)
+
 }
 
 
@@ -539,4 +547,23 @@ plot_labels <- function(breaks, trans) {
   } else {
     10^breaks
   }
+}
+
+dx_forest_to_gg <- function(plot, scale = 1, hjust = 0, vjust = 0, ...) {
+
+  ymin <- xmin <- 1 - scale
+  xmax <- ymax <- scale
+
+  ggplot2::ggplot(data.frame(x = 0:1, y = 0:1), ggplot2::aes_(x = ~x, y = ~y)) +
+    ggplot2::geom_blank() +
+    ggplot2::scale_x_continuous(limits = c(0,1), expand = c(0, 0)) +
+    ggplot2::scale_y_continuous(limits = c(0,1), expand = c(0, 0)) +
+    ggplot2::annotation_custom(
+      plot,
+      xmin = xmin + hjust,
+      xmax = xmax + hjust,
+      ymin = ymin + vjust,
+      ymax = ymax + vjust
+    )  +
+    ggplot2::theme_void()
 }
