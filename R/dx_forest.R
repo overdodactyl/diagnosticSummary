@@ -287,9 +287,9 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
 
   if (return_type == "ggplot") {
     g <- dx_forest_to_gg(g)
-    print(g)
+    # print(g)
   } else {
-    grid::grid.draw(g)
+    # grid::grid.draw(g)
   }
 
   return(g)
