@@ -19,6 +19,11 @@ dx_forest(
   body_bg = c("#e6e4e2", "#ffffff"),
   footer_bg = "#b8b6b4",
   footer_col = "black",
+  header_fontsize = 10,
+  body_fontsize = 9,
+  fraction_multiline = FALSE,
+  or_lwd = 0.8,
+  or_size = 0.35,
   body_or_col = "black",
   footer_or_col = footer_col
 )

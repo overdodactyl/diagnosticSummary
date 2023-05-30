@@ -50,6 +50,9 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
                       header_bg = "white", header_col = "black",
                       body_bg = c("#e6e4e2", "#ffffff"),
                       footer_bg = "#b8b6b4", footer_col = "black",
+                      header_fontsize = 10, body_fontsize = 9,
+                      fraction_multiline = FALSE,
+                      or_lwd = .8, or_size = .35,
                       body_or_col = "black", footer_or_col = footer_col) {
 
   trans <- match.arg(trans)
@@ -57,7 +60,12 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
 
   stopifnot("Odds Ratio" %in% measures)
 
-  data <- dx_prep_forest(dx_obj, fraction = fraction, measures = measures)
+  data <- dx_prep_forest(
+    dx_obj,
+    fraction = fraction,
+    fraction_multiline = fraction_multiline,
+    measures = measures
+  )
 
   indent_rows <- which(!is.na(data$rawestime))
   bold_rows <- setdiff(1:(nrow(data)), indent_rows)
@@ -120,14 +128,17 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
 
   tbl_data <- dplyr::rename(tbl_data, Group = "group")
 
+  names(tbl_data) <- gsub("Positive Predictive Value", "PPV", names(tbl_data))
+  names(tbl_data) <- gsub("Negative Predictive Value", "NPV", names(tbl_data))
+
   table_theme <- gridExtra::ttheme_minimal(
     core = list(
       margin = unit(c(1, 1), "mm"),
       bg_params = list(fill = rep(body_bg), col = NA),
-      fg_params = list(fontface = 1, cex = .6)
+      fg_params = list(fontface = 1, fontsize = body_fontsize)
     ),
     colhead = list(
-      fg_params = list(col = header_col, fontface = 1, cex = .7),
+      fg_params = list(col = header_col, fontface = 1, fontsize = header_fontsize),
       bg_params = list(fill = header_bg, col = NA)
     )
   )
@@ -135,6 +146,17 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
   or_col <- which(names(tbl_data) == " ")
   nrows <- nrow(tbl_data)
   ncols <- ncol(tbl_data)
+
+
+  cell_width <- dplyr::mutate_all(tbl_data, ~gsub("(.*)\n(.*)", "\\2", .))
+  cell_width <- dplyr::mutate_all(cell_width, nchar)
+  column_widths <- apply(cell_width, 2, max)
+  column_widths[8] <- 0
+  column_widths[2] <- column_widths[2] + 5
+  column_widths[8] <- max(column_widths)
+
+  column_widths <- column_widths / sum(column_widths)
+
 
   # Convert df to grob
   g <- gridExtra::tableGrob(tbl_data,
@@ -179,7 +201,7 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
     col <- ifelse(i == length(estimate), footer_or_col, body_or_col)
     g <- dx_forest_add_or(
       g, i + 1, lower[i], estimate[i], upper[i],
-      or_col = or_col, col = col
+      or_col = or_col, col = col, lwd = or_lwd, size = or_size
     )
   }
 
@@ -238,7 +260,16 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
 
 
   # Adjust width of plot - some fine tunining here in the future woud be nice
-  g$widths <- unit(rep(1 / ncol(g), ncol(g)), "npc")
+  # g$widths <- unit(rep(1 / ncol(g), ncol(g)), "npc")
+  g$widths <- unit(column_widths, "npc")
+  # g$heights <- max(g$heights)
+
+  row_height <- ifelse(fraction & fraction_multiline, 1.2, 1)
+
+  g$heights <- rep(
+    unit(0.05*row_height, "npc"),
+    length(g$heights)
+  )
 
   if (!is.na(filename)) {
     if (requireNamespace("ggplot2", quietly = TRUE)) {
@@ -326,22 +357,22 @@ dx_edit_cell <- function(table, row, col, name = "core-fg", ...) {
 
 
 dx_forest_add_or <- function(grob, row, low, est, high,
-                             or_col = 4, col = "black") {
+                             or_col = 4, col = "black", lwd = .8, pch = 16, size = .35) {
 
   i <- sample(1:100000, 1)
 
   tmp <- dx_hline(
-    grob, gp = gpar(lwd = .8, col = col),
+    grob, gp = gpar(lwd = lwd, col = col),
     y = .5, x0 = low, x1 = high, t = row, l = or_col,
     name = paste0("or", i), clip = "on"
   )
   tmp <- dx_vline(
-    tmp, gp = gpar(lwd = .8, col = col),
+    tmp, gp = gpar(lwd = lwd, col = col),
     x = low, y0 = .35, y1 = .65, t = row, l = or_col,
     name = paste0("left_or_cap_", i), clip = "on"
   )
   tmp <- dx_vline(
-    tmp, gp = gpar(lwd = .8, col = col),
+    tmp, gp = gpar(lwd = lwd, col = col),
     x = high, y0 = .35, y1 = .65, t = row, l = or_col,
     name = paste0("right_or_cap_", i), clip = "on"
   )
@@ -353,7 +384,7 @@ dx_forest_add_or <- function(grob, row, low, est, high,
         y = .5,
         pch = 16,
         gp = gpar(col = col),
-        size = unit(.35, "char")
+        size = unit(size, "char")
       )
     ),
     t = row, l = or_col, name = "point1", z = Inf
@@ -385,7 +416,7 @@ dx_forest_add_tick <- function(grob, tick_scaled, tick, nrows,
 
 dx_prep_variable <- function(dx_obj, data,
                              measures = c("AUC", "Sensitivity", "Specificity","Odds Ratio"),
-                             fraction = FALSE) {
+                             fraction = FALSE, fraction_multiline) {
 
 
   var <- data$variable[[1]]
@@ -398,10 +429,30 @@ dx_prep_variable <- function(dx_obj, data,
   tmp <- dplyr::filter(tmp, measure != "Breslow-Day")
 
 
+  # if (fraction) {
+  #   tmp$estimate <- ifelse(tmp$fraction == "", tmp$estimate,
+  #     paste0(tmp$estimate, " (", tmp$fraction, ")")
+  #   )
+  # }
+
   if (fraction) {
-    tmp$estimate <- ifelse(tmp$fraction == "", tmp$estimate,
-      paste0(tmp$estimate, " (", tmp$fraction, ")")
-    )
+    if (fraction_multiline) {
+      tmp$estimate <- ifelse(
+        tmp$fraction == "",
+        tmp$estimate,
+        paste0(tmp$fraction, "\n", tmp$estimate)
+      )
+    } else {
+      tmp$estimate <- ifelse(
+        tmp$fraction == "",
+        tmp$estimate,
+        paste0(tmp$estimate, " (", tmp$fraction, ")")
+      )
+    }
+  }
+
+  if (fraction) {
+
   }
 
   res_sel <- tmp %>% dplyr::select(group = label, measure, estimate)
@@ -441,7 +492,7 @@ label_df <- function(data) {
   )
 }
 
-dx_prep_forest <- function(dx_obj, fraction = fraction, measures) {
+dx_prep_forest <- function(dx_obj, fraction = fraction, fraction_multiline, measures) {
   tmp <- dx_obj$measures %>%
     dplyr::filter(threshold == dx_obj$options$setthreshold)
 
@@ -471,6 +522,7 @@ dx_prep_forest <- function(dx_obj, fraction = fraction, measures) {
       dx_obj = dx_obj,
       data = tmp_split[[i]],
       fraction = fraction,
+      fraction_multiline = fraction_multiline,
       measures = measures
     )
   }
