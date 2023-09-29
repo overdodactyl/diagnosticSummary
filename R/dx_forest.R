@@ -562,7 +562,7 @@ plot_range <- function(limits = NA, breaks = NA, trans = NA,
       res <- c(min(pretty), max(pretty))
     } else {
       high <- ceiling(log10(max_or))
-      low <- max(c(0, floor(log10(min_or))))
+      low <- floor(log10(min_or))
       res <- 10^c(low, high)
     }
   }
