@@ -12,24 +12,30 @@ dx_measure <- function(data, threshold, options, var = "Overall",
     poslabel = options$poslabel
   )
 
-  prevalence  <- dx_prevalence(pos = perfdf$dispos, perfdf$n, options$citype)
-
+  prevalence  <- dx_prevalence(perfdf$dispos, perfdf$n, options$citype)
   lrt_neg <- dx_lrtneg(tp = perfdf$tp, tn = perfdf$tn, fp = perfdf$fp, fn = perfdf$fn)
   lrt_pos <- dx_lrtpos(tp = perfdf$tp, tn = perfdf$tn, fp = perfdf$fp, fn = perfdf$fn)
   dx_or <- dx_odds_ratio(perfdf$tp, perfdf$tn, perfdf$fp, perfdf$fn)
   senres <- dx_sensitivity(
-    tp = perfdf$tp, dispos = perfdf$dispos,
-    options$citype, threshold
+    perfdf$tp,
+    perfdf$dispos,
+    options$citype,
+    # threshold = threshold,
+    notes = paste0(">=", threshold)
   )
-  specres <- dx_specificity(perfdf$tn, perfdf$disneg, options$citype, threshold)
+  specres <- dx_specificity(
+    perfdf$tn,
+    perfdf$disneg,
+    citype = options$citype,
+    notes = paste0("<", threshold)
+  )
   accres <- dx_accuracy(perfdf$correct, perfdf$n, options$citype)
   ppvres <- dx_ppv(perfdf$tp, perfdf$testpos, options$citype)
   npvres <- dx_npv(perfdf$tn, perfdf$testneg, options$citype)
   precision <- dx_precision(perfdf$tp, perfdf$fp)
   recall <- dx_recall(perfdf$tp, perfdf$fn)
   f1 <- dx_f1(
-    predprob, truth, precision, recall, options$bootreps,
-    options$doboot
+    predprob, truth, threshold, options$poslabel, bootreps = 1000, doboot = FALSE
   )
   auc <- dx_auc(truth, predprob)
 

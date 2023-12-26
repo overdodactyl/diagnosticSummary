@@ -1,352 +1,236 @@
-conf_int <- function(est, lower, upper, accuracy = .1, percent = F) {
-  if (percent) {
-    est <- scales::percent(est, accuracy = accuracy)
-    lower <- scales::percent(lower, accuracy = accuracy)
-    upper <- scales::percent(upper, accuracy = accuracy)
-  } else {
-    est <- scales::comma(est, accuracy = accuracy)
-    lower <- scales::comma(lower, accuracy = accuracy)
-    upper <- scales::comma(upper, accuracy = accuracy)
+comma <- function(x) {
+  prettyNum(x, big.mark = ",")
+}
+
+conf_int <- function(est, lower, upper, accuracy = .1, percent = FALSE) {
+  format_num <- function(num) {
+    if (percent) {
+      paste0(formatC(num * 100, format = "f", digits = -log10(accuracy)), "%")
+    } else {
+      formatC(num, format = "f", digits = -log10(accuracy), big.mark = ",")
+    }
   }
-  paste0(est, " (", lower, ", ", upper, ")")
+
+  paste0(format_num(est), " (", format_num(lower), ", ", format_num(upper), ")")
+}
+
+dx_measure_df <- function(measure = "", estimate = "", fraction = "",
+                          ci_type = "", notes = "", estimate_raw = NA,
+                          lci_raw = NA, uci_raw = NA) {
+
+  # Create data frame with base R
+  tmp <- data.frame(
+    measure = measure,
+    estimate = estimate,
+    fraction = fraction,
+    ci_type = ci_type,
+    notes = as.character(notes),
+    rawestime = estimate_raw,
+    rawlci = lci_raw,
+    rawuci = uci_raw,
+    stringsAsFactors = FALSE  # ensure that strings are not converted to factors
+  )
+
+  # Convert factors to characters if any
+  tmp[] <- lapply(tmp, function(x) if(is.factor(x)) as.character(x) else x)
+
+  return(tmp)
+}
+dx_measure_df <- function(measure = "", estimate = "", fraction = "",
+                          ci_type = "", notes = "", estimate_raw = NA,
+                          lci_raw = NA, uci_raw = NA) {
+  # Create data frame with base R
+  tmp <- data.frame(
+    measure = measure,
+    estimate = estimate,
+    fraction = fraction,
+    ci_type = ci_type,
+    notes = notes,
+    rawestime = estimate_raw,
+    rawlci = lci_raw,
+    rawuci = uci_raw,
+    stringsAsFactors = FALSE  # ensure that strings are not converted to factors
+  )
+
+  # Convert factors to characters if any
+  tmp[] <- lapply(tmp, function(x) if(is.factor(x)) as.character(x) else x)
+
+  return(tmp)
 }
 
 
 dx_confusion_core <- function(predprob, truth, threshold, poslabel) {
-  pred <- ifelse(predprob >= threshold, 1, 0)
+  # Calculate predictions based on threshold
+  pred <- as.numeric(predprob >= threshold)
 
-  tempdf <- data.frame(pred, truth)
-  tempdf$testresult <- ifelse(tempdf$pred == poslabel, 1, 0)
-  tempdf$trueresult <- ifelse(tempdf$truth == poslabel, 1, 0)
+  # Determine test and true results
+  testresult <- as.numeric(pred == poslabel)
+  trueresult <- as.numeric(truth == poslabel)
 
-  neg <- dplyr::filter(tempdf, trueresult == 0)
-  pos <- dplyr::filter(tempdf, trueresult == 1)
+  # Calculate confusion matrix components
+  tp <- sum(testresult == 1 & trueresult == 1)
+  fn <- sum(testresult == 0 & trueresult == 1)
+  tn <- sum(testresult == 0 & trueresult == 0)
+  fp <- sum(testresult == 1 & trueresult == 0)
 
-  ## now count the tps and fns
-  senscount <- pos %>%
-    dplyr::group_by(testresult) %>%
-    dplyr::summarize(counts = dplyr::n())
-  speccount <- neg %>%
-    dplyr::group_by(testresult) %>%
-    dplyr::summarize(counts = dplyr::n())
+  # Calculate additional metrics
+  dispos <- tp + fn  # Actual positives
+  disneg <- tn + fp  # Actual negatives
+  n <- length(truth) # Total observations, assuming 'truth' is complete
+  correct <- tp + tn # Correct predictions
+  testpos <- tp + fp # Predicted positives
+  testneg <- tn + fn # Predicted negatives
 
-  tp_1 <- dplyr::ungroup(senscount) %>%
-    dplyr::filter(testresult == 1) %>%
-    dplyr::select(counts)
-  tp <- ifelse(length(tp_1[, 1]) == 0, 0, tp_1[1, 1]) %>% as.numeric()
-  fn_1 <- dplyr::ungroup(senscount) %>%
-    dplyr::filter(testresult == 0) %>%
-    dplyr::select(counts)
-  fn <- ifelse(length(fn_1[, 1]) == 0, 0, fn_1[1, 1]) %>% as.numeric()
-  tn_1 <- dplyr::ungroup(speccount) %>%
-    dplyr::filter(testresult == 0) %>%
-    dplyr::select(counts)
-  tn <- ifelse(length(tn_1[, 1]) == 0, 0, tn_1[1, 1]) %>% as.numeric()
-  fp_1 <- dplyr::ungroup(speccount) %>%
-    dplyr::filter(testresult == 1) %>%
-    dplyr::select(counts)
-  fp <- ifelse(length(fp_1[, 1]) == 0, 0, fp_1[1, 1]) %>% as.numeric()
+  # Compile performance dataframe
+  perfdf <- data.frame(tp, fn, tn, fp, dispos, disneg, n, correct, testpos, testneg)
 
-  perfdf <- data.frame(tp, fn, tn, fp) %>%
-    dplyr::mutate_all(~ ifelse(is.na(.), 0, .))
+  # Replace NAs with zeros - though there should be none in this context
+  perfdf[is.na(perfdf)] <- 0
 
-  dispos <- perfdf$tp + perfdf$fn # Actaul positives
-  disneg <- perfdf$tn + perfdf$fp # Actual negatives
-  n <- dispos + disneg # Total observations
-  correct <- perfdf$tp + perfdf$tn # Correct
-  testpos <- perfdf$tp + perfdf$fp # Predicted positive
-  testneg <- perfdf$tn + perfdf$fn # Predicted negative
-
-  perfdf <- cbind(perfdf, dispos, disneg, n, correct, testpos, testneg)
-
-  # fixing some zero cell issues
-  dplyr::mutate_all(perfdf, ~ ifelse(is.na(.), 0, .))
+  return(perfdf)
 }
 
-# Compute diagnositc odds ratio
-dx_odds_ratio <- function(tp, tn, fp, fn) {
-  if (tp == 0 | tn == 0 | fp == 0 | fn == 0) {
-    or_raw <- (tp + 0.5) * (tn + 0.5) / ((fp + 0.5) * (fn + 0.5))
-    sqrtsdlnor <- sqrt(1 / (tp + 0.5) + 1 / (tn + 0.5) +
-      1 / (fn + 0.5) + 1 / (fp + 0.5))
-    ornote <- "Empirical Logit"
-  } else {
-    or_raw <- tp * tn / (fp * fn)
-    sqrtsdlnor <- sqrt(1 / tp + 1 / tn + 1 / fn + 1 / fp)
-    ornote <- " "
+createDiagnosticFunction <- function(calc_func, measure_name) {
+  function(correct, n, citype, notes = "", ...) {
+    # Perform the specific calculation for the measure
+    measure_raw <- calc_func(correct, n, ...)
+
+    # Calculate binomial confidence interval using binom package
+    confint_res <- binom::binom.confint(correct, n, conf.level = 0.95, methods = citype)
+
+    # Formatting results
+    formatted_estimate <- conf_int(
+      measure_raw,
+      confint_res$lower,
+      confint_res$upper,
+      percent = TRUE
+    )
+
+    # Constructing the fraction string
+    fraction <- paste0(comma(correct), "/", comma(n))
+
+    # Returning structured output
+    dx_measure_df(
+      measure = measure_name,
+      estimate = formatted_estimate,
+      fraction = fraction,
+      ci_type = citype,
+      estimate_raw = measure_raw,
+      lci_raw = confint_res$lower,
+      uci_raw = confint_res$upper,
+      notes = as.character(notes)
+    )
   }
-
-  lnor <- log(or_raw)
-  lnor_l <- lnor - stats::qnorm(.975) * sqrtsdlnor
-  lnor_u <- lnor + stats::qnorm(.975) * sqrtsdlnor
-  or <- conf_int(or_raw, exp(lnor_l), exp(lnor_u))
-
-  dx_measure_df(
-    measure = "Odds Ratio",
-    estimate = or,
-    ci_type = "Large sample",
-    notes = ornote,
-    estimate_raw = or_raw,
-    lci_raw = exp(lnor_l),
-    uci_raw = exp(lnor_u)
-  )
 }
 
-dx_prevalence <- function(pos, n, citype) {
+createRatioFunction <- function(calc_func, calc_sd_func, measure_name) {
+  function(tp, tn, fp, fn) {
+    # Apply continuity correction if any cell is zero
+    continuity_correction <- if (tp == 0 | tn == 0 | fp == 0 | fn == 0) 0.5 else 0
 
-  prev_raw <- pos / n
-  prev_frac <-  paste0(scales::comma(pos), "/", scales::comma(n))
-  prevres <- binom::binom.confint(pos, n, conf.level = 0.95, methods = citype)
-  prevres <- dplyr::rename(
-    prevres,
-    y1_check = x,
-    n1_check = n,
-    p1_check = mean,
-    sens_lci = lower,
-    sens_uci = upper
-  )
-  prev <- conf_int(
-    prev_raw,
-    prevres$sens_lci,
-    prevres$sens_uci,
-    percent = TRUE
-  )
+    # Adjust values if necessary
+    tp <- tp + continuity_correction
+    tn <- tn + continuity_correction
+    fp <- fp + continuity_correction
+    fn <- fn + continuity_correction
 
-  dx_measure_df(
-    measure = "Prevalence",
-    estimate = prev,
-    fraction = prev_frac,
-    ci_type = citype,
-    estimate_raw = prev_raw,
-    lci_raw = prevres$sens_lci,
-    uci_raw = prevres$sens_uci
-  )
+    # Calculate the ratio (Odds or Likelihood)
+    ratio <- calc_func(tp, tn, fp, fn)
 
+    # Calculate standard deviation for log-transformed Ratio
+    ratio_sd <- calc_sd_func(tp, tn, fp, fn)
 
+    # Calculate confidence interval
+    z_value <- 1.95996398454005  # 95% CI
+    ratio_log <- log(ratio)
+    ratio_ci_l <- exp(ratio_log - z_value * ratio_sd)
+    ratio_ci_u <- exp(ratio_log + z_value * ratio_sd)
+
+    # Format the result
+    ratio_est <- conf_int(ratio, ratio_ci_l, ratio_ci_u, accuracy = .01)
+
+    # Return structured output
+    dx_measure_df(
+      measure = measure_name,
+      estimate = ratio_est,
+      fraction = "",  # adjust as needed
+      ci_type = if (continuity_correction > 0) "Adjusted for zero cells" else "Large sample",
+      estimate_raw = ratio,
+      lci_raw = ratio_ci_l,
+      uci_raw = ratio_ci_u
+    )
+  }
 }
 
 
-
-dx_sensitivity <- function(tp, dispos, citype, threshold) {
-  sensitivity_raw <- tp / dispos
-  sens_frac <- paste0(scales::comma(tp), "/", scales::comma(dispos))
-  senres <- binom::binom.confint(tp, dispos,
-    conf.level = 0.95,
-    methods = citype
-  )
-  senres <- dplyr::rename(senres,
-    y1_check = x, n1_check = n,
-    p1_check = mean, sens_lci = lower, sens_uci = upper
-  )
-  sensitivity <- conf_int(sensitivity_raw, senres$sens_lci,
-    senres$sens_uci,
-    percent = TRUE
-  )
-  dx_measure_df(
-    measure = "Sensitivity",
-    estimate = sensitivity,
-    fraction = sens_frac,
-    ci_type = citype,
-    notes = paste0(">=", threshold),
-    estimate_raw = sensitivity_raw,
-    lci_raw = senres$sens_lci,
-    uci_raw = senres$sens_uci
-  )
+calc_sensitivity <- function(tp, dispos) {
+  tp / dispos
 }
 
-dx_specificity <- function(tn, disneg, citype, threshold) {
-  specificity_raw <- tn / disneg
-  spec_frac <- paste0(scales::comma(tn), "/", scales::comma(disneg))
-  specres <- binom::binom.confint(tn, disneg,
-    conf.level = 0.95, methods = citype
-  )
-  specres <- dplyr::rename(specres,
-    y2_check = x, n2_check = n,
-    p2_check = mean, spec_lci = lower, spec_uci = upper
-  )
-  specificity <- conf_int(specificity_raw, specres$spec_lci,
-    specres$spec_uci,
-    percent = TRUE
-  )
-  dx_measure_df(
-    measure = "Specificity",
-    estimate = specificity,
-    fraction = spec_frac,
-    ci_type = citype,
-    notes = paste0("<", threshold),
-    estimate_raw = specificity_raw,
-    lci_raw = specres$spec_lci,
-    uci_raw = specres$spec_uci
-  )
+calc_specificity <- function(tn, disneg) {
+  tn / disneg
 }
 
-dx_accuracy <- function(correct, n, citype) {
-  accuracy_raw <- correct / n
-  acc_frac <- paste0(scales::comma(correct), "/", scales::comma(n))
-  accres <- binom::binom.confint(correct, n,
-    conf.level = 0.95,
-    methods = citype
-  )
-  accres <- dplyr::rename(accres,
-    y3_check = x, n3_check = n,
-    p3_check = mean, acc_lci = lower, acc_uci = upper
-  )
-  accuracy <- conf_int(accuracy_raw, accres$acc_lci,
-    accres$acc_uci,
-    percent = TRUE
-  )
-
-  dx_measure_df(
-    measure = "Accuracy",
-    estimate = accuracy,
-    fraction = acc_frac,
-    ci_type = citype,
-    estimate_raw = accuracy_raw,
-    lci_raw = accres$acc_lci,
-    uci_raw = accres$acc_uci
-  )
+calc_ppv <- function(tp, testpos) {
+  tp / testpos
 }
 
-dx_ppv <- function(tp, testpos, citype) {
-  ppv_raw <- tp / testpos
-  ppv_frac <- paste0(scales::comma(tp), "/", scales::comma(testpos))
-  ppvres <- binom::binom.confint(tp, testpos,
-    conf.level = 0.95,
-    methods = citype
-  )
-  ppvres <- dplyr::rename(ppvres,
-    y4_check = x, n4_check = n,
-    p4_check = mean, ppv_lci = lower, ppv_uci = upper
-  )
-  ppv <- conf_int(ppv_raw, ppvres$ppv_lci, ppvres$ppv_uci, percent = TRUE)
-
-  dx_measure_df(
-    measure = "Positive Predictive Value",
-    estimate = ppv,
-    fraction = ppv_frac,
-    ci_type = citype,
-    estimate_raw = ppv_raw,
-    lci_raw = ppvres$ppv_lci,
-    uci_raw = ppvres$ppv_uci
-  )
+calc_npv <- function(tn, testneg) {
+  tn / testneg
 }
 
-dx_npv <- function(tn, testneg, citype) {
-  npv_raw <- tn / testneg
-  npv_frac <- paste0(scales::comma(tn), "/", scales::comma(testneg))
-  npvres <- binom::binom.confint(tn, testneg,
-    conf.level = 0.95,
-    methods = citype
-  )
-  npvres <- dplyr::rename(npvres,
-    y5_check = x, n5_check = n, p5_check = mean,
-    npv_lci = lower, npv_uci = upper
-  )
-  npv <- conf_int(npv_raw, npvres$npv_lci, npvres$npv_uci, percent = TRUE)
-
-  dx_measure_df(
-    measure = "Negative Predictive Value",
-    estimate = npv,
-    fraction = npv_frac,
-    ci_type = citype,
-    estimate_raw = npv_raw,
-    lci_raw = npvres$npv_lci,
-    uci_raw = npvres$npv_uci
-  )
+calc_accuracy <- function(correct, n) {
+  correct / n
 }
 
-dx_precision <- function(tp, fp) {
+calc_sd_or <- function(tp, tn, fp, fn) {
+  sqrt(sum(1 / c(tp, tn, fn, fp)))
+}
+
+calc_sd_lrtpos <- function(tp, tn, fp, fn) {
+  sqrt(1/tp - 1/(tp + fn) + 1/fp - 1/(fp + tn))
+}
+
+calc_sd_lrtneg <- function(tp, tn, fp, fn) {
+  sqrt(1/fn - 1/(tp + fn) + 1/tn - 1/(fp + tn))
+}
+
+calc_odds_ratio <- function(tp, tn, fp, fn) {
+  (tp * tn) / (fp * fn)
+}
+
+
+calc_lr_neg <- function(tp, tn, fp, fn) {
+  (fn / (tp + fn)) / (tn / (fp + tn))
+}
+
+calc_lr_pos <- function(tp, tn, fp, fn) {
+  (tp / (tp + fn)) / (fp / (fp + tn))
+}
+
+calc_prevalence <- function(pos, n) {
+  pos / n
+}
+
+calc_precision <- function(tp, fp) {
   tp / (tp + fp)
 }
 
-dx_recall <- function(tp, fn) {
+calc_recall <- function(tp, fn) {
   tp / (tp + fn)
 }
 
-dx_f1 <- function(predprob, truth, precision, recall, bootreps, doboot) {
-  f1_raw <- 2 * (precision * recall) / (precision + recall)
+calc_f1 <- function(tp, fp, fn) {
+  # Calculate precision and recall directly within the function
+  precision <- if(tp + fp == 0) 0 else tp / (tp + fp)
+  recall <- if(tp + fn == 0) 0 else tp / (tp + fn)
 
-  # Make sure boot is available if using
-  if (doboot & !requireNamespace("boot", quietly = TRUE)) {
-    warning("boot package not installed.  Skipping bootsrapped CI. ")
-    doboot <- FALSE
-  }
-
-  #### Generate bootstrap estimate of F1 confidence interval
-  if (doboot) {
-    set.seed(bootseed)
-
-    pred <- ifelse(predprob >= threshold, 1, 0)
-    tempmat <- data.frame(pred, truth)
-
-    boot_res <- boot::boot(data = tempmat, statistic = f1boot, R = bootreps)
-    # get 95% confidence interval
-    boot_ci_res <- boot::boot.ci(boot_res, type = "basic")
-    dim(boot_ci_res$basic)
-    f1_lci <- boot_ci_res$basic[4]
-    f1_uci <- boot_ci_res$basic[5]
-
-    f1 <- conf_int(f1_raw, f1_lci, f1_uci, percent = T)
-
-    f1 <- cbind(f1, f1_lci, f1_uci)
+  # Calculate F1 score
+  if (precision + recall == 0) {
+    return(0)  # Return 0 to handle division by zero
   } else {
-    f1 <- formatC(round(f1_raw * 100, 1), format = "f", digits = 1)
+    return(2 * (precision * recall) / (precision + recall))
   }
-
-  dx_measure_df(
-    measure = "F1 Score",
-    estimate = f1,
-    estimate_raw = f1_raw,
-    ci_type = if (doboot) "Bootstrapped" else "",
-    notes = if (doboot) paste0("B=", bootreps, "") else ""
-  )
-}
-
-
-### Function to bootstrap the F1 statistic
-f1boot <- function(data, indices, poslabel = 1) {
-  ## data coming in needs to be a two column data frame:
-  # Column 1 is the truth,
-  # column 2 is the prediction. both are the binary classifications
-  d <- data[indices, ] # allows boot to select sample
-
-  truth <- d[, 1]
-  pred <- d[, 2]
-
-
-  tempdf <- data.frame(pred, truth)
-  tempdf$testresult <- ifelse(tempdf$pred == poslabel, 1, 0)
-  tempdf$trueresult <- ifelse(tempdf$truth == poslabel, 1, 0)
-
-  neg <- dplyr::filter(tempdf, trueresult == 0)
-  pos <- dplyr::filter(tempdf, trueresult == 1)
-
-  ## now count the tps and fns
-  senscount <- pos %>%
-    dplyr::group_by(testresult) %>%
-    dplyr::summarize(counts = n())
-  speccount <- neg %>%
-    dplyr::group_by(testresult) %>%
-    dplyr::summarize(counts = n())
-
-  tp <- dplyr::ungroup(senscount) %>%
-    dplyr::filter(testresult == 1) %>%
-    dplyr::select(counts)
-  fn <- dplyr::ungroup(senscount) %>%
-    dplyr::filter(testresult == 0) %>%
-    dplyr::select(counts)
-  tn <- dplyr::ungroup(speccount) %>%
-    dplyr::filter(testresult == 0) %>%
-    dplyr::select(counts)
-  fp <- dplyr::ungroup(speccount) %>%
-    dplyr::filter(testresult == 1) %>%
-    dplyr::select(counts)
-  perfdf <- data.frame(tp, fn, tn, fp)
-  names(perfdf) <- c("tp", "fn", "tn", "fp")
-  precision <- perfdf$tp / (perfdf$tp + perfdf$fp)
-  recall <- perfdf$tp / (perfdf$tp + perfdf$fn)
-  f1 <- 2 * (precision * recall) / (precision + recall)
-  return(f1)
 }
 
 
@@ -371,108 +255,70 @@ dx_auc <- function(truth, predprob) {
 }
 
 
-dx_lrtneg <- function(tp, tn, fp, fn) {
-  ## account for zero cells if present
-  if (tp != 0 & tn != 0 & fp != 0 & fn != 0) {
-    citype <- "Large sample"
+dx_f1 <- function(predprob, truth, threshold, poslabel, bootreps = 1000, doboot = FALSE) {
+  cm <- dx_confusion_core(predprob, truth, threshold, poslabel)
+
+  f1_raw <- calc_f1(cm$tp, cm$fp, cm$fn)
+
+  # Continue with bootstrapping or direct calculation as before
+  # Bootstrapping for confidence interval
+  if (doboot & requireNamespace("boot", quietly = TRUE)) {
+    boot_res <- boot::boot(
+      data = cbind(truth, predprob >= threshold),
+      statistic = f1boot,
+      R = bootreps
+    )
+    boot_ci_res <- boot::boot.ci(boot_res, type = "basic")
+    f1_lci <- boot_ci_res$basic[4]
+    f1_uci <- boot_ci_res$basic[5]
+    f1 <- conf_int(f1_raw, f1_lci, f1_uci, percent = TRUE)
   } else {
-    tp <- tp + .5
-    fp <- fp + .5
-    tn <- tn + .5
-    fn <- fn + .5
-    citype <- "Large sample plus 0.5 for all cells"
+    f1 <- formatC(round(f1_raw * 100, 1), format = "f", digits = 1)
+    f1_lci <- NA
+    f1_uci <- NA
   }
 
-
-  ## Estimate the LRT-
-  lrtneg <- (fn / (tp + fn)) / ( tn / (fp + tn))
-
-  ## Estimate the CI
-  zcritical <- stats::qnorm(.975)
-
-  ## Derived based on the delta method and log LRT
-  lrtneg_sd <- sqrt( 1/fn - 1/(tp + fn) + 1/tn - 1/(fp + tn) )
-
-  lrtneg_ci_l <- lrtneg * exp( -zcritical * lrtneg_sd)
-  lrtneg_ci_u <- lrtneg * exp( zcritical * lrtneg_sd)
-
-
-  ## Save the estimates
-  lrtneg_est <- conf_int(lrtneg, lrtneg_ci_l,lrtneg_ci_u, accuracy = .01)
-  # print(lrtneg_est)
   dx_measure_df(
-    measure = "LRT-",
-    estimate = lrtneg_est,
-    fraction = "",
-    ci_type = citype,
-    estimate_raw = lrtneg,
-    lci_raw = lrtneg_ci_l,
-    uci_raw = lrtneg_ci_u
+    measure = "F1 Score",
+    estimate = f1,
+    estimate_raw = f1_raw,
+    ci_type = if (doboot) "Bootstrapped" else "",
+    notes = if (doboot) paste0("Bootstraps: ", bootreps) else "",
+    lci_raw = f1_lci,
+    uci_raw = f1_uci
   )
 }
 
+f1boot <- function(data, indices) {
+  # Extract data based on indices for bootstrapping
+  d <- data[indices,]
 
-dx_lrtpos <- function(tp, tn, fp, fn) {
-  ## account for zero cells if present
-  if (tp != 0 & tn != 0 & fp != 0 & fn != 0) {
-    citype <- "Large sample"
-  } else {
-    tp <- tp + .5
-    fp <- fp + .5
-    tn <- tn + .5
-    fn <- fn + .5
-    citype <- "Large sample plus 0.5 for all cells"
-  }
+  # Calculate confusion matrix components
+  tp <- sum(d[,1] == 1 & d[,2] == 1)
+  fp <- sum(d[,1] == 0 & d[,2] == 1)
+  fn <- sum(d[,1] == 1 & d[,2] == 0)
 
+  f1 <- calc_f1(tp, fp, fn)
 
-  ## Estimate the LRT+
-  lrtpos <- (tp / (tp + fn)) / ( fp / (fp + tn))
-
-  ## Estimate the CI
-  zcritical <- stats::qnorm(.975)
-  lrtpos_sd <- sqrt(1/tp - 1/(tp + fn) + 1/fp - 1/(fp + tn) )
-
-
-
-  lrtpos_ci_l <- lrtpos * exp( -zcritical * lrtpos_sd)
-  lrtpos_ci_u <- lrtpos * exp( zcritical * lrtpos_sd)
-
-
-
-  ## Save the estimates
-  lrtpos_est <- conf_int(lrtpos, lrtpos_ci_l,lrtpos_ci_u, accuracy = .01)
-  # print(lrtpos_est)
-  dx_measure_df(
-    measure = "LRT+",
-    estimate = lrtpos_est,
-    fraction = "",
-    ci_type = citype,
-    estimate_raw = lrtpos,
-    lci_raw = lrtpos_ci_l,
-    uci_raw = lrtpos_ci_u
-  )
+  return(f1)
 }
 
 
 
 
-dx_measure_df <- function(measure = "", estimate = "", fraction = "",
-                          ci_type = "", notes = "", estimate_raw = NA,
-                          lci_raw = NA, uci_raw = NA) {
-  tmp <- data.frame(
-    measure = measure,
-    estimate = estimate,
-    fraction = fraction,
-    ci_type = ci_type,
-    notes = notes,
-    rawestime = estimate_raw,
-    rawlci = lci_raw,
-    rawuci = uci_raw,
-    stringsAsFactors = FALSE
-  )
+dx_sensitivity <- createDiagnosticFunction(calc_sensitivity, "Sensitivity")
+dx_specificity <- createDiagnosticFunction(calc_specificity, "Specificity")
+dx_ppv <- createDiagnosticFunction(calc_ppv, "Positive Predictive Value")
+dx_npv <- createDiagnosticFunction(calc_npv, "Negative Predictive Value")
+dx_accuracy <- createDiagnosticFunction(calc_accuracy, "Accuracy")
+dx_prevalence <- createDiagnosticFunction(calc_prevalence, "Prevalence")
 
-  tmp %>% dplyr::mutate_if(is.factor, as.character)
-}
+dx_recall <- calc_recall
+dx_precision <- calc_precision
+
+dx_odds_ratio <- createRatioFunction(calc_odds_ratio, calc_sd_or, "Odds Ratio")
+dx_lrtneg <- createRatioFunction(calc_lr_neg, calc_sd_lrtneg, "LRT-")
+dx_lrtpos <- createRatioFunction(calc_lr_pos, calc_sd_lrtpos, "LRT+")
 
 check_package <- function(pkg) {
   if (!requireNamespace(pkg, quietly = TRUE))  {
@@ -495,7 +341,7 @@ dx_breslow_day <- function(data, options, group_varname) {
       group = data[[group_varname]]
     )
 
-    tmp <- dplyr::filter(tmp, !is.na(group))
+    tmp <- tmp[!is.na(tmp$group), ]
 
     tab <- table(tmp$pred, tmp$truth, tmp$group)
 
