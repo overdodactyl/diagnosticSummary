@@ -1,7 +1,7 @@
 #' Plot ROC curve for a dx object
 #'
 #' @param dx_obj An object of class dx
-#' @param levels A character vector of length 2.  x an y labels for +/- classes
+#' @param levels A character vector of length 2.  x an y labels for -/+ classes
 #' @param palette A character vector of length 2.  Colors for low and high ends of the fill gradient
 #' @export
 #' @examples
@@ -17,24 +17,25 @@
 #' dx_cm(dx_obj)
 dx_cm <- function(dx_obj, palette = c("#e5eef7", "#0057B8"), levels = c("-", "+")) {
 
-  mat <- as.data.frame(table(dx_obj$data$true_binaryf, dx_obj$data$test_binaryf))
-  names(mat) <- c("truth", "predicted", "count")
-  mat$count <- round(mat$count, 0)
-  mat <- dplyr::mutate_at(mat, 1:2, ~factor(., dx_obj$options$classlabels,  0:1))
-
-
+  # Obtain the metrics as a dataframe
   metrics <- as.data.frame(dx_obj, thresh = dx_obj$options$setthreshold, variable = "Overall")
 
-  mat <- dplyr::mutate(
-    mat,
-    label = dplyr::case_when(
-      truth == 1 & predicted == 1 ~ "True Positive (TP)",
-      truth == 0 & predicted == 0 ~ "True Negative (TN)",
-      truth == 1 & predicted == 0 ~ "False Negative (FN)",
-      truth == 0 & predicted == 1 ~ "False Positive (FP)"
-    )
+  predprob <- dx_obj$data[[dx_obj$options$pred_varname]]
+  truth <- dx_obj$data[[dx_obj$options$true_varname]]
+
+  perfdf <- dx_confusion_core(
+    predprob = predprob,
+    truth = truth,
+    threshold = dx_obj$options$setthreshold,
+    poslabel = dx_obj$options$poslabel
   )
 
+  mat <- data.frame(
+    truth = factor(c(0, 1, 0, 1)),
+    predicted = factor(c(0, 0, 1, 1)),
+    label = c("True Negative (TN)", "False Negative (FN)", "False Positive (FP)", "True Positive (TP)"),
+    count = c(perfdf$tn, perfdf$fn, perfdf$fp, perfdf$tp)
+  )
 
   sens_label <- paste0("Sensitivity", "\n", metrics[metrics$measure == "Sensitivity", "estimate"])
   spec_label <- paste0("Specificity", "\n", metrics[metrics$measure == "Specificity", "estimate"])
@@ -44,7 +45,7 @@ dx_cm <- function(dx_obj, palette = c("#e5eef7", "#0057B8"), levels = c("-", "+"
 
   ggplot2::ggplot(mat, mapping = ggplot2::aes(x = truth, y = predicted)) +
     ggplot2::geom_tile(ggplot2::aes(fill = count), colour = "white") +
-    ggplot2::geom_text(ggplot2::aes(label = scales::comma(count)), vjust = 0, size = 6) +
+    ggplot2::geom_text(ggplot2::aes(label = count), vjust = 0, size = 6) +
     ggplot2::geom_text(ggplot2::aes(label = label), vjust = 2, size = 6) +
     ggplot2::theme_bw() +
     ggplot2::scale_fill_gradient(low = palette[1], high = palette[2]) +
