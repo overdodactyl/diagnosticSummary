@@ -202,9 +202,9 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
   cell_width <- as.data.frame(cell_width)
 
   column_widths <- apply(cell_width, 2, max)
-  column_widths[8] <- 0
-  column_widths[2] <- column_widths[2] + 5
-  column_widths[8] <- max(column_widths)
+  # column_widths[8] <- 0
+  # column_widths[2] <- column_widths[2] + 5
+  # column_widths[8] <- max(column_widths)
 
   column_widths <- column_widths / sum(column_widths)
 
