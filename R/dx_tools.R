@@ -361,14 +361,35 @@ dx_breslow_day <- function(data, options, group_varname) {
       uci_raw = NA
     )
 
-    measure$variable <- group_varname
-    measure$label <- "Overall"
-    measure$threshold <- options$setthreshold
+    # measure$variable <- group_varname
+    # measure$label <- "Overall"
+    # measure$threshold <- options$setthreshold
+    # measure$n <- nrow(tmp)
+
     measure$n <- nrow(tmp)
 
-    return(measure)
+  } else {
+    measure <- dx_measure_df(
+      measure = "Breslow-Day",
+      estimate = NA_real_,
+      fraction = "",
+      ci_type = "",
+      notes = "Test requires the package DescTools",
+      estimate_raw = NA_real_,
+      lci_raw = NA_real_,
+      uci_raw = NA_real_
+    )
+
+    measure$n <- NA_real_
 
   }
+
+  measure$variable <- group_varname
+  measure$label <- "Overall"
+  measure$threshold <- options$setthreshold
+
+
+  return(measure)
 
 
 }
