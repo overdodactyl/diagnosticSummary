@@ -33,53 +33,41 @@ dx_diagnostic_table <- function(dx_obj,
                                 includeOR = TRUE,
                                 includeF1 = TRUE) {
 
-  select_string <- c("threshold")
+  # Define all possible measures and their respective inclusion flags in a named vector
+  includeMeasures <- c(includeAUC, includeAccuracy, includeSensitivity,
+                       includeSpecificity, includePPV, includeNPV,
+                       includeOR, includeF1)
 
-  if (includeAUC) {
-    select_string <- c(select_string, "AUC")
-  }
-  if (includeAccuracy) {
-    select_string <- c(select_string, "Accuracy")
-  }
-  if (includeSensitivity) {
-    select_string <- c(select_string, "Sensitivity")
-  }
-  if (includeSpecificity) {
-    select_string <- c(select_string, "Specificity")
-  }
-  if (includePPV) {
-    select_string <- c(select_string, "Positive Predictive Value")
-  }
-  if (includeNPV) {
-    select_string <- c(select_string, "Negative Predictive Value")
-  }
-  if (includeOR) {
-    select_string <- c(select_string, "Odds Ratio")
-  }
-  if (includeF1) {
-    select_string <- c(select_string, "F1 Score")
-  }
+  measureNames <- c("AUC", "Accuracy", "Sensitivity", "Specificity",
+                    "Positive Predictive Value", "Negative Predictive Value",
+                    "Odds Ratio", "F1 Score")
 
+  # Select the measures that are included
+  selectedMeasures <- measureNames[includeMeasures]
 
-  operatingdata <- dx_obj$measures %>%
-    dplyr::filter(variable == "Overall")
+  # Filter and transform the operating data
+  operatingdata <- dx_obj$measures[dx_obj$measures$variable == "Overall", ]
 
   if (includeFractions) {
-    operatingdata <- operatingdata %>%
-      dplyr::mutate(
-        fraction = dplyr::case_when(
-          nchar(fraction) == 0 ~ fraction,
-          TRUE ~ paste("", fraction, sep = " ")
-        )
-      )
+    operatingdata$fraction <- ifelse(nchar(as.character(operatingdata$fraction)) == 0,
+                                     operatingdata$fraction,
+                                     paste(" ", operatingdata$fraction))
   }
 
-  operatingdata <- operatingdata %>%
-    tidyr::unite("combined_summary", estimate, fraction, na.rm = TRUE, remove = TRUE, sep = "") %>%
-    dplyr::select(threshold, measure, combined_summary) %>%
-    tidyr::spread(key = measure, value = combined_summary) %>%
-    dplyr::select(dplyr::all_of(select_string))
+  # Combine estimate and fraction if needed
+  operatingdata$combined_summary <- paste0(operatingdata$estimate, operatingdata$fraction)
 
-  return(operatingdata)
+  # Select and reshape the data to wide format
+  operatingdata_wide <- reshape(operatingdata,
+                                timevar = "measure",
+                                idvar = "threshold",
+                                direction = "wide")
 
+  # Select the desired columns based on the selected measures
+  cols_to_select <- c("threshold", paste("combined_summary", selectedMeasures, sep = "."))
+  operatingdata_wide <- operatingdata_wide[, cols_to_select, drop = FALSE]
+  names(operatingdata_wide) <- gsub("combined_summary\\.", "", names(operatingdata_wide))
+
+  return(operatingdata_wide)
 }
+
