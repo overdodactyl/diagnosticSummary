@@ -1,5 +1,6 @@
 comma <- function(x) {
-  prettyNum(x, big.mark = ",")
+  y <- prettyNum(x, big.mark = ",")
+  y[y == "NA"] <- ""
 }
 
 conf_int <- function(est, lower, upper, accuracy = .1, percent = FALSE) {
