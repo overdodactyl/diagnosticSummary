@@ -49,14 +49,17 @@ rescale <- function (x, to = c(0, 1), from = range(x, na.rm = TRUE, finite = TRU
 #'     If left NA, no file will be created.
 #' @param header_bg Background color of the header
 #' @param header_col Color of text in the header
+#' @param header_fontsize Font size of header text
 #' @param body_bg Background color of table rows.  If values are less than total
 #'     number of rows, values are repeated.
+#' @param body_fontsize Font size of body text
 #' @param footer_bg Background color if the footer row.
 #' @param footer_col Color of the footer row.
 #' @param body_or_col Color of odds ratios in the table body
 #' @param footer_or_col Color of odds ratios in the table footer
-#' @importFrom gtable gtable_add_grob
-#' @importFrom grid grobTree unit gpar editGrob segmentsGrob pointsGrob textGrob
+#' @param fraction_multiline Logical. Should fractions be split onto 2 lines?
+#' @param or_lwd Line width for OR
+#' @param or_size Size of OR point
 #' @export
 #' @examples
 #'
@@ -83,6 +86,11 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
                       fraction_multiline = FALSE,
                       or_lwd = .8, or_size = .35,
                       body_or_col = "black", footer_or_col = footer_col) {
+
+  check_package("gridExtra")
+  check_package("grid")
+  check_package("gtable")
+
 
   trans <- match.arg(trans)
   return_type <- match.arg(return)
@@ -180,7 +188,7 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
 
   table_theme <- gridExtra::ttheme_minimal(
     core = list(
-      margin = unit(c(1, 1), "mm"),
+      margin = grid::unit(c(1, 1), "mm"),
       bg_params = list(fill = rep(body_bg), col = NA),
       fg_params = list(fontface = 1, fontsize = body_fontsize)
     ),
@@ -212,7 +220,7 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
   # Convert df to grob
   g <- gridExtra::tableGrob(tbl_data,
     theme = table_theme, rows = NULL,
-    widths = unit(c(rep(5, ncols)), c("cm"))
+    widths = grid::unit(c(rep(5, ncols)), c("cm"))
   )
 
   # Add border under header
@@ -244,7 +252,7 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
   # Add dashed line for overall OR
   g <- dx_vline(g,
     x = overall_or, y0 = 0, y1 = 1, t = 2, b = nrows, l = or_col,
-    name = "overall_or", gp = gpar(lwd = .8, lty = 2)
+    name = "overall_or", gp = grid::gpar(lwd = .8, lty = 2)
   )
 
   # Add OR's
@@ -266,37 +274,37 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
 
   # Bold bottom row
   g <- dx_edit_cell(g, nrow(g) - 1, seq_len(ncol(g)), "core-fg",
-    gp = gpar(fontface = "bold")
+    gp = grid::gpar(fontface = "bold")
   )
 
   # Bold levels
   g <- dx_edit_cell(g, bold_rows + 1, 1, "core-fg",
-    gp = gpar(fontface = "bold")
+    gp = grid::gpar(fontface = "bold")
   )
 
   # Left align first column
   g <- dx_edit_cell(g, seq_len(nrow(g)), 1, "core-fg",
-    x = unit(.05, "npc"), hjust = 0
+    x = grid::unit(.05, "npc"), hjust = 0
   )
   g <- dx_edit_cell(g, seq_len(nrow(g)), 1, "colhead-fg",
-    x = unit(.05, "npc"), hjust = 0
+    x = grid::unit(.05, "npc"), hjust = 0
   )
 
   # Darken total row
   g <- dx_edit_cell(
     g, nrow(g) - 1, seq_len(ncol(g)), "core-bg",
-    gp = gpar(fill = footer_bg)
+    gp = grid::gpar(fill = footer_bg)
   )
 
   # Color total row
   g <- dx_edit_cell(
     g, nrow(g) - 1, seq_len(ncol(g)), "core-fg",
-    gp = gpar(col = footer_col)
+    gp = grid::gpar(col = footer_col)
   )
 
   # Last row should be white (ticks and lables)
   g <- dx_edit_cell(g, nrow(g), seq_len(ncol(g)), "core-bg",
-    gp = gpar(fill = "#ffffff")
+    gp = grid::gpar(fill = "#ffffff")
   )
 
   if (all(c("Odds Ratio", "Breslow-Day") %in% measures)) {
@@ -305,20 +313,20 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
 
     g <- dx_edit_cell(
       g, bold_rows + 1, col, "core-fg",
-      gp = gpar(fontface = "italic")
+      gp = grid::gpar(fontface = "italic")
     )
   }
 
 
   # Adjust width of plot - some fine tunining here in the future woud be nice
-  # g$widths <- unit(rep(1 / ncol(g), ncol(g)), "npc")
-  g$widths <- unit(column_widths, "npc")
+  # g$widths <- grid::unit(rep(1 / ncol(g), ncol(g)), "npc")
+  g$widths <- grid::unit(column_widths, "npc")
   # g$heights <- max(g$heights)
 
   row_height <- ifelse(fraction & fraction_multiline, 1.2, 1)
 
   g$heights <- rep(
-    unit(0.05*row_height, "npc"),
+    grid::unit(0.05*row_height, "npc"),
     length(g$heights)
   )
 
@@ -349,14 +357,14 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
 
 
 dx_hline <- function(table, y, x0, x1, t, b = t, l, r = l, name,
-                     gp = gpar(lwd = .8), clip = "off") {
-  gtable_add_grob(table,
-    grobs = grobTree(
-      segmentsGrob(
-        x0 = unit(x0, "npc"),
-        y0 = unit(y, "npc"),
-        x1 = unit(x1, "npc"),
-        y1 = unit(y, "npc"),
+                     gp = grid::gpar(lwd = .8), clip = "off") {
+  gtable::gtable_add_grob(table,
+    grobs = grid::grobTree(
+      grid::segmentsGrob(
+        x0 = grid::unit(x0, "npc"),
+        y0 = grid::unit(y, "npc"),
+        x1 = grid::unit(x1, "npc"),
+        y1 = grid::unit(y, "npc"),
         gp = gp
       )
     ),
@@ -368,14 +376,14 @@ dx_hline <- function(table, y, x0, x1, t, b = t, l, r = l, name,
 }
 
 dx_vline <- function(table, x, y0, y1, t, b = t, l, r = l, name,
-                     gp = gpar(lwd = .8, col = "black"), clip = "off") {
-  gtable_add_grob(table,
-    grobs = grobTree(
-      segmentsGrob(
-        x0 = unit(x, "npc"),
-        y0 = unit(y0, "npc"),
-        x1 = unit(x, "npc"),
-        y1 = unit(y1, "npc"),
+                     gp = grid::gpar(lwd = .8, col = "black"), clip = "off") {
+  gtable::gtable_add_grob(table,
+    grobs = grid::grobTree(
+      grid::segmentsGrob(
+        x0 = grid::unit(x, "npc"),
+        y0 = grid::unit(y0, "npc"),
+        x1 = grid::unit(x, "npc"),
+        y1 = grid::unit(y1, "npc"),
         gp = gp
       )
     ),
@@ -394,13 +402,13 @@ dx_vline <- function(table, x, y0, y1, t, b = t, l, r = l, name,
 #' @param row Numeric vector of rows to edit
 #' @param col Numeric vector of columns to edit
 #' @param name Name of table layer to edit
-#' @param ... Parameters passed to editGrob such as gpar or hjust.
+#' @param ... Parameters passed to grid::editGrob such as grid::gpar or hjust.
 #' @export
 dx_edit_cell <- function(table, row, col, name = "core-fg", ...) {
   l <- table$layout
   ids <- which(l$t %in% row & l$l %in% col & l$name == name)
   for (id in ids) {
-    newgrob <- editGrob(table$grobs[id][[1]], ...)
+    newgrob <- grid::editGrob(table$grobs[id][[1]], ...)
     table$grobs[id][[1]] <- newgrob
   }
   table
@@ -413,29 +421,29 @@ dx_forest_add_or <- function(grob, row, low, est, high,
   i <- sample(1:100000, 1)
 
   tmp <- dx_hline(
-    grob, gp = gpar(lwd = lwd, col = col),
+    grob, gp = grid::gpar(lwd = lwd, col = col),
     y = .5, x0 = low, x1 = high, t = row, l = or_col,
     name = paste0("or", i), clip = "on"
   )
   tmp <- dx_vline(
-    tmp, gp = gpar(lwd = lwd, col = col),
+    tmp, gp = grid::gpar(lwd = lwd, col = col),
     x = low, y0 = .35, y1 = .65, t = row, l = or_col,
     name = paste0("left_or_cap_", i), clip = "on"
   )
   tmp <- dx_vline(
-    tmp, gp = gpar(lwd = lwd, col = col),
+    tmp, gp = grid::gpar(lwd = lwd, col = col),
     x = high, y0 = .35, y1 = .65, t = row, l = or_col,
     name = paste0("right_or_cap_", i), clip = "on"
   )
 
-  gtable_add_grob(tmp,
-    grobs = grobTree(
-      pointsGrob(
+  gtable::gtable_add_grob(tmp,
+    grobs = grid::grobTree(
+      grid::pointsGrob(
         x = est,
         y = .5,
         pch = 16,
-        gp = gpar(col = col),
-        size = unit(size, "char")
+        gp = grid::gpar(col = col),
+        size = grid::unit(size, "char")
       )
     ),
     t = row, l = or_col, name = "point1", z = Inf
@@ -450,13 +458,13 @@ dx_forest_add_tick <- function(grob, tick_scaled, tick, nrows,
     l = or_col, name = paste0("tick_", tick)
   )
 
-  gtable_add_grob(tmp,
-    grobs = grobTree(
-      textGrob(
+  gtable::gtable_add_grob(tmp,
+    grobs = grid::grobTree(
+      grid::textGrob(
         label = tick,
         x = tick_scaled,
         y = .5,
-        gp = gpar(fontsize = tick_label_size)
+        gp = grid::gpar(fontsize = tick_label_size)
       )
     ),
     t = nrows + 1, l = or_col, name = paste0("tick_label_", tick),

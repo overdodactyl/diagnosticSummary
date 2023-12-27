@@ -37,7 +37,7 @@ dx_diagnostic_table <- function(dx_obj, measures = c("AUC", "Accuracy", "Sensiti
 
 
   # Select and reshape the data to wide format
-  operatingdata_wide <- reshape(operatingdata,
+  operatingdata_wide <- stats::reshape(operatingdata,
                                 timevar = "measure",
                                 idvar = "threshold",
                                 direction = "wide")

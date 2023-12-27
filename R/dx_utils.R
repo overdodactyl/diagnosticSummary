@@ -2,9 +2,10 @@
 #' @param object An object of class "dx"
 #' @param thresh The threshold to return values from
 #' @param variable Variable to include in returned values
-#' @param level Level to include in returned values
+#' @param label Labels to include in returned values
 #' @param show_var Include variable column in returned data?
 #' @param show_label Include label in returned data?
+#' @param measure Measures to include
 #' @param ... additional arguments to be passed to or from methods
 #' @export
 summary.dx <- function(object, thresh = object$options$setthreshold,
@@ -52,7 +53,8 @@ summary.dx <- function(object, thresh = object$options$setthreshold,
 #' @param optional logical. If TRUE, setting row names and converting column
 #'     names (to syntactic names: see make.names) is optional.
 #' @param variable Variable to include in returned values
-#' @param level Level to include in returned values
+#' @param label Labels to include in returned values
+#' @param measure Measures to include
 #' @param ... additional arguments to be passed to or from methods
 #' @export
 as.data.frame.dx <- function(x, row.names = NULL, optional = TRUE, thresh = NA,

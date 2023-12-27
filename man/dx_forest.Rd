@@ -65,6 +65,16 @@ number of rows, values are repeated.}
 
 \item{footer_col}{Color of the footer row.}
 
+\item{header_fontsize}{Font size of header text}
+
+\item{body_fontsize}{Font size of body text}
+
+\item{fraction_multiline}{Logical. Should fractions be split onto 2 lines?}
+
+\item{or_lwd}{Line width for OR}
+
+\item{or_size}{Size of OR point}
+
 \item{body_or_col}{Color of odds ratios in the table body}
 
 \item{footer_or_col}{Color of odds ratios in the table footer}

@@ -6,37 +6,17 @@
 \usage{
 dx_diagnostic_table(
   dx_obj,
-  includeFractions = TRUE,
-  includeAUC = TRUE,
-  includeAccuracy = TRUE,
-  includeSensitivity = TRUE,
-  includeSpecificity = TRUE,
-  includePPV = TRUE,
-  includeNPV = TRUE,
-  includeOR = TRUE,
-  includeF1 = TRUE
+  measures = c("AUC", "Accuracy", "Sensitivity", "Specificity",
+    "Positive Predictive Value", "Negative Predictive Value", "Odds Ratio", "F1 Score"),
+  fraction = TRUE
 )
 }
 \arguments{
 \item{dx_obj}{An object of class dx}
 
-\item{includeFractions}{Logical for inclusion of the fractions appended to the estimates and CIs}
+\item{measures}{Vector of diagnostic measures to include}
 
-\item{includeAUC}{Logical to include AUC in data frame}
-
-\item{includeAccuracy}{Logical to include Accuracy in data frame}
-
-\item{includeSensitivity}{Logical to include sensitivity in data frame}
-
-\item{includeSpecificity}{Logical to include Specificity in data frame}
-
-\item{includePPV}{Logical to include Positive predictive value in data frame}
-
-\item{includeNPV}{Logical to include Negative predictive value in data frame}
-
-\item{includeOR}{Logical to include Odds Ratio in data frame}
-
-\item{includeF1}{Logical to include F1 in data frame}
+\item{fraction}{Logical. Should fractions be included for measures (where applicable)?}
 }
 \description{
 Generate a dataframe of diagnostic performance over the range of thresholds specified in the main dx function call.
@@ -51,5 +31,5 @@ dx_obj <- dx(
   setthreshold = .3,
   grouping_variables = c("AgeGroup", "Sex", "AgeSex")
 )
-dx_diagnostic_table(dx_obj, includeOR = FALSE, includeF1 = FALSE)
+dx_diagnostic_table(dx_obj)
 }

@@ -8,9 +8,10 @@
   object,
   thresh = object$options$setthreshold,
   variable = NA,
-  level = NA,
+  label = NA,
   show_var = T,
   show_label = T,
+  measure = NA,
   ...
 )
 }
@@ -21,11 +22,13 @@
 
 \item{variable}{Variable to include in returned values}
 
-\item{level}{Level to include in returned values}
+\item{label}{Labels to include in returned values}
 
 \item{show_var}{Include variable column in returned data?}
 
 \item{show_label}{Include label in returned data?}
+
+\item{measure}{Measures to include}
 
 \item{...}{additional arguments to be passed to or from methods}
 }

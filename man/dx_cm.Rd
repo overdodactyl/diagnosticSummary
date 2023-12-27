@@ -11,7 +11,7 @@ dx_cm(dx_obj, palette = c("#e5eef7", "#0057B8"), levels = c("-", "+"))
 
 \item{palette}{A character vector of length 2.  Colors for low and high ends of the fill gradient}
 
-\item{levels}{A character vector of length 2.  x an y labels for +/- classes}
+\item{levels}{A character vector of length 2.  x an y labels for -/+ classes}
 }
 \description{
 Plot ROC curve for a dx object

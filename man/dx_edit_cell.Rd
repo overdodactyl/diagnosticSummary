@@ -15,7 +15,7 @@ dx_edit_cell(table, row, col, name = "core-fg", ...)
 
 \item{name}{Name of table layer to edit}
 
-\item{...}{Parameters passed to editGrob such as gpar or hjust.}
+\item{...}{Parameters passed to grid::editGrob such as grid::gpar or hjust.}
 }
 \description{
 A convenient wrapper used to edit cells of a gtable.

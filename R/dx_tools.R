@@ -3,6 +3,21 @@ comma <- function(x) {
   y[y == "NA"] <- ""
 }
 
+format_pvalue <- function(p, accuracy = 0.01) {
+  # Define the smallest non-zero number representable with the given accuracy
+  smallest_nonzero <- accuracy
+
+  if (p < smallest_nonzero) {
+    # Construct the smallest non-zero representation based on accuracy
+    smallest_nonzero_str <- formatC(accuracy, format = "f", digits = -log10(accuracy))
+    return(paste0("p<", smallest_nonzero_str))
+  } else {
+    # Round and format the p-value
+    rounded_p <- round(p, -log10(accuracy))
+    return(paste("p=", formatC(rounded_p, format = "f", digits = -log10(accuracy)), sep = ""))
+  }
+}
+
 conf_int <- function(est, lower, upper, accuracy = .1, percent = FALSE) {
   format_num <- function(num) {
     if (percent) {
@@ -323,7 +338,7 @@ dx_lrtpos <- createRatioFunction(calc_lr_pos, calc_sd_lrtpos, "LRT+")
 
 check_package <- function(pkg) {
   if (!requireNamespace(pkg, quietly = TRUE))  {
-      cli::cli_abort("{.pkg {pkg}} must be must be installed to use {.code mayodb::{func}}.")
+    stop(paste0(pkg, " must be must be installed to use this function"))
   }
 }
 
@@ -353,7 +368,7 @@ dx_breslow_day <- function(data, options, group_varname) {
 
     measure <- dx_measure_df(
       measure = "Breslow-Day",
-      estimate = scales::pvalue(bd$p.value, accuracy = 0.01, add_p = TRUE),
+      estimate = format_pvalue(bd$p.value, accuracy = 0.01),
       fraction = "",
       ci_type = "",
       notes = "Mantel-Haenszel OR estimate",
