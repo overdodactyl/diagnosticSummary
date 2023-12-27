@@ -1,3 +1,32 @@
+zero_range <- function (x, tol = 1000 * .Machine$double.eps) {
+  if (length(x) == 1) {
+    return(TRUE)
+  }
+  if (length(x) != 2)
+    stop("x must be length 1 or 2")
+  if (any(is.na(x))) {
+    return(NA)
+  }
+  if (x[1] == x[2]) {
+    return(TRUE)
+  }
+  if (all(is.infinite(x))) {
+    return(FALSE)
+  }
+  m <- min(abs(x))
+  if (m == 0) {
+    return(FALSE)
+  }
+  abs((x[1] - x[2])/m) < tol
+}
+
+rescale <- function (x, to = c(0, 1), from = range(x, na.rm = TRUE, finite = TRUE), ...) {
+  if (zero_range(from) || zero_range(to)) {
+    return(ifelse(is.na(x), NA, mean(to)))
+  }
+  (x - from[1])/diff(from) * diff(to) + to[1]
+}
+
 #' Create table with odds ratios displayed graphically
 #'
 #' Generate a table of diagnostic measures
@@ -71,9 +100,8 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
   bold_rows <- setdiff(1:(nrow(data)), indent_rows)
   indent_rows <- indent_rows[indent_rows != nrow(data)]
 
-  overall_or <- data %>%
-    dplyr::filter(group == "Overall") %>%
-    dplyr::pull(rawestime)
+  overall_or <- data[data$group == "Overall", ]$rawestime
+
 
   lower <- data$rawlci
   estimate <- data$rawestime
@@ -101,32 +129,51 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
   }
 
   # Rescale data between 0 and 1
-  breaks_scaled <- scales::rescale(breaks)
-  lower <- scales::rescale(lower, from = range)
-  estimate <- scales::rescale(estimate, from = range)
-  upper <- scales::rescale(upper, from = range)
-  overall_or <- scales::rescale(overall_or, from = range)
+  breaks_scaled <- rescale(breaks)
+  lower <- rescale(lower, from = range)
+  estimate <- rescale(estimate, from = range)
+  upper <- rescale(upper, from = range)
+  overall_or <- rescale(overall_or, from = range)
 
 
   select_measuers <- measures[!measures %in% c("Breslow-Day")]
 
-  tbl_data <- data %>%
-    dplyr::mutate(` ` = "                                          ") %>%
-    dplyr::mutate(n = scales::comma(n, 1)) %>%
-    dplyr::select(group, N = n, dplyr::one_of(select_measuers), ` `) %>%
-    dplyr::relocate(` `, .before = `Odds Ratio`)
-    # dplyr::select(group, N = n, AUC, Sensitivity, Specificity, ` `, `Odds Ratio`)
+  # Create a new column with spaces
+  data$` ` <- "                                          "
 
-  tbl_data <- tbl_data %>% dplyr::add_row()
+  # Format the 'n' column
+  data$n <- comma(data$n)
+
+  # Select and rename the necessary columns. Ensure 'select_measures' is a character vector of column names
+  cols_to_select <- c("group", "N", select_measuers, " ")
+  names(data)[names(data) == "n"] <- "N"
+  tbl_data <- data[cols_to_select]
+
+  # Order the columns, moving the space column before 'Odds Ratio'
+  # Assuming 'Odds Ratio' is one of the 'select_measures'
+  odds_ratio_index <- which(names(tbl_data) == "Odds Ratio")
+  space_index <- which(names(tbl_data) == " ")
+  tbl_data[c("group", "N", select_measuers, " ")]
+
+
+  order <- append(names(tbl_data), " ", after = odds_ratio_index-1)
+  order <- order[1:length(order)-1]
+
+  tbl_data <- tbl_data[order]
+  rownames(tbl_data) <- NULL
+
+  tbl_data <- rbind_all(tbl_data, NA)
 
   tbl_data[is.na(tbl_data)] <- ""
 
-  tbl_data <- tbl_data %>%
-    dplyr::mutate(group = ifelse(dplyr::row_number() %in% indent_rows,
-      paste("   ", group), group
-    ))
+  # Create a sequence of row numbers
+  row_nums <- seq_len(nrow(tbl_data))
 
-  tbl_data <- dplyr::rename(tbl_data, Group = "group")
+  # Use ifelse to conditionally prepend spaces to the 'group' column
+  tbl_data$group <- ifelse(row_nums %in% indent_rows, paste("   ", tbl_data$group), tbl_data$group)
+
+  names(tbl_data)[names(tbl_data) == "group"] <- "Group"
+
 
   names(tbl_data) <- gsub("Positive Predictive Value", "PPV", names(tbl_data))
   names(tbl_data) <- gsub("Negative Predictive Value", "NPV", names(tbl_data))
@@ -147,9 +194,13 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
   nrows <- nrow(tbl_data)
   ncols <- ncol(tbl_data)
 
+  # Copy tbl_data to a new variable and apply gsub to retain only the second line
+  cell_width <- lapply(tbl_data, function(x) gsub("(.*)\n(.*)", "\\2", x))
+  # Calculate the number of characters in each cell
+  cell_width <- lapply(cell_width, nchar)
+  # Convert the list back to a data frame
+  cell_width <- as.data.frame(cell_width)
 
-  cell_width <- dplyr::mutate_all(tbl_data, ~gsub("(.*)\n(.*)", "\\2", .))
-  cell_width <- dplyr::mutate_all(cell_width, nchar)
   column_widths <- apply(cell_width, 2, max)
   column_widths[8] <- 0
   column_widths[2] <- column_widths[2] + 5
@@ -421,19 +472,13 @@ dx_prep_variable <- function(dx_obj, data,
 
   var <- data$variable[[1]]
   orig_var <- data$original_variable[[1]]
-  tmp <- data %>% dplyr::filter(measure %in% measures)
-
+  tmp <- data[data$measure %in% measures, ]
 
   # Breslow-Day test will be added separately
-  bd_test <- dplyr::filter(tmp, measure == "Breslow-Day")
-  tmp <- dplyr::filter(tmp, measure != "Breslow-Day")
+  bd_test <- tmp[tmp$measure == "Breslow-Day", ]
 
-
-  # if (fraction) {
-  #   tmp$estimate <- ifelse(tmp$fraction == "", tmp$estimate,
-  #     paste0(tmp$estimate, " (", tmp$fraction, ")")
-  #   )
-  # }
+  # Subset for rows where measure is not "Breslow-Day"
+  tmp <- tmp[tmp$measure != "Breslow-Day", ]
 
   if (fraction) {
     if (fraction_multiline) {
@@ -451,35 +496,60 @@ dx_prep_variable <- function(dx_obj, data,
     }
   }
 
-  if (fraction) {
+  # Selecting and renaming specific columns
+  res_sel <- tmp[c("label", "measure", "estimate")]
+  names(res_sel)[names(res_sel) == "label"] <- "group"
 
-  }
 
-  res_sel <- tmp %>% dplyr::select(group = label, measure, estimate)
-  rawdata <- tmp %>%
-    dplyr::filter(measure == "Odds Ratio") %>%
-    dplyr::select(group = label, n, dplyr::starts_with("raw")) %>%
-    dplyr::filter(!is.na(rawestime))
+  # Filter for rows where measure is "Odds Ratio"
+  filtered_data <- tmp[tmp$measure == "Odds Ratio", ]
+
+  # Select and rename columns: 'label' to 'group', include 'n', and all columns starting with 'raw'
+  cols_to_select <- c("label", "n", grep("^raw", names(filtered_data), value = TRUE))
+  rawdata <- filtered_data[cols_to_select]
+  names(rawdata)[names(rawdata) == "label"] <- "group"
+
+  # Filter out rows where 'rawestime' is NA
+  rawdata <- rawdata[!is.na(rawdata$rawestime), ]
+
   res <- utils::unstack(res_sel, form = estimate ~ measure)
   names(res) <- gsub("\\.", " ", names(res))
   if (var == "Overall") res <- as.data.frame(t(res))
   res$group <- unique(res_sel$group)
-  res <- dplyr::left_join(res, rawdata, by = "group")
+  res <- merge(res, rawdata, by = "group", all.x = TRUE)
   if (var != "Overall") {
     res$group <- factor(res$group, levels = levels(dx_obj$data[[orig_var]]))
-    res <- dplyr::arrange(res, group)
+    res <- res[order(res$group), ]
     res$group <- as.character(res$group)
     empty_df <- data.frame(group = var, stringsAsFactors = FALSE)
-    res <- dplyr::bind_rows(empty_df, res)
+    res <- rbind_all(empty_df, res)
 
     if (nrow(bd_test) == 1) {
       res$`Odds Ratio`[res$group == var] <- bd_test$estimate
     }
 
   }
-  res %>%
-    dplyr::mutate_if(is.factor, as.character) %>%
-    dplyr::as_tibble()
+
+  res[] <- lapply(res, function(x) if(is.factor(x)) as.character(x) else x)
+
+  res
+
+}
+
+rbind_all <- function(df1, df2) {
+  df1[setdiff(names(df2), names(df1))] <- NA
+  df2[setdiff(names(df1), names(df2))] <- NA
+  rbind(df1, df2)
+  # # Step 1: Identify all unique column names
+  # all_cols <- union(names(x), names(y))
+  #
+  # # Step 2: Align columns by ensuring both data frames have all columns
+  # # This fills in any missing columns with NA
+  # empty_df_aligned <- setNames(lapply(all_cols, function(cn) x[[cn]]), all_cols)
+  # res_aligned <- setNames(lapply(all_cols, function(cn) y[[cn]]), all_cols)
+  #
+  # # Step 3: Bind the rows together
+  # rbind(empty_df_aligned, res_aligned)
 }
 
 label_df <- function(data) {
@@ -493,23 +563,21 @@ label_df <- function(data) {
 }
 
 dx_prep_forest <- function(dx_obj, fraction = fraction, fraction_multiline, measures) {
-  tmp <- dx_obj$measures %>%
-    dplyr::filter(threshold == dx_obj$options$setthreshold)
+
+  tmp <- dx_obj$measures[dx_obj$measures$threshold == dx_obj$options$setthreshold, ]
+
 
   labs <- label_df(data = dx_obj$data)
 
-  tmp <- dplyr::left_join(tmp, labs, by = "variable")
+  tmp <- merge(tmp, labs, by = "variable", all.x = TRUE)
 
-  tmp <- dplyr::mutate(tmp,
-    original_variable = variable,
-    variable = dplyr::coalesce(variable_label, variable)
-  )
+  # Copying the original 'variable' column to a new 'original_variable' column
+  tmp$original_variable <- tmp$variable
 
-  tmp_split <- tmp %>%
-    dplyr::group_by(variable) %>%
-    dplyr::group_split() %>%
-    as.list()
+  # Updating 'variable' column with 'variable_label' where it's not NA, otherwise keep 'variable'
+  tmp$variable <- ifelse(is.na(tmp$variable_label), tmp$variable, tmp$variable_label)
 
+  tmp_split <- split(tmp, tmp$variable)
 
   # Vector to store the current order of our split list
   # Alphabetical by label/variable
