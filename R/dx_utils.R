@@ -8,8 +8,8 @@
 #' @param ... additional arguments to be passed to or from methods
 #' @export
 summary.dx <- function(object, thresh = object$options$setthreshold,
-                       variable = NA, level = NA, show_var = T,
-                       show_label = T, ...) {
+                       variable = NA, label = NA, show_var = T,
+                       show_label = T, measure = NA, ...) {
   if (is.na(thresh) | length(thresh) > 1) {
     stop("Must pass a numeric value to thresh")
   }
@@ -17,15 +17,31 @@ summary.dx <- function(object, thresh = object$options$setthreshold,
   tmp <- as.data.frame(object,
     thresh = thresh,
     variable = variable,
-    level = level
+    label = label,
+    measure = measure
   )
 
-  tmp <- dplyr::select(tmp, -rawestime, -rawlci, -rawuci)
-  tmp <- dplyr::rename(tmp, `CI Type` = ci_type)
+  rownames(tmp) <- NULL
+
+  # Dropping columns 'rawestime', 'rawlci', 'rawuci'
+  tmp <- tmp[, !names(tmp) %in% c('rawestime', 'rawlci', 'rawuci', 'ci_type', 'notes', 'n')]
+
   if (!show_var) tmp <- subset(tmp, select = -c(variable))
   if (!show_label) tmp <- subset(tmp, select = -c(label))
+
+  caption <- paste0("N=", comma(tmp$n[1]), "; ", "Threshold=", thresh)
+
   tmp <- subset(tmp, select = -c(threshold))
-  knitr::kable(tmp, caption = paste0("Threshold: ", thresh))
+  rownames(tmp) <- NULL
+  if (requireNamespace("knitr", quietly = TRUE))  {
+    knitr::kable(tmp, caption = caption, row.names = F)
+  } else {
+    print(caption)
+    print(tmp)
+  }
+
+
+
 }
 
 #' Convert to a data frame
@@ -40,18 +56,22 @@ summary.dx <- function(object, thresh = object$options$setthreshold,
 #' @param ... additional arguments to be passed to or from methods
 #' @export
 as.data.frame.dx <- function(x, row.names = NULL, optional = TRUE, thresh = NA,
-                             variable = NA, level = NA, ...) {
+                             variable = NA, label = NA, measure = NA, ...) {
 
   tmp <- x$measures
-  filter_var <- variable
+
   if (!is.na(thresh)) {
-    tmp <- dplyr::filter(tmp, threshold %in% thresh)
+    tmp <- tmp[tmp$threshold %in% thresh, ]
   }
   if (!is.na(variable)) {
-    tmp <- dplyr::filter(tmp, variable %in% filter_var)
+    tmp <- tmp[tmp$variable %in% variable, ]
   }
-  if (!is.na(level)) {
-    tmp <- dplyr::filter(tmp, level %in% level)
+  if (!is.na(label)) {
+    tmp <- tmp[tmp$label %in% label, ]
   }
+  if (!is.na(measure)) {
+    tmp <- tmp[tmp$measure %in% measure, ]
+  }
+
   tmp
 }
