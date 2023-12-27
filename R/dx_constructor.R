@@ -127,6 +127,10 @@ dx <- function(data,
     threshold_measures <- rbind(subgroups, threshold_measures)
   }
 
+  ####### Threshold Analysis
+  threshold_analysis <- dx_thresholds(data, options)
+
+
   # Number of unique levels
   n_levels <- length(unique(threshold_measures$Label))
 
@@ -135,6 +139,7 @@ dx <- function(data,
 
   structure(list(
     data = data, options = options, measures = threshold_measures,
+    thresholds = threshold_analysis,
     n_levels = n_levels, roc = roc
   ), class = "dx")
 }

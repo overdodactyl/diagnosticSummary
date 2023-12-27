@@ -1,6 +1,7 @@
 comma <- function(x) {
   y <- prettyNum(x, big.mark = ",")
   y[y == "NA"] <- ""
+  return(y)
 }
 
 format_pvalue <- function(p, accuracy = 0.01) {
@@ -178,6 +179,17 @@ createRatioFunction <- function(calc_func, calc_sd_func, measure_name) {
   }
 }
 
+calc_fnr <- function(fn, dispos) {
+  fn / dispos
+}
+
+calc_fpr <- function(fp, disneg) {
+  fp / disneg
+}
+
+calc_fdr <- function(fp, testpos) {
+  fp / testpos
+}
 
 calc_sensitivity <- function(tp, dispos) {
   tp / dispos
@@ -236,6 +248,57 @@ calc_recall <- function(tp, fn) {
   tp / (tp + fn)
 }
 
+#' Calculate Area Under the Precision-Recall Curve (AUC-PR)
+#'
+#' This function calculates the Area Under the Curve (AUC) for the Precision-Recall curve
+#' using the trapezoidal rule. It ensures proper alignment of precision and recall values
+#' by adding a starting point at recall=0 with the first observed precision and an ending
+#' point at recall=1 with the last observed precision.
+#'
+#' @param precision Numeric vector of precision values corresponding to different thresholds.
+#' @param recall Numeric vector of recall values corresponding to different thresholds.
+#' @return Numeric AUC of the precision-recall curve.
+#' @details The function prepares the precision and recall vectors by ensuring they are ordered
+#'          by increasing recall values. It then calculates the AUC using the trapezoidal rule,
+#'          which is the sum of areas of trapezoids formed between each consecutive pair of points.
+#'          The first and last points are added to cover the entire recall range from 0 to 1.
+#' @examples
+#' # Assuming pr_data is your dataframe with precision and recall columns
+#' auc_pr <- calc_auc_pr(pr_data$precision, pr_data$recall)
+#' print(auc_pr)
+calc_auc_pr <- function(precision, recall) {
+  # Remove any NA values that could cause issues in the calculation
+  valid_indices <- !is.na(precision) & !is.na(recall)
+  precision <- precision[valid_indices]
+  recall <- recall[valid_indices]
+
+  # Ensure the vectors are ordered by recall
+  ord <- order(recall, decreasing = FALSE)
+  precision <- precision[ord]
+  recall <- recall[ord]
+
+  # Add a starting point for recall at 0 with the first precision
+  recall <- c(0, recall)
+  precision <- c(precision[1], precision)
+
+  # Add an ending point for recall at 1 with the last precision
+  recall <- c(recall, 1)
+  precision <- c(precision, precision[length(precision)])
+
+  # Calculate differences in recall (x-axis)
+  delta_recall <- diff(recall)
+
+  # Calculate the average precision for each segment (y-axis)
+  avg_precision <- (precision[-length(precision)] + precision[-1]) / 2
+
+  # Calculate the area under the curve (AUC)
+  auc <- sum(delta_recall * avg_precision)
+
+  return(auc)
+}
+
+
+
 calc_f1 <- function(tp, fp, fn) {
   # Calculate precision and recall directly within the function
   precision <- if(tp + fp == 0) 0 else tp / (tp + fp)
@@ -267,6 +330,16 @@ dx_auc <- function(truth, predprob) {
     estimate_raw = auc_raw,
     lci_raw = auc_lci,
     uci_raw = auc_uci
+  )
+}
+
+dx_pr_auc <- function(data, options) {
+  threshold_analysis <- dx_thresholds(data, options)
+  pr_auc <- calc_auc_pr(threshold_analysis$precision, threshold_analysis$sensitivity)
+  dx_measure_df(
+    measure = "PR AUC",
+    estimate = as.character(round(pr_auc, 2)),
+    estimate_raw = pr_auc,
   )
 }
 
@@ -328,6 +401,9 @@ dx_ppv <- createDiagnosticFunction(calc_ppv, "Positive Predictive Value")
 dx_npv <- createDiagnosticFunction(calc_npv, "Negative Predictive Value")
 dx_accuracy <- createDiagnosticFunction(calc_accuracy, "Accuracy")
 dx_prevalence <- createDiagnosticFunction(calc_prevalence, "Prevalence")
+dx_fnr <- createDiagnosticFunction(calc_fnr, "False Negative Rate")
+dx_fpr <- createDiagnosticFunction(calc_fpr, "False Positive Rate")
+dx_fdr <- createDiagnosticFunction(calc_fdr, "False Discovery Rate")
 
 dx_recall <- calc_recall
 dx_precision <- calc_precision
