@@ -53,31 +53,22 @@ dx_roc <- function(dx_obj, curve_color = "#0057B8", fill_color = "#cfcdcb",
                    summary_stats = c(1, 2, 3, 4, 5, 6, 7, 8), filename = NA) {
 
 
+  measures <- as.data.frame(dx_obj, variable = "Overall", thresh = dx_obj$options$setthreshold)
 
-  sensdf <- dx_obj$data %>%
-    dplyr::filter(!!as.name(dx_obj$options$true_varname) == 1) %>%
-    dplyr::summarize(sens = mean(
-      ifelse(!!as.name(dx_obj$options$pred_varname) <=
-               dx_obj$options$setthreshold, 0, 1)
-    )) %>%
-    as.vector()
+  sensdf <- measures[measures$measure == "Sensitivity", ]$rawestime
 
-  specdf <- dx_obj$data %>%
-    dplyr::filter(!!as.name(dx_obj$options$true_varname) == 0) %>%
-    dplyr::summarize(spec = 1 - mean(
-      ifelse(!!as.name(dx_obj$options$pred_varname) <=
-               dx_obj$options$setthreshold, 0, 1)
-    )) %>%
-    as.vector()
+  specdf <- measures[measures$measure == "Specificity", ]$rawestime
 
   auc_df <- pROC::coords(dx_obj$roc, "all", transpose = FALSE)
   auc_df <- auc_df[rev(seq(nrow(auc_df))),]
+
+  auc_df$lead_specificity <- c(auc_df$specificity[-1], NA)
 
   p <- ggplot2::ggplot(auc_df) +
     ggplot2::geom_rect(
       ggplot2::aes(
         xmin = specificity,
-        xmax = dplyr::lead(specificity),
+        xmax = lead_specificity,
         ymin = 0,
         ymax = sensitivity
       ),
@@ -89,17 +80,17 @@ dx_roc <- function(dx_obj, curve_color = "#0057B8", fill_color = "#cfcdcb",
     ggplot2::geom_line(
       ggplot2::aes(specificity, sensitivity),
       color = curve_color,
-      size = 1
+      linewidth = 1
     ) +
     ggplot2::scale_x_reverse() +
     ggplot2::geom_hline(
       yintercept = 0,
-      size = 1,
+      linewidth = 1,
       colour = axis_color
     ) +
     ggplot2::geom_vline(
       xintercept = 1.05,
-      size = 1,
+      linewidth = 1,
       colour = axis_color
     )
 
@@ -114,14 +105,14 @@ dx_roc <- function(dx_obj, curve_color = "#0057B8", fill_color = "#cfcdcb",
       ) +
       # horizontal line
       ggplot2::geom_segment(
-        ggplot2::aes(x = 0, xend = 1.05, y = sensdf[[1]], yend = sensdf[[1]]),
+        ggplot2::aes(x = 0, xend = 1.05, y = sensdf, yend = sensdf),
         size = .2,
         linetype = "dashed",
         color = ref_lines_color
       ) +
       # vertical line
       ggplot2::geom_segment(
-        ggplot2::aes(x = specdf[[1]], xend = specdf[[1]], y = 0, yend = 1.05),
+        ggplot2::aes(x = specdf, xend = specdf, y = 0, yend = 1.05),
         size = .2,
         linetype = "dashed",
         color = ref_lines_color
@@ -131,7 +122,7 @@ dx_roc <- function(dx_obj, curve_color = "#0057B8", fill_color = "#cfcdcb",
   if (add_ref_circle) {
     p <- p +
       ggplot2::geom_point(
-        mapping = ggplot2::aes(x = specdf[[1]], y = sensdf[[1]]),
+        mapping = ggplot2::aes(x = specdf, y = sensdf),
         fill = NA,
         size = 6,
         shape = 1,
@@ -168,17 +159,18 @@ dx_roc <- function(dx_obj, curve_color = "#0057B8", fill_color = "#cfcdcb",
         select = -c(variable, label)
       )
 
-    diagsummary_resultsdf <- diagsummary_resultsdf %>%
-      dplyr::filter(dplyr::row_number() %in% summary_stats) %>%
-      dplyr::mutate(
-        numden = dplyr::case_when(
-          !add_fractions ~ "",
-          nchar(fraction) == 0 ~ "",
-          TRUE ~ paste0(" (", fraction, ")")
-        ),
-        y = location_vector,
-        label = paste0(measure, ":  ", estimate, numden)
-      )
+    diagsummary_resultsdf <- diagsummary_resultsdf[seq_len(nrow(diagsummary_resultsdf)) %in% summary_stats, ]
+
+    diagsummary_resultsdf$numden <- ifelse(
+      !add_fractions | nchar(diagsummary_resultsdf$fraction) == 0,
+      "",
+      paste0(" (", diagsummary_resultsdf$fraction, ")")
+    )
+
+    diagsummary_resultsdf$y <- location_vector
+
+    diagsummary_resultsdf$label <- paste0(diagsummary_resultsdf$measure, ":  ", diagsummary_resultsdf$estimate, diagsummary_resultsdf$numden)
+
 
     p <- p +
       ggplot2::geom_text(

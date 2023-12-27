@@ -20,7 +20,6 @@ dx_measure <- function(data, threshold, options, var = "Overall",
     perfdf$tp,
     perfdf$dispos,
     options$citype,
-    # threshold = threshold,
     notes = paste0(">=", threshold)
   )
   specres <- dx_specificity(
@@ -40,11 +39,12 @@ dx_measure <- function(data, threshold, options, var = "Overall",
   auc <- dx_auc(truth, predprob)
 
   # set data in order we want to appear
-  results <- dplyr::bind_rows(
+  results <- rbind(
     auc, accres, senres, specres,
     ppvres, npvres, lrt_pos, lrt_neg, dx_or, f1,
     prevalence
   )
+
   results$threshold <- threshold
   results$variable <- var
   results$label <- label
@@ -57,18 +57,19 @@ dx_measure <- function(data, threshold, options, var = "Overall",
 
 
 dx_group_measure <- function(data, options, group_varname) {
-  group_labels <- data %>%
-    dplyr::select(group_varname) %>%
-    dplyr::distinct() %>%
-    dplyr::mutate_all(as.character) %>%
-    dplyr::pull(group_varname)
+
+  group_col <- unique(data[[group_varname]])
+
+  # Convert them to character
+  group_labels <- as.character(group_col)
   group_labels <- group_labels[!is.na(group_labels)]
 
   datalist <- list()
 
   for (i in seq_along(group_labels)) {
-    subsetdata <- data %>%
-      dplyr::filter(!!as.name(group_varname) == group_labels[i])
+
+    subsetdata <- data[data[[group_varname]] == group_labels[i] , ]
+
     if (dim(subsetdata)[1] > 0) {
       datalist[[i]] <- dx_measure(
         data = subsetdata,
@@ -82,6 +83,6 @@ dx_group_measure <- function(data, options, group_varname) {
   res <- do.call(rbind, datalist)
   bd <- dx_breslow_day(data, options, group_varname)
 
-  dplyr::bind_rows(res, bd)
+  rbind(res, bd)
 
 }
