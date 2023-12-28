@@ -71,6 +71,34 @@ dx_prevalence_analysis <- function(data, options) {
 
 }
 
+dx_rank <- function(data, options) {
+  truth <- data[[options$true_varname]]
+  predprob <- data[[options$pred_varname]]
+
+  # Combine and sort by predicted probability in descending order
+  data <- data.frame(truth, predprob)
+  data <- data[order(-data$predprob),]
+
+  # Calculate cumulative true positives
+  data$cumulativeTruePositives <- cumsum(data$truth)
+
+  # Calculate the fraction of positives at each threshold
+  totalPositives <- sum(data$truth)
+  data$gain <- data$cumulativeTruePositives / totalPositives
+
+  # Calculate the lift for each percentile
+  data$percentile <- seq(from = 0, to = 1, length.out = nrow(data))
+  data$randomModelGain <- data$percentile * totalPositives
+  data$lift <- data$cumulativeTruePositives / data$randomModelGain
+
+  # Calculate cumulative true positive and true negative rates for KS Plot
+  data$cumulativeTPR <- data$cumulativeTruePositives / totalPositives  # True Positive Rate
+  data$cumulativeFPR <- cumsum(!data$truth) / sum(!data$truth)  # False Positive Rate
+
+  return(data)
+}
+
+
 
 
 dx_measure <- function(data, threshold, options, var = "Overall",
