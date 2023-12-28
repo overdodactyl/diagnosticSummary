@@ -81,6 +81,8 @@ dx_measure <- function(data, threshold, options, var = "Overall",
 
   pr_auc <- dx_pr_auc(data, options)
 
+  kappa <- dx_cohens_kappa(perfdf$tp, perfdf$fn, perfdf$tn, perfdf$fp, perfdf$n)
+
   # set data in order we want to appear
   results <- rbind(
     auc, accres, senres, specres,
@@ -89,7 +91,8 @@ dx_measure <- function(data, threshold, options, var = "Overall",
     fnr,
     fpr,
     fdr,
-    pr_auc
+    pr_auc,
+    kappa
   )
 
   results$threshold <- threshold

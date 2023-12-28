@@ -392,6 +392,55 @@ f1boot <- function(data, indices) {
   return(f1)
 }
 
+dx_cohens_kappa <- function(tp, fn, tn, fp, n) {
+
+  # Calculate observed agreement (po)
+  po <- (tp + tn) / n
+
+  # Calculate expected agreement (pe)
+  pe <- ((tp + fp) * (tp + fn) + (fn + tn) * (fp + tn)) / (n^2)
+
+  # Calculate Cohen's Kappa
+  kappa <- (po - pe) / (1 - pe)
+
+  # Calculate variance of kappa (standard method)
+  var_kappa <- (po * (1 - po)) / (n * (1 - pe)^2)
+
+  # Calculate standard error of kappa
+  se_kappa <- sqrt(var_kappa)
+
+  # Confidence interval using normal approximation, typically Z = 1.96 for 95%
+  z <- 1.96
+  ci_lower <- kappa - z * se_kappa
+  ci_upper <- kappa + z * se_kappa
+
+  if (kappa < 0) {
+    note <- "Less than chance agreement"
+  } else if (kappa < 0.2) {
+    note <- "Slight Agreement"
+  } else if (kappa < .4) {
+    note <- "Fair Agreement"
+  } else if (kappa < .6) {
+    note <- "Moderate Agreement"
+  } else if (kappa < .8) {
+    note <- "Substantial Agreement"
+  } else if (kappa < 1) {
+    note <- "Almost Perfect Agreement"
+  }
+
+
+  dx_measure_df(
+    measure = "Cohen's Kappa",
+    estimate = conf_int(kappa, ci_lower, ci_upper, accuracy = .01),
+    estimate_raw = kappa,
+    ci_type = "Standard Error+Normal Approximation",
+    notes = note,
+    lci_raw = ci_lower,
+    uci_raw = ci_upper
+  )
+
+}
+
 
 
 
