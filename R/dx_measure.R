@@ -33,6 +33,44 @@ dx_thresholds <- function(data, options) {
 
 }
 
+dx_prevalence_analysis <- function(data, options) {
+  # create vector for the prediction
+  predprob <- data[[options$pred_varname]]
+  truth <- data[[options$true_varname]]
+
+  perfdf <- dx_confusion_core(
+    predprob = predprob,
+    truth = truth,
+    threshold = options$setthreshold,
+    poslabel = options$poslabel
+  )
+
+  sensitivity <- calc_sensitivity(perfdf$tp, perfdf$dispos)
+  specificity <-  calc_specificity(perfdf$tn, perfdf$disneg)
+
+  prevalences <- seq(0.01, 0.99, by = 0.005)
+
+  # Initialize vectors for PPV and NPV
+  ppv_values <- numeric(length(prevalences))
+  npv_values <- numeric(length(prevalences))
+
+  # Iterate over prevalences to calculate PPV and NPV
+  for (i in seq_along(prevalences)) {
+    prevalence <- prevalences[i]
+
+    # Calculate PPV and NPV using prevalence, sensitivity, and specificity
+    ppv_values[i] <- (sensitivity * prevalence) / (sensitivity * prevalence + (1 - specificity) * (1 - prevalence))
+    npv_values[i] <- (specificity * (1 - prevalence)) / ((1 - sensitivity) * prevalence + specificity * (1 - prevalence))
+  }
+
+  data.frame(
+    prevalence = prevalences,
+    ppv = ppv_values,
+    npv = npv_values
+  )
+
+}
+
 
 
 dx_measure <- function(data, threshold, options, var = "Overall",
@@ -71,7 +109,8 @@ dx_measure <- function(data, threshold, options, var = "Overall",
   precision <- dx_precision(perfdf$tp, perfdf$fp)
   recall <- dx_recall(perfdf$tp, perfdf$fn)
   f1 <- dx_f1(
-    predprob, truth, threshold, options$poslabel, bootreps = 1000, doboot = FALSE
+    predprob, truth, threshold, options$poslabel,
+    bootreps = options$bootreps, doboot = options$doboot
   )
   auc <- dx_auc(truth, predprob)
 
@@ -83,6 +122,11 @@ dx_measure <- function(data, threshold, options, var = "Overall",
 
   kappa <- dx_cohens_kappa(perfdf$tp, perfdf$fn, perfdf$tn, perfdf$fp, perfdf$n)
 
+  mcc <- dx_mcc(
+    predprob, truth, threshold, options$poslabel,
+    bootreps = options$bootreps, doboot = options$doboot
+  )
+
   # set data in order we want to appear
   results <- rbind(
     auc, accres, senres, specres,
@@ -92,7 +136,8 @@ dx_measure <- function(data, threshold, options, var = "Overall",
     fpr,
     fdr,
     pr_auc,
-    kappa
+    kappa,
+    mcc
   )
 
   results$threshold <- threshold

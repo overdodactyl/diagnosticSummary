@@ -130,6 +130,9 @@ dx <- function(data,
   ####### Threshold Analysis
   threshold_analysis <- dx_thresholds(data, options)
 
+  ####### Prevalence Analysis
+  prevalence_analysis <- dx_prevalence_analysis(data, options)
+
 
   # Number of unique levels
   n_levels <- length(unique(threshold_measures$Label))
@@ -138,8 +141,11 @@ dx <- function(data,
 
 
   structure(list(
-    data = data, options = options, measures = threshold_measures,
+    data = data,
+    options = options,
+    measures = threshold_measures,
     thresholds = threshold_analysis,
+    prevalence = prevalence_analysis,
     n_levels = n_levels, roc = roc
   ), class = "dx")
 }

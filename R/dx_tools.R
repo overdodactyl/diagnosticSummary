@@ -248,6 +248,20 @@ calc_recall <- function(tp, fn) {
   tp / (tp + fn)
 }
 
+calc_mcc <- function(tp, fn, tn, fp) {
+  numerator <- (tp * tn) - (fp * fn)
+  denominator <- (tp + fp) * (tp + fn) * (tn + fp) * (tn + fn)
+
+  # Handling edge cases by setting the denominator to 1 if it's zero
+  if (denominator == 0) {
+    return(0)
+  } else {
+    return(numerator / sqrt(denominator))
+  }
+}
+
+
+
 #' Calculate Area Under the Precision-Recall Curve (AUC-PR)
 #'
 #' This function calculates the Area Under the Curve (AUC) for the Precision-Recall curve
@@ -390,6 +404,70 @@ f1boot <- function(data, indices) {
   f1 <- calc_f1(tp, fp, fn)
 
   return(f1)
+}
+
+calc_mcc <- function(tp, fn, tn, fp) {
+  numerator <- (tp * tn) - (fp * fn)
+  denominator <- (tp + fp) * (tp + fn) * (tn + fp) * (tn + fn)
+
+  # Handling edge cases by setting the denominator to 1 if it's zero
+  if (denominator == 0) {
+    return(0)
+  } else {
+    return(numerator / sqrt(denominator))
+  }
+}
+
+
+dx_mcc <- function(predprob, truth, threshold, poslabel, bootreps = 1000, doboot = FALSE) {
+
+  cm <- dx_confusion_core(predprob, truth, threshold, poslabel)
+
+  mcc_raw <- calc_mcc(cm$tp, cm$fn, cm$tn, cm$fp)
+
+  prediction <- as.numeric(predprob >= threshold)
+
+  if (doboot) {
+    # Bootstrap for confidence intervals
+    boot_mccs <- numeric(bootreps)
+    for (i in 1:bootreps) {
+      indices <- sample(seq_along(truth), length(truth), replace = TRUE)
+      truth_boot <- truth[indices]
+      prediction_boot <- prediction[indices]
+
+      tp <- sum(prediction_boot == 1 & truth_boot == 1)
+      fn <- sum(prediction_boot == 0 & truth_boot == 1)
+      tn <- sum(prediction_boot == 0 & truth_boot == 0)
+      fp <- sum(prediction_boot == 1 & truth_boot == 0)
+
+      boot_mccs[i] <- calc_mcc(tp, fn, tn, fp)
+    }
+
+    mcc_ci <- quantile(boot_mccs, probs = c(0.025, 0.975))
+    mcc_low <- mcc_ci[[1]]
+    mcc_high <- mcc_ci[[2]]
+    mcc <- conf_int(mcc_raw, mcc_low, mcc_high, accuracy = 0.01)
+    ci_type <- "Bootstrapped 95%"
+
+  } else {
+    mcc_low <- NA_real_
+    mcc_high <- NA_real_
+    ci_type <- ""
+    mcc <- formatC(mcc_raw, format = "f", digits = 2)
+  }
+
+  dx_measure_df(
+    measure = "Matthews Correlation Coefficient",
+    estimate = mcc,
+    estimate_raw = mcc_raw,
+    ci_type = ci_type,
+    lci_raw = mcc_low,
+    uci_raw = mcc_high,
+    notes = ""
+  )
+
+
+
 }
 
 dx_cohens_kappa <- function(tp, fn, tn, fp, n) {
