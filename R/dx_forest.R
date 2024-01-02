@@ -72,11 +72,11 @@ rescale <- function (x, to = c(0, 1), from = range(x, na.rm = TRUE, finite = TRU
 #'   setthreshold = .3,
 #'   grouping_variables = c("AgeGroup", "Sex", "AgeSex")
 #' )
-#' #dx_forest(dx_obj)
-#' #dx_forest(dx_obj, trans = "log10")
-dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
+#' dx_forest(dx_obj)
+#' dx_forest(dx_obj, trans = "log10")
+dx_plot_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
                       tick_label_size = 6.5, trans = c(NA, "log10"),
-                      measures = c("AUC", "Sensitivity", "Specificity","Odds Ratio"),
+                      measures = c("AUC ROC", "Sensitivity", "Specificity","Odds Ratio"),
                       return = c("ggplot", "grid"),
                       filename = NA,
                       header_bg = "white", header_col = "black",
@@ -104,20 +104,20 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
     measures = measures
   )
 
-  indent_rows <- which(!is.na(data$rawestime))
+  indent_rows <- which(!is.na(data$estimate))
   bold_rows <- setdiff(1:(nrow(data)), indent_rows)
   indent_rows <- indent_rows[indent_rows != nrow(data)]
 
-  overall_or <- data[data$group == "Overall", ]$rawestime
+  overall_or <- data[data$group == "Overall", ]$estimate
 
 
-  lower <- data$rawlci
-  estimate <- data$rawestime
-  upper <- data$rawuci
+  lower <- data$conf_low
+  estimate <- data$estimate
+  upper <- data$conf_high
 
   # Find range of OR's
-  min_or <- min(data$rawlci, na.rm = T)
-  max_or <- max(data$rawuci, na.rm = T)
+  min_or <- min(data$conf_low, na.rm = T)
+  max_or <- max(data$conf_high, na.rm = T)
 
   # Get plot range, breaks, and labels
   range <- plot_range(
@@ -474,7 +474,7 @@ dx_forest_add_tick <- function(grob, tick_scaled, tick, nrows,
 }
 
 dx_prep_variable <- function(dx_obj, data,
-                             measures = c("AUC", "Sensitivity", "Specificity","Odds Ratio"),
+                             measures = c("AUC-ROC", "Sensitivity", "Specificity","Odds Ratio"),
                              fraction = FALSE, fraction_multiline) {
 
 
@@ -490,22 +490,22 @@ dx_prep_variable <- function(dx_obj, data,
 
   if (fraction) {
     if (fraction_multiline) {
-      tmp$estimate <- ifelse(
+      tmp$summary <- ifelse(
         tmp$fraction == "",
-        tmp$estimate,
-        paste0(tmp$fraction, "\n", tmp$estimate)
+        tmp$summary,
+        paste0(tmp$fraction, "\n", tmp$summary)
       )
     } else {
-      tmp$estimate <- ifelse(
+      tmp$summary <- ifelse(
         tmp$fraction == "",
-        tmp$estimate,
-        paste0(tmp$estimate, " (", tmp$fraction, ")")
+        tmp$summary,
+        paste0(tmp$summary, " (", tmp$fraction, ")")
       )
     }
   }
 
   # Selecting and renaming specific columns
-  res_sel <- tmp[c("label", "measure", "estimate")]
+  res_sel <- tmp[c("label", "measure", "summary")]
   names(res_sel)[names(res_sel) == "label"] <- "group"
 
 
@@ -513,16 +513,19 @@ dx_prep_variable <- function(dx_obj, data,
   filtered_data <- tmp[tmp$measure == "Odds Ratio", ]
 
   # Select and rename columns: 'label' to 'group', include 'n', and all columns starting with 'raw'
-  cols_to_select <- c("label", "n", grep("^raw", names(filtered_data), value = TRUE))
+  cols_to_select <- c("label", "n", "estimate", "conf_low", "conf_high")
   rawdata <- filtered_data[cols_to_select]
   names(rawdata)[names(rawdata) == "label"] <- "group"
 
   # Filter out rows where 'rawestime' is NA
-  rawdata <- rawdata[!is.na(rawdata$rawestime), ]
+  rawdata <- rawdata[!is.na(rawdata$estimate), ]
 
-  res <- utils::unstack(res_sel, form = estimate ~ measure)
+  res <- utils::unstack(res_sel, form = summary ~ measure)
   names(res) <- gsub("\\.", " ", names(res))
-  if (var == "Overall") res <- as.data.frame(t(res))
+  if (var == "Overall") {
+    res <- as.data.frame(t(res))
+    names(res) <- gsub("\\-", " ", names(res))
+  }
   res$group <- unique(res_sel$group)
   res <- merge(res, rawdata, by = "group", all.x = TRUE)
   if (var != "Overall") {
@@ -533,12 +536,16 @@ dx_prep_variable <- function(dx_obj, data,
     res <- rbind_all(empty_df, res)
 
     if (nrow(bd_test) == 1) {
-      res$`Odds Ratio`[res$group == var] <- bd_test$estimate
+      res$`Odds Ratio`[res$group == var] <- bd_test$summary
     }
-
   }
 
   res[] <- lapply(res, function(x) if(is.factor(x)) as.character(x) else x)
+
+  # res$conf_low <- NULL
+  # res$conf_high <- NULL
+  # res$n <- NULL
+  # res$estimate <- NULL
 
   res
 
@@ -615,7 +622,6 @@ dx_prep_forest <- function(dx_obj, fraction = fraction, fraction_multiline, meas
 
   # Re-order back to input
   tmp_split <- tmp_split[order(current_order)]
-
 
   do.call("rbind", tmp_split)
 }

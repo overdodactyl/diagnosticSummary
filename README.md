@@ -50,6 +50,23 @@ dx_obj <- dx(
   bootreps = 1000,
   grouping_variables = c("AgeGroup", "Sex", "AgeSex")
 )
+#> Warning in stats::chisq.test(conf_matrix): Chi-squared approximation may be
+#> incorrect
+
+#> Warning in stats::chisq.test(conf_matrix): Chi-squared approximation may be
+#> incorrect
+
+#> Warning in stats::chisq.test(conf_matrix): Chi-squared approximation may be
+#> incorrect
+
+#> Warning in stats::chisq.test(conf_matrix): Chi-squared approximation may be
+#> incorrect
+
+#> Warning in stats::chisq.test(conf_matrix): Chi-squared approximation may be
+#> incorrect
+
+#> Warning in stats::chisq.test(conf_matrix): Chi-squared approximation may be
+#> incorrect
 ```
 
 ``` r
@@ -67,31 +84,24 @@ summary(dx_obj, variable = "Overall", show_var = F, show_label = F)
 | LRT+                             | 3.54 (2.66, 4.71)    |
 | LRT-                             | 0.20 (0.13, 0.32)    |
 | Odds Ratio                       | 17.59 (9.12, 33.94)  |
-| F1 Score                         | 75.5% (68.3%, 81.4%) |
-| F2 Score                         | 80.7% (74.2%, 86.5%) |
+| F1 Score                         | 75.5% (68.6%, 81.5%) |
+| F2 Score                         | 80.7% (73.9%, 86.5%) |
 | Prevalence                       | 37.5% (31.7%, 43.7%) |
 | False Negative Rate              | 15.3% (8.8%, 24.0%)  |
 | False Positive Rate              | 23.9% (17.6%, 31.2%) |
 | False Discovery Rate             | 32.0% (23.8%, 41.0%) |
 | AUC-PR                           | 0.87                 |
 | Cohen’s Kappa                    | 0.58 (0.48, 0.68)    |
-| Matthews Correlation Coefficient | 59.0% (49.9%, 68.2%) |
-| Balanced Accuracy                | 80.4% (75.3%, 85.1%) |
-| Informedness                     | 60.8% (50.3%, 70.0%) |
-| Markedness                       | 57.2% (47.9%, 66.7%) |
-| G-mean                           | 80.3% (75.4%, 85.0%) |
-| Fowlkes-Mallows Index            | 75.9% (69.2%, 81.3%) |
+| Matthews Correlation Coefficient | 59.0% (49.4%, 68.4%) |
+| Balanced Accuracy                | 80.4% (75.0%, 85.0%) |
+| Informedness                     | 60.8% (51.3%, 70.3%) |
+| Markedness                       | 57.2% (47.5%, 66.8%) |
+| G-mean                           | 80.3% (75.4%, 84.9%) |
+| Fowlkes-Mallows Index            | 75.9% (69.3%, 81.9%) |
+| Brier Score                      | 0.11                 |
+| Pearson’s Chi-squared            | p\<0.01              |
+| Pearson’s Chi-squared            | p\<0.01              |
+| Fisher’s Exact                   | p\<0.01              |
+| G-Test                           | p\<0.01              |
 
 Threshold= 0.3
-
-``` r
-# dx_forest(dx_obj)
-```
-
-``` r
-# dx_roc(dx_obj)
-```
-
-``` r
-# dx_cm(dx_obj)
-```

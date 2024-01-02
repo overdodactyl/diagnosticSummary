@@ -21,7 +21,6 @@ reference:
 - title: Figures
   desc: Figures summarizing diagnostic statistics
   contents:
-  - dx_forest
   - starts_with("dx_plot")
   - dx_edit_cell
 - title: Utilities

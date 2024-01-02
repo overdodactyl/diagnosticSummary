@@ -53,6 +53,7 @@
 * Added Youden's J Index Curve: `dx_plot_youden_j`
 * Added Cumulative Accuracy Profile (CAP) curve: `dx_plot_cap`
 * Added cost curve: `dx_plot_cost`
+* Added plot showing metrics across thresholds: `dx_plot_thresholds`
 
 **Renamed Functions**
 

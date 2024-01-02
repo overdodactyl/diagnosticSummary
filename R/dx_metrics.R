@@ -876,7 +876,7 @@ dx_auc_pr <- function(precision, recall, detail = "full") {
     return(auc)
   } else {
     res <- measure_df(
-      measure = "AUC-PR",
+      measure = "AUC PR",
       estimate = as.character(round(auc, 2)),
       estimate_raw = auc,
     )
@@ -922,7 +922,7 @@ dx_auc <- function(truth, predprob, detail = "full") {
     auc <- conf_int(auc_raw, auc_lci, auc_uci, percent = F, accuracy = .001)
 
     return(measure_df(
-      measure = "AUC-ROC",
+      measure = "AUC ROC",
       estimate = auc,
       ci_type = "DeLong",
       estimate_raw = auc_raw,
