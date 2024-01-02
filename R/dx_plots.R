@@ -979,3 +979,74 @@ dx_plot_probabilities <- function(dx_obj, plot_type = "histogram", bins = NULL, 
 }
 
 
+#' Plot Diagnostic Measures across Thresholds
+#'
+#' Generates a line plot to visualize various diagnostic measures across different
+#' threshold values for a binary classification model. This visualization can help in
+#' selecting an optimal threshold based on the trade-offs between different measures.
+#'
+#' @param dx_obj A `dx` object containing threshold-based statistics, including values
+#'               for various diagnostic measures at different thresholds.
+#'
+#' @return A `ggplot` object representing the diagnostic measures across thresholds
+#'         with the ability to further customize if desired.
+#'
+#' @export
+#'
+#' @details
+#' The function plots multiple lines representing different diagnostic measures such
+#' as NPV, PPV, sensitivity, specificity, and F1 score across a range of threshold
+#' values. Each line corresponds to a specific metric, illustrating how the measure
+#' changes as the classification threshold is varied. A vertical dashed line indicates
+#' the set threshold in the `dx` object for reference.
+#'
+#' This plot is particularly useful for understanding the behavior of a classifier
+#' under different operating conditions and for identifying a threshold that balances
+#' the trade-offs between various measures according to the specific needs of the
+#' application.
+#'
+#' @examples
+#' dx_obj <- dx(
+#'   data = dx_heart_failure,
+#'   true_varname = "truth",
+#'   pred_varname = "predicted",
+#'   outcome_label = "Heart Attack",
+#'   setthreshold = .3
+#' )
+#' dx_plot_thresholds(dx_obj)
+dx_plot_thresholds <- function(dx_obj) {
+
+  thresholds <- dx_obj$thresholds
+
+  measures <- c(
+    "npv", "ppv", "sensitivity", "specificity", "f1"
+  )
+
+  data_list <- lapply(measures, function(m) {
+    data.frame(
+      threshold = thresholds$threshold,
+      metric = m,
+      measure = thresholds[[m]]
+    )
+  })
+
+  res <- do.call(rbind, data_list)
+  res <- stats::na.omit(res)
+
+
+  ggplot2::ggplot(res) +
+    ggplot2::geom_vline(
+      xintercept = dx_obj$options$setthreshold,
+      linetype = "dashed",
+      color = "gray"
+    ) +
+    ggplot2::geom_line(
+      ggplot2::aes(x = .data$threshold, y = .data$measure, color = .data$metric),
+      linewidth = 1
+    ) +
+    ggplot2::theme_minimal() +
+    ggplot2::labs(x = "Threshold", y = "Measure", color = "Metric")
+    # ggplot2::ggtitle("Diagnostic Measures across Thresholds")
+    # ggplot2::facet_wrap(~metric, scales = "free_y")
+}
+
