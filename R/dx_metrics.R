@@ -9,6 +9,8 @@
 #' @param boot Logical specifying if confidence intervals should be generated
 #'         via bootstrapping.  Note, this can be slow.
 #' @param bootreps The number of bootstrap replications for calculating confidence intervals.
+#' @param predprob Numeric vector of predicted probabilities associated with the positive class.
+#' @param truth Numeric vector of true binary outcomes, typically 0 or 1, with the same length as `predprob`.
 #' @return Depending on the `detail` parameter, returns a numeric value
 #'         representing the calculated metric or a data frame/tibble with
 #'         detailed diagnostics including confidence intervals and possibly other
@@ -38,7 +40,7 @@ metricparams <- function() {}
 #' @examples
 #' cm <- dx_cm(
 #'   dx_heart_failure$predicted,
-#'   dx_heart_failure$truth,
+#'   dx_heart_failure$predicted,
 #'   threshold = 0.3, poslabel = 1
 #' )
 #' simple_accuracy <- dx_accuracy(cm, detail = "simple")
@@ -1290,3 +1292,67 @@ get_roc <- function(true_varname, pred_varname, data, direction) {
     pROC::roc(.(f), data = data, ci = TRUE, direction = .(direction), quiet = TRUE)
   ))
 }
+
+#' Calculate Brier Score
+#'
+#' @description
+#' The Brier score is a proper score function that measures the accuracy of probabilistic predictions.
+#' It is applicable to tasks in which predictions must assign probabilities to a set of mutually
+#' exclusive discrete outcomes. For binary classification, the Brier score is a measure of how far
+#' the predicted probabilities are from the actual outcomes.
+#'
+#' @inheritParams metrics-params
+#'
+#' @details
+#' The formula for the Brier score in a binary classification is:
+#'
+#' \deqn{BS = \frac{1}{N} \sum_{i=1}^{N} (f_i - o_i)^2}{BS = (1/N) * sum((f_i - o_i)^2)}
+#'
+#' where:
+#' - \(N\) is the number of predictions,
+#' - \(f_i\) is the predicted probability of the occurrence of the positive class for the ith prediction,
+#' - \(o_i\) is the actual outcome for the ith prediction, 0 or 1.
+#'
+#' The Brier score ranges from 0 to 1, where 0 represents a perfect model and 1 represents the worst model.
+#' It is equivalent to the mean squared error used in regression and can be decomposed into calibration loss,
+#' refinement loss, and uncertainty. This makes it a very informative metric for probabilistic forecasts,
+#' providing a nuanced view of the model's predictive performance.
+#'
+#' @examples
+#' predprob <- dx_heart_failure$predicted
+#' truth <- dx_heart_failure$truth
+#' simple <- dx_brier(predprob, truth, detail = "simple")
+#' detailed <- dx_brier(predprob, truth)
+#' print(simple)
+#' print(detailed)
+#' @concept metrics
+#' @export
+dx_brier <- function(predprob, truth, detail = "full") {
+  # Ensuring that the length of predicted probabilities and actual outcomes are the same
+  if (length(predprob) != length(truth)) {
+    stop("The length of predicted probabilities and actual outcomes must be the same.")
+  }
+
+  brier <- calculate_brier(truth, predprob)
+  if (detail == "simple") {
+    return(brier)
+  } else if (detail == "full") {
+    return(measure_df(
+      measure = "Brier Score",
+      estimate = format(brier, digits = 2),
+      estimate_raw = brier,
+      notes = "CIs not yet implemented"
+    ))
+  } else {
+    stop("Invalid detail parameter: should be 'simple' or 'full'")
+  }
+}
+
+
+
+calculate_brier <- function(truth, predprob) {
+  mean((predprob - truth) ^ 2)
+}
+
+
+
