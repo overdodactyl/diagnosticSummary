@@ -58,9 +58,9 @@ test_that("Accuracy", {
   caret_ac_high <- caret_accuracy$conf.high
 
   dx_acc <- subset(dx_res, measure == "Accuracy")
-  dx_ac_raw <- dx_acc$rawestime
-  dx_ac_low <- dx_acc$rawlci
-  dx_ac_high <- dx_acc$rawuci
+  dx_ac_raw <- dx_acc$estimate
+  dx_ac_low <- dx_acc$conf_low
+  dx_ac_high <- dx_acc$conf_high
 
   expect_equal(dx_ac_raw, caret_ac_raw)
   expect_equal(dx_ac_low, caret_ac_low)
@@ -69,7 +69,7 @@ test_that("Accuracy", {
 
 get_measures <- function(dx, caret) {
   caret_res <- caret_results[caret_results$term == caret, ]$estimate
-  dx_res <- dx_res[dx_res$measure == dx, "rawestime"]
+  dx_res <- dx_res[dx_res$measure == dx, ]$estimate
 
   testthat::expect_equal(dx_res, caret_res)
 }

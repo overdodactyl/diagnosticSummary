@@ -12,7 +12,8 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 ```
-# diagnosticSummary
+
+# diagnosticSummary <img src="man/figures/logo.png" align="right" />
 
 <!-- badges: start -->
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
@@ -46,6 +47,8 @@ dx_obj <- dx(
   outcome_label = "Heart Attack",
   threshold_range = c(.1,.2,.3),
   setthreshold = .3,
+  doboot = TRUE,
+  bootreps = 1000,
   grouping_variables = c("AgeGroup", "Sex", "AgeSex")
 )
 ```
@@ -57,36 +60,36 @@ summary(dx_obj, variable = "Overall", show_var = F, show_label = F)
 
 
 ```{r eval = F}
-dx_forest(dx_obj)
+# dx_forest(dx_obj)
 ```
 
 
 ```{r, echo=FALSE}
-g <- dx_forest(dx_obj, return_grid = T)
-ggplot2::ggsave(plot = g, height = 3.3, width = 7, filename = "man/figures/forest_plot.png")
+# g <- dx_forest(dx_obj, return_grid = T)
+# ggplot2::ggsave(plot = g, height = 3.3, width = 7, filename = "man/figures/forest_plot.png")
 ```
 
 
 ```{r echo=FALSE}
-knitr::include_graphics("man/figures/forest_plot.png")
+# knitr::include_graphics("man/figures/forest_plot.png")
 ```
 
 
 ```{r eval = F}
-dx_roc(dx_obj)
+# dx_roc(dx_obj)
 ```
 
 
 ```{r echo=F, include=F, message=FALSE}
-dx_roc(dx_obj, filename = "man/figures/roc_plot.png")
+# dx_roc(dx_obj, filename = "man/figures/roc_plot.png")
 ```
 
 
 ```{r out.width="60%", echo=FALSE, fig.align="center"}
-knitr::include_graphics("man/figures/roc_plot.png")
+# knitr::include_graphics("man/figures/roc_plot.png")
 ```
 
 ```{r fig.width=8, fig.height=6, dpi = 600, fig.align='center', out.width="60%", fig.align="center"}
-dx_cm(dx_obj)
+# dx_cm(dx_obj)
 ```
 

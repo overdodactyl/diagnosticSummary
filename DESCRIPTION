@@ -1,6 +1,6 @@
 Package: diagnosticSummary
 Title: Diagnostic Summaries
-Version: 0.0.1.06
+Version: 0.0.2.00
 Authors@R: 
   c(person(given = "Pat",
            family = "Johnson",
@@ -24,14 +24,13 @@ Suggests:
     grid,
     gtable,
     gridExtra,
-    boot,
     rmarkdown,
     knitr,
     ggplot2,
     testthat (>= 2.1.0),
     caret,
     broom,
-    DescTools
+    tibble
 RoxygenNote: 7.1.2
 Language: en-US
 URL: https://overdodactyl.github.io/diagnosticSummary/, https://github.com/overdodactyl/diagnosticSummary/

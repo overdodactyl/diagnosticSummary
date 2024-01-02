@@ -72,8 +72,8 @@ rescale <- function (x, to = c(0, 1), from = range(x, na.rm = TRUE, finite = TRU
 #'   setthreshold = .3,
 #'   grouping_variables = c("AgeGroup", "Sex", "AgeSex")
 #' )
-#' dx_forest(dx_obj)
-#' dx_forest(dx_obj, trans = "log10")
+#' #dx_forest(dx_obj)
+#' #dx_forest(dx_obj, trans = "log10")
 dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
                       tick_label_size = 6.5, trans = c(NA, "log10"),
                       measures = c("AUC", "Sensitivity", "Specificity","Odds Ratio"),

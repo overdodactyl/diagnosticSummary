@@ -10,26 +10,53 @@ dx_thresholds <- function(data, options) {
   sensitivities <- numeric(length(unique_thresholds))
   specificities <- numeric(length(unique_thresholds))
   precision <- numeric(length(unique_thresholds))
+  net_benefits <- numeric(length(unique_thresholds))
+  informedness <- numeric(length(unique_thresholds))
+
+  sensitivities <- specificities <- numeric(length(unique_thresholds))
+  precision <- net_benefits <- informedness <- sensitivities
+  tp <- fp <- fn <- tn <- sensitivities
+
+
   # recall <- numeric(length(unique_thresholds))
 
   # Step 2: Calculate sensitivity and specificity for each unique threshold
   for (i in seq_along(unique_thresholds)) {
     threshold <- unique_thresholds[i]
-    perf <- dx_confusion_core(predprob, truth, threshold, options$poslabel)
+    perf <- dx_cm(predprob, truth, threshold, options$poslabel)
 
-    sensitivities[i] <- calc_sensitivity(perf$tp, perf$dispos)
-    specificities[i] <- calc_specificity(perf$tn, perf$disneg)
-    precision[i] <- calc_ppv(perf$tp, perf$testpos)
+    sensitivities[i] <- dx_sensitivity(perf, detail = "simple")
+    specificities[i] <- dx_specificity(perf, detail = "simple")
+    precision[i] <- dx_precision(perf, detail = "simple")
+    informedness[i] <- dx_informedness(perf, detail = "simple")
+    tp[i] <- perf$tp
+    fp[i] <- perf$fp
+    fn[i] <- perf$fn
+    tn[i] <- perf$tn
+
+    # Calculate net benefit
+    weight <- threshold / (1 - threshold)
+    tp_rate <- sensitivities[i]  # True positive rate is sensitivity
+    fp_rate <- 1 - specificities[i]  # False positive rate is 1 - specificity
+    net_benefits[i] <- tp_rate - weight * fp_rate
+
 
   }
 
-  data.frame(
+  res <- data.frame(
     threshold = unique_thresholds,
     sensitivity = sensitivities,
     specificity = specificities,
-    precision = precision
+    precision = precision,
+    net_benefit = net_benefits,
+    informedness = informedness,
+    tp = tp,
+    tn = tn,
+    fp = fp,
+    fn = fn
   )
 
+  return_df(res)
 
 }
 
@@ -38,15 +65,15 @@ dx_prevalence_analysis <- function(data, options) {
   predprob <- data[[options$pred_varname]]
   truth <- data[[options$true_varname]]
 
-  perfdf <- dx_confusion_core(
+  perfdf <- dx_cm(
     predprob = predprob,
     truth = truth,
     threshold = options$setthreshold,
     poslabel = options$poslabel
   )
 
-  sensitivity <- calc_sensitivity(perfdf$tp, perfdf$dispos)
-  specificity <-  calc_specificity(perfdf$tn, perfdf$disneg)
+  sensitivity <- dx_sensitivity(perfdf, detail = "simple")
+  specificity <-  dx_specificity(perfdf, detail = "simple")
 
   prevalences <- seq(0.01, 0.99, by = 0.005)
 
@@ -87,9 +114,10 @@ dx_rank <- function(data, options) {
   data$gain <- data$cumulativeTruePositives / totalPositives
 
   # Calculate the lift for each percentile
-  data$percentile <- seq(from = 0, to = 1, length.out = nrow(data))
+  n <- nrow(data)
+  data$percentile <- (1:n) / n  # Represents the percentile of the population up to each instance
   data$randomModelGain <- data$percentile * totalPositives
-  data$lift <- data$cumulativeTruePositives / data$randomModelGain
+  data$lift <- ifelse(data$randomModelGain > 0, data$cumulativeTruePositives / data$randomModelGain, 0)
 
   # Calculate cumulative true positive and true negative rates for KS Plot
   data$cumulativeTPR <- data$cumulativeTruePositives / totalPositives  # True Positive Rate
@@ -108,65 +136,80 @@ dx_measure <- function(data, threshold, options, var = "Overall",
   predprob <- data[[options$pred_varname]]
   truth <- data[[options$true_varname]]
 
-  perfdf <- dx_confusion_core(
+  cm <- dx_cm(
     predprob = predprob,
     truth = truth,
     threshold = threshold,
     poslabel = options$poslabel
   )
 
-  prevalence  <- dx_prevalence(perfdf$dispos, perfdf$n, options$citype)
-  lrt_neg <- dx_lrtneg(tp = perfdf$tp, tn = perfdf$tn, fp = perfdf$fp, fn = perfdf$fn)
-  lrt_pos <- dx_lrtpos(tp = perfdf$tp, tn = perfdf$tn, fp = perfdf$fp, fn = perfdf$fn)
-  dx_or <- dx_odds_ratio(perfdf$tp, perfdf$tn, perfdf$fp, perfdf$fn)
-  senres <- dx_sensitivity(
-    perfdf$tp,
-    perfdf$dispos,
-    options$citype,
-    notes = paste0(">=", threshold)
-  )
-  specres <- dx_specificity(
-    perfdf$tn,
-    perfdf$disneg,
-    citype = options$citype,
-    notes = paste0("<", threshold)
-  )
-  accres <- dx_accuracy(perfdf$correct, perfdf$n, options$citype)
-  ppvres <- dx_ppv(perfdf$tp, perfdf$testpos, options$citype)
-  npvres <- dx_npv(perfdf$tn, perfdf$testneg, options$citype)
-  precision <- dx_precision(perfdf$tp, perfdf$fp)
-  recall <- dx_recall(perfdf$tp, perfdf$fn)
-  f1 <- dx_f1(
-    predprob, truth, threshold, options$poslabel,
-    bootreps = options$bootreps, doboot = options$doboot
-  )
-  auc <- dx_auc(truth, predprob)
+  threshold_analysis <- dx_thresholds(data, options)
 
-  fnr <- dx_fnr(perfdf$fn, perfdf$dispos, options$citype)
-  fpr <- dx_fpr(perfdf$fp, perfdf$disneg, options$citype)
-  fdr <- dx_fdr(perfdf$fp, perfdf$testpos, options$citype)
+  # metrics_list <- list(
+  #   auc = dx_auc(truth, predprob),
+  #   accuracy = dx_accuracy(cm, citype = options$citype),
+  #   sensitivity = dx_sensitivity(cm, citype = options$citype),
+  #   specificity = dx_specificity(cm, citype = options$citype),
+  #   ppv = dx_ppv(cm, citype = options$citype),
+  #   npv = dx_npv(cm, citype = options$citype),
+  #   lrt_pos = dx_lrt_pos(cm),
+  #   lrt_neg = dx_lrt_neg(cm),
+  #   or = dx_odds_ratio(cm),
+  #   f1 = dx_f1(cm, bootreps = options$bootreps),
+  #   prevalence = dx_prevalence(cm, citype = options$citype),
+  #   fnr = dx_fnr(cm, citype = options$citype),
+  #   fpr = dx_fpr(cm, citype = options$citype),
+  #   fdr = dx_fdr(cm, citype = options$citype),
+  #   pr_auc =  dx_auc_pr(threshold_analysis$precision, threshold_analysis$sensitivity),
+  #   kappa = dx_cohens_kappa(cm),
+  #   mcc = dx_mcc(cm, bootreps = options$bootreps)
+  # )
+  #
+  # # Combine all metric results into one data frame
+  # results <- do.call(rbind, metrics_list)
 
-  pr_auc <- dx_pr_auc(data, options)
 
-  kappa <- dx_cohens_kappa(perfdf$tp, perfdf$fn, perfdf$tn, perfdf$fp, perfdf$n)
+  # Common arguments for metrics that use a confusion matrix and citype
+  common_cm_args <- list(cm = cm, citype = options$citype)
+  common_boot_args <- list(cm = cm, boot = options$doboot, bootreps = options$bootreps)
+  common_ratio_args <- list(cm = cm)
 
-  mcc <- dx_mcc(
-    predprob, truth, threshold, options$poslabel,
-    bootreps = options$bootreps, doboot = options$doboot
+  metric_calculations <- list(
+    auc = list(fun = dx_auc, params = list(truth = truth, predprob = predprob)),
+    accuracy = list(fun = dx_accuracy, params = common_cm_args),
+    sensitivity = list(fun = dx_sensitivity, params = common_cm_args),
+    specificity = list(fun = dx_specificity, params = common_cm_args),
+    ppv = list(fun = dx_ppv, params = common_cm_args),
+    npv = list(fun = dx_npv, params = common_cm_args),
+    lrt_pos = list(fun = dx_lrt_pos, params = common_ratio_args),
+    lrt_neg = list(fun = dx_lrt_neg, params = common_ratio_args),
+    or = list(fun = dx_odds_ratio, params = common_ratio_args),
+    f1 = list(fun = dx_f1, params = common_boot_args),
+    f2 = list(fun = dx_f2, params = common_boot_args),
+    prevalence = list(fun = dx_prevalence, params = common_cm_args),
+    fnr = list(fun = dx_fnr, params = common_cm_args),
+    fpr = list(fun = dx_fpr, params = common_cm_args),
+    fdr = list(fun = dx_fdr, params = common_cm_args),
+    pr_auc = list(fun = dx_auc_pr, params = list(precision = threshold_analysis$precision, recall = threshold_analysis$sensitivity)),  # Assuming precision and recall are named thus in threshold_analysis
+    kappa = list(fun = dx_cohens_kappa, params = list(cm = cm)),
+    mcc = list(fun = dx_mcc, params = common_boot_args),
+    balanced_accuracy = list(fun = dx_balanced_accuracy, params = common_boot_args),
+    informedness = list(fun = dx_informedness, params = common_boot_args),
+    markedness = list(fun = dx_markedness, params = common_boot_args),
+    g_mean = list(fun = dx_g_mean, params = common_boot_args),
+    fowlkes_mallows = list(fun = dx_fowlkes_mallows, params = common_boot_args)
   )
 
-  # set data in order we want to appear
-  results <- rbind(
-    auc, accres, senres, specres,
-    ppvres, npvres, lrt_pos, lrt_neg, dx_or, f1,
-    prevalence,
-    fnr,
-    fpr,
-    fdr,
-    pr_auc,
-    kappa,
-    mcc
-  )
+  # Function to call each metric function with parameters
+  call_metric <- function(metric) {
+    do.call(metric$fun, metric$params)
+  }
+
+  # Apply the generic function to all metrics and combine results
+  metrics_list <- lapply(metric_calculations, call_metric)
+
+  # Combine all metric results into one data frame
+  results <- do.call(rbind, metrics_list)
 
   results$threshold <- threshold
   results$variable <- var

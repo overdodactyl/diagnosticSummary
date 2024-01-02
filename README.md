@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# diagnosticSummary
+# diagnosticSummary <img src="man/figures/logo.png" align="right" />
 
 <!-- badges: start -->
 
@@ -46,6 +46,8 @@ dx_obj <- dx(
   outcome_label = "Heart Attack",
   threshold_range = c(.1,.2,.3),
   setthreshold = .3,
+  doboot = TRUE,
+  bootreps = 1000,
   grouping_variables = c("AgeGroup", "Sex", "AgeSex")
 )
 ```
@@ -54,35 +56,42 @@ dx_obj <- dx(
 summary(dx_obj, variable = "Overall", show_var = F, show_label = F)
 ```
 
-| measure                   | estimate             | fraction | CI Type      | notes  |   n |
-|:--------------------------|:---------------------|:---------|:-------------|:-------|----:|
-| AUC                       | 0.904 (0.864, 0.943) |          | DeLong       |        | 261 |
-| Accuracy                  | 79.3% (73.9%, 84.1%) | 207/261  | exact        |        | 261 |
-| Sensitivity               | 84.7% (76.0%, 91.2%) | 83/98    | exact        | \>=0.3 | 261 |
-| Specificity               | 76.1% (68.8%, 82.4%) | 124/163  | exact        | \<0.3  | 261 |
-| Positive Predictive Value | 68.0% (59.0%, 76.2%) | 83/122   | exact        |        | 261 |
-| Negative Predictive Value | 89.2% (82.8%, 93.8%) | 124/139  | exact        |        | 261 |
-| LRT+                      | 3.54 (2.66, 4.71)    |          | Large sample |        | 261 |
-| LRT-                      | 0.20 (0.13, 0.32)    |          | Large sample |        | 261 |
-| Odds Ratio                | 17.6 (9.1, 33.9)     |          | Large sample |        | 261 |
-| F1 Score                  | 75.5                 |          |              |        | 261 |
+| measure                          | summary              |
+|:---------------------------------|:---------------------|
+| AUC-ROC                          | 0.904 (0.864, 0.943) |
+| Accuracy                         | 79.3% (73.9%, 84.1%) |
+| Sensitivity                      | 84.7% (76.0%, 91.2%) |
+| Specificity                      | 76.1% (68.8%, 82.4%) |
+| Positive Predictive Value        | 68.0% (59.0%, 76.2%) |
+| Negative Predictive Value        | 89.2% (82.8%, 93.8%) |
+| LRT+                             | 3.54 (2.66, 4.71)    |
+| LRT-                             | 0.20 (0.13, 0.32)    |
+| Odds Ratio                       | 17.59 (9.12, 33.94)  |
+| F1 Score                         | 75.5% (68.3%, 81.4%) |
+| F2 Score                         | 80.7% (74.2%, 86.5%) |
+| Prevalence                       | 37.5% (31.7%, 43.7%) |
+| False Negative Rate              | 15.3% (8.8%, 24.0%)  |
+| False Positive Rate              | 23.9% (17.6%, 31.2%) |
+| False Discovery Rate             | 32.0% (23.8%, 41.0%) |
+| AUC-PR                           | 0.87                 |
+| Cohen’s Kappa                    | 0.58 (0.48, 0.68)    |
+| Matthews Correlation Coefficient | 59.0% (49.9%, 68.2%) |
+| Balanced Accuracy                | 80.4% (75.3%, 85.1%) |
+| Informedness                     | 60.8% (50.3%, 70.0%) |
+| Markedness                       | 57.2% (47.9%, 66.7%) |
+| G-mean                           | 80.3% (75.4%, 85.0%) |
+| Fowlkes-Mallows Index            | 75.9% (69.2%, 81.3%) |
 
-Threshold: 0.3
+Threshold= 0.3
 
 ``` r
-dx_forest(dx_obj)
+# dx_forest(dx_obj)
 ```
-
-<img src="man/figures/forest_plot.png" width="100%" />
 
 ``` r
-dx_roc(dx_obj)
+# dx_roc(dx_obj)
 ```
-
-<img src="man/figures/roc_plot.png" width="60%" style="display: block; margin: auto;" />
 
 ``` r
-dx_cm(dx_obj)
+# dx_cm(dx_obj)
 ```
-
-<img src="man/figures/README-unnamed-chunk-9-1.png" width="60%" style="display: block; margin: auto;" />
