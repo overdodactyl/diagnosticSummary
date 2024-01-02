@@ -38,8 +38,7 @@
 **Changes to `dx_obj$measures` output**
 
 * `rawestime` column renamed to `estimate`
-* column renamed to `conf_low` and `conf_high`
-* ...
+* `rawuci` and `rawlci` column renamed to `conf_low` and `conf_high`
 
 **New plots**
 
@@ -59,6 +58,7 @@
 
 * The confusion matrix plot was renamed from `dx_cm` to `dx_plot_cm` (`dx_cm` now constructs the confusion matrix)
 * `dx_roc` was renamed `dx_plot_roc`
+* `dx_forest` was renamed `dx_plot_forest`
 
 **Bug Fixes**
 
