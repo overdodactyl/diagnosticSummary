@@ -212,13 +212,12 @@ evaluate_metric <- function(cm, metric_func, measure_name, detail, boot, bootrep
     return(metric_raw)
   } else if (detail == "full") {
     if (boot) {
-      # Prepare the data for bootstrapping
       data_recreated <- recreate_data_from_cm(cm)
 
       # Perform bootstrapping
       ci_bounds <- boot_metric(
-        data_recreated$truth,
-        data_recreated$predprob,
+        truth = data_recreated$truth,
+        predprob = data_recreated$predprob,
         metric_func,  # Metric calculation function
         list(...),  # Pass additional args if needed
         bootreps,

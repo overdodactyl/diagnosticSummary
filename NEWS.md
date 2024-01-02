@@ -16,6 +16,7 @@
 * Markedness
 * G-mean
 * Fowlkes-Mallows Index
+* Brier Score
 
 
 *Also added aliases for metrics with the same name (e.g., recall and true positive rate for sensitivity)* 
@@ -23,6 +24,10 @@
 **New/modified tests**
 
 * Breslow and Day test implemented within package
+* Added Chi-Square Test
+* Added Fisher's Exact Test 
+* Added G-Test (Log-Likelihood Ratio Test)
+
 
 **New output**
 

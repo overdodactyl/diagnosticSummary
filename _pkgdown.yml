@@ -14,9 +14,10 @@ reference:
   contents:
   - has_concept("metrics")
 - title: Tests
-  desc: Tests
+  desc: Statistical tests
   contents:
   - breslow_day_test
+  - has_concept("tests")
 - title: Figures
   desc: Figures summarizing diagnostic statistics
   contents:

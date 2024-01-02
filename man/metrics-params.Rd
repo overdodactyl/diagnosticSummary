@@ -21,6 +21,10 @@ including 95\% confidence intervals.}
 via bootstrapping.  Note, this can be slow.}
 
 \item{bootreps}{The number of bootstrap replications for calculating confidence intervals.}
+
+\item{predprob}{Numeric vector of predicted probabilities associated with the positive class.}
+
+\item{truth}{Numeric vector of true binary outcomes, typically 0 or 1, with the same length as `predprob`.}
 }
 \value{
 Depending on the `detail` parameter, returns a numeric value

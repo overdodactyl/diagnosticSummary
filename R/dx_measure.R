@@ -197,7 +197,12 @@ dx_measure <- function(data, threshold, options, var = "Overall",
     informedness = list(fun = dx_informedness, params = common_boot_args),
     markedness = list(fun = dx_markedness, params = common_boot_args),
     g_mean = list(fun = dx_g_mean, params = common_boot_args),
-    fowlkes_mallows = list(fun = dx_fowlkes_mallows, params = common_boot_args)
+    fowlkes_mallows = list(fun = dx_fowlkes_mallows, params = common_boot_args),
+    brier = list(fun = dx_brier, params = list(predprob = predprob, truth = truth)),
+    chisquare = list(fun = dx_chi_square, params = common_ratio_args),
+    chisquare = list(fun = dx_chi_square, params = common_ratio_args),
+    fishers = list(fun = dx_fishers_exact, params = common_ratio_args),
+    gtest = list(fun = dx_g_test, params = common_ratio_args)
   )
 
   # Function to call each metric function with parameters
