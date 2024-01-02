@@ -142,7 +142,9 @@ variance_a <- function(tilde_a_value, marginals) {
 #' @export
 dx_chi_square <- function(cm, detail = "full") {
   conf_matrix <- matrix(c(cm$tp, cm$fn, cm$fp, cm$tn), nrow = 2)
-  chi_square_result <- stats::chisq.test(conf_matrix)
+  chi_square_result <- suppressWarnings({
+    stats::chisq.test(conf_matrix)
+  })
 
   if (detail == "simple") {
     return(chi_square_result$p.value)
