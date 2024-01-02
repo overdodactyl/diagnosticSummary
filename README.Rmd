@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
-[![R-CMD-check](https://github.com/overdodactyl/diagnosticSummary/workflows/R-CMD-check/badge.svg)](https://github.com/overdodactyl/diagnosticSummary/actions)
+[![R-CMD-check](https://github.com/overdodactyl/diagnosticSummary/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/overdodactyl/diagnosticSummary/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 `diagnosticSummary` is designed to quickly create diagnostic summaries and reports for binary classification data.
