@@ -74,8 +74,8 @@ dx_accuracy <- function(cm, detail = "full", ...) {
 #' @examples
 #' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
 #'             0.5, poslabel = 1)
-#' simple_ppv <- dx_ppv(cm)
-#' detailed_ppv <- dx_ppv(cm, detail = "full")
+#' simple_ppv <- dx_ppv(cm, detail = "simple")
+#' detailed_ppv <- dx_ppv(cm)
 #' print(simple_ppv)
 #' print(detailed_ppv)
 #' @seealso \code{\link{dx_cm}} to understand how to create and interact with a
@@ -114,8 +114,8 @@ dx_precision <- dx_ppv
 #' @examples
 #' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
 #'             0.5, poslabel = 1)
-#' simple_npv <- dx_npv(cm)
-#' detailed_npv <- dx_npv(cm, detail = "full")
+#' simple_npv <- dx_npv(cm, detail = "simple")
+#' detailed_npv <- dx_npv(cm)
 #' print(simple_npv)
 #' print(detailed_npv)
 #' @seealso \code{\link{dx_cm}} to understand how to create and interact with a
@@ -147,8 +147,8 @@ dx_npv <- function(cm, detail = "full", ...) {
 #' @examples
 #' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
 #'             0.5, poslabel = 1)
-#' simple_fnr <- dx_fnr(cm)
-#' detailed_fnr <- dx_fnr(cm, detail = "full")
+#' simple_fnr <- dx_fnr(cm, detail = "simple")
+#' detailed_fnr <- dx_fnr(cm)
 #' print(simple_fnr)
 #' print(detailed_fnr)
 #' @seealso \code{\link{dx_cm}} to understand how to create and interact with a
@@ -179,8 +179,8 @@ dx_fnr <- function(cm, detail = "full", ...) {
 #' @examples
 #' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
 #'             0.5, poslabel = 1)
-#' simple_fpr <- dx_fpr(cm)
-#' detailed_fpr <- dx_fpr(cm, detail = "full")
+#' simple_fpr <- dx_fpr(cm, detail = "simple")
+#' detailed_fpr <- dx_fpr(cm)
 #' print(simple_fpr)
 #' print(detailed_fpr)
 #' @seealso \code{\link{dx_cm}} to understand how to create and interact with a
@@ -211,8 +211,8 @@ dx_fpr <- function(cm, detail = "full", ...) {
 #' @examples
 #' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
 #'             0.5, poslabel = 1)
-#' simple_fdr <- dx_fdr(cm)
-#' detailed_fdr <- dx_fdr(cm, detail = "full")
+#' simple_fdr <- dx_fdr(cm, detail = "simple")
+#' detailed_fdr <- dx_fdr(cm)
 #' print(simple_fdr)
 #' print(detailed_fdr)
 #' @seealso \code{\link{dx_cm}} to understand how to create and interact with a
@@ -245,8 +245,8 @@ dx_fdr <- function(cm, detail = "full", ...) {
 #' @examples
 #' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
 #'             0.5, poslabel = 1)
-#' simple_sensitivity <- dx_sensitivity(cm)
-#' detailed_sensitivity <- dx_sensitivity(cm, detail = "full")
+#' simple_sensitivity <- dx_sensitivity(cm, detail = "simple")
+#' detailed_sensitivity <- dx_sensitivity(cm)
 #' print(simple_sensitivity)
 #' print(detailed_sensitivity)
 #' @seealso \code{\link{dx_cm}} to understand how to create and interact with a
@@ -286,8 +286,8 @@ dx_tpr <- dx_sensitivity
 #' @examples
 #' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
 #'             0.5, poslabel = 1)
-#' simple_specificity <- dx_specificity(cm)
-#' detailed_specificity <- dx_specificity(cm, detail = "full")
+#' simple_specificity <- dx_specificity(cm, detail = "simple")
+#' detailed_specificity <- dx_specificity(cm)
 #' print(simple_specificity)
 #' print(detailed_specificity)
 #' @seealso \code{\link{dx_cm}} to understand how to create and interact with a
@@ -324,8 +324,8 @@ dx_tnr <- dx_specificity
 #'
 #' @examples
 #' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold = 0.5, poslabel = 1)
-#' simple_balanced_accuracy <- dx_balanced_accuracy(cm)
-#' detailed_balanced_accuracy <- dx_balanced_accuracy(cm, detail = "full")
+#' simple_balanced_accuracy <- dx_balanced_accuracy(cm, detail = "simple")
+#' detailed_balanced_accuracy <- dx_balanced_accuracy(cm)
 #' print(simple_balanced_accuracy)
 #' print(detailed_balanced_accuracy)
 #' @seealso \code{\link{dx_cm}} to understand how to create and interact with a 'dx_cm' object.
@@ -370,8 +370,8 @@ calculate_balanced_accuracy <- function(cm) {
 #' @examples
 #' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
 #'             0.5, poslabel = 1)
-#' simple_prevalence <- dx_prevalence(cm)
-#' detailed_prevalence <- dx_prevalence(cm, detail = "full")
+#' simple_prevalence <- dx_prevalence(cm, detail = "simple")
+#' detailed_prevalence <- dx_prevalence(cm)
 #' print(simple_prevalence)
 #' print(detailed_prevalence)
 #' @seealso \code{\link{dx_cm}} to understand how to create and interact with a
@@ -900,8 +900,8 @@ dx_auc_pr <- function(precision, recall, detail = "full") {
 #' # Assuming you have a vector of true class labels and predicted probabilities
 #' true_classes <- c(1, 0, 1, 1, 0, 0, 1)
 #' predicted_probs <- c(0.9, 0.1, 0.8, 0.75, 0.33, 0.25, 0.67)
-#' simple_auc <- dx_auc(true_classes, predicted_probs, detail = "full")
-#' detailed_auc <- dx_auc(true_classes, predicted_probs, detail = "full")
+#' simple_auc <- dx_auc(true_classes, predicted_probs, detail = "simple")
+#' detailed_auc <- dx_auc(true_classes, predicted_probs)
 #' print(simple_auc)
 #' print(detailed_auc)
 #' @export
@@ -973,6 +973,13 @@ calculate_fbeta <- function(cm, beta = 1) {
 #'         F-beta or a data frame with the F-beta and its confidence intervals.
 #' @seealso \code{\link{dx_f1}}, \code{\link{dx_f2}} for specific F-beta scores.
 #' @export
+#' @examples
+#' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
+#'             0.5, poslabel = 1)
+#' simple_f <- dx_fbeta(cm, beta = .5, detail = "simple")
+#' detailed_f <- dx_fbeta(cm, beta = .5)
+#' print(simple_f)
+#' print(detailed_f)
 #' @concept metrics
 dx_fbeta <- function(cm, beta = 1, detail = "full", boot = FALSE, bootreps = 1000) {
   evaluate_metric(cm, calculate_fbeta, paste0("F", beta, " Score"), detail, boot, bootreps, beta = beta)
@@ -991,6 +998,13 @@ dx_fbeta <- function(cm, beta = 1, detail = "full", boot = FALSE, bootreps = 100
 #' @seealso \code{\link{dx_fbeta}}, \code{\link{dx_f2}} for other F-beta scores.
 #' @export
 #' @concept metrics
+#' @examples
+#' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
+#'             0.5, poslabel = 1)
+#' simple_f <- dx_f1(cm, detail = "simple")
+#' detailed_f <- dx_f1(cm)
+#' print(simple_f)
+#' print(detailed_f)
 dx_f1 <- function(cm, detail = "full", boot = FALSE, bootreps = 1000) {
   dx_fbeta(cm, beta = 1, detail, boot, bootreps)
 }
@@ -1008,6 +1022,13 @@ dx_f1 <- function(cm, detail = "full", boot = FALSE, bootreps = 1000) {
 #' @seealso \code{\link{dx_fbeta}}, \code{\link{dx_f1}} for other F-beta scores.
 #' @export
 #' @concept metrics
+#' @examples
+#' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
+#'             0.5, poslabel = 1)
+#' simple_f <- dx_f2(cm, detail = "simple")
+#' detailed_f <- dx_f2(cm)
+#' print(simple_f)
+#' print(detailed_f)
 dx_f2 <- function(cm, detail = "full", boot = FALSE, bootreps = 1000) {
   dx_fbeta(cm, beta = 2, detail, boot, bootreps)
 }
@@ -1032,8 +1053,8 @@ dx_f2 <- function(cm, detail = "full", boot = FALSE, bootreps = 1000) {
 #' @aliases dx_youden_j
 #' @examples
 #' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold = 0.5, poslabel = 1)
-#' simple_informedness <- dx_informedness(cm)
-#' detailed_informedness <- dx_informedness(cm, detail = "full")
+#' simple_informedness <- dx_informedness(cm, detail = "simple")
+#' detailed_informedness <- dx_informedness(cm)
 #' print(simple_informedness)
 #' print(detailed_informedness)
 #' @seealso \code{\link{dx_cm}} to understand how to create and interact with a 'dx_cm' object.
@@ -1076,8 +1097,8 @@ dx_youden_j <- dx_informedness
 #'
 #' @examples
 #' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold = 0.5, poslabel = 1)
-#' simple_markedness <- dx_markedness(cm)
-#' detailed_markedness <- dx_markedness(cm, detail = "full")
+#' simple_markedness <- dx_markedness(cm, detail = "simple")
+#' detailed_markedness <- dx_markedness(cm)
 #' print(simple_markedness)
 #' print(detailed_markedness)
 #' @seealso \code{\link{dx_cm}} to understand how to create and interact with a 'dx_cm' object.
@@ -1119,8 +1140,8 @@ calculate_markedness <- function(cm) {
 #'
 #' @examples
 #' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold = 0.5, poslabel = 1)
-#' simple_g_mean <- dx_g_mean(cm)
-#' detailed_g_mean <- dx_g_mean(cm, detail = "full")
+#' simple_g_mean <- dx_g_mean(cm, detail = "simple")
+#' detailed_g_mean <- dx_g_mean(cm)
 #' print(simple_g_mean)
 #' print(detailed_g_mean)
 #' @seealso \code{\link{dx_cm}} to understand how to create and interact with a 'dx_cm' object.
@@ -1160,8 +1181,8 @@ calculate_g_mean <- function(cm) {
 #'
 #' @examples
 #' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold = 0.5, poslabel = 1)
-#' simple_fm_index <- dx_fowlkes_mallows(cm)
-#' detailed_fm_index <- dx_fowlkes_mallows(cm, detail = "full")
+#' simple_fm_index <- dx_fowlkes_mallows(cm, detail = "simple")
+#' detailed_fm_index <- dx_fowlkes_mallows(cm)
 #' print(simple_fm_index)
 #' print(detailed_fm_index)
 #' @seealso \code{\link{dx_cm}} to understand how to create and interact with a 'dx_cm' object.

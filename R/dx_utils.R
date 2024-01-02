@@ -190,10 +190,6 @@ boot_metric <- function(truth, predprob, metric_func, metric_args, bootreps, mea
 
     cm_boot <- dx_cm(predprob_boot, truth_boot, threshold = 0.5, poslabel = 1)
     boot_metrics[i] <- do.call(metric_func, c(list(cm = cm_boot), metric_args))
-    # if (is.na(boot_metrics[i]) || is.null(boot_metrics[i])) {
-    #   print(cm_boot)
-    #   print(boot_metrics[i])
-    # }
   }
 
   # Example of checking proportion of NAs

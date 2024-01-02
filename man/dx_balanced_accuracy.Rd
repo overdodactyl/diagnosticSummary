@@ -34,8 +34,8 @@ The formula for Balanced Accuracy is:
 }
 \examples{
 cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold = 0.5, poslabel = 1)
-simple_balanced_accuracy <- dx_balanced_accuracy(cm)
-detailed_balanced_accuracy <- dx_balanced_accuracy(cm, detail = "full")
+simple_balanced_accuracy <- dx_balanced_accuracy(cm, detail = "simple")
+detailed_balanced_accuracy <- dx_balanced_accuracy(cm)
 print(simple_balanced_accuracy)
 print(detailed_balanced_accuracy)
 }

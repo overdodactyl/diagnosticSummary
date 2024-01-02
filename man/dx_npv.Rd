@@ -36,8 +36,8 @@ The formula for NPV is:
 \examples{
 cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
             0.5, poslabel = 1)
-simple_npv <- dx_npv(cm)
-detailed_npv <- dx_npv(cm, detail = "full")
+simple_npv <- dx_npv(cm, detail = "simple")
+detailed_npv <- dx_npv(cm)
 print(simple_npv)
 print(detailed_npv)
 }

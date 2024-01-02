@@ -30,6 +30,14 @@ to include bootstrapped confidence intervals. The F-beta score is a
 generalization of the F1 score, allowing different importance to precision
 and recall via the beta parameter.
 }
+\examples{
+cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
+            0.5, poslabel = 1)
+simple_f <- dx_fbeta(cm, beta = .5, detail = "simple")
+detailed_f <- dx_fbeta(cm, beta = .5)
+print(simple_f)
+print(detailed_f)
+}
 \seealso{
 \code{\link{dx_f1}}, \code{\link{dx_f2}} for specific F-beta scores.
 }

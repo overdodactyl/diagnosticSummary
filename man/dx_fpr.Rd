@@ -33,8 +33,8 @@ The formula for FPR is:
 \examples{
 cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
             0.5, poslabel = 1)
-simple_fpr <- dx_fpr(cm)
-detailed_fpr <- dx_fpr(cm, detail = "full")
+simple_fpr <- dx_fpr(cm, detail = "simple")
+detailed_fpr <- dx_fpr(cm)
 print(simple_fpr)
 print(detailed_fpr)
 }

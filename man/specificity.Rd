@@ -38,8 +38,8 @@ The formula for Specificity is:
 \examples{
 cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
             0.5, poslabel = 1)
-simple_specificity <- dx_specificity(cm)
-detailed_specificity <- dx_specificity(cm, detail = "full")
+simple_specificity <- dx_specificity(cm, detail = "simple")
+detailed_specificity <- dx_specificity(cm)
 print(simple_specificity)
 print(detailed_specificity)
 }

@@ -34,8 +34,8 @@ The formula for FNR is:
 \examples{
 cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
             0.5, poslabel = 1)
-simple_fnr <- dx_fnr(cm)
-detailed_fnr <- dx_fnr(cm, detail = "full")
+simple_fnr <- dx_fnr(cm, detail = "simple")
+detailed_fnr <- dx_fnr(cm)
 print(simple_fnr)
 print(detailed_fnr)
 }

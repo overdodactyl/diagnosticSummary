@@ -43,8 +43,8 @@ The formula for Sensitivity is:
 \examples{
 cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
             0.5, poslabel = 1)
-simple_sensitivity <- dx_sensitivity(cm)
-detailed_sensitivity <- dx_sensitivity(cm, detail = "full")
+simple_sensitivity <- dx_sensitivity(cm, detail = "simple")
+detailed_sensitivity <- dx_sensitivity(cm)
 print(simple_sensitivity)
 print(detailed_sensitivity)
 }

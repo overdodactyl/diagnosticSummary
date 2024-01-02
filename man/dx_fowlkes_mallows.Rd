@@ -34,8 +34,8 @@ The formula for Fowlkes-Mallows Index is:
 }
 \examples{
 cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold = 0.5, poslabel = 1)
-simple_fm_index <- dx_fowlkes_mallows(cm)
-detailed_fm_index <- dx_fowlkes_mallows(cm, detail = "full")
+simple_fm_index <- dx_fowlkes_mallows(cm, detail = "simple")
+detailed_fm_index <- dx_fowlkes_mallows(cm)
 print(simple_fm_index)
 print(detailed_fm_index)
 }

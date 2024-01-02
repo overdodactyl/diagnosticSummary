@@ -27,6 +27,14 @@ Calculates the F1 score from a confusion matrix object with an option to
 include bootstrapped confidence intervals. The F1 score is the harmonic
 mean of precision and recall.
 }
+\examples{
+cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
+            0.5, poslabel = 1)
+simple_f <- dx_f1(cm, detail = "simple")
+detailed_f <- dx_f1(cm)
+print(simple_f)
+print(detailed_f)
+}
 \seealso{
 \code{\link{dx_fbeta}}, \code{\link{dx_f2}} for other F-beta scores.
 }

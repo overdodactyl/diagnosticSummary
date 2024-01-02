@@ -34,8 +34,8 @@ The formula for Prevalence is:
 \examples{
 cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
             0.5, poslabel = 1)
-simple_prevalence <- dx_prevalence(cm)
-detailed_prevalence <- dx_prevalence(cm, detail = "full")
+simple_prevalence <- dx_prevalence(cm, detail = "simple")
+detailed_prevalence <- dx_prevalence(cm)
 print(simple_prevalence)
 print(detailed_prevalence)
 }

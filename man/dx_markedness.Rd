@@ -34,8 +34,8 @@ The formula for Markedness is:
 }
 \examples{
 cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold = 0.5, poslabel = 1)
-simple_markedness <- dx_markedness(cm)
-detailed_markedness <- dx_markedness(cm, detail = "full")
+simple_markedness <- dx_markedness(cm, detail = "simple")
+detailed_markedness <- dx_markedness(cm)
 print(simple_markedness)
 print(detailed_markedness)
 }

@@ -35,8 +35,8 @@ The formula for G-mean is:
 }
 \examples{
 cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold = 0.5, poslabel = 1)
-simple_g_mean <- dx_g_mean(cm)
-detailed_g_mean <- dx_g_mean(cm, detail = "full")
+simple_g_mean <- dx_g_mean(cm, detail = "simple")
+detailed_g_mean <- dx_g_mean(cm)
 print(simple_g_mean)
 print(detailed_g_mean)
 }

@@ -33,8 +33,8 @@ The formula for FDR is:
 \examples{
 cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
             0.5, poslabel = 1)
-simple_fdr <- dx_fdr(cm)
-detailed_fdr <- dx_fdr(cm, detail = "full")
+simple_fdr <- dx_fdr(cm, detail = "simple")
+detailed_fdr <- dx_fdr(cm)
 print(simple_fdr)
 print(detailed_fdr)
 }

@@ -38,8 +38,8 @@ The formula for PPV is:
 \examples{
 cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
             0.5, poslabel = 1)
-simple_ppv <- dx_ppv(cm)
-detailed_ppv <- dx_ppv(cm, detail = "full")
+simple_ppv <- dx_ppv(cm, detail = "simple")
+detailed_ppv <- dx_ppv(cm)
 print(simple_ppv)
 print(detailed_ppv)
 }
