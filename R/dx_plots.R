@@ -940,7 +940,6 @@ dx_roc_ggtheme <- function() {
 #' @param plot_type Character string specifying the type of plot: "histogram" or "density".
 #' @param bins Optional; number of bins for the histogram (relevant if plot_type = "histogram").
 #' @param fill_color Color to fill the bars or density plot.
-#' @param title Optional; title of the plot.
 #' @return A ggplot object representing the distribution of predicted probabilities.
 #' @export
 #' @examples
@@ -955,6 +954,8 @@ dx_roc_ggtheme <- function() {
 #' dx_plot_probabilities(dx_obj, plot_type = "density")
 #'
 dx_plot_probabilities <- function(dx_obj, plot_type = "histogram", bins = NULL, fill_color = "#0057B8") {
+
+  density <- NULL  # Dummy definition to avoid R CMD check warnings
 
   # Prepare data for plotting
   data <- data.frame(Predictions = dx_obj$data[[dx_obj$options$pred_varname]])

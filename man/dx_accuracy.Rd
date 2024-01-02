@@ -37,8 +37,8 @@ cm <- dx_cm(
   dx_heart_failure$truth,
   threshold = 0.3, poslabel = 1
 )
-simple_accuracy <- dx_accuracy(cm)
-detailed_accuracy <- dx_accuracy(cm, detail = "full")
+simple_accuracy <- dx_accuracy(cm, detail = "simple")
+detailed_accuracy <- dx_accuracy(cm)
 print(simple_accuracy)
 print(detailed_accuracy)
 }

@@ -19,8 +19,6 @@ dx_plot_probabilities(
 \item{bins}{Optional; number of bins for the histogram (relevant if plot_type = "histogram").}
 
 \item{fill_color}{Color to fill the bars or density plot.}
-
-\item{title}{Optional; title of the plot.}
 }
 \value{
 A ggplot object representing the distribution of predicted probabilities.
