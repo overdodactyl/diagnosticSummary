@@ -10,7 +10,8 @@
   optional = TRUE,
   thresh = NA,
   variable = NA,
-  level = NA,
+  label = NA,
+  measure = NA,
   ...
 )
 }
@@ -27,7 +28,9 @@ names (to syntactic names: see make.names) is optional.}
 
 \item{variable}{Variable to include in returned values}
 
-\item{level}{Level to include in returned values}
+\item{label}{Labels to include in returned values}
+
+\item{measure}{Measures to include}
 
 \item{...}{additional arguments to be passed to or from methods}
 }

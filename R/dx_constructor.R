@@ -42,11 +42,6 @@ dx <- function(data,
     stop(paste(true_varname, "was not found in `data`"))
   }
 
-  # Check if boot available when needed
-  if (doboot & !requireNamespace("boot", quietly = TRUE)) {
-    stop("boot package not installed. Install package or use doboot = FALSE")
-  }
-
   # Check if grouping variables are factors
   if (!identical(grouping_variables, NA)) {
     for (f in grouping_variables) {
@@ -114,6 +109,8 @@ dx <- function(data,
 
   ####### Subgroup Analysis
 
+  set.seed(123)
+
   if (!identical(grouping_variables, NA)) {
     subgroups <- list()
     for (i in seq_along(options$grouping_variables)) {
@@ -127,14 +124,29 @@ dx <- function(data,
     threshold_measures <- rbind(subgroups, threshold_measures)
   }
 
+  ####### Threshold Analysis
+  threshold_analysis <- dx_thresholds(data, options)
+
+  ####### Prevalence Analysis
+  prevalence_analysis <- dx_prevalence_analysis(data, options)
+
+  ###### Rank Analysis
+  rank_analysis <- dx_rank(data, options)
+
+
   # Number of unique levels
-  n_levels <- length(unique(threshold_measures$Label))
+  n_levels <- length(unique(threshold_measures$label))
 
   roc <- get_roc(true_varname, pred_varname, data, direction)
 
 
   structure(list(
-    data = data, options = options, measures = threshold_measures,
+    data = data,
+    options = options,
+    measures = threshold_measures,
+    thresholds = threshold_analysis,
+    prevalence = prevalence_analysis,
+    rank = rank_analysis,
     n_levels = n_levels, roc = roc
   ), class = "dx")
 }

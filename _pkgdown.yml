@@ -1,24 +1,31 @@
 url: https://overdodactyl.github.io/diagnosticSummary
 
 template:
-  package: mayotemplate
+  bootstrap: 5
 
 reference:
 - title: Construction
   desc:  Generate a dx object
   contents:
   - dx
+  - dx_cm
+- title: Metrics
+  desc: Measures of binary classification tasks
+  contents:
+  - has_concept("metrics")
+- title: Tests
+  desc: Statistical tests
+  contents:
+  - breslow_day_test
+  - has_concept("tests")
 - title: Figures
   desc: Figures summarizing diagnostic statistics
   contents:
-  - dx_roc
-  - dx_forest
-  - dx_cm
+  - starts_with("dx_plot")
   - dx_edit_cell
 - title: Utilities
   desc: Helper functions and S3 methods
   contents:
-  - dx_diagnostic_table
   - as.data.frame.dx
   - summary.dx
 - title: Data
@@ -35,7 +42,7 @@ figures:
   dpi: 96
   dev.args: []
   fig.ext: png
-  fig.width: 6
+  fig.width: 8
   fig.height: ~
   fig.retina: 2
   fig.asp: 1

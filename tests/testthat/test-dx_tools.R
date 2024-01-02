@@ -1,5 +1,3 @@
-library(dplyr)
-
 test_that("Generate Confidence Intervals", {
   est <- .123234213
   high <- .89123423
@@ -54,15 +52,15 @@ dx_res <- as.data.frame(dx_obj, variable = "Overall", thresh = .3)
 
 
 test_that("Accuracy", {
-  caret_accuracy <- caret_results %>% filter(term == "accuracy")
-  caret_ac_raw <- caret_accuracy %>% pull(estimate)
-  caret_ac_low <- caret_accuracy %>% pull(conf.low)
-  caret_ac_high <- caret_accuracy %>% pull(conf.high)
+  caret_accuracy <- subset(caret_results, term == "accuracy")
+  caret_ac_raw <- caret_accuracy$estimate
+  caret_ac_low <- caret_accuracy$conf.low
+  caret_ac_high <- caret_accuracy$conf.high
 
-  dx_acc <- dx_res %>% filter(measure == "Accuracy")
-  dx_ac_raw <- dx_acc %>% pull(rawestime)
-  dx_ac_low <- dx_acc %>% pull(rawlci)
-  dx_ac_high <- dx_acc %>% pull(rawuci)
+  dx_acc <- subset(dx_res, measure == "Accuracy")
+  dx_ac_raw <- dx_acc$estimate
+  dx_ac_low <- dx_acc$conf_low
+  dx_ac_high <- dx_acc$conf_high
 
   expect_equal(dx_ac_raw, caret_ac_raw)
   expect_equal(dx_ac_low, caret_ac_low)
@@ -70,13 +68,8 @@ test_that("Accuracy", {
 })
 
 get_measures <- function(dx, caret) {
-  caret_res <- caret_results %>%
-    filter(term == caret) %>%
-    pull(estimate)
-
-  dx_res <- dx_res %>%
-    filter(measure == dx) %>%
-    pull(rawestime)
+  caret_res <- caret_results[caret_results$term == caret, ]$estimate
+  dx_res <- dx_res[dx_res$measure == dx, ]$estimate
 
   testthat::expect_equal(dx_res, caret_res)
 }

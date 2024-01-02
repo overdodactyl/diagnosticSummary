@@ -1,3 +1,32 @@
+zero_range <- function (x, tol = 1000 * .Machine$double.eps) {
+  if (length(x) == 1) {
+    return(TRUE)
+  }
+  if (length(x) != 2)
+    stop("x must be length 1 or 2")
+  if (any(is.na(x))) {
+    return(NA)
+  }
+  if (x[1] == x[2]) {
+    return(TRUE)
+  }
+  if (all(is.infinite(x))) {
+    return(FALSE)
+  }
+  m <- min(abs(x))
+  if (m == 0) {
+    return(FALSE)
+  }
+  abs((x[1] - x[2])/m) < tol
+}
+
+rescale <- function (x, to = c(0, 1), from = range(x, na.rm = TRUE, finite = TRUE), ...) {
+  if (zero_range(from) || zero_range(to)) {
+    return(ifelse(is.na(x), NA, mean(to)))
+  }
+  (x - from[1])/diff(from) * diff(to) + to[1]
+}
+
 #' Create table with odds ratios displayed graphically
 #'
 #' Generate a table of diagnostic measures
@@ -20,14 +49,17 @@
 #'     If left NA, no file will be created.
 #' @param header_bg Background color of the header
 #' @param header_col Color of text in the header
+#' @param header_fontsize Font size of header text
 #' @param body_bg Background color of table rows.  If values are less than total
 #'     number of rows, values are repeated.
+#' @param body_fontsize Font size of body text
 #' @param footer_bg Background color if the footer row.
 #' @param footer_col Color of the footer row.
 #' @param body_or_col Color of odds ratios in the table body
 #' @param footer_or_col Color of odds ratios in the table footer
-#' @importFrom gtable gtable_add_grob
-#' @importFrom grid grobTree unit gpar editGrob segmentsGrob pointsGrob textGrob
+#' @param fraction_multiline Logical. Should fractions be split onto 2 lines?
+#' @param or_lwd Line width for OR
+#' @param or_size Size of OR point
 #' @export
 #' @examples
 #'
@@ -42,9 +74,9 @@
 #' )
 #' dx_forest(dx_obj)
 #' dx_forest(dx_obj, trans = "log10")
-dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
+dx_plot_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
                       tick_label_size = 6.5, trans = c(NA, "log10"),
-                      measures = c("AUC", "Sensitivity", "Specificity","Odds Ratio"),
+                      measures = c("AUC ROC", "Sensitivity", "Specificity","Odds Ratio"),
                       return = c("ggplot", "grid"),
                       filename = NA,
                       header_bg = "white", header_col = "black",
@@ -54,6 +86,11 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
                       fraction_multiline = FALSE,
                       or_lwd = .8, or_size = .35,
                       body_or_col = "black", footer_or_col = footer_col) {
+
+  check_package("gridExtra")
+  check_package("grid")
+  check_package("gtable")
+
 
   trans <- match.arg(trans)
   return_type <- match.arg(return)
@@ -67,21 +104,20 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
     measures = measures
   )
 
-  indent_rows <- which(!is.na(data$rawestime))
+  indent_rows <- which(!is.na(data$estimate))
   bold_rows <- setdiff(1:(nrow(data)), indent_rows)
   indent_rows <- indent_rows[indent_rows != nrow(data)]
 
-  overall_or <- data %>%
-    dplyr::filter(group == "Overall") %>%
-    dplyr::pull(rawestime)
+  overall_or <- data[data$group == "Overall", ]$estimate
 
-  lower <- data$rawlci
-  estimate <- data$rawestime
-  upper <- data$rawuci
+
+  lower <- data$conf_low
+  estimate <- data$estimate
+  upper <- data$conf_high
 
   # Find range of OR's
-  min_or <- min(data$rawlci, na.rm = T)
-  max_or <- max(data$rawuci, na.rm = T)
+  min_or <- min(data$conf_low, na.rm = T)
+  max_or <- max(data$conf_high, na.rm = T)
 
   # Get plot range, breaks, and labels
   range <- plot_range(
@@ -101,39 +137,58 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
   }
 
   # Rescale data between 0 and 1
-  breaks_scaled <- scales::rescale(breaks)
-  lower <- scales::rescale(lower, from = range)
-  estimate <- scales::rescale(estimate, from = range)
-  upper <- scales::rescale(upper, from = range)
-  overall_or <- scales::rescale(overall_or, from = range)
+  breaks_scaled <- rescale(breaks)
+  lower <- rescale(lower, from = range)
+  estimate <- rescale(estimate, from = range)
+  upper <- rescale(upper, from = range)
+  overall_or <- rescale(overall_or, from = range)
 
 
   select_measuers <- measures[!measures %in% c("Breslow-Day")]
 
-  tbl_data <- data %>%
-    dplyr::mutate(` ` = "                                          ") %>%
-    dplyr::mutate(n = scales::comma(n, 1)) %>%
-    dplyr::select(group, N = n, dplyr::one_of(select_measuers), ` `) %>%
-    dplyr::relocate(` `, .before = `Odds Ratio`)
-    # dplyr::select(group, N = n, AUC, Sensitivity, Specificity, ` `, `Odds Ratio`)
+  # Create a new column with spaces
+  data$` ` <- "                                          "
 
-  tbl_data <- tbl_data %>% dplyr::add_row()
+  # Format the 'n' column
+  data$n <- comma(data$n)
+
+  # Select and rename the necessary columns. Ensure 'select_measures' is a character vector of column names
+  cols_to_select <- c("group", "N", select_measuers, " ")
+  names(data)[names(data) == "n"] <- "N"
+  tbl_data <- data[cols_to_select]
+
+  # Order the columns, moving the space column before 'Odds Ratio'
+  # Assuming 'Odds Ratio' is one of the 'select_measures'
+  odds_ratio_index <- which(names(tbl_data) == "Odds Ratio")
+  space_index <- which(names(tbl_data) == " ")
+  tbl_data[c("group", "N", select_measuers, " ")]
+
+
+  order <- append(names(tbl_data), " ", after = odds_ratio_index-1)
+  order <- order[1:length(order)-1]
+
+  tbl_data <- tbl_data[order]
+  rownames(tbl_data) <- NULL
+
+  tbl_data <- rbind_all(tbl_data, NA)
 
   tbl_data[is.na(tbl_data)] <- ""
 
-  tbl_data <- tbl_data %>%
-    dplyr::mutate(group = ifelse(dplyr::row_number() %in% indent_rows,
-      paste("   ", group), group
-    ))
+  # Create a sequence of row numbers
+  row_nums <- seq_len(nrow(tbl_data))
 
-  tbl_data <- dplyr::rename(tbl_data, Group = "group")
+  # Use ifelse to conditionally prepend spaces to the 'group' column
+  tbl_data$group <- ifelse(row_nums %in% indent_rows, paste("   ", tbl_data$group), tbl_data$group)
+
+  names(tbl_data)[names(tbl_data) == "group"] <- "Group"
+
 
   names(tbl_data) <- gsub("Positive Predictive Value", "PPV", names(tbl_data))
   names(tbl_data) <- gsub("Negative Predictive Value", "NPV", names(tbl_data))
 
   table_theme <- gridExtra::ttheme_minimal(
     core = list(
-      margin = unit(c(1, 1), "mm"),
+      margin = grid::unit(c(1, 1), "mm"),
       bg_params = list(fill = rep(body_bg), col = NA),
       fg_params = list(fontface = 1, fontsize = body_fontsize)
     ),
@@ -147,13 +202,17 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
   nrows <- nrow(tbl_data)
   ncols <- ncol(tbl_data)
 
+  # Copy tbl_data to a new variable and apply gsub to retain only the second line
+  cell_width <- lapply(tbl_data, function(x) gsub("(.*)\n(.*)", "\\2", x))
+  # Calculate the number of characters in each cell
+  cell_width <- lapply(cell_width, nchar)
+  # Convert the list back to a data frame
+  cell_width <- as.data.frame(cell_width)
 
-  cell_width <- dplyr::mutate_all(tbl_data, ~gsub("(.*)\n(.*)", "\\2", .))
-  cell_width <- dplyr::mutate_all(cell_width, nchar)
   column_widths <- apply(cell_width, 2, max)
-  column_widths[8] <- 0
-  column_widths[2] <- column_widths[2] + 5
-  column_widths[8] <- max(column_widths)
+  # column_widths[8] <- 0
+  # column_widths[2] <- column_widths[2] + 5
+  # column_widths[8] <- max(column_widths)
 
   column_widths <- column_widths / sum(column_widths)
 
@@ -161,7 +220,7 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
   # Convert df to grob
   g <- gridExtra::tableGrob(tbl_data,
     theme = table_theme, rows = NULL,
-    widths = unit(c(rep(5, ncols)), c("cm"))
+    widths = grid::unit(c(rep(5, ncols)), c("cm"))
   )
 
   # Add border under header
@@ -193,7 +252,7 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
   # Add dashed line for overall OR
   g <- dx_vline(g,
     x = overall_or, y0 = 0, y1 = 1, t = 2, b = nrows, l = or_col,
-    name = "overall_or", gp = gpar(lwd = .8, lty = 2)
+    name = "overall_or", gp = grid::gpar(lwd = .8, lty = 2)
   )
 
   # Add OR's
@@ -215,37 +274,37 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
 
   # Bold bottom row
   g <- dx_edit_cell(g, nrow(g) - 1, seq_len(ncol(g)), "core-fg",
-    gp = gpar(fontface = "bold")
+    gp = grid::gpar(fontface = "bold")
   )
 
   # Bold levels
   g <- dx_edit_cell(g, bold_rows + 1, 1, "core-fg",
-    gp = gpar(fontface = "bold")
+    gp = grid::gpar(fontface = "bold")
   )
 
   # Left align first column
   g <- dx_edit_cell(g, seq_len(nrow(g)), 1, "core-fg",
-    x = unit(.05, "npc"), hjust = 0
+    x = grid::unit(.05, "npc"), hjust = 0
   )
   g <- dx_edit_cell(g, seq_len(nrow(g)), 1, "colhead-fg",
-    x = unit(.05, "npc"), hjust = 0
+    x = grid::unit(.05, "npc"), hjust = 0
   )
 
   # Darken total row
   g <- dx_edit_cell(
     g, nrow(g) - 1, seq_len(ncol(g)), "core-bg",
-    gp = gpar(fill = footer_bg)
+    gp = grid::gpar(fill = footer_bg)
   )
 
   # Color total row
   g <- dx_edit_cell(
     g, nrow(g) - 1, seq_len(ncol(g)), "core-fg",
-    gp = gpar(col = footer_col)
+    gp = grid::gpar(col = footer_col)
   )
 
   # Last row should be white (ticks and lables)
   g <- dx_edit_cell(g, nrow(g), seq_len(ncol(g)), "core-bg",
-    gp = gpar(fill = "#ffffff")
+    gp = grid::gpar(fill = "#ffffff")
   )
 
   if (all(c("Odds Ratio", "Breslow-Day") %in% measures)) {
@@ -254,20 +313,20 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
 
     g <- dx_edit_cell(
       g, bold_rows + 1, col, "core-fg",
-      gp = gpar(fontface = "italic")
+      gp = grid::gpar(fontface = "italic")
     )
   }
 
 
   # Adjust width of plot - some fine tunining here in the future woud be nice
-  # g$widths <- unit(rep(1 / ncol(g), ncol(g)), "npc")
-  g$widths <- unit(column_widths, "npc")
+  # g$widths <- grid::unit(rep(1 / ncol(g), ncol(g)), "npc")
+  g$widths <- grid::unit(column_widths, "npc")
   # g$heights <- max(g$heights)
 
   row_height <- ifelse(fraction & fraction_multiline, 1.2, 1)
 
   g$heights <- rep(
-    unit(0.05*row_height, "npc"),
+    grid::unit(0.05*row_height, "npc"),
     length(g$heights)
   )
 
@@ -298,14 +357,14 @@ dx_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
 
 
 dx_hline <- function(table, y, x0, x1, t, b = t, l, r = l, name,
-                     gp = gpar(lwd = .8), clip = "off") {
-  gtable_add_grob(table,
-    grobs = grobTree(
-      segmentsGrob(
-        x0 = unit(x0, "npc"),
-        y0 = unit(y, "npc"),
-        x1 = unit(x1, "npc"),
-        y1 = unit(y, "npc"),
+                     gp = grid::gpar(lwd = .8), clip = "off") {
+  gtable::gtable_add_grob(table,
+    grobs = grid::grobTree(
+      grid::segmentsGrob(
+        x0 = grid::unit(x0, "npc"),
+        y0 = grid::unit(y, "npc"),
+        x1 = grid::unit(x1, "npc"),
+        y1 = grid::unit(y, "npc"),
         gp = gp
       )
     ),
@@ -317,14 +376,14 @@ dx_hline <- function(table, y, x0, x1, t, b = t, l, r = l, name,
 }
 
 dx_vline <- function(table, x, y0, y1, t, b = t, l, r = l, name,
-                     gp = gpar(lwd = .8, col = "black"), clip = "off") {
-  gtable_add_grob(table,
-    grobs = grobTree(
-      segmentsGrob(
-        x0 = unit(x, "npc"),
-        y0 = unit(y0, "npc"),
-        x1 = unit(x, "npc"),
-        y1 = unit(y1, "npc"),
+                     gp = grid::gpar(lwd = .8, col = "black"), clip = "off") {
+  gtable::gtable_add_grob(table,
+    grobs = grid::grobTree(
+      grid::segmentsGrob(
+        x0 = grid::unit(x, "npc"),
+        y0 = grid::unit(y0, "npc"),
+        x1 = grid::unit(x, "npc"),
+        y1 = grid::unit(y1, "npc"),
         gp = gp
       )
     ),
@@ -343,13 +402,13 @@ dx_vline <- function(table, x, y0, y1, t, b = t, l, r = l, name,
 #' @param row Numeric vector of rows to edit
 #' @param col Numeric vector of columns to edit
 #' @param name Name of table layer to edit
-#' @param ... Parameters passed to editGrob such as gpar or hjust.
+#' @param ... Parameters passed to grid::editGrob such as grid::gpar or hjust.
 #' @export
 dx_edit_cell <- function(table, row, col, name = "core-fg", ...) {
   l <- table$layout
   ids <- which(l$t %in% row & l$l %in% col & l$name == name)
   for (id in ids) {
-    newgrob <- editGrob(table$grobs[id][[1]], ...)
+    newgrob <- grid::editGrob(table$grobs[id][[1]], ...)
     table$grobs[id][[1]] <- newgrob
   }
   table
@@ -362,29 +421,29 @@ dx_forest_add_or <- function(grob, row, low, est, high,
   i <- sample(1:100000, 1)
 
   tmp <- dx_hline(
-    grob, gp = gpar(lwd = lwd, col = col),
+    grob, gp = grid::gpar(lwd = lwd, col = col),
     y = .5, x0 = low, x1 = high, t = row, l = or_col,
     name = paste0("or", i), clip = "on"
   )
   tmp <- dx_vline(
-    tmp, gp = gpar(lwd = lwd, col = col),
+    tmp, gp = grid::gpar(lwd = lwd, col = col),
     x = low, y0 = .35, y1 = .65, t = row, l = or_col,
     name = paste0("left_or_cap_", i), clip = "on"
   )
   tmp <- dx_vline(
-    tmp, gp = gpar(lwd = lwd, col = col),
+    tmp, gp = grid::gpar(lwd = lwd, col = col),
     x = high, y0 = .35, y1 = .65, t = row, l = or_col,
     name = paste0("right_or_cap_", i), clip = "on"
   )
 
-  gtable_add_grob(tmp,
-    grobs = grobTree(
-      pointsGrob(
+  gtable::gtable_add_grob(tmp,
+    grobs = grid::grobTree(
+      grid::pointsGrob(
         x = est,
         y = .5,
         pch = 16,
-        gp = gpar(col = col),
-        size = unit(size, "char")
+        gp = grid::gpar(col = col),
+        size = grid::unit(size, "char")
       )
     ),
     t = row, l = or_col, name = "point1", z = Inf
@@ -399,13 +458,13 @@ dx_forest_add_tick <- function(grob, tick_scaled, tick, nrows,
     l = or_col, name = paste0("tick_", tick)
   )
 
-  gtable_add_grob(tmp,
-    grobs = grobTree(
-      textGrob(
+  gtable::gtable_add_grob(tmp,
+    grobs = grid::grobTree(
+      grid::textGrob(
         label = tick,
         x = tick_scaled,
         y = .5,
-        gp = gpar(fontsize = tick_label_size)
+        gp = grid::gpar(fontsize = tick_label_size)
       )
     ),
     t = nrows + 1, l = or_col, name = paste0("tick_label_", tick),
@@ -415,71 +474,97 @@ dx_forest_add_tick <- function(grob, tick_scaled, tick, nrows,
 }
 
 dx_prep_variable <- function(dx_obj, data,
-                             measures = c("AUC", "Sensitivity", "Specificity","Odds Ratio"),
+                             measures = c("AUC-ROC", "Sensitivity", "Specificity","Odds Ratio"),
                              fraction = FALSE, fraction_multiline) {
 
 
   var <- data$variable[[1]]
   orig_var <- data$original_variable[[1]]
-  tmp <- data %>% dplyr::filter(measure %in% measures)
-
+  tmp <- data[data$measure %in% measures, ]
 
   # Breslow-Day test will be added separately
-  bd_test <- dplyr::filter(tmp, measure == "Breslow-Day")
-  tmp <- dplyr::filter(tmp, measure != "Breslow-Day")
+  bd_test <- tmp[tmp$measure == "Breslow-Day", ]
 
-
-  # if (fraction) {
-  #   tmp$estimate <- ifelse(tmp$fraction == "", tmp$estimate,
-  #     paste0(tmp$estimate, " (", tmp$fraction, ")")
-  #   )
-  # }
+  # Subset for rows where measure is not "Breslow-Day"
+  tmp <- tmp[tmp$measure != "Breslow-Day", ]
 
   if (fraction) {
     if (fraction_multiline) {
-      tmp$estimate <- ifelse(
+      tmp$summary <- ifelse(
         tmp$fraction == "",
-        tmp$estimate,
-        paste0(tmp$fraction, "\n", tmp$estimate)
+        tmp$summary,
+        paste0(tmp$fraction, "\n", tmp$summary)
       )
     } else {
-      tmp$estimate <- ifelse(
+      tmp$summary <- ifelse(
         tmp$fraction == "",
-        tmp$estimate,
-        paste0(tmp$estimate, " (", tmp$fraction, ")")
+        tmp$summary,
+        paste0(tmp$summary, " (", tmp$fraction, ")")
       )
     }
   }
 
-  if (fraction) {
+  # Selecting and renaming specific columns
+  res_sel <- tmp[c("label", "measure", "summary")]
+  names(res_sel)[names(res_sel) == "label"] <- "group"
 
-  }
 
-  res_sel <- tmp %>% dplyr::select(group = label, measure, estimate)
-  rawdata <- tmp %>%
-    dplyr::filter(measure == "Odds Ratio") %>%
-    dplyr::select(group = label, n, dplyr::starts_with("raw")) %>%
-    dplyr::filter(!is.na(rawestime))
-  res <- utils::unstack(res_sel, form = estimate ~ measure)
+  # Filter for rows where measure is "Odds Ratio"
+  filtered_data <- tmp[tmp$measure == "Odds Ratio", ]
+
+  # Select and rename columns: 'label' to 'group', include 'n', and all columns starting with 'raw'
+  cols_to_select <- c("label", "n", "estimate", "conf_low", "conf_high")
+  rawdata <- filtered_data[cols_to_select]
+  names(rawdata)[names(rawdata) == "label"] <- "group"
+
+  # Filter out rows where 'rawestime' is NA
+  rawdata <- rawdata[!is.na(rawdata$estimate), ]
+
+  res <- utils::unstack(res_sel, form = summary ~ measure)
   names(res) <- gsub("\\.", " ", names(res))
-  if (var == "Overall") res <- as.data.frame(t(res))
+  if (var == "Overall") {
+    res <- as.data.frame(t(res))
+    names(res) <- gsub("\\-", " ", names(res))
+  }
   res$group <- unique(res_sel$group)
-  res <- dplyr::left_join(res, rawdata, by = "group")
+  res <- merge(res, rawdata, by = "group", all.x = TRUE)
   if (var != "Overall") {
     res$group <- factor(res$group, levels = levels(dx_obj$data[[orig_var]]))
-    res <- dplyr::arrange(res, group)
+    res <- res[order(res$group), ]
     res$group <- as.character(res$group)
     empty_df <- data.frame(group = var, stringsAsFactors = FALSE)
-    res <- dplyr::bind_rows(empty_df, res)
+    res <- rbind_all(empty_df, res)
 
     if (nrow(bd_test) == 1) {
-      res$`Odds Ratio`[res$group == var] <- bd_test$estimate
+      res$`Odds Ratio`[res$group == var] <- bd_test$summary
     }
-
   }
-  res %>%
-    dplyr::mutate_if(is.factor, as.character) %>%
-    dplyr::as_tibble()
+
+  res[] <- lapply(res, function(x) if(is.factor(x)) as.character(x) else x)
+
+  # res$conf_low <- NULL
+  # res$conf_high <- NULL
+  # res$n <- NULL
+  # res$estimate <- NULL
+
+  res
+
+}
+
+rbind_all <- function(df1, df2) {
+  df1[setdiff(names(df2), names(df1))] <- NA
+  df2[setdiff(names(df1), names(df2))] <- NA
+  rbind(df1, df2)
+  # # Step 1: Identify all unique column names
+  # all_cols <- union(names(x), names(y))
+  #
+  # # Step 2: Align columns by ensuring both data frames have all columns
+  # # This fills in any missing columns with NA
+  # empty_df_aligned <- setNames(lapply(all_cols, function(cn) x[[cn]]), all_cols)
+  # res_aligned <- setNames(lapply(all_cols, function(cn) y[[cn]]), all_cols)
+  #
+  # # Step 3: Bind the rows together
+  # rbind(empty_df_aligned, res_aligned)
 }
 
 label_df <- function(data) {
@@ -493,23 +578,21 @@ label_df <- function(data) {
 }
 
 dx_prep_forest <- function(dx_obj, fraction = fraction, fraction_multiline, measures) {
-  tmp <- dx_obj$measures %>%
-    dplyr::filter(threshold == dx_obj$options$setthreshold)
+
+  tmp <- dx_obj$measures[dx_obj$measures$threshold == dx_obj$options$setthreshold, ]
+
 
   labs <- label_df(data = dx_obj$data)
 
-  tmp <- dplyr::left_join(tmp, labs, by = "variable")
+  tmp <- merge(tmp, labs, by = "variable", all.x = TRUE)
 
-  tmp <- dplyr::mutate(tmp,
-    original_variable = variable,
-    variable = dplyr::coalesce(variable_label, variable)
-  )
+  # Copying the original 'variable' column to a new 'original_variable' column
+  tmp$original_variable <- tmp$variable
 
-  tmp_split <- tmp %>%
-    dplyr::group_by(variable) %>%
-    dplyr::group_split() %>%
-    as.list()
+  # Updating 'variable' column with 'variable_label' where it's not NA, otherwise keep 'variable'
+  tmp$variable <- ifelse(is.na(tmp$variable_label), tmp$variable, tmp$variable_label)
 
+  tmp_split <- split(tmp, tmp$variable)
 
   # Vector to store the current order of our split list
   # Alphabetical by label/variable
@@ -539,7 +622,6 @@ dx_prep_forest <- function(dx_obj, fraction = fraction, fraction_multiline, meas
 
   # Re-order back to input
   tmp_split <- tmp_split[order(current_order)]
-
 
   do.call("rbind", tmp_split)
 }
