@@ -93,6 +93,6 @@ dx_obj <- dx(
   setthreshold = .3,
   grouping_variables = c("AgeGroup", "Sex", "AgeSex")
 )
-dx_forest(dx_obj)
-dx_forest(dx_obj, trans = "log10")
+dx_plot_forest(dx_obj)
+dx_plot_forest(dx_obj, trans = "log10")
 }
