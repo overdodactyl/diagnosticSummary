@@ -55,6 +55,12 @@
     <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_cohens_kappa.html</loc>
   </url>
   <url>
+    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_compare.html</loc>
+  </url>
+  <url>
+    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_delong.html</loc>
+  </url>
+  <url>
     <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_edit_cell.html</loc>
   </url>
   <url>
@@ -103,6 +109,9 @@
     <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_mcc.html</loc>
   </url>
   <url>
+    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_mcnemars.html</loc>
+  </url>
+  <url>
     <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_npv.html</loc>
   </url>
   <url>
@@ -148,6 +157,9 @@
     <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_roc.html</loc>
   </url>
   <url>
+    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_rocs.html</loc>
+  </url>
+  <url>
     <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_thresholds.html</loc>
   </url>
   <url>
@@ -158,6 +170,9 @@
   </url>
   <url>
     <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_roc_ggtheme.html</loc>
+  </url>
+  <url>
+    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_z_test.html</loc>
   </url>
   <url>
     <loc>https://overdodactyl.github.io/diagnosticSummary/reference/expected_cell_count.html</loc>

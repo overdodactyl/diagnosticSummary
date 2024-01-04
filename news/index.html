@@ -68,6 +68,9 @@
 <li>Added Chi-Square Test</li>
 <li>Added Fisher’s Exact Test</li>
 <li>Added G-Test (Log-Likelihood Ratio Test)</li>
+<li>Added McNemar’s Chi-squared Test for Paired Proportions</li>
+<li>Added Z-test for Comparing Two Proportions</li>
+<li>Added DeLong’s Test for Comparing Two ROC Curves</li>
 </ul><p><strong>New output</strong></p>
 <ul><li>Added <code>thresholds</code> to the output of <code>dx</code> containing metrics across a full range of thresholds</li>
 <li>Added <code>prevalence</code> to the output of <code>dx</code> containing metrics across a full range of prevalencies</li>
@@ -102,6 +105,8 @@
 </li>
 <li>Added plot showing metrics across thresholds: <code>dx_plot_thresholds</code>
 </li>
+<li>Add ability to plot multiple ROC curves: <code>dx_plot_rocs</code>
+</li>
 </ul><p><strong>Renamed Functions</strong></p>
 <ul><li>The confusion matrix plot was renamed from <code>dx_cm</code> to <code>dx_plot_cm</code> (<code>dx_cm</code> now constructs the confusion matrix)</li>
 <li>
@@ -119,6 +124,9 @@
 <li>Moved <code>gtable</code>, <code>grid</code>, and <code>gridExtra</code> to Suggests</li>
 <li>Removed <code>DescTools</code> and <code>e1071</code> from Suggests</li>
 <li>Added <code>tibble</code> to Suggests</li>
+</ul><p><strong>Comparison of dx objects</strong></p>
+<ul><li>New <code>dx_compare</code> function to run pairwise tests on a list of <code>dx_objects</code>
+</li>
 </ul><p><strong>Documentation</strong></p>
 <ul><li>Added a <code>NEWS.md</code> file to track changes to the package.</li>
 <li>Added documentation/descriptions/details to all functions</li>
