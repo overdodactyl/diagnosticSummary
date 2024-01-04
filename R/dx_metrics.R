@@ -527,10 +527,10 @@ dx_mcc <- function(cm, detail = "full", boot = FALSE, bootreps = 1000) {
 
 calculate_mcc <- function(cm) {
   # Extract counts from the confusion matrix
-  tp <- cm$tp
-  tn <- cm$tn
-  fp <- cm$fp
-  fn <- cm$fn
+  tp <- as.numeric(tp)
+  tn <- as.numeric(tn)
+  fp <- as.numeric(fp)
+  fn <- as.numeric(fn)
 
   # Calculate elements needed for MCC
   numerator <- (tp * tn) - (fp * fn)
