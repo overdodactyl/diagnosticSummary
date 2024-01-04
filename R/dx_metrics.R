@@ -11,6 +11,8 @@
 #' @param bootreps The number of bootstrap replications for calculating confidence intervals.
 #' @param predprob Numeric vector of predicted probabilities associated with the positive class.
 #' @param truth Numeric vector of true binary outcomes, typically 0 or 1, with the same length as `predprob`.
+#' @param dx1 A `dx` object
+#' @param dx2 A `dx` object
 #' @return Depending on the `detail` parameter, returns a numeric value
 #'         representing the calculated metric or a data frame/tibble with
 #'         detailed diagnostics including confidence intervals and possibly other
@@ -569,6 +571,33 @@ measure_df <- function(measure = "", estimate = "", fraction = "",
     conf_high = uci_raw,
     fraction = fraction,
     conf_type = ci_type,
+    notes = notes,
+    stringsAsFactors = FALSE
+  )
+
+  return_df(metric)
+
+}
+
+compare_df <- function(models = "",
+                       test = "",
+                       summary = "",
+                       p_value = "",
+                       estimate = "",
+                       conf_low = NA,
+                       conf_high = NA,
+                       statistic = "",
+                       notes = "") {
+
+  metric <- data.frame(
+    models = models,
+    test = test,
+    summary = summary,
+    p_value = p_value,
+    estimate = estimate,
+    conf_low = conf_low,
+    conf_high = conf_high,
+    statistic = statistic,
     notes = notes,
     stringsAsFactors = FALSE
   )

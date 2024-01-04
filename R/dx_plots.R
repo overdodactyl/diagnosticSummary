@@ -1050,3 +1050,131 @@ dx_plot_thresholds <- function(dx_obj) {
     # ggplot2::facet_wrap(~metric, scales = "free_y")
 }
 
+pluck_auc_roc_data <- function(dx_obj) {
+  measures <- as.data.frame(dx_obj, variable = "Overall", thresh = dx_obj$options$setthreshold)
+
+  sensdf <- measures[measures$measure == "Sensitivity", ]$estimate
+
+  specdf <- measures[measures$measure == "Specificity", ]$estimate
+
+  auc_df <- data.frame(
+    threshold = dx_obj$thresholds$threshold,
+    specificity = dx_obj$thresholds$specificity,
+    sensitivity = dx_obj$thresholds$sensitivity
+  )
+
+  auc_df$lead_specificity <- c(auc_df$specificity[-1], NA)
+
+  list(
+    sensitivity = sensdf,
+    specificity = specdf,
+    auc_df = auc_df
+  )
+
+}
+
+
+#' Plot ROC Curves for Multiple Models
+#'
+#' Generates Receiver Operating Characteristic (ROC) curves for multiple models
+#' and overlays them for comparison. Optionally, it adds text annotations for DeLong's
+#' test results to indicate statistical differences between the models' Area Under
+#' the ROC Curve (AUC).
+#'
+#' @param dx_comp A `dx_compare` object containing the results of pairwise model
+#'                comparisons and the list of `dx` objects with ROC data.
+#' @param add_text Logical, whether to add DeLong's test results as text annotations
+#'                on the plot. Defaults to TRUE.
+#' @param axis_color Color of the axes lines, specified as a color name or hex code.
+#'                   Defaults to "#333333".
+#' @param text_color Color of the text annotations, specified as a color name or hex code.
+#'                   Defaults to "black".
+#'
+#' @return A ggplot object representing the ROC curves for the models included in the
+#'         `dx_comp` object. Each model's ROC curve is color-coded, and the plot
+#'         includes annotations for DeLong's test p-values if `add_text` is TRUE.
+#'
+#' @details This function is a visualization tool that plots ROC curves for multiple
+#'          models to facilitate comparison. It uses DeLong's test to statistically
+#'          compare AUC values and, if desired, annotates the plot with the results.
+#'          The function expects a `dx_compare` object as input, which should contain
+#'          the necessary ROC and test comparison data. Ensure that the ROC data and
+#'          DeLong's test results are appropriately generated and stored in the
+#'          `dx_compare` object before using this function.
+#'
+#' @examples
+#' dx_glm <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted")
+#' dx_rf <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted_rf")
+#' dx_list <- list(dx_glm, dx_rf)
+#' dx_comp <- dx_compare(dx_list, paired = TRUE)
+#' dx_plot_rocs(dx_comp)
+#' @seealso \code{\link{dx_compare}} to generate the required input object.
+#'          \code{\link{dx_delong}} for details on DeLong's test used in comparisons.
+#' @export
+dx_plot_rocs <- function(dx_comp, add_text = TRUE, axis_color = "#333333", text_color = "black") {
+
+
+  roc_data <- lapply(dx_comp$dx_list, pluck_auc_roc_data)
+  delong <- dx_comp$tests
+  delong <- delong[delong$test == "DeLong's test for ROC curves", ]
+
+  for (i in seq_along(roc_data)) {
+    roc_data[[i]]$auc_df$model <- names(roc_data)[i]
+  }
+
+  df <- do.call(rbind, lapply(roc_data, function(model) model$auc_df))
+
+  df <- stats::na.omit(df)
+
+  p <- ggplot2::ggplot(df) +
+    ggplot2::geom_line(
+      ggplot2::aes(.data$specificity, .data$sensitivity, color = .data$model),
+      linewidth = 1
+    ) +
+    ggplot2::scale_x_reverse() +
+    ggplot2::geom_hline(
+      yintercept = 0,
+      linewidth = 1,
+      colour = axis_color
+    ) +
+    ggplot2::geom_vline(
+      xintercept = 1.05,
+      linewidth = 1,
+      colour = axis_color
+    ) +
+    ggplot2::coord_fixed() +
+    dx_roc_ggtheme() +
+    ggplot2::labs(
+      x = "\nSpecificity",
+      y = "Sensitivity\n\n",
+      color = "Model"
+    ) +
+    ggplot2::theme(legend.position = "bottom")
+
+
+  if (add_text) {
+    numsummary <- nrow(delong)
+    ystart <- 0.05
+    yend <- ystart + (numsummary - 1) * 0.05
+    location_vector <- seq(yend, ystart, -0.05)
+
+
+
+    text_df <- data.frame(
+      y = location_vector,
+      label = paste0(delong$models, ": ", sapply(delong$p_value, format_pvalue))
+    )
+
+    p <- p +
+      ggplot2::geom_text(
+        data = text_df,
+        mapping = ggplot2::aes(x = .05, y = .data$y, label = .data$label, hjust = 1),
+        color = text_color
+      )
+  }
+
+  return(p)
+
+}
+
+

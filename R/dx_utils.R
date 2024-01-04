@@ -108,7 +108,10 @@ format_pvalue <- function(p, accuracy = 0.01) {
 
 conf_int <- function(est, lower, upper, accuracy = .1, percent = FALSE) {
   format_num <- function(num) {
-    if (percent) {
+
+    if (is.na(num)) {
+      "-"
+    } else if (percent) {
       paste0(formatC(num * 100, format = "f", digits = -log10(accuracy)), "%")
     } else {
       formatC(num, format = "f", digits = -log10(accuracy), big.mark = ",")
@@ -260,3 +263,46 @@ return_df <- function(x) {
     return(x)
   }
 }
+
+validate_dx_list <- function(dx_list) {
+  if (!is.list(dx_list)) {
+    stop("dx_list must be a list of `dx` objects")
+  }
+  if (!length(dx_list) >= 2) {
+    stop("dx_list must contain two or more `dx_objects")
+  }
+  for (x in dx_list) {
+    if (! "dx" %in% class(x)) {
+      stop("All elements in `dx_list` must be `dx` objects")
+    }
+  }
+  if (is.null(names(dx_list))) {
+    names(dx_list) <- paste("Model", seq_along(dx_list))
+  }
+  for (i in seq_along(dx_list)) {
+    if (names(dx_list)[i] == "") {
+      names(dx_list)[1] <- paste("Model", i)
+    }
+  }
+  return(dx_list)
+}
+
+
+pluck_probabilities <- function(dx) {
+  dx$data[[dx$options$pred_varname]]
+}
+
+pluck_predicted <- function(dx) {
+  as.numeric(pluck_probabilities(dx) >= dx$options$setthreshold)
+}
+
+pluck_truths <- function(dx) {
+  dx$data[[dx$options$true_varname]]
+}
+
+two_model_name <- function(x, y) {
+  paste(x, "vs.", y)
+}
+
+
+

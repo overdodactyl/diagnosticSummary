@@ -277,3 +277,234 @@ dx_g_test <- function(cm, detail = "full") {
 }
 
 
+# Two Models --------------------------------------------------------------
+
+#' DeLong's Test for Comparing Two ROC Curves
+#'
+#' This function applies DeLong's test to compare the areas under two correlated ROC curves,
+#' providing a statistical approach to assess if there is a significant difference between
+#' them. It's particularly useful for comparing the performance of two diagnostic models.
+#'
+#' @param dx1 A `dx` object containing the first ROC curve.
+#' @param dx2 A `dx` object containing the second ROC curve.
+#' @param detail Character specifying the level of detail in the output:
+#'               "simple" for p-value only, "full" for detailed test results.
+#' @param paired Logical indicating if data between `dx1` and `dx2` is paired.
+#' @return Depending on the `detail` parameter, returns a p-value or a comprehensive
+#'         summary of the test including the test statistic, p-value, and confidence interval
+#'         for the difference in AUC.
+#' @details The function utilizes the `roc.test` function from the `pROC` package to perform
+#' DeLong's test, which is suitable for comparing two correlated ROC curves. This correlation
+#' typically arises from using the same set of samples to generate both curves. A significant
+#' p-value indicates a statistically significant difference between the AUCs of the two models.
+#' When `detail` is "full", additional information about the comparison, including the estimated
+#' difference in AUC and its confidence interval, is provided. The confidence interval gives a
+#' range of plausible values for the difference in AUC between the two models.
+#' @examples
+#' dx_glm <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted")
+#' dx_rf <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted_rf")
+#' simple <- dx_delong(dx_glm, dx_rf, detail = "simple")
+#' detailed <- dx_delong(dx_glm, dx_rf)
+#' print(simple)
+#' print(detailed)
+#' @seealso \code{\link[pROC]{roc.test}} for the underlying test implementation.
+#' @seealso \code{\link{dx_cm}} to understand how to create a `dx` object.
+#' @concept tests
+#' @export
+dx_delong <- function(dx1, dx2, detail = "full", paired = TRUE) {
+  test <- pROC::roc.test(
+    roc1 = dx1$roc,
+    roc2 = dx2$roc,
+    paired = paired,
+    method = "delong"
+  )
+
+  if (detail == "simple") {
+    return(test$p.value)
+  } else if (detail == "full") {
+    roc1 <- as.numeric(test$roc1$auc)
+    roc2 <- as.numeric(test$roc2$auc)
+
+    estimate <- abs(roc1 - roc2)
+    low <- test$conf.int[1]
+    high <- test$conf.int[2]
+    low <- ifelse(is.null(low), NA, low)
+    high <- ifelse(is.null(high), NA, high)
+
+    summary <- conf_int(estimate, low, high, accuracy = 0.01)
+
+    compare_df(
+      test = "DeLong's test for ROC curves",
+      summary = summary,
+      p_value = test$p.value,
+      estimate = abs(roc1 - roc2),
+      conf_low = low,
+      conf_high = high,
+      statistic = as.numeric(test$statistic)
+    )
+  }
+
+
+
+}
+
+#' Z-test for Comparing Two Proportions
+#'
+#' Conducts a two-sided Z-test (using prop.test for two proportions) to assess whether the success rates (proportions)
+#' of two groups are different from each other based on a specified metric. It can compare accuracy,
+#' PPV, NPV, FNR, FPR, FDR, sensitivity, or specificity between two dx objects.
+#'
+#' @param dx1 A `dx` object for the first group.
+#' @param dx2 A `dx` object for the second group.
+#' @param metric A character string specifying the metric to compare between the two groups.
+#'        Options include "accuracy", "ppv", "npv", "fnr", "fpr", "fdr", "sensitivity", "specificity".
+#' @param detail Character specifying the level of detail in the output:
+#'        "simple" for raw estimate (p-value only), "full" for detailed estimate including
+#'        confidence intervals and test statistic.
+#' @return Depending on the `detail` parameter, returns the p-value of the test or a
+#'         more detailed list including the test statistic, confidence interval, and p-value.
+#' @details The function uses the prop.test function to perform the hypothesis test,
+#' assuming the null hypothesis that the two proportions based on the specified metric are the same.
+#' A low p-value indicates a significant difference in the proportions, suggesting that the success rates
+#' of the two groups are statistically significantly different. The function automatically adjusts
+#' for continuity and provides confidence intervals for the difference in proportions.
+#'
+#' The Z-test for two proportions is appropriate when comparing the success rates (proportions) of two independent samples.
+#' Here are some considerations for using this test:
+#' \itemize{
+#'   \item Independence: The samples should be independent. This test is not appropriate for paired or matched data.
+#'   \item Sample Size**: Both groups should have a sufficiently large number of trials. As a rule of thumb, the test
+#'    assumes that the number of successes and failures in each group should be at least 5. However, for more accurate
+#'    results, especially in cases with extreme proportions (close to 0 or 1), larger sample sizes may be necessary.
+#'   \item Binary Outcome: This test is specific to binary outcomes (success/failure, presence/absence, etc.) represented
+#'    as proportions. It's not suitable for continuous data or counts that haven't been converted to proportions.
+#'   \item Normal Approximation: The Z-test is based on the normal approximation of the distribution of the sample proportion.
+#'    This approximation is more accurate when the sample size is large and the proportion is not extremely close to 0 or 1.
+#' }
+#' It's also important to note that while `prop.test` adjusts for continuity, this adjustment may not be sufficient for very
+#' small sample sizes or very unbalanced designs. Always consider the context and assumptions of your data when interpreting
+#' the results of the test.
+#' @examples
+#' dx_glm <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted")
+#' dx_rf <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted_rf")
+#' dx_z_test(dx_glm, dx_rf, metric = "accuracy")
+#' @concept tests
+#' @export
+dx_z_test <- function(dx1, dx2, metric = c("accuracy", "ppv", "npv", "fnr", "fpr", "fdr", "sensitivity", "specificity"), detail = "full") {
+
+  metric <- match.arg(metric)
+
+  metric_mapping <- list(
+    accuracy = c("correct", "n"),
+    ppv = c("tp", "testpos"),
+    npv = c("tn", "testneg"),
+    fnr = c("fn", "dispos"),
+    fpr = c("fp", "disneg"),
+    fdr = c("fp", "testpos"),
+    sensitivity = c("tp", "dispos"),
+    specificity = c("tn", "disneg")
+  )
+
+
+  vals <- metric_mapping[[metric]]
+
+  p <- c(dx1$cm[[vals[1]]], dx2$cm[[vals[1]]])
+  n <- c(dx1$cm[[vals[2]]], dx2$cm[[vals[2]]])
+
+  test <- stats::prop.test(p, n, alternative = "two.sided")
+
+  if (detail == "simple") {
+    return(test$p.value)
+  } else if (detail == "full") {
+
+    val1 <- as.numeric(test$estimate[1])
+    val2 <- as.numeric(test$estimate[2])
+
+    estimate <- abs(val1 - val2)
+    low <- test$conf.int[1]
+    high <- test$conf.int[2]
+
+    summary <- conf_int(estimate, low, high, accuracy = 0.01)
+
+    compare_df(
+      test = paste0("Z-test: ", metric),
+      summary = summary,
+      p_value = test$p.value,
+      estimate = estimate,
+      conf_low = low,
+      conf_high = high,
+      statistic = as.numeric(test$statistic)
+    )
+  }
+
+}
+
+#' McNemar's Chi-squared Test for Paired Proportions
+#'
+#' Performs McNemar's test to evaluate the difference between two paired proportions.
+#' This is typically used in the context of binary classification to test whether the
+#' proportion of correct classifications significantly differs between two classifiers
+#' on the same set of instances.
+#'
+#' @param dx1 The first `dx` object containing predictions and truth values.
+#' @param dx2 The second `dx` object containing predictions and truth values.
+#' @param detail A string indicating the level of detail for the output: "simple" for
+#'        just the p-value, "full" for a comprehensive result including test statistics.
+#' @return Depending on the `detail` parameter, returns either the p-value (simple)
+#'         or a more comprehensive list including the test statistic and p-value (full).
+#' @details
+#' McNemar's test is appropriate when comparing the classification results of two
+#' algorithms on the same data set (paired design). It specifically tests the null
+#' hypothesis that the marginal probabilities of row and column variable are the same.
+#'
+#' This test is suitable for binary classification tasks where you are comparing the
+#' performance of two classifiers over the same instances. It's not appropriate for
+#' independent samples or more than two classifiers.
+#'
+#' The function expects the input as two `dx` objects, each containing the predictions
+#' and truth values from the classifiers being compared. It calculates the contingency
+#' table based on the agreements and disagreements between the classifiers and applies
+#' McNemar's test to this table.
+#'
+#' @examples
+#' dx_glm <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted")
+#' dx_rf <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted_rf")
+#' dx_mcnemars(dx_glm, dx_rf)
+#' @seealso \code{\link{dx_cm}}, \code{\link{mcnemar.test}}
+#' @concept tests
+#' @export
+dx_mcnemars <- function(dx1, dx2, detail = "full") {
+
+  truth <- pluck_truths(dx1)
+  predictions1 <- pluck_predicted(dx1)
+  predictions2 <- pluck_predicted(dx2)
+
+  # Construct the contingency table for paired samples
+  both_correct <- sum(predictions1 == truth & predictions2 == truth)
+  first_correct_second_incorrect <- sum(predictions1 == truth & predictions2 != truth)
+  first_incorrect_second_correct <- sum(predictions1 != truth & predictions2 == truth)
+  both_incorrect <- sum(predictions1 != truth & predictions2 != truth)
+
+  cont_table <- matrix(c(both_correct, first_correct_second_incorrect,
+                         first_incorrect_second_correct, both_incorrect),
+                       nrow = 2)
+
+  # Perform McNemar's test
+  test <- stats::mcnemar.test(cont_table)
+
+  if (detail == "simple") {
+    return(test$p.value)
+  } else if (detail == "full") {
+    compare_df(
+      test = "McNemar's Chi-squared Test",
+      summary = format_pvalue(test$p.value),
+      p_value = test$p.value,
+      statistic = as.numeric(test$statistic)
+    )
+  }
+}
+
+
+
+
+

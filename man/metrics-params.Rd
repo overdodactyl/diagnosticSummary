@@ -25,6 +25,10 @@ via bootstrapping.  Note, this can be slow.}
 \item{predprob}{Numeric vector of predicted probabilities associated with the positive class.}
 
 \item{truth}{Numeric vector of true binary outcomes, typically 0 or 1, with the same length as `predprob`.}
+
+\item{dx1}{A `dx` object}
+
+\item{dx2}{A `dx` object}
 }
 \value{
 Depending on the `detail` parameter, returns a numeric value

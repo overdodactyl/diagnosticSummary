@@ -265,3 +265,76 @@ dx_group_measure <- function(data, options, group_varname) {
   rbind(res, bd)
 
 }
+
+
+#' Compare Multiple Classification Models
+#'
+#' Compares multiple classification models pairwise using various statistical tests
+#' to assess differences in performance metrics. It supports both paired and unpaired
+#' comparisons.
+#'
+#' @param dx_list A list of `dx` objects representing the models to be compared.
+#'                Each `dx` object should be the result of a call to `dx()`.
+#' @param paired Logical, indicating whether the comparisons should be treated as paired.
+#'               Paired comparisons are appropriate when models are evaluated on the
+#'               same set of instances (e.g., cross-validation or repeated measures).
+#'
+#' @return A `dx_compare` object containing a list of `dx` objects and a data frame of
+#'         pairwise comparison results for each test conducted.
+#'
+#' @details This function is a utility to perform a comprehensive comparison between
+#'          multiple classification models. Based on the value of `paired`, it will
+#'          perform appropriate tests.  The resulting object can be used it further
+#'          functions like `dx_plot_rocs.`
+#'
+#' @examples
+#' dx_glm <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted")
+#' dx_rf <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted_rf")
+#' dx_list <- list(dx_glm, dx_rf)
+#' dx_comp <- dx_compare(dx_list, paired = TRUE)
+#' print(dx_comp$tests)
+#' @seealso \code{\link{dx_delong}}, \code{\link{dx_z_test}}, \code{\link{dx_mcnemars}}
+#' for more details on the tests used for comparisons.
+#'
+#' @export
+dx_compare <- function(dx_list, paired = TRUE) {
+
+  dx_list <- validate_dx_list(dx_list)
+
+
+  combinations <- utils::combn(names(dx_list), 2)
+
+  res <- NULL
+
+  for (i in seq_along(ncol(combinations))) {
+    n1 <- combinations[1,i]
+    n2 <- combinations[2,i]
+    dx1 <- dx_list[[n1]]
+    dx2 <- dx_list[[n2]]
+    delong <- dx_delong(dx1, dx2, paired = paired)
+    res <- rbind(res, delong)
+
+    if (!paired) {
+      metrics <- c("accuracy", "ppv", "npv", "fnr", "fpr", "fdr", "sensitivity", "specificity")
+      for (metric in metrics) {
+        ztest <- dx_z_test(dx1, dx2, metric = metric)
+        res <- rbind(res, ztest)
+      }
+    } else {
+      mcnemars <- dx_mcnemars(dx1, dx2)
+      res <- rbind(res, mcnemars)
+    }
+
+    res$models <- two_model_name(n1, n2)
+  }
+
+  structure(
+    list(
+      dx_list = dx_list,
+      tests = res
+    ),
+    class = "dx_compare"
+  )
+
+
+}

@@ -8,7 +8,7 @@ dx(
   data,
   classlabels = c("Negative", "Positive"),
   threshold_range = NA,
-  outcome_label,
+  outcome_label = NA,
   pred_varname,
   true_varname,
   setthreshold = 0.5,

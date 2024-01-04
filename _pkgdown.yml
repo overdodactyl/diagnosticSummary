@@ -9,6 +9,7 @@ reference:
   contents:
   - dx
   - dx_cm
+  - dx_compare
 - title: Metrics
   desc: Measures of binary classification tasks
   contents:

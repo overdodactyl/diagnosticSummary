@@ -10,7 +10,8 @@ A data frame with 261 rows and 5 variables:
   \item{AgeGroup}{Age group}
   \item{Sex}{sex}
   \item{truth}{Heart failure (outcome)}
-  \item{predicted}{Predicted outcome from model}
+  \item{predicted}{Predicted outcome from a GLM model}
+  \item{predicted_rf}{Predicted outcome from a Random Forest model}
   \item{AgeSex}{Age and sex group}
 }
 }

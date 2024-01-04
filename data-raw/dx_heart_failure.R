@@ -26,4 +26,12 @@ dx_heart_failure$Sex <- factor(dx_heart_failure$Sex, levels = c(0, 1), labels = 
 dx_heart_failure$AgeSex <- factor(paste0(dx_heart_failure$AgeGroup, " - ", dx_heart_failure$Sex))
 
 
+rf_model <- randomForest::randomForest(
+  as.factor(num) ~ cp + age + sex + trestbps + chol + restecg + fbs + thalach + oldpeak,
+  data=ha_data
+)
+rf_pred <- predict(rf_model, type="prob")[,2]
+dx_heart_failure$predicted_rf <- rf_pred
+
+
 usethis::use_data(dx_heart_failure, overwrite = TRUE)

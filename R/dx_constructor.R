@@ -26,7 +26,7 @@
 
 dx <- function(data,
                classlabels = c("Negative", "Positive"),
-               threshold_range = NA, outcome_label, pred_varname, true_varname,
+               threshold_range = NA, outcome_label = NA, pred_varname, true_varname,
                setthreshold = .5, poslabel = 1, grouping_variables = NA,
                citype = "exact", bootreps = 2000, bootseed = 20191015,
                doboot = FALSE, direction = "auto", ...) {
@@ -139,6 +139,17 @@ dx <- function(data,
 
   roc <- get_roc(true_varname, pred_varname, data, direction)
 
+  # main confusion matrix
+  predprob <- data[[options$pred_varname]]
+  truth <- data[[options$true_varname]]
+
+  cm <- dx_cm(
+    predprob = predprob,
+    truth = truth,
+    threshold = setthreshold,
+    poslabel = options$poslabel
+  )
+
 
   structure(list(
     data = data,
@@ -147,6 +158,8 @@ dx <- function(data,
     thresholds = threshold_analysis,
     prevalence = prevalence_analysis,
     rank = rank_analysis,
-    n_levels = n_levels, roc = roc
+    cm = cm,
+    n_levels = n_levels,
+    roc = roc
   ), class = "dx")
 }

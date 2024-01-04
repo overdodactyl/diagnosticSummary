@@ -27,6 +27,9 @@
 * Added Chi-Square Test
 * Added Fisher's Exact Test 
 * Added G-Test (Log-Likelihood Ratio Test)
+* Added McNemar's Chi-squared Test for Paired Proportions
+* Added Z-test for Comparing Two Proportions
+* Added DeLong's Test for Comparing Two ROC Curves
 
 
 **New output**
@@ -53,6 +56,7 @@
 * Added Cumulative Accuracy Profile (CAP) curve: `dx_plot_cap`
 * Added cost curve: `dx_plot_cost`
 * Added plot showing metrics across thresholds: `dx_plot_thresholds`
+* Add ability to plot multiple ROC curves: `dx_plot_rocs`
 
 **Renamed Functions**
 
@@ -71,6 +75,10 @@
 * Moved `gtable`, `grid`, and `gridExtra` to Suggests
 * Removed `DescTools` and `e1071` from Suggests
 * Added `tibble` to Suggests
+
+**Comparison of dx objects**
+
+* New `dx_compare` function to run pairwise tests on a list of `dx_objects`
 
 **Documentation**
 
