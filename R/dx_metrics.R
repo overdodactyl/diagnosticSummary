@@ -147,7 +147,8 @@ dx_npv <- function(cm, detail = "full", ...) {
 #'
 #' The formula for FNR is:
 #' \deqn{FNR = \frac{False Negatives}{False Negatives + True Positives}}{FNR = FN / (FN + TP)}
-#'
+#' @aliases dx_miss_rate
+#' @name fnr
 #' @examples
 #' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
 #'             0.5, poslabel = 1)
@@ -162,6 +163,9 @@ dx_npv <- function(cm, detail = "full", ...) {
 dx_fnr <- function(cm, detail = "full", ...) {
   metric_binomial(cm$fn, cm$dispos, name = "False Negative Rate", detail = detail, ...)
 }
+
+#' @rdname fnr
+dx_miss_rate <- dx_fnr
 
 #' Calculate False Positive Rate (FPR)
 #'
