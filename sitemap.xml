@@ -88,9 +88,6 @@
     <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_fowlkes_mallows.html</loc>
   </url>
   <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_fpr.html</loc>
-  </url>
-  <url>
     <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_g_mean.html</loc>
   </url>
   <url>
@@ -182,6 +179,9 @@
   </url>
   <url>
     <loc>https://overdodactyl.github.io/diagnosticSummary/reference/expected_cell_count.html</loc>
+  </url>
+  <url>
+    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/fpr.html</loc>
   </url>
   <url>
     <loc>https://overdodactyl.github.io/diagnosticSummary/reference/get_roc.html</loc>
