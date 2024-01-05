@@ -1421,5 +1421,44 @@ calculate_brier <- function(truth, predprob) {
   mean((predprob - truth) ^ 2)
 }
 
+#' Calculate No Information Rate (NIR)
+#'
+#' @description
+#' The No Information Rate is the proportion of the largest class in the actual outcomes.
+#' It represents the accuracy that a naive model would achieve by always predicting
+#' the most frequent class. It's a baseline measure for classification performance.
+#'
+#' @inheritParams metrics-params
+#' @examples
+#' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold = 0.5, poslabel = 1)
+#' nir <- dx_nir(cm)
+#' print(nir)
+#' @export
+#' @concept metrics
+dx_nir <- function(cm, detail = "full") {
+  # Calculate the total number of actual positives and negatives
+  dispos <- cm$dispos  # Number of actual positives
+  disneg <- cm$disneg  # Number of actual negatives
+
+  # The NIR is the proportion of the largest class
+  num <- max(dispos, disneg)
+  den <- dispos + disneg
+  nir <- num / den
+
+  if (detail == "simple") {
+    return(nir)
+  } else if (detail == "full") {
+    return(measure_df(
+      measure = "No Information Rate",
+      estimate = format(nir, digits = 2),
+      estimate_raw = nir,
+      fraction = paste0(comma(num), "/", comma(den))
+    ))
+  }
+
+
+  return(nir)
+}
+
 
 
