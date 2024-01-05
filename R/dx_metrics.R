@@ -179,7 +179,8 @@ dx_fnr <- function(cm, detail = "full", ...) {
 #'
 #' The formula for FPR is:
 #' \deqn{FPR = \frac{False Positives}{False Positives + True Negatives}}{FPR = FP / (FP + TN)}
-#'
+#' @aliases dx_fall_out
+#' @name fpr
 #' @examples
 #' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
 #'             0.5, poslabel = 1)
@@ -194,6 +195,9 @@ dx_fnr <- function(cm, detail = "full", ...) {
 dx_fpr <- function(cm, detail = "full", ...) {
   metric_binomial(cm$fp, cm$disneg, name = "False Positive Rate", detail = detail, ...)
 }
+
+#' @rdname fpr
+dx_fall_out <- dx_fpr
 
 #' Calculate False Discovery Rate (FDR)
 #'
