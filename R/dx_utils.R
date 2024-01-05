@@ -305,4 +305,66 @@ two_model_name <- function(x, y) {
 }
 
 
+#' Create a Data Frame for Metric Measures
+#'
+#' This internal function creates a data frame for storing metric measures, including
+#' the measure name, its estimate, confidence interval type, and any additional notes.
+#'
+#' @param measure The name of the measure.
+#' @param estimate The formatted estimate of the measure.
+#' @param fraction The fraction representing the measure (if applicable).
+#' @param ci_type The type of confidence interval used.
+#' @param notes Additional notes or interpretation about the measure.
+#' @param estimate_raw The raw estimate value.
+#' @param lci_raw The lower limit of the confidence interval (raw).
+#' @param uci_raw The upper limit of the confidence interval (raw).
+#' @return A data frame with the specified measure details.
+#' @noRd
+measure_df <- function(measure = "", estimate = "", fraction = "",
+                       ci_type = "", notes = "", estimate_raw = NA,
+                       lci_raw = NA, uci_raw = NA) {
+
+  metric <- data.frame(
+    measure = measure,
+    summary = estimate,
+    estimate = estimate_raw,
+    conf_low = lci_raw,
+    conf_high = uci_raw,
+    fraction = fraction,
+    conf_type = ci_type,
+    notes = notes,
+    stringsAsFactors = FALSE
+  )
+
+  return_df(metric)
+
+}
+
+compare_df <- function(models = "",
+                       test = "",
+                       summary = "",
+                       p_value = "",
+                       estimate = "",
+                       conf_low = NA,
+                       conf_high = NA,
+                       statistic = "",
+                       notes = "") {
+
+  metric <- data.frame(
+    models = models,
+    test = test,
+    summary = summary,
+    p_value = p_value,
+    estimate = estimate,
+    conf_low = conf_low,
+    conf_high = conf_high,
+    statistic = statistic,
+    notes = notes,
+    stringsAsFactors = FALSE
+  )
+
+  return_df(metric)
+
+}
+
 
