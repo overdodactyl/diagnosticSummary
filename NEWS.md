@@ -17,6 +17,7 @@
 * G-mean
 * Fowlkes-Mallows Index
 * Brier Score
+* Detection Prevalence
 
 
 *Also added aliases for metrics with the same name (e.g., recall and true positive rate for sensitivity)* 

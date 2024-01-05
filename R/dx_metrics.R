@@ -386,6 +386,44 @@ dx_prevalence <- function(cm, detail = "full", ...) {
   metric_binomial(cm$dispos, cm$n, name = "Prevalence", detail = detail, ...)
 }
 
+
+#' Calculate Detection Prevalence
+#'
+#' Calculates Detection Prevalence, which is the proportion of cases that are predicted
+#' positive by the classifier over the total number of cases. Detection Prevalence provides
+#' a measure of how often the condition is identified by the model, regardless of its actual prevalence.
+#'
+#' @inheritParams metrics-params
+#'
+#' @details
+#' Detection Prevalence is a measure of the frequency with which a classifier predicts
+#' a condition as positive. It is different from the actual condition prevalence in the population
+#' and is influenced by the classifier's threshold and performance characteristics. High detection
+#' prevalence could indicate a tendency of the model to predict more positive cases, which
+#' might be useful or detrimental depending on the specific application and the cost of false
+#' positives. It is important to compare Detection Prevalence with the actual condition
+#' prevalence to assess the model's performance.
+#'
+#' The formula for Detection Prevalence is:
+#' \deqn{Detection Prevalence = \frac{Number of Predicted Positives}{Total Number of Cases}}{Detection Prevalence = TestPos / N}
+#'
+#' @examples
+#' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
+#'             0.5, poslabel = 1)
+#' simple_detection_prevalence <- dx_detection_prevalence(cm, detail = "simple")
+#' detailed_detection_prevalence <- dx_detection_prevalence(cm)
+#' print(simple_detection_prevalence)
+#' print(detailed_detection_prevalence)
+#' @seealso \code{\link{dx_cm}} to understand how to create and interact with a
+#'          'dx_cm' object.
+#' @export
+#' @concept metrics
+dx_detection_prevalence <- function(cm, detail = "full", ...) {
+  metric_binomial(cm$testpos, cm$n, name = "Detection Prevalence", detail = detail, ...)
+}
+
+
+
 #' Calculate Cohen's Kappa
 #'
 #' Calculates Cohen's Kappa, a statistical measure of inter-rater reliability
