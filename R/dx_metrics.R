@@ -431,6 +431,18 @@ dx_detection_prevalence <- function(cm, detail = "full", ...) {
 }
 
 
+get_kappa_interpretation <- function(kappa) {
+  # Define the breaks and labels for the categories
+  breaks <- c(-Inf, 0, 0.2, 0.4, 0.6, 0.8, 1)
+  labels <- c("Less than chance agreement", "Slight Agreement", "Fair Agreement",
+              "Moderate Agreement", "Substantial Agreement", "Almost Perfect Agreement")
+
+  # Use cut to find the category for each kappa value
+  categories <- cut(kappa, breaks = breaks, labels = labels, right = FALSE)
+  as.character(categories)
+}
+
+
 
 #' Calculate Cohen's Kappa
 #'
@@ -456,12 +468,12 @@ dx_detection_prevalence <- function(cm, detail = "full", ...) {
 #'
 #' Interpretation of Cohen's Kappa varies, but generally, a higher value indicates
 #' better agreement. Typical benchmarks for interpreting Cohen's Kappa are:
-#' - < 0: Less than chance agreement
-#' - 0.01-0.20: Slight agreement
-#' - 0.21-0.40: Fair agreement
-#' - 0.41-0.60: Moderate agreement
-#' - 0.61-0.80: Substantial agreement
-#' - 0.81-0.99: Almost perfect agreement
+#' - <0: Less than chance agreement
+#' - 0.-0.2: Slight agreement
+#' - 0.2-0.4: Fair agreement
+#' - 0.4-0.6: Moderate agreement
+#' - 0.6-0.8: Substantial agreement
+#' - 0.8-1.0: Almost perfect agreement
 #'
 #' @examples
 #' # Assuming you have a confusion matrix cm with appropriate structure
@@ -499,20 +511,7 @@ dx_cohens_kappa <- function(cm, detail = "full") {
     ci_lower <- kappa - z * se_kappa
     ci_upper <- kappa + z * se_kappa
 
-    if (kappa < 0) {
-      note <- "Less than chance agreement"
-    } else if (kappa < 0.2) {
-      note <- "Slight Agreement"
-    } else if (kappa < .4) {
-      note <- "Fair Agreement"
-    } else if (kappa < .6) {
-      note <- "Moderate Agreement"
-    } else if (kappa < .8) {
-      note <- "Substantial Agreement"
-    } else if (kappa < 1) {
-      note <- "Almost Perfect Agreement"
-    }
-
+    note <- get_kappa_interpretation()
 
     res <- measure_df(
       measure = "Cohen's Kappa",

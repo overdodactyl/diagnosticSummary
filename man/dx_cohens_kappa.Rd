@@ -35,12 +35,12 @@ agreement that can be expected from random chance.
 
 Interpretation of Cohen's Kappa varies, but generally, a higher value indicates
 better agreement. Typical benchmarks for interpreting Cohen's Kappa are:
-- < 0: Less than chance agreement
-- 0.01-0.20: Slight agreement
-- 0.21-0.40: Fair agreement
-- 0.41-0.60: Moderate agreement
-- 0.61-0.80: Substantial agreement
-- 0.81-0.99: Almost perfect agreement
+- <0: Less than chance agreement
+- 0.-0.2: Slight agreement
+- 0.2-0.4: Fair agreement
+- 0.4-0.6: Moderate agreement
+- 0.6-0.8: Substantial agreement
+- 0.8-1.0: Almost perfect agreement
 }
 \examples{
 # Assuming you have a confusion matrix cm with appropriate structure
