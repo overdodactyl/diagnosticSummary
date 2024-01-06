@@ -96,12 +96,12 @@ hypothetical probability of chance agreement. The value of kappa can range from 
 agreement that can be expected from random chance.</p>
 <p>Interpretation of Cohen's Kappa varies, but generally, a higher value indicates
 better agreement. Typical benchmarks for interpreting Cohen's Kappa are:
-- &lt; 0: Less than chance agreement
-- 0.01-0.20: Slight agreement
-- 0.21-0.40: Fair agreement
-- 0.41-0.60: Moderate agreement
-- 0.61-0.80: Substantial agreement
-- 0.81-0.99: Almost perfect agreement</p>
+- &lt;0: Less than chance agreement
+- 0.-0.2: Slight agreement
+- 0.2-0.4: Fair agreement
+- 0.4-0.6: Moderate agreement
+- 0.6-0.8: Substantial agreement
+- 0.8-1.0: Almost perfect agreement</p>
     </div>
 
     <div class="section level2">
@@ -111,13 +111,11 @@ better agreement. Typical benchmarks for interpreting Cohen's Kappa are:
 <span class="r-in"><span>            <span class="fl">0.5</span>, poslabel <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">kappa_simple</span> <span class="op">&lt;-</span> <span class="fu">dx_cohens_kappa</span><span class="op">(</span><span class="va">cm</span>, detail <span class="op">=</span> <span class="st">"simple"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">kappa_full</span> <span class="op">&lt;-</span> <span class="fu">dx_cohens_kappa</span><span class="op">(</span><span class="va">cm</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in get_kappa_interpretation():</span> argument "kappa" is missing, with no default</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">kappa_simple</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.6361249</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">kappa_full</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 8</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   measure       summary     estimate conf_low conf_high fraction conf_type notes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Cohen's Kappa 0.64 (0.54…    0.636    0.537     0.736 <span style="color: #949494;">""</span>       Standard… Subs…</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'kappa_full' not found</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
