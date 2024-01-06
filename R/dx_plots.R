@@ -805,21 +805,21 @@ dx_plot_roc <- function(dx_obj, curve_color = "#0057B8", fill_color = "#cfcdcb",
     p <- p +
       ggplot2::geom_segment(
         ggplot2::aes(x = 1, y = 0, xend = 0, yend = 1),
-        size = .2,
+        linewidth = .2,
         linetype = "dotted",
         color = ref_lines_color
       ) +
       # horizontal line
       ggplot2::geom_segment(
         ggplot2::aes(x = 0, xend = 1.05, y = sensdf, yend = sensdf),
-        size = .2,
+        linewidth = .2,
         linetype = "dashed",
         color = ref_lines_color
       ) +
       # vertical line
       ggplot2::geom_segment(
         ggplot2::aes(x = specdf, xend = specdf, y = 0, yend = 1.05),
-        size = .2,
+        linewidth = .2,
         linetype = "dashed",
         color = ref_lines_color
       )
