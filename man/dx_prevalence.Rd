@@ -16,6 +16,12 @@ including 95\% confidence intervals.}
 \item{...}{Additional arguments to pass to metric_binomial function, such as
 `citype` for type of confidence interval method.}
 }
+\value{
+Depending on the `detail` parameter, returns a numeric value
+        representing the calculated metric or a data frame/tibble with
+        detailed diagnostics including confidence intervals and possibly other
+        metrics relevant to understanding the metric.
+}
 \description{
 Calculates Prevalence, which is the proportion of cases that are positive for
 the condition of interest over the total number of cases. Prevalence provides

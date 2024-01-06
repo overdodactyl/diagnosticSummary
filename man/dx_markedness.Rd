@@ -18,6 +18,12 @@ via bootstrapping.  Note, this can be slow.}
 
 \item{bootreps}{The number of bootstrap replications for calculating confidence intervals.}
 }
+\value{
+Depending on the `detail` parameter, returns a numeric value
+        representing the calculated metric or a data frame/tibble with
+        detailed diagnostics including confidence intervals and possibly other
+        metrics relevant to understanding the metric.
+}
 \description{
 Calculates Markedness for the provided confusion matrix. Markedness is a combined measure
 of PPV (Positive Predictive Value) and NPV (Negative Predictive Value). It reflects the

@@ -18,6 +18,12 @@ via bootstrapping.  Note, this can be slow.}
 
 \item{bootreps}{The number of bootstrap replications for calculating confidence intervals.}
 }
+\value{
+Depending on the `detail` parameter, returns a numeric value
+        representing the calculated metric or a data frame/tibble with
+        detailed diagnostics including confidence intervals and possibly other
+        metrics relevant to understanding the metric.
+}
 \description{
 Calculates the Geometric Mean (G-mean) for the provided confusion matrix.
 G-mean is a measure of a model's performance that considers both the sensitivity

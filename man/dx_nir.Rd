@@ -13,6 +13,12 @@ dx_nir(cm, detail = "full")
 "simple" for raw estimate, "full" for detailed estimate
 including 95\% confidence intervals.}
 }
+\value{
+Depending on the `detail` parameter, returns a numeric value
+        representing the calculated metric or a data frame/tibble with
+        detailed diagnostics including confidence intervals and possibly other
+        metrics relevant to understanding the metric.
+}
 \description{
 The No Information Rate is the proportion of the largest class in the actual outcomes.
 It represents the accuracy that a naive model would achieve by always predicting

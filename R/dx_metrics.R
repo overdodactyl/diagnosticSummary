@@ -29,7 +29,7 @@ metricparams <- function() {
 #' over all cases from a confusion matrix object, providing a measure
 #' of the classifier's overall correctness.
 #'
-#' @inheritParams metrics-params
+#' @inherit metrics-params
 #'
 #' @details
 #' \eqn{Accuracy = \frac{True Positives + True Negatives}{Total Cases}}{Accuracy = (TP + TN) / N}
@@ -66,7 +66,7 @@ dx_accuracy <- function(cm, detail = "full", ...) {
 #' PPV can be influenced by the prevalence of the condition and should be used
 #' alongside other metrics.
 #'
-#' @inheritParams metrics-params
+#' @inherit metrics-params
 #'
 #' @details
 #' PPV, also known as precision, is the ratio of true positives to the sum of true
@@ -107,7 +107,7 @@ dx_precision <- dx_ppv
 #' Note that NPV, like other metrics, may not fully represent classifier performance
 #' in unbalanced datasets and should be used alongside other metrics.
 #'
-#' @inheritParams metrics-params
+#' @inherit metrics-params
 #'
 #' @details
 #' NPV is the ratio of true negatives to the sum of true and false negatives. It is an
@@ -143,7 +143,7 @@ dx_npv <- function(cm, detail = "full", ...) {
 #' as the miss rate and is a critical measure in evaluating the performance of a classifier,
 #' especially in scenarios where failing to detect positives is costly.
 #'
-#' @inheritParams metrics-params
+#' @inherit metrics-params
 #'
 #' @details
 #' FNR is an important measure in situations where the cost of missing a positive classification
@@ -181,7 +181,7 @@ dx_miss_rate <- dx_fnr
 #' that were incorrectly identified as positives by the classifier. FPR is also known
 #' as the fall-out rate and is crucial in evaluating the specificity of a classifier.
 #'
-#' @inheritParams metrics-params
+#' @inherit metrics-params
 #'
 #' @details
 #' FPR is particularly important in contexts where false alarms are costly. It is
@@ -219,7 +219,7 @@ dx_fall_out <- dx_fpr
 #' among all positive predictions. FDR is a critical measure in many classification contexts,
 #' particularly where the cost of a false positive is high.
 #'
-#' @inheritParams metrics-params
+#' @inherit metrics-params
 #'
 #' @details
 #' FDR is an important measure when the consequences of false discoveries (false positives)
@@ -254,7 +254,7 @@ dx_fdr <- function(cm, detail = "full", ...) {
 #' classifier. Sensitivity is a key measure in evaluating the effectiveness of a classifier
 #' in identifying positive instances.
 #'
-#' @inheritParams metrics-params
+#' @inherit metrics-params
 #'
 #' @details
 #' Sensitivity or TPR is an important measure in scenarios where missing a positive
@@ -298,7 +298,7 @@ dx_tpr <- dx_sensitivity
 #' Specificity is a key measure in evaluating the effectiveness of a classifier in
 #' identifying negative instances.
 #'
-#' @inheritParams metrics-params
+#' @inherit metrics-params
 #'
 #' @details
 #' Specificity or TNR measures how well the classifier can identify negative instances,
@@ -339,7 +339,7 @@ dx_tnr <- dx_specificity
 #' This metric is particularly useful for imbalanced datasets as it accounts for both the
 #' positive and negative classes equally and doesn't inherently favor the majority class.
 #'
-#' @inheritParams metrics-params
+#' @inherit metrics-params
 #'
 #' @details
 #' Balanced Accuracy mitigates the issue of the regular accuracy metric favoring models
@@ -383,7 +383,7 @@ calculate_balanced_accuracy <- function(cm) {
 #' the condition of interest over the total number of cases. Prevalence provides
 #' a measure of how widespread a condition is within the population at a given time.
 #'
-#' @inheritParams metrics-params
+#' @inherit metrics-params
 #'
 #' @details
 #' Prevalence is a measure of the burden of a condition or disease in a population.
@@ -419,7 +419,7 @@ dx_prevalence <- function(cm, detail = "full", ...) {
 #' positive by the classifier over the total number of cases. Detection Prevalence provides
 #' a measure of how often the condition is identified by the model, regardless of its actual prevalence.
 #'
-#' @inheritParams metrics-params
+#' @inherit metrics-params
 #'
 #' @details
 #' Detection Prevalence is a measure of the frequency with which a classifier predicts
@@ -473,7 +473,7 @@ get_kappa_interpretation <- function(kappa) {
 #' to be a more robust measure than simple percent agreement calculation since
 #' Kappa takes into account the agreement occurring by chance.
 #'
-#' @inheritParams metrics-params
+#' @inherit metrics-params
 #'
 #' @return If `detail` is "simple", returns a single numeric value of Cohen's Kappa.
 #' If `detail` is "full", returns a list or data frame that includes Cohen's Kappa,
@@ -560,7 +560,7 @@ dx_cohens_kappa <- function(cm, detail = "full") {
 #' disagreement between prediction and observation. The function can also return a
 #' confidence interval for the MCC value using bootstrapping if detail is set to "full".
 #'
-#' @inheritParams metrics-params
+#' @inherit metrics-params
 #'
 #' @return If `detail` is "simple", returns a single numeric value of MCC.
 #' If `detail` is "full", returns a data frame that includes MCC, its
@@ -682,7 +682,7 @@ ci_binomial <- function(x, n, citype = "exact", ...) {
 #' will occur given a particular exposure, compared to the odds of the outcome occurring
 #' in the absence of that exposure.
 #'
-#' @inheritParams metrics-params
+#' @inherit metrics-params
 #'
 #' @details
 #' The odds ratio is calculated as (TP * TN) / (FP * FN). It is used in case-control
@@ -713,7 +713,7 @@ dx_odds_ratio <- function(cm, detail = "full", ...) {
 #' LR- compares the probability of a negative test result among patients with the
 #' disease to the probability of a negative test result among patients without the disease.
 #'
-#' @inheritParams metrics-params
+#' @inherit metrics-params
 #'
 #' @details
 #' The negative likelihood ratio is calculated as (FN / (TP + FN)) / (TN / (FP + TN)).
@@ -743,7 +743,7 @@ dx_lrt_neg <- function(cm, detail = "full", ...) {
 #' LR+ compares the probability of a positive test result among patients with the
 #' disease to the probability of a positive test result among patients without the disease.
 #'
-#' @inheritParams metrics-params
+#' @inherit metrics-params
 #'
 #' @details
 #' The positive likelihood ratio is calculated as (TP / (TP + FN)) / (FP / (FP + TN)).
@@ -1008,7 +1008,7 @@ calculate_fbeta <- function(cm, beta = 1) {
 #' generalization of the F1 score, allowing different importance to precision
 #' and recall via the beta parameter.
 #'
-#' @inheritParams metrics-params
+#' @inherit metrics-params
 #' @param beta The beta value determining the weight of precision in the F-score.
 #' @return Depending on the `detail` parameter, returns a single numeric value of
 #'         F-beta or a data frame with the F-beta and its confidence intervals.
@@ -1086,7 +1086,7 @@ dx_f2 <- function(cm, detail = "full", boot = FALSE, bootreps = 1000) {
 #' of Sensitivity (True Positive Rate) and Specificity (True Negative Rate). It reflects the
 #' probability that a classifier is informed about the true class, ranging from -1 to 1.
 #'
-#' @inheritParams metrics-params
+#' @inherit metrics-params
 #'
 #' @details
 #' Informedness is defined as \code{Informedness = Sensitivity + Specificity - 1}. It is the sum of the true positive rate
@@ -1131,7 +1131,7 @@ dx_youden_j <- dx_informedness
 #' of PPV (Positive Predictive Value) and NPV (Negative Predictive Value). It reflects the
 #' effectiveness of a classifier in marking class labels correctly, ranging from -1 to 1.
 #'
-#' @inheritParams metrics-params
+#' @inherit metrics-params
 #'
 #' @details
 #' Markedness is defined as \code{Markedness = PPV + NPV - 1}. It is the sum of the proportions
@@ -1174,7 +1174,7 @@ calculate_markedness <- function(cm) {
 #' (True Positive Rate) and specificity (True Negative Rate), especially useful in
 #' imbalanced datasets.
 #'
-#' @inheritParams metrics-params
+#' @inherit metrics-params
 #'
 #' @details
 #' G-mean is the geometric mean of sensitivity and specificity. It tries to maximize
@@ -1215,7 +1215,7 @@ calculate_g_mean <- function(cm) {
 #' FM Index is the geometric mean of precision and recall, providing a balance
 #' measure between these two metrics.
 #'
-#' @inheritParams metrics-params
+#' @inherit metrics-params
 #'
 #' @details
 #' Fowlkes-Mallows Index is defined as the geometric mean of the precision (Positive Predictive Value)
@@ -1345,7 +1345,7 @@ get_roc <- function(true_varname, pred_varname, data, direction) {
 #' exclusive discrete outcomes. For binary classification, the Brier score is a measure of how far
 #' the predicted probabilities are from the actual outcomes.
 #'
-#' @inheritParams metrics-params
+#' @inherit metrics-params
 #'
 #' @details
 #' The formula for the Brier score in a binary classification is:
@@ -1404,7 +1404,7 @@ calculate_brier <- function(truth, predprob) {
 #' It represents the accuracy that a naive model would achieve by always predicting
 #' the most frequent class. It's a baseline measure for classification performance.
 #'
-#' @inheritParams metrics-params
+#' @inherit metrics-params
 #' @examples
 #' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold = 0.5, poslabel = 1)
 #' nir <- dx_nir(cm)

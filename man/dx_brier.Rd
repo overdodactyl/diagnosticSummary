@@ -15,6 +15,12 @@ dx_brier(predprob, truth, detail = "full")
 "simple" for raw estimate, "full" for detailed estimate
 including 95\% confidence intervals.}
 }
+\value{
+Depending on the `detail` parameter, returns a numeric value
+        representing the calculated metric or a data frame/tibble with
+        detailed diagnostics including confidence intervals and possibly other
+        metrics relevant to understanding the metric.
+}
 \description{
 The Brier score is a proper score function that measures the accuracy of probabilistic predictions.
 It is applicable to tasks in which predictions must assign probabilities to a set of mutually

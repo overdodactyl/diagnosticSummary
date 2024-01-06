@@ -22,6 +22,12 @@ via bootstrapping.  Note, this can be slow.}
 
 \item{bootreps}{The number of bootstrap replications for calculating confidence intervals.}
 }
+\value{
+Depending on the `detail` parameter, returns a numeric value
+        representing the calculated metric or a data frame/tibble with
+        detailed diagnostics including confidence intervals and possibly other
+        metrics relevant to understanding the metric.
+}
 \description{
 Calculates Informedness for the provided confusion matrix. Informedness is a combined measure
 of Sensitivity (True Positive Rate) and Specificity (True Negative Rate). It reflects the
