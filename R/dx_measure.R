@@ -208,7 +208,6 @@ dx_measure <- function(data, threshold, options, var = "Overall",
     fowlkes_mallows = list(fun = dx_fowlkes_mallows, params = common_boot_args),
     brier = list(fun = dx_brier, params = list(predprob = predprob, truth = truth)),
     chisquare = list(fun = dx_chi_square, params = common_ratio_args),
-    chisquare = list(fun = dx_chi_square, params = common_ratio_args),
     fishers = list(fun = dx_fishers_exact, params = common_ratio_args),
     gtest = list(fun = dx_g_test, params = common_ratio_args)
   )
