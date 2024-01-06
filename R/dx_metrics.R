@@ -511,7 +511,7 @@ dx_cohens_kappa <- function(cm, detail = "full") {
     ci_lower <- kappa - z * se_kappa
     ci_upper <- kappa + z * se_kappa
 
-    note <- get_kappa_interpretation()
+    note <- get_kappa_interpretation(kappa)
 
     res <- measure_df(
       measure = "Cohen's Kappa",
