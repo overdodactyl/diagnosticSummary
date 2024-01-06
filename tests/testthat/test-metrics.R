@@ -365,26 +365,3 @@ test_that("Metric Binomial", {
   }
 
 })
-
-# test_that("Check Zero Denominator", {
-#
-#   expect_true(
-#     check_zero_denominator(),
-#     0.8026811213655892
-#   )
-#
-# })
-
-
-
-
-
-
-
-
-
-
-
-
-
-

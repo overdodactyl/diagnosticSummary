@@ -29,8 +29,10 @@ Note that a value of 1 indicates no association, greater than 1 indicates increa
 odds of the outcome with exposure, and less than 1 indicates decreased odds.
 }
 \examples{
-cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
-            0.5, poslabel = 1)
+cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
+  threshold =
+    0.5, poslabel = 1
+)
 simple_or <- dx_odds_ratio(cm, detail = "simple")
 detailed_or <- dx_odds_ratio(cm)
 print(simple_or)

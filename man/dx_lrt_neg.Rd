@@ -27,8 +27,10 @@ It is used to assess the diagnostic usefulness of a test. A LR- closer to 0 indi
 a good diagnostic test that can confidently rule out the disease when the test is negative.
 }
 \examples{
-cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
-            0.5, poslabel = 1)
+cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
+  threshold =
+    0.5, poslabel = 1
+)
 simple_lrn <- dx_lrt_neg(cm, detail = "simple")
 detailed_lrn <- dx_lrt_neg(cm)
 print(simple_lrn)

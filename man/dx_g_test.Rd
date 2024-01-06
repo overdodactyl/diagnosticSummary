@@ -28,7 +28,8 @@ distribution. Caution is needed with zero counts or very small samples.
 }
 \examples{
 cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
-            threshold = 0.3, poslabel = 1)
+  threshold = 0.3, poslabel = 1
+)
 simple <- dx_g_test(cm, detail = "simple")
 detailed <- dx_g_test(cm)
 print(simple)

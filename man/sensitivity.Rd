@@ -41,8 +41,10 @@ The formula for Sensitivity is:
 \deqn{Sensitivity = \frac{True Positives}{True Positives + False Negatives}}{Sensitivity = TP / (TP + FN)}
 }
 \examples{
-cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
-            0.5, poslabel = 1)
+cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
+  threshold =
+    0.5, poslabel = 1
+)
 simple_sensitivity <- dx_sensitivity(cm, detail = "simple")
 detailed_sensitivity <- dx_sensitivity(cm)
 print(simple_sensitivity)

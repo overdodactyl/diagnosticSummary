@@ -1,5 +1,4 @@
 dx_thresholds <- function(data, options) {
-
   predprob <- data[[options$pred_varname]]
   truth <- data[[options$true_varname]]
 
@@ -16,9 +15,6 @@ dx_thresholds <- function(data, options) {
   sensitivities <- specificities <- numeric(length(unique_thresholds))
   precision <- net_benefits <- informedness <- sensitivities
   tp <- fp <- fn <- tn <- f1 <- fpr <- npv <- ppv <- sensitivities
-
-
-  # recall <- numeric(length(unique_thresholds))
 
   # Step 2: Calculate sensitivity and specificity for each unique threshold
   for (i in seq_along(unique_thresholds)) {
@@ -40,11 +36,9 @@ dx_thresholds <- function(data, options) {
 
     # Calculate net benefit
     weight <- threshold / (1 - threshold)
-    tp_rate <- sensitivities[i]  # True positive rate is sensitivity
-    fp_rate <- 1 - specificities[i]  # False positive rate is 1 - specificity
+    tp_rate <- sensitivities[i] # True positive rate is sensitivity
+    fp_rate <- 1 - specificities[i] # False positive rate is 1 - specificity
     net_benefits[i] <- tp_rate - weight * fp_rate
-
-
   }
 
   res <- data.frame(
@@ -65,7 +59,6 @@ dx_thresholds <- function(data, options) {
   )
 
   return_df(res)
-
 }
 
 dx_prevalence_analysis <- function(data, options) {
@@ -81,7 +74,7 @@ dx_prevalence_analysis <- function(data, options) {
   )
 
   sensitivity <- dx_sensitivity(perfdf, detail = "simple")
-  specificity <-  dx_specificity(perfdf, detail = "simple")
+  specificity <- dx_specificity(perfdf, detail = "simple")
 
   prevalences <- seq(0.01, 0.99, by = 0.005)
 
@@ -103,7 +96,6 @@ dx_prevalence_analysis <- function(data, options) {
     ppv = ppv_values,
     npv = npv_values
   )
-
 }
 
 dx_rank <- function(data, options) {
@@ -112,7 +104,7 @@ dx_rank <- function(data, options) {
 
   # Combine and sort by predicted probability in descending order
   data <- data.frame(truth, predprob)
-  data <- data[order(-data$predprob),]
+  data <- data[order(-data$predprob), ]
 
   # Calculate cumulative true positives
   data$cumulativeTruePositives <- cumsum(data$truth)
@@ -123,13 +115,17 @@ dx_rank <- function(data, options) {
 
   # Calculate the lift for each percentile
   n <- nrow(data)
-  data$percentile <- (1:n) / n  # Represents the percentile of the population up to each instance
+  data$percentile <- (1:n) / n # Represents the percentile of the population up to each instance
   data$randomModelGain <- data$percentile * totalPositives
-  data$lift <- ifelse(data$randomModelGain > 0, data$cumulativeTruePositives / data$randomModelGain, 0)
+  data$lift <- ifelse(
+    data$randomModelGain > 0,
+    data$cumulativeTruePositives / data$randomModelGain,
+    0
+  )
 
   # Calculate cumulative true positive and true negative rates for KS Plot
-  data$cumulativeTPR <- data$cumulativeTruePositives / totalPositives  # True Positive Rate
-  data$cumulativeFPR <- cumsum(!data$truth) / sum(!data$truth)  # False Positive Rate
+  data$cumulativeTPR <- data$cumulativeTruePositives / totalPositives # True Positive Rate
+  data$cumulativeFPR <- cumsum(!data$truth) / sum(!data$truth) # False Positive Rate
 
   return(data)
 }
@@ -153,30 +149,6 @@ dx_measure <- function(data, threshold, options, var = "Overall",
 
   threshold_analysis <- dx_thresholds(data, options)
 
-  # metrics_list <- list(
-  #   auc = dx_auc(truth, predprob),
-  #   accuracy = dx_accuracy(cm, citype = options$citype),
-  #   sensitivity = dx_sensitivity(cm, citype = options$citype),
-  #   specificity = dx_specificity(cm, citype = options$citype),
-  #   ppv = dx_ppv(cm, citype = options$citype),
-  #   npv = dx_npv(cm, citype = options$citype),
-  #   lrt_pos = dx_lrt_pos(cm),
-  #   lrt_neg = dx_lrt_neg(cm),
-  #   or = dx_odds_ratio(cm),
-  #   f1 = dx_f1(cm, bootreps = options$bootreps),
-  #   prevalence = dx_prevalence(cm, citype = options$citype),
-  #   fnr = dx_fnr(cm, citype = options$citype),
-  #   fpr = dx_fpr(cm, citype = options$citype),
-  #   fdr = dx_fdr(cm, citype = options$citype),
-  #   pr_auc =  dx_auc_pr(threshold_analysis$precision, threshold_analysis$sensitivity),
-  #   kappa = dx_cohens_kappa(cm),
-  #   mcc = dx_mcc(cm, bootreps = options$bootreps)
-  # )
-  #
-  # # Combine all metric results into one data frame
-  # results <- do.call(rbind, metrics_list)
-
-
   # Common arguments for metrics that use a confusion matrix and citype
   common_cm_args <- list(cm = cm, citype = options$citype)
   common_boot_args <- list(cm = cm, boot = options$doboot, bootreps = options$bootreps)
@@ -198,7 +170,12 @@ dx_measure <- function(data, threshold, options, var = "Overall",
     fnr = list(fun = dx_fnr, params = common_cm_args),
     fpr = list(fun = dx_fpr, params = common_cm_args),
     fdr = list(fun = dx_fdr, params = common_cm_args),
-    pr_auc = list(fun = dx_auc_pr, params = list(precision = threshold_analysis$precision, recall = threshold_analysis$sensitivity)),  # Assuming precision and recall are named thus in threshold_analysis
+    pr_auc = list(
+      fun = dx_auc_pr,
+      params = list(
+        precision = threshold_analysis$precision,
+        recall = threshold_analysis$sensitivity)
+      ),
     kappa = list(fun = dx_cohens_kappa, params = list(cm = cm)),
     mcc = list(fun = dx_mcc, params = common_boot_args),
     balanced_accuracy = list(fun = dx_balanced_accuracy, params = common_boot_args),
@@ -235,7 +212,6 @@ dx_measure <- function(data, threshold, options, var = "Overall",
 
 
 dx_group_measure <- function(data, options, group_varname) {
-
   group_col <- unique(data[[group_varname]])
 
   # Convert them to character
@@ -245,8 +221,7 @@ dx_group_measure <- function(data, options, group_varname) {
   datalist <- list()
 
   for (i in seq_along(group_labels)) {
-
-    subsetdata <- data[data[[group_varname]] == group_labels[i] , ]
+    subsetdata <- data[data[[group_varname]] == group_labels[i], ]
 
     if (dim(subsetdata)[1] > 0) {
       datalist[[i]] <- dx_measure(
@@ -262,7 +237,6 @@ dx_group_measure <- function(data, options, group_varname) {
   bd <- dx_breslow_day(data, options, group_varname)
 
   rbind(res, bd)
-
 }
 
 
@@ -297,7 +271,6 @@ dx_group_measure <- function(data, options, group_varname) {
 #'
 #' @export
 dx_compare <- function(dx_list, paired = TRUE) {
-
   dx_list <- validate_dx_list(dx_list)
 
 
@@ -306,8 +279,8 @@ dx_compare <- function(dx_list, paired = TRUE) {
   res <- NULL
 
   for (i in seq_along(ncol(combinations))) {
-    n1 <- combinations[1,i]
-    n2 <- combinations[2,i]
+    n1 <- combinations[1, i]
+    n2 <- combinations[2, i]
     dx1 <- dx_list[[n1]]
     dx2 <- dx_list[[n2]]
     delong <- dx_delong(dx1, dx2, paired = paired)
@@ -334,6 +307,4 @@ dx_compare <- function(dx_list, paired = TRUE) {
     ),
     class = "dx_compare"
   )
-
-
 }

@@ -36,8 +36,10 @@ The formula for Specificity is:
 \deqn{Specificity = \frac{True Negatives}{True Negatives + False Positives}}{Specificity = TN / (TN + FP)}
 }
 \examples{
-cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
-            0.5, poslabel = 1)
+cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
+  threshold =
+    0.5, poslabel = 1
+)
 simple_specificity <- dx_specificity(cm, detail = "simple")
 detailed_specificity <- dx_specificity(cm)
 print(simple_specificity)

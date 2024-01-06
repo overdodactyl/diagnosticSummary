@@ -41,4 +41,3 @@
 #
 #   return(operatingdata_wide)
 # }
-

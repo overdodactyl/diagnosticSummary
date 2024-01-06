@@ -19,7 +19,9 @@
 #'         metrics relevant to understanding the metric.
 #' @name metrics-params
 #' @keywords internal
-metricparams <- function() {}
+metricparams <- function() {
+
+}
 
 #' Calculate Accuracy
 #'
@@ -76,8 +78,10 @@ dx_accuracy <- function(cm, detail = "full", ...) {
 #' \deqn{PPV = \frac{True Positives}{True Positives + False Positives}}{PPV = TP / (TP + FP)}
 #'
 #' @examples
-#' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
-#'             0.5, poslabel = 1)
+#' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
+#'   threshold =
+#'     0.5, poslabel = 1
+#' )
 #' simple_ppv <- dx_ppv(cm, detail = "simple")
 #' detailed_ppv <- dx_ppv(cm)
 #' print(simple_ppv)
@@ -116,8 +120,10 @@ dx_precision <- dx_ppv
 #' \deqn{NPV = \frac{True Negatives}{True Negatives + False Negatives}}{NPV = TN / (TN + FN)}
 #'
 #' @examples
-#' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
-#'             0.5, poslabel = 1)
+#' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
+#'   threshold =
+#'     0.5, poslabel = 1
+#' )
 #' simple_npv <- dx_npv(cm, detail = "simple")
 #' detailed_npv <- dx_npv(cm)
 #' print(simple_npv)
@@ -150,8 +156,10 @@ dx_npv <- function(cm, detail = "full", ...) {
 #' @aliases dx_miss_rate
 #' @name fnr
 #' @examples
-#' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
-#'             0.5, poslabel = 1)
+#' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
+#'   threshold =
+#'     0.5, poslabel = 1
+#' )
 #' simple_fnr <- dx_fnr(cm, detail = "simple")
 #' detailed_fnr <- dx_fnr(cm)
 #' print(simple_fnr)
@@ -186,8 +194,10 @@ dx_miss_rate <- dx_fnr
 #' @aliases dx_fall_out
 #' @name fpr
 #' @examples
-#' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
-#'             0.5, poslabel = 1)
+#' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
+#'   threshold =
+#'     0.5, poslabel = 1
+#' )
 #' simple_fpr <- dx_fpr(cm, detail = "simple")
 #' detailed_fpr <- dx_fpr(cm)
 #' print(simple_fpr)
@@ -221,8 +231,10 @@ dx_fall_out <- dx_fpr
 #' \deqn{FDR = \frac{False Positives}{False Positives + True Positives}}{FDR = FP / (FP + TP)}
 #'
 #' @examples
-#' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
-#'             0.5, poslabel = 1)
+#' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
+#'   threshold =
+#'     0.5, poslabel = 1
+#' )
 #' simple_fdr <- dx_fdr(cm, detail = "simple")
 #' detailed_fdr <- dx_fdr(cm)
 #' print(simple_fdr)
@@ -255,8 +267,10 @@ dx_fdr <- function(cm, detail = "full", ...) {
 #' \deqn{Sensitivity = \frac{True Positives}{True Positives + False Negatives}}{Sensitivity = TP / (TP + FN)}
 #'
 #' @examples
-#' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
-#'             0.5, poslabel = 1)
+#' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
+#'   threshold =
+#'     0.5, poslabel = 1
+#' )
 #' simple_sensitivity <- dx_sensitivity(cm, detail = "simple")
 #' detailed_sensitivity <- dx_sensitivity(cm)
 #' print(simple_sensitivity)
@@ -296,8 +310,10 @@ dx_tpr <- dx_sensitivity
 #' \deqn{Specificity = \frac{True Negatives}{True Negatives + False Positives}}{Specificity = TN / (TN + FP)}
 #'
 #' @examples
-#' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
-#'             0.5, poslabel = 1)
+#' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
+#'   threshold =
+#'     0.5, poslabel = 1
+#' )
 #' simple_specificity <- dx_specificity(cm, detail = "simple")
 #' detailed_specificity <- dx_specificity(cm)
 #' print(simple_specificity)
@@ -380,8 +396,10 @@ calculate_balanced_accuracy <- function(cm) {
 #' \deqn{Prevalence = \frac{Number of Current Cases (Positives)}{Total Number of Cases}}{Prevalence = Pos / N}
 #'
 #' @examples
-#' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
-#'             0.5, poslabel = 1)
+#' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
+#'   threshold =
+#'     0.5, poslabel = 1
+#' )
 #' simple_prevalence <- dx_prevalence(cm, detail = "simple")
 #' detailed_prevalence <- dx_prevalence(cm)
 #' print(simple_prevalence)
@@ -416,8 +434,10 @@ dx_prevalence <- function(cm, detail = "full", ...) {
 #' \deqn{Detection Prevalence = \frac{Number of Predicted Positives}{Total Number of Cases}}{Detection Prevalence = TestPos / N}
 #'
 #' @examples
-#' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
-#'             0.5, poslabel = 1)
+#' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
+#'   threshold =
+#'     0.5, poslabel = 1
+#' )
 #' simple_detection_prevalence <- dx_detection_prevalence(cm, detail = "simple")
 #' detailed_detection_prevalence <- dx_detection_prevalence(cm)
 #' print(simple_detection_prevalence)
@@ -434,8 +454,10 @@ dx_detection_prevalence <- function(cm, detail = "full", ...) {
 get_kappa_interpretation <- function(kappa) {
   # Define the breaks and labels for the categories
   breaks <- c(-Inf, 0, 0.2, 0.4, 0.6, 0.8, 1)
-  labels <- c("Less than chance agreement", "Slight Agreement", "Fair Agreement",
-              "Moderate Agreement", "Substantial Agreement", "Almost Perfect Agreement")
+  labels <- c(
+    "Less than chance agreement", "Slight Agreement", "Fair Agreement",
+    "Moderate Agreement", "Substantial Agreement", "Almost Perfect Agreement"
+  )
 
   # Use cut to find the category for each kappa value
   categories <- cut(kappa, breaks = breaks, labels = labels, right = FALSE)
@@ -477,8 +499,10 @@ get_kappa_interpretation <- function(kappa) {
 #'
 #' @examples
 #' # Assuming you have a confusion matrix cm with appropriate structure
-#' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
-#'             0.5, poslabel = 1)
+#' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
+#'   threshold =
+#'     0.5, poslabel = 1
+#' )
 #' kappa_simple <- dx_cohens_kappa(cm, detail = "simple")
 #' kappa_full <- dx_cohens_kappa(cm)
 #' print(kappa_simple)
@@ -526,8 +550,6 @@ dx_cohens_kappa <- function(cm, detail = "full") {
 
     return(res)
   }
-
-
 }
 
 #' Calculate Matthews Correlation Coefficient (MCC)
@@ -558,8 +580,10 @@ dx_cohens_kappa <- function(cm, detail = "full") {
 #' for the MCC value, providing a more robust understanding of its stability.
 #'
 #' @examples
-#' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
-#'             0.5, poslabel = 1)
+#' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
+#'   threshold =
+#'     0.5, poslabel = 1
+#' )
 #' mcc_simple <- dx_mcc(cm, detail = "simple")
 #' mcc_full <- dx_mcc(cm)
 #' print(mcc_simple)
@@ -583,7 +607,9 @@ calculate_mcc <- function(cm) {
   denominator <- sqrt((tp + fp) * (tp + fn) * (tn + fp) * (tn + fn))
 
   # Handle cases where the denominator is 0 to avoid division by zero
-  if (denominator == 0) return(0)
+  if (denominator == 0) {
+    return(0)
+  }
 
   # Calculate and return MCC
   numerator / denominator
@@ -628,7 +654,6 @@ metric_binomial <- function(x, n, name, detail = "full", citype = "exact", ...) 
 #' @return A data frame with the calculated binomial metric and confidence intervals.
 #' @noRd
 ci_binomial <- function(x, n, citype = "exact", ...) {
-
   res <- binom::binom.confint(x, n, conf.level = 0.95, methods = citype)
 
   formatted_estimate <- conf_int(
@@ -647,7 +672,6 @@ ci_binomial <- function(x, n, citype = "exact", ...) {
     ci_type = paste0("Binomial: ", citype),
     ...
   )
-
 }
 
 
@@ -667,8 +691,10 @@ ci_binomial <- function(x, n, citype = "exact", ...) {
 #' odds of the outcome with exposure, and less than 1 indicates decreased odds.
 #'
 #' @examples
-#' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
-#'             0.5, poslabel = 1)
+#' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
+#'   threshold =
+#'     0.5, poslabel = 1
+#' )
 #' simple_or <- dx_odds_ratio(cm, detail = "simple")
 #' detailed_or <- dx_odds_ratio(cm)
 #' print(simple_or)
@@ -695,8 +721,10 @@ dx_odds_ratio <- function(cm, detail = "full", ...) {
 #' a good diagnostic test that can confidently rule out the disease when the test is negative.
 #'
 #' @examples
-#' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
-#'             0.5, poslabel = 1)
+#' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
+#'   threshold =
+#'     0.5, poslabel = 1
+#' )
 #' simple_lrn <- dx_lrt_neg(cm, detail = "simple")
 #' detailed_lrn <- dx_lrt_neg(cm)
 #' print(simple_lrn)
@@ -705,7 +733,7 @@ dx_odds_ratio <- function(cm, detail = "full", ...) {
 #' @concept metrics
 dx_lrt_neg <- function(cm, detail = "full", ...) {
   ratio <- function(tp, tn, fp, fn) (fn / (tp + fn)) / (tn / (fp + tn))
-  sd <- function(tp, tn, fp, fn) sqrt(1/fn - 1/(tp + fn) + 1/tn - 1/(fp + tn))
+  sd <- function(tp, tn, fp, fn) sqrt(1 / fn - 1 / (tp + fn) + 1 / tn - 1 / (fp + tn))
   metric_ratio(cm, ratio, sd, detail, name = "LRT-", ...)
 }
 
@@ -724,8 +752,10 @@ dx_lrt_neg <- function(cm, detail = "full", ...) {
 #' test is positive.
 #'
 #' @examples
-#' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
-#'             0.5, poslabel = 1)
+#' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
+#'   threshold =
+#'     0.5, poslabel = 1
+#' )
 #' simple_lrp <- dx_lrt_pos(cm, detail = "simple")
 #' detailed_lrp <- dx_lrt_pos(cm)
 #' print(simple_lrp)
@@ -734,7 +764,7 @@ dx_lrt_neg <- function(cm, detail = "full", ...) {
 #' @concept metrics
 dx_lrt_pos <- function(cm, detail = "full", ...) {
   ratio <- function(tp, tn, fp, fn) (tp / (tp + fn)) / (fp / (fp + tn))
-  sd <- function(tp, tn, fp, fn) sqrt(1/tp - 1/(tp + fn) + 1/fp - 1/(fp + tn))
+  sd <- function(tp, tn, fp, fn) sqrt(1 / tp - 1 / (tp + fn) + 1 / fp - 1 / (fp + tn))
   metric_ratio(cm, ratio, sd, detail, name = "LRT+", ...)
 }
 
@@ -755,7 +785,6 @@ dx_lrt_pos <- function(cm, detail = "full", ...) {
 #'         data frame with the metric and confidence intervals.
 #' @noRd
 metric_ratio <- function(cm, dx_ratio_func, dx_sd_func, detail = "full", ...) {
-
   validate_detail(detail)
 
   # Extract counts from confusion matrix
@@ -780,7 +809,7 @@ metric_ratio <- function(cm, dx_ratio_func, dx_sd_func, detail = "full", ...) {
   if (detail == "simple") {
     return(ratio)
   } else if (detail == "full") {
-    return(ci_ratio(tp, tn, fp, fn, ratio, ratio_sd, continuity_correction=continuity_correction, ...))
+    return(ci_ratio(tp, tn, fp, fn, ratio, ratio_sd, continuity_correction = continuity_correction, ...))
   }
 }
 
@@ -803,7 +832,7 @@ metric_ratio <- function(cm, dx_ratio_func, dx_sd_func, detail = "full", ...) {
 #' @noRd
 ci_ratio <- function(tp, tn, fp, fn, ratio, ratio_sd, name, continuity_correction, ...) {
   # Calculate confidence interval for log-transformed Ratio
-  z_value <- 1.95996398454005  # 95% CI
+  z_value <- 1.95996398454005 # 95% CI
   ratio_log <- log(ratio)
   ratio_ci_l <- exp(ratio_log - z_value * ratio_sd)
   ratio_ci_u <- exp(ratio_log + z_value * ratio_sd)
@@ -895,8 +924,6 @@ dx_auc_pr <- function(precision, recall, detail = "full") {
     )
     return(res)
   }
-
-
 }
 
 #' Calculate Area Under the ROC Curve (AUC)
@@ -962,13 +989,13 @@ calculate_fbeta <- function(cm, beta = 1) {
   fn <- cm$fn
 
   # Calculate precision and recall
-  precision <- if(tp + fp == 0) 0 else tp / (tp + fp)
-  recall <- if(tp + fn == 0) 0 else tp / (tp + fn)
+  precision <- if (tp + fp == 0) 0 else tp / (tp + fp)
+  recall <- if (tp + fn == 0) 0 else tp / (tp + fn)
 
   # Calculate F-beta score
   beta_sq <- beta^2
   if (precision + recall == 0) {
-    0  # Return 0 to handle division by zero
+    0 # Return 0 to handle division by zero
   } else {
     (1 + beta_sq) * (precision * recall) / (beta_sq * precision + recall)
   }
@@ -988,8 +1015,10 @@ calculate_fbeta <- function(cm, beta = 1) {
 #' @seealso \code{\link{dx_f1}}, \code{\link{dx_f2}} for specific F-beta scores.
 #' @export
 #' @examples
-#' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
-#'             0.5, poslabel = 1)
+#' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
+#'   threshold =
+#'     0.5, poslabel = 1
+#' )
 #' simple_f <- dx_fbeta(cm, beta = .5, detail = "simple")
 #' detailed_f <- dx_fbeta(cm, beta = .5)
 #' print(simple_f)
@@ -1013,8 +1042,10 @@ dx_fbeta <- function(cm, beta = 1, detail = "full", boot = FALSE, bootreps = 100
 #' @export
 #' @concept metrics
 #' @examples
-#' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
-#'             0.5, poslabel = 1)
+#' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
+#'   threshold =
+#'     0.5, poslabel = 1
+#' )
 #' simple_f <- dx_f1(cm, detail = "simple")
 #' detailed_f <- dx_f1(cm)
 #' print(simple_f)
@@ -1037,8 +1068,10 @@ dx_f1 <- function(cm, detail = "full", boot = FALSE, bootreps = 1000) {
 #' @export
 #' @concept metrics
 #' @examples
-#' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
-#'             0.5, poslabel = 1)
+#' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
+#'   threshold =
+#'     0.5, poslabel = 1
+#' )
 #' simple_f <- dx_f2(cm, detail = "simple")
 #' detailed_f <- dx_f2(cm)
 #' print(simple_f)
@@ -1211,8 +1244,8 @@ dx_fowlkes_mallows <- function(cm, detail = "full", boot = FALSE, bootreps = 100
 
 calculate_fowlkes_mallows <- function(cm) {
   # Extract PPV (precision) and sensitivity (recall) from the confusion matrix
-  ppv <- dx_ppv(cm, "simple")  # Positive Predictive Value or Precision
-  recall <- dx_sensitivity(cm, "simple")  # Sensitivity or Recall
+  ppv <- dx_ppv(cm, "simple") # Positive Predictive Value or Precision
+  recall <- dx_sensitivity(cm, "simple") # Sensitivity or Recall
 
   # Calculate Fowlkes-Mallows Index
   sqrt(ppv * recall)
@@ -1276,8 +1309,8 @@ dx_cm <- function(predprob, truth, threshold, poslabel) {
   fp <- sum(testresult == 1 & trueresult == 0)
 
   # Calculate additional metrics
-  dispos <- tp + fn  # Actual positives
-  disneg <- tn + fp  # Actual negatives
+  dispos <- tp + fn # Actual positives
+  disneg <- tn + fp # Actual negatives
   n <- length(truth) # Total observations, assuming 'truth' is complete
   correct <- tp + tn # Correct predictions
   testpos <- tp + fp # Predicted positives
@@ -1288,7 +1321,6 @@ dx_cm <- function(predprob, truth, threshold, poslabel) {
 
   class(cm) <- c("dx_cm", class(cm))
   return(cm)
-
 }
 
 #' Return an pROC::roc object for a dx object
@@ -1362,7 +1394,7 @@ dx_brier <- function(predprob, truth, detail = "full") {
 
 
 calculate_brier <- function(truth, predprob) {
-  mean((predprob - truth) ^ 2)
+  mean((predprob - truth)^2)
 }
 
 #' Calculate No Information Rate (NIR)
@@ -1382,8 +1414,8 @@ calculate_brier <- function(truth, predprob) {
 dx_nir <- function(cm, detail = "full") {
   validate_detail(detail)
   # Calculate the total number of actual positives and negatives
-  dispos <- cm$dispos  # Number of actual positives
-  disneg <- cm$disneg  # Number of actual negatives
+  dispos <- cm$dispos # Number of actual positives
+  disneg <- cm$disneg # Number of actual negatives
 
   # The NIR is the proportion of the largest class
   num <- max(dispos, disneg)
@@ -1404,6 +1436,3 @@ dx_nir <- function(cm, detail = "full") {
 
   return(nir)
 }
-
-
-

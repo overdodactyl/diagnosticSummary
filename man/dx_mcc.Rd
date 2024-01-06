@@ -44,8 +44,10 @@ For "full" details, bootstrap methods are used to estimate the confidence interv
 for the MCC value, providing a more robust understanding of its stability.
 }
 \examples{
-cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
-            0.5, poslabel = 1)
+cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
+  threshold =
+    0.5, poslabel = 1
+)
 mcc_simple <- dx_mcc(cm, detail = "simple")
 mcc_full <- dx_mcc(cm)
 print(mcc_simple)

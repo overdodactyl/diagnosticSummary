@@ -26,30 +26,18 @@ summary.dx <- function(object, thresh = object$options$setthreshold,
 
   rownames(tmp) <- NULL
 
-  # Dropping columns 'rawestime', 'rawlci', 'rawuci'
-  # tmp <- tmp[, !names(tmp) %in% c('rawestime', 'rawlci', 'rawuci', 'ci_type', 'notes', 'n')]
-
   if (!show_var) tmp <- subset(tmp, select = -c(variable))
   if (!show_label) tmp <- subset(tmp, select = -c(label))
 
-  # caption <- paste0("N=", comma(tmp$n[1]), "; ", "Threshold=", thresh)
   caption <- paste("Threshold=", thresh)
 
-  # tmp <- subset(tmp, select = -c(threshold))
-  # tmp <- tmp[, -which(names(tmp) %in% c("threshold"))]
-
-
-
   rownames(tmp) <- NULL
-  if (requireNamespace("knitr", quietly = TRUE))  {
+  if (requireNamespace("knitr", quietly = TRUE)) {
     knitr::kable(tmp, caption = caption, row.names = F)
   } else {
     print(caption)
     print(tmp)
   }
-
-
-
 }
 
 #' Convert to a data frame
@@ -66,7 +54,6 @@ summary.dx <- function(object, thresh = object$options$setthreshold,
 #' @export
 as.data.frame.dx <- function(x, row.names = NULL, optional = TRUE, thresh = NA,
                              variable = NA, label = NA, measure = NA, ...) {
-
   tmp <- x$measures
 
   if (!is.na(thresh)) {
@@ -108,7 +95,6 @@ format_pvalue <- function(p, accuracy = 0.01) {
 
 conf_int <- function(est, lower, upper, accuracy = .1, percent = FALSE) {
   format_num <- function(num) {
-
     if (is.na(num)) {
       "-"
     } else if (percent) {
@@ -122,7 +108,7 @@ conf_int <- function(est, lower, upper, accuracy = .1, percent = FALSE) {
 }
 
 check_package <- function(pkg) {
-  if (!requireNamespace(pkg, quietly = TRUE))  {
+  if (!requireNamespace(pkg, quietly = TRUE)) {
     stop(paste0(pkg, " must be must be installed to use this function"))
   }
 }
@@ -132,9 +118,8 @@ check_package <- function(pkg) {
 
 
 dx_breslow_day <- function(data, options, group_varname) {
-
-  predprob = data[[options$pred_varname]]
-  pred = ifelse(predprob >= options$setthreshold, 1, 0)
+  predprob <- data[[options$pred_varname]]
+  pred <- ifelse(predprob >= options$setthreshold, 1, 0)
 
   tmp <- data.frame(
     predprob = predprob,
@@ -168,8 +153,6 @@ dx_breslow_day <- function(data, options, group_varname) {
 
 
   return(measure)
-
-
 }
 
 recreate_data_from_cm <- function(cm) {
@@ -178,7 +161,8 @@ recreate_data_from_cm <- function(cm) {
   truth <- c(rep(1, cm$tp + cm$fn), rep(0, cm$tn + cm$fp))
 
   # Create synthetic predicted probabilities vector
-  # Assuming binary classification, predicted probabilities are either 1 (for positive class) or 0 (for negative class)
+  # Assuming binary classification
+  # predicted probabilities are either 1 (for positive class) or 0 (for negative class)
   predprob <- c(rep(1, cm$tp), rep(0, cm$fn), rep(1, cm$fp), rep(0, cm$tn))
 
   return(list(truth = truth, predprob = predprob))
@@ -197,8 +181,13 @@ boot_metric <- function(truth, predprob, metric_func, metric_args, bootreps, mea
 
   # Example of checking proportion of NAs
   na_proportion <- sum(is.na(boot_metrics)) / length(boot_metrics)
-  if(na_proportion > 0.05) {  # or some other threshold
-    warning(paste0("High proportion of NAs in bootstrapped samples for ", measure_name, " (", round(na_proportion, digits = 2), ")"))
+  if (na_proportion > 0.05) { # or some other threshold
+    warning(
+      paste0(
+        "High proportion of NAs in bootstrapped samples for ",measure_name,
+        " (", round(na_proportion, digits = 2), ")"
+        )
+    )
   }
 
 
@@ -222,8 +211,8 @@ evaluate_metric <- function(cm, metric_func, measure_name, detail, boot, bootrep
       ci_bounds <- boot_metric(
         truth = data_recreated$truth,
         predprob = data_recreated$predprob,
-        metric_func,  # Metric calculation function
-        list(...),  # Pass additional args if needed
+        metric_func, # Metric calculation function
+        list(...), # Pass additional args if needed
         bootreps,
         measure_name = measure_name
       )
@@ -258,7 +247,7 @@ evaluate_metric <- function(cm, metric_func, measure_name, detail, boot, bootrep
 
 
 return_df <- function(x) {
-  if (requireNamespace("tibble", quietly = TRUE))  {
+  if (requireNamespace("tibble", quietly = TRUE)) {
     return(tibble::as_tibble(x))
   } else {
     return(x)
@@ -273,7 +262,7 @@ validate_dx_list <- function(dx_list) {
     stop("dx_list must contain two or more `dx_objects")
   }
   for (x in dx_list) {
-    if (! "dx" %in% class(x)) {
+    if (!"dx" %in% class(x)) {
       stop("All elements in `dx_list` must be `dx` objects")
     }
   }
@@ -324,7 +313,6 @@ two_model_name <- function(x, y) {
 measure_df <- function(measure = "", estimate = "", fraction = "",
                        ci_type = "", notes = "", estimate_raw = NA,
                        lci_raw = NA, uci_raw = NA) {
-
   metric <- data.frame(
     measure = measure,
     summary = estimate,
@@ -338,7 +326,6 @@ measure_df <- function(measure = "", estimate = "", fraction = "",
   )
 
   return_df(metric)
-
 }
 
 compare_df <- function(models = "",
@@ -350,7 +337,6 @@ compare_df <- function(models = "",
                        conf_high = NA,
                        statistic = "",
                        notes = "") {
-
   metric <- data.frame(
     models = models,
     test = test,
@@ -365,11 +351,8 @@ compare_df <- function(models = "",
   )
 
   return_df(metric)
-
 }
 
 validate_detail <- function(detail) {
-  check <- match.arg(detail, choices = c("full", "simple"))
+  invisible(match.arg(detail, choices = c("full", "simple")))
 }
-
-

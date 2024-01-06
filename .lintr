@@ -1,1 +1,4 @@
-linters: with_defaults(cyclocomp_linter(25))
+linters: with_defaults(
+    line_length_linter(100),
+    cyclocomp_linter(25)
+  )

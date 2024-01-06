@@ -38,7 +38,8 @@ in the 2x2 table has an expected frequency of 5 or more.
 }
 \examples{
 cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
-            threshold = 0.3, poslabel = 1)
+  threshold = 0.3, poslabel = 1
+)
 simple <- dx_chi_square(cm, detail = "simple")
 detailed <- dx_chi_square(cm)
 print(simple)

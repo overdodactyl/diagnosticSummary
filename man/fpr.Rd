@@ -35,8 +35,10 @@ The formula for FPR is:
 \deqn{FPR = \frac{False Positives}{False Positives + True Negatives}}{FPR = FP / (FP + TN)}
 }
 \examples{
-cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
-            0.5, poslabel = 1)
+cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
+  threshold =
+    0.5, poslabel = 1
+)
 simple_fpr <- dx_fpr(cm, detail = "simple")
 detailed_fpr <- dx_fpr(cm)
 print(simple_fpr)

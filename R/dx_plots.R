@@ -28,28 +28,14 @@
 #' )
 #' dx_plot_gain(dx_obj)
 dx_plot_gain <- function(dx_obj) {
-
   data <- dx_obj$rank
 
   ggplot2::ggplot(data, ggplot2::aes(x = .data$percentile, y = .data$gain)) +
     ggplot2::theme_minimal() +
     ggplot2::geom_line(color = "#0057B8", linewidth = 1) +
     ggplot2::coord_fixed() +
-    # dx_roc_ggtheme() +
-    # ggplot2::geom_hline(
-    #   yintercept = 0,
-    #   linewidth = 1,
-    #   colour = axis_color
-    # ) +
-    # ggplot2::geom_vline(
-    #   xintercept = 0,
-    #   linewidth = 1,
-    #   colour = axis_color
-    # ) +
     ggplot2::xlab("\nPercentile of Population") +
     ggplot2::ylab("Gain (Fraction of Total Positives Captured)\n\n")
-
-
 }
 
 #' Plot Lift Curve
@@ -83,7 +69,6 @@ dx_plot_gain <- function(dx_obj) {
 #' )
 #' dx_plot_lift(dx_obj)
 dx_plot_lift <- function(dx_obj) {
-
   data <- dx_obj$rank
 
   # Plotting the lift curve
@@ -92,23 +77,12 @@ dx_plot_lift <- function(dx_obj) {
     ggplot2::theme_minimal() +
     # dx_roc_ggtheme() +
     ggplot2::geom_hline(
-      yintercept = 1,  # Lift of 1 for random model
+      yintercept = 1, # Lift of 1 for random model
       linetype = "dashed",
       color = "gray"
     ) +
-    # ggplot2::geom_hline(
-    #   yintercept = 0,
-    #   linewidth = 1,
-    #   colour = axis_color
-    # ) +
-    # ggplot2::geom_vline(
-    #   xintercept = 0,
-    #   linewidth = 1,
-    #   colour = axis_color
-    # ) +
     ggplot2::xlab("\nPercentile of Population") +
     ggplot2::ylab("Lift\n\n")
-
 }
 
 
@@ -144,7 +118,6 @@ dx_plot_lift <- function(dx_obj) {
 #' )
 #' dx_plot_ks(dx_obj)
 dx_plot_ks <- function(dx_obj) {
-
   data <- dx_obj$rank
 
   long_data <- rbind(
@@ -172,7 +145,6 @@ dx_plot_ks <- function(dx_obj) {
     ) +
     ggplot2::scale_color_manual(values = c("TPR" = "blue", "FPR" = "red")) +
     ggplot2::theme_minimal()
-
 }
 
 #' Plot Precision-Recall Curve
@@ -214,7 +186,6 @@ dx_plot_pr <- function(dx_obj) {
     ggplot2::xlab("Recall") +
     ggplot2::ylab("Precision") +
     ggplot2::theme_minimal()
-
 }
 
 #' Plot Predictive Values Against Prevalence
@@ -255,16 +226,16 @@ dx_plot_pr <- function(dx_obj) {
 #' )
 #' dx_plot_predictive_value(dx_obj)
 dx_plot_predictive_value <- function(dx_obj) {
-
   prevalence <- dx_obj$prevalence
 
   plot_data <- stats::reshape(prevalence,
-                              varying = list(c("ppv", "npv")),
-                              v.names = "Value",
-                              timevar = "Measure",
-                              times = c("ppv", "npv"),
-                              direction = "long",
-                              idvar = "prevalence")
+    varying = list(c("ppv", "npv")),
+    v.names = "Value",
+    timevar = "Measure",
+    times = c("ppv", "npv"),
+    direction = "long",
+    idvar = "prevalence"
+  )
 
   plot_data$Measure <- toupper(plot_data$Measure)
 
@@ -318,7 +289,6 @@ dx_plot_predictive_value <- function(dx_obj) {
 #' )
 #' dx_plot_calibration(dx_obj)
 dx_plot_calibration <- function(dx_obj, bins = 10) {
-
   predicted_probs <- dx_obj$data[[dx_obj$options$pred_varname]]
   true_labels <- dx_obj$data[[dx_obj$options$true_varname]]
 
@@ -333,9 +303,9 @@ dx_plot_calibration <- function(dx_obj, bins = 10) {
   ggplot2::ggplot(
     calibration_data,
     ggplot2::aes(x = .data$mean_predicted_prob, y = .data$observed_proportion)
-    ) +
+  ) +
     ggplot2::geom_line(color = "#0057B8", linewidth = 1) +
-    ggplot2::geom_abline(intercept = 0, slope = 1, linetype = 2, color = "red") +  # Diagonal line for perfect calibration
+    ggplot2::geom_abline(intercept = 0, slope = 1, linetype = 2, color = "red") + # Diagonal line for perfect calibration
     ggplot2::xlab("Mean Predicted Probability") +
     ggplot2::ylab("Observed Proportion") +
     # ggplot2::ggtitle("Calibration Curve") +
@@ -546,7 +516,7 @@ dx_plot_cap <- function(dx_obj) {
 
   # Plotting the CAP curve
   ggplot2::ggplot(long_data, ggplot2::aes(x = .data$x, y = .data$y)) +
-    ggplot2::geom_line(ggplot2::aes(color = .data$Model, linetype = .data$lt), linewidth = 1)+
+    ggplot2::geom_line(ggplot2::aes(color = .data$Model, linetype = .data$lt), linewidth = 1) +
     ggplot2::scale_color_manual(values = c("#0057B8", "darkgreen", "darkred")) +
     ggplot2::scale_linetype_identity() +
     ggplot2::coord_fixed() +
@@ -604,7 +574,6 @@ dx_plot_cap <- function(dx_obj) {
 #' )
 #' dx_plot_cost(dx_obj, cfp = 1000, cfn = 8000)
 dx_plot_cost <- function(dx_obj, cfp, cfn, ctp = 0, ctn = 0) {
-
   thresholds <- dx_obj$thresholds
 
   # Calculate total cost at each threshold
@@ -689,13 +658,12 @@ dx_plot_cm <- function(dx_obj, palette = c("#e5eef7", "#0057B8"), levels = c("-"
       axis.ticks = ggplot2::element_blank(),
       axis.title = ggplot2::element_text(size = 20)
     ) +
-    ggplot2::annotate("text", x = 2, y = 2.55, vjust = 0 , size = 5, label = sens_label, fontface = 'italic') +
-    ggplot2::annotate("text", x = 1, y = 2.55, vjust = 0 , size = 5, label = spec_label, fontface = 'italic') +
-    ggplot2::annotate("text", x = 2.55, y = 2, hjust = 0, vjust = 1, size = 5, label = ppv_label, fontface = 'italic') +
-    ggplot2::annotate("text", x = 2.55, y = 1, hjust = 0, vjust = 1, size = 5, label = npv_label, fontface = 'italic') +
+    ggplot2::annotate("text", x = 2, y = 2.55, vjust = 0, size = 5, label = sens_label, fontface = "italic") +
+    ggplot2::annotate("text", x = 1, y = 2.55, vjust = 0, size = 5, label = spec_label, fontface = "italic") +
+    ggplot2::annotate("text", x = 2.55, y = 2, hjust = 0, vjust = 1, size = 5, label = ppv_label, fontface = "italic") +
+    ggplot2::annotate("text", x = 2.55, y = 1, hjust = 0, vjust = 1, size = 5, label = npv_label, fontface = "italic") +
     ggplot2::coord_cartesian(clip = "off", ylim = c(.8, 2.5), xlim = c(.8, 3)) +
     ggplot2::labs(x = "\nTruth", y = "Predicted\n")
-
 }
 
 #' Plot ROC Curve
@@ -749,13 +717,11 @@ dx_plot_cm <- function(dx_obj, palette = c("#e5eef7", "#0057B8"), levels = c("-"
 #' )
 #' dx_plot_roc(dx_obj)
 dx_plot_roc <- function(dx_obj, curve_color = "#0057B8", fill_color = "#cfcdcb",
-                   text_color = "black", add_text = TRUE, add_ref_lines = TRUE,
-                   add_fractions = TRUE, axis_color = "#333333",
-                   add_ref_circle = TRUE, ref_lines_color = "#8a8887",
-                   circle_ref_color = "#E4002B",
-                   summary_stats = c(1, 2, 3, 4, 5, 6, 7, 8), filename = NA) {
-
-
+                        text_color = "black", add_text = TRUE, add_ref_lines = TRUE,
+                        add_fractions = TRUE, axis_color = "#333333",
+                        add_ref_circle = TRUE, ref_lines_color = "#8a8887",
+                        circle_ref_color = "#E4002B",
+                        summary_stats = c(1, 2, 3, 4, 5, 6, 7, 8), filename = NA) {
   measures <- as.data.frame(dx_obj, variable = "Overall", thresh = dx_obj$options$setthreshold)
 
   sensdf <- measures[measures$measure == "Sensitivity", ]$estimate
@@ -894,7 +860,6 @@ dx_plot_roc <- function(dx_obj, curve_color = "#0057B8", fill_color = "#cfcdcb",
   }
 
   p
-
 }
 
 #' Theme used for dx_roc
@@ -954,8 +919,7 @@ dx_roc_ggtheme <- function() {
 #' dx_plot_probabilities(dx_obj, plot_type = "density")
 #'
 dx_plot_probabilities <- function(dx_obj, plot_type = "histogram", bins = NULL, fill_color = "#0057B8") {
-
-  density <- NULL  # Dummy definition to avoid R CMD check warnings
+  density <- NULL # Dummy definition to avoid R CMD check warnings
 
   # Prepare data for plotting
   data <- data.frame(Predictions = dx_obj$data[[dx_obj$options$pred_varname]])
@@ -1015,7 +979,6 @@ dx_plot_probabilities <- function(dx_obj, plot_type = "histogram", bins = NULL, 
 #' )
 #' dx_plot_thresholds(dx_obj)
 dx_plot_thresholds <- function(dx_obj) {
-
   thresholds <- dx_obj$thresholds
 
   measures <- c(
@@ -1046,8 +1009,6 @@ dx_plot_thresholds <- function(dx_obj) {
     ) +
     ggplot2::theme_minimal() +
     ggplot2::labs(x = "Threshold", y = "Measure", color = "Metric")
-    # ggplot2::ggtitle("Diagnostic Measures across Thresholds")
-    # ggplot2::facet_wrap(~metric, scales = "free_y")
 }
 
 pluck_auc_roc_data <- function(dx_obj) {
@@ -1070,7 +1031,6 @@ pluck_auc_roc_data <- function(dx_obj) {
     specificity = specdf,
     auc_df = auc_df
   )
-
 }
 
 
@@ -1112,8 +1072,6 @@ pluck_auc_roc_data <- function(dx_obj) {
 #'          \code{\link{dx_delong}} for details on DeLong's test used in comparisons.
 #' @export
 dx_plot_rocs <- function(dx_comp, add_text = TRUE, axis_color = "#333333", text_color = "black") {
-
-
   roc_data <- lapply(dx_comp$dx_list, pluck_auc_roc_data)
   delong <- dx_comp$tests
   delong <- delong[delong$test == "DeLong's test for ROC curves", ]
@@ -1174,7 +1132,4 @@ dx_plot_rocs <- function(dx_comp, add_text = TRUE, axis_color = "#333333", text_
   }
 
   return(p)
-
 }
-
-

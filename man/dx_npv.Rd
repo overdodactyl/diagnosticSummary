@@ -34,8 +34,10 @@ The formula for NPV is:
 \deqn{NPV = \frac{True Negatives}{True Negatives + False Negatives}}{NPV = TN / (TN + FN)}
 }
 \examples{
-cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
-            0.5, poslabel = 1)
+cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
+  threshold =
+    0.5, poslabel = 1
+)
 simple_npv <- dx_npv(cm, detail = "simple")
 detailed_npv <- dx_npv(cm)
 print(simple_npv)

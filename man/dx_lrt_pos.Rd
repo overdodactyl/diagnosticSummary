@@ -28,8 +28,10 @@ indicates a good diagnostic test that can confidently confirm the disease when t
 test is positive.
 }
 \examples{
-cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
-            0.5, poslabel = 1)
+cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
+  threshold =
+    0.5, poslabel = 1
+)
 simple_lrp <- dx_lrt_pos(cm, detail = "simple")
 detailed_lrp <- dx_lrt_pos(cm)
 print(simple_lrp)

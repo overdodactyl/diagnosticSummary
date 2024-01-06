@@ -34,8 +34,10 @@ The formula for Detection Prevalence is:
 \deqn{Detection Prevalence = \frac{Number of Predicted Positives}{Total Number of Cases}}{Detection Prevalence = TestPos / N}
 }
 \examples{
-cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
-            0.5, poslabel = 1)
+cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
+  threshold =
+    0.5, poslabel = 1
+)
 simple_detection_prevalence <- dx_detection_prevalence(cm, detail = "simple")
 detailed_detection_prevalence <- dx_detection_prevalence(cm)
 print(simple_detection_prevalence)

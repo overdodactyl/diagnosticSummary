@@ -1,9 +1,10 @@
-zero_range <- function (x, tol = 1000 * .Machine$double.eps) {
+zero_range <- function(x, tol = 1000 * .Machine$double.eps) {
   if (length(x) == 1) {
     return(TRUE)
   }
-  if (length(x) != 2)
+  if (length(x) != 2) {
     stop("x must be length 1 or 2")
+  }
   if (any(is.na(x))) {
     return(NA)
   }
@@ -17,14 +18,14 @@ zero_range <- function (x, tol = 1000 * .Machine$double.eps) {
   if (m == 0) {
     return(FALSE)
   }
-  abs((x[1] - x[2])/m) < tol
+  abs((x[1] - x[2]) / m) < tol
 }
 
-rescale <- function (x, to = c(0, 1), from = range(x, na.rm = TRUE, finite = TRUE), ...) {
+rescale <- function(x, to = c(0, 1), from = range(x, na.rm = TRUE, finite = TRUE), ...) {
   if (zero_range(from) || zero_range(to)) {
     return(ifelse(is.na(x), NA, mean(to)))
   }
-  (x - from[1])/diff(from) * diff(to) + to[1]
+  (x - from[1]) / diff(from) * diff(to) + to[1]
 }
 
 #' Create table with odds ratios displayed graphically
@@ -75,18 +76,17 @@ rescale <- function (x, to = c(0, 1), from = range(x, na.rm = TRUE, finite = TRU
 #' dx_plot_forest(dx_obj)
 #' dx_plot_forest(dx_obj, trans = "log10")
 dx_plot_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
-                      tick_label_size = 6.5, trans = c(NA, "log10"),
-                      measures = c("AUC ROC", "Sensitivity", "Specificity","Odds Ratio"),
-                      return = c("ggplot", "grid"),
-                      filename = NA,
-                      header_bg = "white", header_col = "black",
-                      body_bg = c("#e6e4e2", "#ffffff"),
-                      footer_bg = "#b8b6b4", footer_col = "black",
-                      header_fontsize = 10, body_fontsize = 9,
-                      fraction_multiline = FALSE,
-                      or_lwd = .8, or_size = .35,
-                      body_or_col = "black", footer_or_col = footer_col) {
-
+                           tick_label_size = 6.5, trans = c(NA, "log10"),
+                           measures = c("AUC ROC", "Sensitivity", "Specificity", "Odds Ratio"),
+                           return = c("ggplot", "grid"),
+                           filename = NA,
+                           header_bg = "white", header_col = "black",
+                           body_bg = c("#e6e4e2", "#ffffff"),
+                           footer_bg = "#b8b6b4", footer_col = "black",
+                           header_fontsize = 10, body_fontsize = 9,
+                           fraction_multiline = FALSE,
+                           or_lwd = .8, or_size = .35,
+                           body_or_col = "black", footer_or_col = footer_col) {
   check_package("gridExtra")
   check_package("grid")
   check_package("gtable")
@@ -152,7 +152,6 @@ dx_plot_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
   # Format the 'n' column
   data$n <- comma(data$n)
 
-  # Select and rename the necessary columns. Ensure 'select_measures' is a character vector of column names
   cols_to_select <- c("group", "N", select_measuers, " ")
   names(data)[names(data) == "n"] <- "N"
   tbl_data <- data[cols_to_select]
@@ -160,12 +159,11 @@ dx_plot_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
   # Order the columns, moving the space column before 'Odds Ratio'
   # Assuming 'Odds Ratio' is one of the 'select_measures'
   odds_ratio_index <- which(names(tbl_data) == "Odds Ratio")
-  space_index <- which(names(tbl_data) == " ")
   tbl_data[c("group", "N", select_measuers, " ")]
 
 
-  order <- append(names(tbl_data), " ", after = odds_ratio_index-1)
-  order <- order[1:length(order)-1]
+  order <- append(names(tbl_data), " ", after = odds_ratio_index - 1)
+  order <- order[seq_along(order) - 1]
 
   tbl_data <- tbl_data[order]
   rownames(tbl_data) <- NULL
@@ -210,9 +208,6 @@ dx_plot_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
   cell_width <- as.data.frame(cell_width)
 
   column_widths <- apply(cell_width, 2, max)
-  # column_widths[8] <- 0
-  # column_widths[2] <- column_widths[2] + 5
-  # column_widths[8] <- max(column_widths)
 
   column_widths <- column_widths / sum(column_widths)
 
@@ -308,7 +303,6 @@ dx_plot_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
   )
 
   if (all(c("Odds Ratio", "Breslow-Day") %in% measures)) {
-
     col <- which(names(tbl_data) == "Odds Ratio")
 
     g <- dx_edit_cell(
@@ -319,14 +313,12 @@ dx_plot_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
 
 
   # Adjust width of plot - some fine tunining here in the future woud be nice
-  # g$widths <- grid::unit(rep(1 / ncol(g), ncol(g)), "npc")
   g$widths <- grid::unit(column_widths, "npc")
-  # g$heights <- max(g$heights)
 
   row_height <- ifelse(fraction & fraction_multiline, 1.2, 1)
 
   g$heights <- rep(
-    grid::unit(0.05*row_height, "npc"),
+    grid::unit(0.05 * row_height, "npc"),
     length(g$heights)
   )
 
@@ -346,13 +338,9 @@ dx_plot_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
 
   if (return_type == "ggplot") {
     g <- dx_forest_to_gg(g)
-    # print(g)
-  } else {
-    # grid::grid.draw(g)
   }
 
   return(g)
-
 }
 
 
@@ -417,21 +405,23 @@ dx_edit_cell <- function(table, row, col, name = "core-fg", ...) {
 
 dx_forest_add_or <- function(grob, row, low, est, high,
                              or_col = 4, col = "black", lwd = .8, pch = 16, size = .35) {
-
   i <- sample(1:100000, 1)
 
   tmp <- dx_hline(
-    grob, gp = grid::gpar(lwd = lwd, col = col),
+    grob,
+    gp = grid::gpar(lwd = lwd, col = col),
     y = .5, x0 = low, x1 = high, t = row, l = or_col,
     name = paste0("or", i), clip = "on"
   )
   tmp <- dx_vline(
-    tmp, gp = grid::gpar(lwd = lwd, col = col),
+    tmp,
+    gp = grid::gpar(lwd = lwd, col = col),
     x = low, y0 = .35, y1 = .65, t = row, l = or_col,
     name = paste0("left_or_cap_", i), clip = "on"
   )
   tmp <- dx_vline(
-    tmp, gp = grid::gpar(lwd = lwd, col = col),
+    tmp,
+    gp = grid::gpar(lwd = lwd, col = col),
     x = high, y0 = .35, y1 = .65, t = row, l = or_col,
     name = paste0("right_or_cap_", i), clip = "on"
   )
@@ -474,10 +464,8 @@ dx_forest_add_tick <- function(grob, tick_scaled, tick, nrows,
 }
 
 dx_prep_variable <- function(dx_obj, data,
-                             measures = c("AUC-ROC", "Sensitivity", "Specificity","Odds Ratio"),
+                             measures = c("AUC-ROC", "Sensitivity", "Specificity", "Odds Ratio"),
                              fraction = FALSE, fraction_multiline) {
-
-
   var <- data$variable[[1]]
   orig_var <- data$original_variable[[1]]
   tmp <- data[data$measure %in% measures, ]
@@ -540,31 +528,15 @@ dx_prep_variable <- function(dx_obj, data,
     }
   }
 
-  res[] <- lapply(res, function(x) if(is.factor(x)) as.character(x) else x)
-
-  # res$conf_low <- NULL
-  # res$conf_high <- NULL
-  # res$n <- NULL
-  # res$estimate <- NULL
+  res[] <- lapply(res, function(x) if (is.factor(x)) as.character(x) else x)
 
   res
-
 }
 
 rbind_all <- function(df1, df2) {
   df1[setdiff(names(df2), names(df1))] <- NA
   df2[setdiff(names(df1), names(df2))] <- NA
   rbind(df1, df2)
-  # # Step 1: Identify all unique column names
-  # all_cols <- union(names(x), names(y))
-  #
-  # # Step 2: Align columns by ensuring both data frames have all columns
-  # # This fills in any missing columns with NA
-  # empty_df_aligned <- setNames(lapply(all_cols, function(cn) x[[cn]]), all_cols)
-  # res_aligned <- setNames(lapply(all_cols, function(cn) y[[cn]]), all_cols)
-  #
-  # # Step 3: Bind the rows together
-  # rbind(empty_df_aligned, res_aligned)
 }
 
 label_df <- function(data) {
@@ -578,7 +550,6 @@ label_df <- function(data) {
 }
 
 dx_prep_forest <- function(dx_obj, fraction = fraction, fraction_multiline, measures) {
-
   tmp <- dx_obj$measures[dx_obj$measures$threshold == dx_obj$options$setthreshold, ]
 
 
@@ -682,20 +653,19 @@ plot_labels <- function(breaks, trans) {
 }
 
 dx_forest_to_gg <- function(plot, scale = 1, hjust = 0, vjust = 0, ...) {
-
   ymin <- xmin <- 1 - scale
   xmax <- ymax <- scale
 
   ggplot2::ggplot(data.frame(x = 0:1, y = 0:1), ggplot2::aes_(x = ~x, y = ~y)) +
     ggplot2::geom_blank() +
-    ggplot2::scale_x_continuous(limits = c(0,1), expand = c(0, 0)) +
-    ggplot2::scale_y_continuous(limits = c(0,1), expand = c(0, 0)) +
+    ggplot2::scale_x_continuous(limits = c(0, 1), expand = c(0, 0)) +
+    ggplot2::scale_y_continuous(limits = c(0, 1), expand = c(0, 0)) +
     ggplot2::annotation_custom(
       plot,
       xmin = xmin + hjust,
       xmax = xmax + hjust,
       ymin = ymin + vjust,
       ymax = ymax + vjust
-    )  +
+    ) +
     ggplot2::theme_void()
 }

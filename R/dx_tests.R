@@ -15,7 +15,6 @@
 #' Breslow NE, Day NE. Statistical methods in cancer research. Volume I -
 #' The analysis of case-control studies. IARC Sci Publ. 1980;(32):5-338.
 breslow_day_test <- function(contingency_table, odds_ratio = NA, correct = FALSE) {
-
   if (!is.array(contingency_table) || length(dim(contingency_table)) != 3) {
     stop("The input 'contingency_table' must be a 2x2xK array.")
   }
@@ -41,11 +40,11 @@ breslow_day_test <- function(contingency_table, odds_ratio = NA, correct = FALSE
     var_a_value <- variance_a(tilde_a_value, marginals)
     var_a_values[stratum_index] <- var_a_value
 
-    breslow_day_statistic <- breslow_day_statistic + (a_value - tilde_a_value) ^ 2 / var_a_value
+    breslow_day_statistic <- breslow_day_statistic + (a_value - tilde_a_value)^2 / var_a_value
   }
 
   if (correct) {
-    correction_term <- (sum(a_values) - sum(tilde_a_values)) ^ 2 / sum(var_a_values)
+    correction_term <- (sum(a_values) - sum(tilde_a_values))^2 / sum(var_a_values)
     breslow_day_statistic <- breslow_day_statistic - correction_term
   }
 
@@ -103,7 +102,7 @@ expected_cell_count <- function(a_value, marginals, odds_ratio) {
 variance_a <- function(tilde_a_value, marginals) {
   mj <- marginals$row
   nj <- marginals$col
-  (1 / tilde_a_value + 1 / (mj[1] - tilde_a_value) + 1 / (nj[1] - tilde_a_value) + 1 / (mj[2] - nj[1] + tilde_a_value)) ^ -1
+  (1 / tilde_a_value + 1 / (mj[1] - tilde_a_value) + 1 / (nj[1] - tilde_a_value) + 1 / (mj[2] - nj[1] + tilde_a_value))^-1
 }
 
 
@@ -132,7 +131,8 @@ variance_a <- function(tilde_a_value, marginals) {
 #' in the 2x2 table has an expected frequency of 5 or more.
 #' @examples
 #' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
-#'             threshold = 0.3, poslabel = 1)
+#'   threshold = 0.3, poslabel = 1
+#' )
 #' simple <- dx_chi_square(cm, detail = "simple")
 #' detailed <- dx_chi_square(cm)
 #' print(simple)
@@ -184,7 +184,8 @@ dx_chi_square <- function(cm, detail = "full") {
 #' indicates a significant association between the predicted and actual binary classifications.
 #' @examples
 #' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
-#'             threshold = 0.3, poslabel = 1)
+#'   threshold = 0.3, poslabel = 1
+#' )
 #' simple <- dx_fishers_exact(cm, detail = "simple")
 #' detailed <- dx_fishers_exact(cm)
 #' print(simple)
@@ -230,7 +231,8 @@ dx_fishers_exact <- function(cm, detail = "full") {
 #' distribution. Caution is needed with zero counts or very small samples.
 #' @examples
 #' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
-#'             threshold = 0.3, poslabel = 1)
+#'   threshold = 0.3, poslabel = 1
+#' )
 #' simple <- dx_g_test(cm, detail = "simple")
 #' detailed <- dx_g_test(cm)
 #' print(simple)
@@ -246,8 +248,8 @@ dx_g_test <- function(cm, detail = "full") {
 
   # Calculate observed frequencies and ensure no zero counts for log calculation
   observed <- as.vector(conf_matrix)
-  observed[observed == 0] <- 1e-5  # small constant to avoid log(0)
-  expected[expected == 0] <- 1e-5  # small constant to avoid log(0)
+  observed[observed == 0] <- 1e-5 # small constant to avoid log(0)
+  expected[expected == 0] <- 1e-5 # small constant to avoid log(0)
 
   # Calculate G statistic
   G <- 2 * sum(observed * log(observed / expected))
@@ -273,7 +275,6 @@ dx_g_test <- function(cm, detail = "full") {
   } else {
     stop("Invalid detail parameter: should be 'simple' or 'full'")
   }
-
 }
 
 
@@ -343,9 +344,6 @@ dx_delong <- function(dx1, dx2, detail = "full", paired = TRUE) {
       statistic = as.numeric(test$statistic)
     )
   }
-
-
-
 }
 
 #' Z-test for Comparing Two Proportions
@@ -391,7 +389,6 @@ dx_delong <- function(dx1, dx2, detail = "full", paired = TRUE) {
 #' @concept tests
 #' @export
 dx_z_test <- function(dx1, dx2, metric = c("accuracy", "ppv", "npv", "fnr", "fpr", "fdr", "sensitivity", "specificity"), detail = "full") {
-
   metric <- match.arg(metric)
 
   metric_mapping <- list(
@@ -416,7 +413,6 @@ dx_z_test <- function(dx1, dx2, metric = c("accuracy", "ppv", "npv", "fnr", "fpr
   if (detail == "simple") {
     return(test$p.value)
   } else if (detail == "full") {
-
     val1 <- as.numeric(test$estimate[1])
     val2 <- as.numeric(test$estimate[2])
 
@@ -436,7 +432,6 @@ dx_z_test <- function(dx1, dx2, metric = c("accuracy", "ppv", "npv", "fnr", "fpr
       statistic = as.numeric(test$statistic)
     )
   }
-
 }
 
 #' McNemar's Chi-squared Test for Paired Proportions
@@ -474,7 +469,6 @@ dx_z_test <- function(dx1, dx2, metric = c("accuracy", "ppv", "npv", "fnr", "fpr
 #' @concept tests
 #' @export
 dx_mcnemars <- function(dx1, dx2, detail = "full") {
-
   truth <- pluck_truths(dx1)
   predictions1 <- pluck_predicted(dx1)
   predictions2 <- pluck_predicted(dx2)
@@ -485,9 +479,12 @@ dx_mcnemars <- function(dx1, dx2, detail = "full") {
   first_incorrect_second_correct <- sum(predictions1 != truth & predictions2 == truth)
   both_incorrect <- sum(predictions1 != truth & predictions2 != truth)
 
-  cont_table <- matrix(c(both_correct, first_correct_second_incorrect,
-                         first_incorrect_second_correct, both_incorrect),
-                       nrow = 2)
+  cont_table <- matrix(c(
+    both_correct, first_correct_second_incorrect,
+    first_incorrect_second_correct, both_incorrect
+  ),
+  nrow = 2
+  )
 
   # Perform McNemar's test
   test <- stats::mcnemar.test(cont_table)
@@ -503,8 +500,3 @@ dx_mcnemars <- function(dx1, dx2, detail = "full") {
     )
   }
 }
-
-
-
-
-

@@ -44,8 +44,10 @@ better agreement. Typical benchmarks for interpreting Cohen's Kappa are:
 }
 \examples{
 # Assuming you have a confusion matrix cm with appropriate structure
-cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
-            0.5, poslabel = 1)
+cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
+  threshold =
+    0.5, poslabel = 1
+)
 kappa_simple <- dx_cohens_kappa(cm, detail = "simple")
 kappa_full <- dx_cohens_kappa(cm)
 print(kappa_simple)

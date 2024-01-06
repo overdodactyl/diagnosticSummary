@@ -36,8 +36,10 @@ The formula for PPV is:
 \deqn{PPV = \frac{True Positives}{True Positives + False Positives}}{PPV = TP / (TP + FP)}
 }
 \examples{
-cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
-            0.5, poslabel = 1)
+cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
+  threshold =
+    0.5, poslabel = 1
+)
 simple_ppv <- dx_ppv(cm, detail = "simple")
 detailed_ppv <- dx_ppv(cm)
 print(simple_ppv)

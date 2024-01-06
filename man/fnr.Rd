@@ -36,8 +36,10 @@ The formula for FNR is:
 \deqn{FNR = \frac{False Negatives}{False Negatives + True Positives}}{FNR = FN / (FN + TP)}
 }
 \examples{
-cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold =
-            0.5, poslabel = 1)
+cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
+  threshold =
+    0.5, poslabel = 1
+)
 simple_fnr <- dx_fnr(cm, detail = "simple")
 detailed_fnr <- dx_fnr(cm)
 print(simple_fnr)
