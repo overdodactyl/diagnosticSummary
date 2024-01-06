@@ -487,6 +487,7 @@ get_kappa_interpretation <- function(kappa) {
 #' @export
 #' @concept metrics
 dx_cohens_kappa <- function(cm, detail = "full") {
+  validate_detail(detail)
   # Calculate observed agreement (po)
   po <- (cm$tp + cm$tn) / cm$n
 
@@ -606,13 +607,11 @@ calculate_mcc <- function(cm) {
 #' @noRd
 metric_binomial <- function(x, n, name, detail = "full", citype = "exact", ...) {
   # if (check_zero_denominator(n, name)) return(NA)
-
+  validate_detail(detail)
   if (detail == "simple") {
     return(x / n)
   } else if (detail == "full") {
     return(ci_binomial(x, n, measure = name, citype, ...))
-  } else {
-    stop("Invalid detail parameter: should be 'simple' or 'full'")
   }
 }
 
@@ -756,6 +755,9 @@ dx_lrt_pos <- function(cm, detail = "full", ...) {
 #'         data frame with the metric and confidence intervals.
 #' @noRd
 metric_ratio <- function(cm, dx_ratio_func, dx_sd_func, detail = "full", ...) {
+
+  validate_detail(detail)
+
   # Extract counts from confusion matrix
   tp <- cm$tp
   tn <- cm$tn
@@ -779,8 +781,6 @@ metric_ratio <- function(cm, dx_ratio_func, dx_sd_func, detail = "full", ...) {
     return(ratio)
   } else if (detail == "full") {
     return(ci_ratio(tp, tn, fp, fn, ratio, ratio_sd, continuity_correction=continuity_correction, ...))
-  } else {
-    stop("Invalid detail parameter: should be 'simple' or 'full'")
   }
 }
 
@@ -857,6 +857,7 @@ ci_ratio <- function(tp, tn, fp, fn, ratio, ratio_sd, name, continuity_correctio
 #' @export
 #' @concept metrics
 dx_auc_pr <- function(precision, recall, detail = "full") {
+  validate_detail(detail)
   # Remove any NA values that could cause issues in the calculation
   valid_indices <- !is.na(precision) & !is.na(recall)
   precision <- precision[valid_indices]
@@ -921,6 +922,7 @@ dx_auc_pr <- function(precision, recall, detail = "full") {
 #' @export
 #' @concept metrics
 dx_auc <- function(truth, predprob, detail = "full") {
+  validate_detail(detail)
   rocest <- pROC::roc(truth, predprob, ci = T, quiet = TRUE)
   aucest <- pROC::auc(rocest)
   auctext <- as.character(pROC::ci(aucest))
@@ -941,8 +943,6 @@ dx_auc <- function(truth, predprob, detail = "full") {
       lci_raw = auc_lci,
       uci_raw = auc_uci
     ))
-  } else {
-    stop("Invalid detail parameter: should be 'simple' or 'full'")
   }
 }
 
@@ -1340,6 +1340,7 @@ get_roc <- function(true_varname, pred_varname, data, direction) {
 #' @concept metrics
 #' @export
 dx_brier <- function(predprob, truth, detail = "full") {
+  validate_detail(detail)
   # Ensuring that the length of predicted probabilities and actual outcomes are the same
   if (length(predprob) != length(truth)) {
     stop("The length of predicted probabilities and actual outcomes must be the same.")
@@ -1355,8 +1356,6 @@ dx_brier <- function(predprob, truth, detail = "full") {
       estimate_raw = brier,
       notes = "CIs not yet implemented"
     ))
-  } else {
-    stop("Invalid detail parameter: should be 'simple' or 'full'")
   }
 }
 
@@ -1381,6 +1380,7 @@ calculate_brier <- function(truth, predprob) {
 #' @export
 #' @concept metrics
 dx_nir <- function(cm, detail = "full") {
+  validate_detail(detail)
   # Calculate the total number of actual positives and negatives
   dispos <- cm$dispos  # Number of actual positives
   disneg <- cm$disneg  # Number of actual negatives

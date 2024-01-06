@@ -208,6 +208,7 @@ boot_metric <- function(truth, predprob, metric_func, metric_args, bootreps, mea
 }
 
 evaluate_metric <- function(cm, metric_func, measure_name, detail, boot, bootreps, ...) {
+  validate_detail(detail)
   # Calculate the metric using the provided function
   metric_raw <- metric_func(cm, ...)
 
@@ -365,6 +366,10 @@ compare_df <- function(models = "",
 
   return_df(metric)
 
+}
+
+validate_detail <- function(detail) {
+  check <- match.arg(detail, choices = c("full", "simple"))
 }
 
 
