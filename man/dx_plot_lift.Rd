@@ -31,6 +31,7 @@ lift of a random model. The lift curve should ideally stay above this line to in
 model has predictive power.
 }
 \examples{
+\dontshow{if (requireNamespace("ggplot2", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 dx_obj <- dx(
   data = dx_heart_failure,
   true_varname = "truth",
@@ -39,4 +40,5 @@ dx_obj <- dx(
   setthreshold = .3
 )
 dx_plot_lift(dx_obj)
+\dontshow{\}) # examplesIf}
 }

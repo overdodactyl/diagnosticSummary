@@ -45,11 +45,13 @@ This function is a visualization tool that plots ROC curves for multiple
          `dx_compare` object before using this function.
 }
 \examples{
+\dontshow{if (requireNamespace("ggplot2", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 dx_glm <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted")
 dx_rf <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted_rf")
 dx_list <- list(dx_glm, dx_rf)
 dx_comp <- dx_compare(dx_list, paired = TRUE)
 dx_plot_rocs(dx_comp)
+\dontshow{\}) # examplesIf}
 }
 \seealso{
 \code{\link{dx_compare}} to generate the required input object.

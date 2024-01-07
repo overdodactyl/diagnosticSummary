@@ -32,6 +32,7 @@ the trade-offs between various measures according to the specific needs of the
 application.
 }
 \examples{
+\dontshow{if (requireNamespace("ggplot2", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 dx_obj <- dx(
   data = dx_heart_failure,
   true_varname = "truth",
@@ -40,4 +41,5 @@ dx_obj <- dx(
   setthreshold = .3
 )
 dx_plot_thresholds(dx_obj)
+\dontshow{\}) # examplesIf}
 }

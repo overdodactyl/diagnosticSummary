@@ -28,6 +28,7 @@ Generates a plot showing the distribution of predicted probabilities.
 Offers options to show as a histogram or density plot.
 }
 \examples{
+\dontshow{if (requireNamespace("ggplot2", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 dx_obj <- dx(
   data = dx_heart_failure,
   true_varname = "truth",
@@ -37,5 +38,5 @@ dx_obj <- dx(
 )
 dx_plot_probabilities(dx_obj, plot_type = "histogram", bins = 30)
 dx_plot_probabilities(dx_obj, plot_type = "density")
-
+\dontshow{\}) # examplesIf}
 }

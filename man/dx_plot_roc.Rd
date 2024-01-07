@@ -71,6 +71,7 @@ The function also provides options to include a reference circle at a specific t
 line (chance line) and lines for the chosen threshold's specificity and sensitivity, and fill color under the curve.
 }
 \examples{
+\dontshow{if (requireNamespace("ggplot2", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 dx_obj <- dx(
   data = dx_heart_failure,
   true_varname = "truth",
@@ -81,4 +82,5 @@ dx_obj <- dx(
   grouping_variables = c("AgeGroup", "Sex", "AgeSex")
 )
 dx_plot_roc(dx_obj)
+\dontshow{\}) # examplesIf}
 }

@@ -30,6 +30,7 @@ performance. This function generates the curve without calculating the area; sep
 should be used if AUPRC is required.
 }
 \examples{
+\dontshow{if (requireNamespace("ggplot2", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 dx_obj <- dx(
   data = dx_heart_failure,
   true_varname = "truth",
@@ -38,4 +39,5 @@ dx_obj <- dx(
   setthreshold = .3
 )
 dx_plot_pr(dx_obj)
+\dontshow{\}) # examplesIf}
 }

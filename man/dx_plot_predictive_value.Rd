@@ -36,7 +36,7 @@ allowing healthcare professionals and researchers to anticipate how well a test 
 in different scenarios.
 }
 \examples{
-# Assuming dx_obj is a dx object created from a prevalence analysis function:
+\dontshow{if (requireNamespace("ggplot2", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 dx_obj <- dx(
   data = dx_heart_failure,
   true_varname = "truth",
@@ -45,4 +45,5 @@ dx_obj <- dx(
   setthreshold = .3
 )
 dx_plot_predictive_value(dx_obj)
+\dontshow{\}) # examplesIf}
 }

@@ -45,6 +45,7 @@ users can determine the point at which the model provides the best balance accor
 the specified cost matrix.
 }
 \examples{
+\dontshow{if (requireNamespace("ggplot2", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 dx_obj <- dx(
   data = dx_heart_failure,
   true_varname = "truth",
@@ -53,4 +54,5 @@ dx_obj <- dx(
   setthreshold = .3
 )
 dx_plot_cost(dx_obj, cfp = 1000, cfn = 8000)
+\dontshow{\}) # examplesIf}
 }

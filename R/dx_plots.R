@@ -18,7 +18,7 @@
 #' ranks positive cases higher than negatives, capturing a large proportion of positives early in the ranking.
 #' Conversely, a curve close to the diagonal suggests performance close to random chance, where the model does
 #' not effectively differentiate between positive and negative cases.
-#' @examples
+#' @examplesIf requireNamespace("ggplot2", quietly = TRUE)
 #' dx_obj <- dx(
 #'   data = dx_heart_failure,
 #'   true_varname = "truth",
@@ -59,7 +59,7 @@ dx_plot_gain <- function(dx_obj) {
 #' values representing better performance. A horizontal dashed line at y=1 represents the baseline
 #' lift of a random model. The lift curve should ideally stay above this line to indicate that the
 #' model has predictive power.
-#' @examples
+#' @examplesIf requireNamespace("ggplot2", quietly = TRUE)
 #' dx_obj <- dx(
 #'   data = dx_heart_failure,
 #'   true_varname = "truth",
@@ -108,7 +108,7 @@ dx_plot_lift <- function(dx_obj) {
 #' a model with better discriminatory ability. The ideal model would have a KS plot with the TPR line
 #' close to the top-left corner and the FPR line close to the bottom-right corner, maximizing the distance
 #' between the two lines.
-#' @examples
+#' @examplesIf requireNamespace("ggplot2", quietly = TRUE)
 #' dx_obj <- dx(
 #'   data = dx_heart_failure,
 #'   true_varname = "truth",
@@ -167,7 +167,7 @@ dx_plot_ks <- function(dx_obj) {
 #' be used as a summary measure of the model performance, with higher values indicating better
 #' performance. This function generates the curve without calculating the area; separate functions
 #' should be used if AUPRC is required.
-#' @examples
+#' @examplesIf requireNamespace("ggplot2", quietly = TRUE)
 #' dx_obj <- dx(
 #'   data = dx_heart_failure,
 #'   true_varname = "truth",
@@ -214,9 +214,7 @@ dx_plot_pr <- function(dx_obj) {
 #' in visualizing these relationships and is a valuable tool in the evaluation of diagnostic tests,
 #' allowing healthcare professionals and researchers to anticipate how well a test will perform
 #' in different scenarios.
-
-#' @examples
-#' # Assuming dx_obj is a dx object created from a prevalence analysis function:
+#' @examplesIf requireNamespace("ggplot2", quietly = TRUE)
 #' dx_obj <- dx(
 #'   data = dx_heart_failure,
 #'   true_varname = "truth",
@@ -279,7 +277,7 @@ dx_plot_predictive_value <- function(dx_obj) {
 #' the probabilities. In such cases, calibration methods like isotonic regression or Platt scaling might be applied to adjust
 #' the model's predicted probabilities.
 #'
-#' @examples
+#' @examplesIf requireNamespace("ggplot2", quietly = TRUE)
 #' dx_obj <- dx(
 #'   data = dx_heart_failure,
 #'   true_varname = "truth",
@@ -348,7 +346,7 @@ dx_plot_calibration <- function(dx_obj, bins = 10) {
 #' The 'plot_range' parameter allows limiting the analysis to a relevant range of thresholds,
 #' avoiding the extremes where the net benefit calculation can become unstable or not clinically relevant.
 #'
-#' @examples
+#' @examplesIf requireNamespace("ggplot2", quietly = TRUE)
 #' dx_obj <- dx(
 #'   data = dx_heart_failure,
 #'   true_varname = "truth",
@@ -419,7 +417,7 @@ dx_plot_decision_curve <- function(dx_obj, plot_range = c(0.05, .95)) {
 #' indicates the threshold with the optimal balance between sensitivity and specificity
 #' according to the Youden's J Index.
 #'
-#' @examples
+#' @examplesIf requireNamespace("ggplot2", quietly = TRUE)
 #' dx_obj <- dx(
 #'   data = dx_heart_failure,
 #'   true_varname = "truth",
@@ -478,7 +476,7 @@ dx_plot_youden_j <- function(dx_obj) {
 #' model across the entire range of classifications. It's particularly insightful for imbalanced
 #' datasets where positive instances are rare or more critical.
 #'
-#' @examples
+#' @examplesIf requireNamespace("ggplot2", quietly = TRUE)
 #' dx_obj <- dx(
 #'   data = dx_heart_failure,
 #'   true_varname = "truth",
@@ -564,7 +562,7 @@ dx_plot_cap <- function(dx_obj) {
 #'
 #' @export
 #'
-#' @examples
+#' @examplesIf requireNamespace("ggplot2", quietly = TRUE)
 #' dx_obj <- dx(
 #'   data = dx_heart_failure,
 #'   true_varname = "truth",
@@ -603,7 +601,7 @@ dx_plot_cost <- function(dx_obj, cfp, cfn, ctp = 0, ctn = 0) {
 #' @return A `ggplot` object that represents the confusion matrix with additional
 #' performance metrics.
 #' @export
-#' @examples
+#' @examplesIf requireNamespace("ggplot2", quietly = TRUE)
 #' dx_obj <- dx(
 #'   data = dx_heart_failure,
 #'   true_varname = "truth",
@@ -705,7 +703,7 @@ dx_plot_cm <- function(dx_obj, palette = c("#e5eef7", "#0057B8"), levels = c("-"
 #' line (chance line) and lines for the chosen threshold's specificity and sensitivity, and fill color under the curve.
 #'
 #' @export
-#' @examples
+#' @examplesIf requireNamespace("ggplot2", quietly = TRUE)
 #' dx_obj <- dx(
 #'   data = dx_heart_failure,
 #'   true_varname = "truth",
@@ -907,7 +905,7 @@ dx_roc_ggtheme <- function() {
 #' @param fill_color Color to fill the bars or density plot.
 #' @return A ggplot object representing the distribution of predicted probabilities.
 #' @export
-#' @examples
+#' @examplesIf requireNamespace("ggplot2", quietly = TRUE)
 #' dx_obj <- dx(
 #'   data = dx_heart_failure,
 #'   true_varname = "truth",
@@ -969,7 +967,7 @@ dx_plot_probabilities <- function(dx_obj, plot_type = "histogram", bins = NULL, 
 #' the trade-offs between various measures according to the specific needs of the
 #' application.
 #'
-#' @examples
+#' @examplesIf requireNamespace("ggplot2", quietly = TRUE)
 #' dx_obj <- dx(
 #'   data = dx_heart_failure,
 #'   true_varname = "truth",
@@ -1062,7 +1060,7 @@ pluck_auc_roc_data <- function(dx_obj) {
 #'          DeLong's test results are appropriately generated and stored in the
 #'          `dx_compare` object before using this function.
 #'
-#' @examples
+#' @examplesIf requireNamespace("ggplot2", quietly = TRUE)
 #' dx_glm <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted")
 #' dx_rf <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted_rf")
 #' dx_list <- list(dx_glm, dx_rf)

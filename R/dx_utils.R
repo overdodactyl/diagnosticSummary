@@ -107,15 +107,39 @@ conf_int <- function(est, lower, upper, accuracy = .1, percent = FALSE) {
   paste0(format_num(est), " (", format_num(lower), ", ", format_num(upper), ")")
 }
 
-check_package <- function(pkg) {
-  if (!requireNamespace(pkg, quietly = TRUE)) {
-    stop(paste0(pkg, " must be must be installed to use this function"))
-  }
+backtick <- function(x) {
+  paste0("`", x, "`")
 }
 
+check_package <- function(pkgs) {
+
+  calling_func <- tryCatch({
+    as.list(sys.call(-1))[[1]]
+  }, error = function(e) {
+    NA
+  })
+
+  for (pkg in pkgs) {
+    if (!requireNamespace(pkg, quietly = TRUE)) {
 
 
+      pkg_phrase <- ifelse(
+        is.na(calling_func),
+        " to use this function.",
+        paste0(" to use ", backtick(calling_func), ".")
+      )
 
+      phrase <- paste0(
+        backtick(pkg),
+        " must be must be installed",
+        pkg_phrase
+      )
+
+      stop(phrase)
+    }
+  }
+
+}
 
 dx_breslow_day <- function(data, options, group_varname) {
   predprob <- data[[options$pred_varname]]

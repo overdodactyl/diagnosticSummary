@@ -37,6 +37,7 @@ model across the entire range of classifications. It's particularly insightful f
 datasets where positive instances are rare or more critical.
 }
 \examples{
+\dontshow{if (requireNamespace("ggplot2", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 dx_obj <- dx(
   data = dx_heart_failure,
   true_varname = "truth",
@@ -45,4 +46,5 @@ dx_obj <- dx(
   setthreshold = .3
 )
 dx_plot_cap(dx_obj)
+\dontshow{\}) # examplesIf}
 }

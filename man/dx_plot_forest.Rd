@@ -83,6 +83,7 @@ number of rows, values are repeated.}
 Generate a table of diagnostic measures
 }
 \examples{
+\dontshow{if (requireNamespace("gridExtra", quietly = TRUE) & requireNamespace("gtable", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 
 dx_obj <- dx(
   data = dx_heart_failure,
@@ -95,4 +96,5 @@ dx_obj <- dx(
 )
 dx_plot_forest(dx_obj)
 dx_plot_forest(dx_obj, trans = "log10")
+\dontshow{\}) # examplesIf}
 }

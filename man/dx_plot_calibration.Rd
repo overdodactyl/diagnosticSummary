@@ -32,6 +32,7 @@ the probabilities. In such cases, calibration methods like isotonic regression o
 the model's predicted probabilities.
 }
 \examples{
+\dontshow{if (requireNamespace("ggplot2", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 dx_obj <- dx(
   data = dx_heart_failure,
   true_varname = "truth",
@@ -40,4 +41,5 @@ dx_obj <- dx(
   setthreshold = .3
 )
 dx_plot_calibration(dx_obj)
+\dontshow{\}) # examplesIf}
 }

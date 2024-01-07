@@ -1,9 +1,6 @@
 zero_range <- function(x, tol = 1000 * .Machine$double.eps) {
-  if (length(x) == 1) {
-    return(TRUE)
-  }
   if (length(x) != 2) {
-    stop("x must be length 1 or 2")
+    stop("x must be length 2")
   }
   if (any(is.na(x))) {
     return(NA)
@@ -21,7 +18,7 @@ zero_range <- function(x, tol = 1000 * .Machine$double.eps) {
   abs((x[1] - x[2]) / m) < tol
 }
 
-rescale <- function(x, to = c(0, 1), from = range(x, na.rm = TRUE, finite = TRUE), ...) {
+rescale <- function(x, to = c(0, 1), from = range(x, na.rm = TRUE, finite = TRUE)) {
   if (zero_range(from) || zero_range(to)) {
     return(ifelse(is.na(x), NA, mean(to)))
   }
@@ -62,7 +59,7 @@ rescale <- function(x, to = c(0, 1), from = range(x, na.rm = TRUE, finite = TRUE
 #' @param or_lwd Line width for OR
 #' @param or_size Size of OR point
 #' @export
-#' @examples
+#' @examplesIf requireNamespace("gridExtra", quietly = TRUE) & requireNamespace("gtable", quietly = TRUE)
 #'
 #' dx_obj <- dx(
 #'   data = dx_heart_failure,
@@ -87,10 +84,10 @@ dx_plot_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
                            fraction_multiline = FALSE,
                            or_lwd = .8, or_size = .35,
                            body_or_col = "black", footer_or_col = footer_col) {
-  check_package("gridExtra")
-  check_package("grid")
-  check_package("gtable")
 
+
+
+  check_package(c("gridExtra", "grid", "gtable"))
 
   trans <- match.arg(trans)
   return_type <- match.arg(return)

@@ -34,6 +34,7 @@ indicates the threshold with the optimal balance between sensitivity and specifi
 according to the Youden's J Index.
 }
 \examples{
+\dontshow{if (requireNamespace("ggplot2", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 dx_obj <- dx(
   data = dx_heart_failure,
   true_varname = "truth",
@@ -42,4 +43,5 @@ dx_obj <- dx(
   setthreshold = .3
 )
 dx_plot_youden_j(dx_obj)
+\dontshow{\}) # examplesIf}
 }

@@ -43,6 +43,7 @@ The 'plot_range' parameter allows limiting the analysis to a relevant range of t
 avoiding the extremes where the net benefit calculation can become unstable or not clinically relevant.
 }
 \examples{
+\dontshow{if (requireNamespace("ggplot2", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 dx_obj <- dx(
   data = dx_heart_failure,
   true_varname = "truth",
@@ -51,4 +52,5 @@ dx_obj <- dx(
   setthreshold = .3
 )
 dx_plot_decision_curve(dx_obj)
+\dontshow{\}) # examplesIf}
 }
