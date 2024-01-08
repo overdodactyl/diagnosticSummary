@@ -7,7 +7,7 @@ in unbalanced datasets and should be used alongside other metrics."><title>Calcu
 (true negatives + false negatives), known as the Negative Predictive Value (NPV).
 This metric is a measure of the classifier's ability to identify negatives correctly.
 Note that NPV, like other metrics, may not fully represent classifier performance
-in unbalanced datasets and should be used alongside other metrics."><meta property="og:image" content="https://overdodactyl.github.io/diagnosticSummary/logo.png"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
+in unbalanced datasets and should be used alongside other metrics."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]--></head><body>
@@ -48,7 +48,7 @@ in unbalanced datasets and should be used alongside other metrics."><meta proper
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Calculate Negative Predictive Value (NPV)</h1>
+      <img src="" class="logo" alt=""><h1>Calculate Negative Predictive Value (NPV)</h1>
       <small class="dont-index">Source: <a href="https://github.com/overdodactyl/diagnosticSummary/blob/HEAD/R/dx_metrics.R" class="external-link"><code>R/dx_metrics.R</code></a></small>
       <div class="d-none name"><code>dx_npv.Rd</code></div>
     </div>
@@ -69,7 +69,7 @@ in unbalanced datasets and should be used alongside other metrics.</p>
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>cm</dt>
-<dd><p>A dx_cm object created by <code><a href="dx_cm.html">dx_cm</a></code>.</p></dd>
+<dd><p>A dx_cm object created by <code><a href="dx_cm.html">dx_cm()</a></code>.</p></dd>
 
 
 <dt>detail</dt>
@@ -80,17 +80,17 @@ including 95% confidence intervals.</p></dd>
 
 <dt>...</dt>
 <dd><p>Additional arguments to pass to metric_binomial function, such as
-`citype` for type of confidence interval method.</p></dd>
+<code>citype</code> for type of confidence interval method.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>Depending on the `detail` parameter, returns a numeric value
-        representing the calculated metric or a data frame/tibble with
-        detailed diagnostics including confidence intervals and possibly other
-        metrics relevant to understanding the metric.</p>
+<p>Depending on the <code>detail</code> parameter, returns a numeric value
+representing the calculated metric or a data frame/tibble with
+detailed diagnostics including confidence intervals and possibly other
+metrics relevant to understanding the metric.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -104,8 +104,8 @@ $$NPV = \frac{True Negatives}{True Negatives + False Negatives}$$</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="dx_cm.html">dx_cm</a></code> to understand how to create and interact with a
-         'dx_cm' object.</p></div>
+    <div class="dont-index"><p><code><a href="dx_cm.html">dx_cm()</a></code> to understand how to create and interact with a
+'dx_cm' object.</p></div>
     </div>
 
     <div class="section level2">

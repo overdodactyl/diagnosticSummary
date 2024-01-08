@@ -7,7 +7,7 @@ confidence interval for the MCC value using bootstrapping if detail is set to "f
 of binary classifications. It returns a value between -1 and +1 where +1 indicates
 perfect prediction, 0 no better than random prediction, and -1 indicates total
 disagreement between prediction and observation. The function can also return a
-confidence interval for the MCC value using bootstrapping if detail is set to "full".'><meta property="og:image" content="https://overdodactyl.github.io/diagnosticSummary/logo.png"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
+confidence interval for the MCC value using bootstrapping if detail is set to "full".'><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]--></head><body>
@@ -48,7 +48,7 @@ confidence interval for the MCC value using bootstrapping if detail is set to "f
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Calculate Matthews Correlation Coefficient (MCC)</h1>
+      <img src="" class="logo" alt=""><h1>Calculate Matthews Correlation Coefficient (MCC)</h1>
       <small class="dont-index">Source: <a href="https://github.com/overdodactyl/diagnosticSummary/blob/HEAD/R/dx_metrics.R" class="external-link"><code>R/dx_metrics.R</code></a></small>
       <div class="d-none name"><code>dx_mcc.Rd</code></div>
     </div>
@@ -69,7 +69,7 @@ confidence interval for the MCC value using bootstrapping if detail is set to "f
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>cm</dt>
-<dd><p>A dx_cm object created by <code><a href="dx_cm.html">dx_cm</a></code>.</p></dd>
+<dd><p>A dx_cm object created by <code><a href="dx_cm.html">dx_cm()</a></code>.</p></dd>
 
 
 <dt>detail</dt>
@@ -91,8 +91,8 @@ via bootstrapping.  Note, this can be slow.</p></dd>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>If `detail` is "simple", returns a single numeric value of MCC.
-If `detail` is "full", returns a data frame that includes MCC, its
+<p>If <code>detail</code> is "simple", returns a single numeric value of MCC.
+If <code>detail</code> is "full", returns a data frame that includes MCC, its
 bootstrapped confidence interval, and other key details</p>
     </div>
     <div class="section level2">
