@@ -7,15 +7,15 @@
 dx_plot_lift(dx_obj)
 }
 \arguments{
-\item{dx_obj}{A `dx` object containing diagnostic measurements, including a rank data frame
+\item{dx_obj}{A \code{dx} object containing diagnostic measurements, including a rank data frame
 with percentile and lift columns. The rank data frame should be the result of a diagnostic
 process that scores and ranks each instance based on the likelihood of being a true positive.}
 }
 \value{
-A `ggplot` object representing the Lift chart, which can be further customized as needed.
+A \code{ggplot} object representing the Lift chart, which can be further customized as needed.
 }
 \description{
-Generates a Lift chart from a `dx` object. Lift charts are used to evaluate the performance
+Generates a Lift chart from a \code{dx} object. Lift charts are used to evaluate the performance
 of binary classification models by comparing the results of using the model versus a random
 selection. The Lift chart plots the ratio of the results obtained with the model to those
 obtained by a random model, across different percentiles of the population.

@@ -12,7 +12,7 @@ dx_plot_probabilities(
 )
 }
 \arguments{
-\item{dx_obj}{A `dx` object}
+\item{dx_obj}{A \code{dx} object}
 
 \item{plot_type}{Character string specifying the type of plot: "histogram" or "density".}
 

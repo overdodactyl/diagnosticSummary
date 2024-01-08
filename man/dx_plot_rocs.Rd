@@ -12,8 +12,8 @@ dx_plot_rocs(
 )
 }
 \arguments{
-\item{dx_comp}{A `dx_compare` object containing the results of pairwise model
-comparisons and the list of `dx` objects with ROC data.}
+\item{dx_comp}{A \code{dx_compare} object containing the results of pairwise model
+comparisons and the list of \code{dx} objects with ROC data.}
 
 \item{add_text}{Logical, whether to add DeLong's test results as text annotations
 on the plot. Defaults to TRUE.}
@@ -26,8 +26,8 @@ Defaults to "black".}
 }
 \value{
 A ggplot object representing the ROC curves for the models included in the
-        `dx_comp` object. Each model's ROC curve is color-coded, and the plot
-        includes annotations for DeLong's test p-values if `add_text` is TRUE.
+\code{dx_comp} object. Each model's ROC curve is color-coded, and the plot
+includes annotations for DeLong's test p-values if \code{add_text} is TRUE.
 }
 \description{
 Generates Receiver Operating Characteristic (ROC) curves for multiple models
@@ -37,12 +37,12 @@ the ROC Curve (AUC).
 }
 \details{
 This function is a visualization tool that plots ROC curves for multiple
-         models to facilitate comparison. It uses DeLong's test to statistically
-         compare AUC values and, if desired, annotates the plot with the results.
-         The function expects a `dx_compare` object as input, which should contain
-         the necessary ROC and test comparison data. Ensure that the ROC data and
-         DeLong's test results are appropriately generated and stored in the
-         `dx_compare` object before using this function.
+models to facilitate comparison. It uses DeLong's test to statistically
+compare AUC values and, if desired, annotates the plot with the results.
+The function expects a \code{dx_compare} object as input, which should contain
+the necessary ROC and test comparison data. Ensure that the ROC data and
+DeLong's test results are appropriately generated and stored in the
+\code{dx_compare} object before using this function.
 }
 \examples{
 \dontshow{if (requireNamespace("ggplot2", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
@@ -54,6 +54,6 @@ dx_plot_rocs(dx_comp)
 \dontshow{\}) # examplesIf}
 }
 \seealso{
-\code{\link{dx_compare}} to generate the required input object.
-         \code{\link{dx_delong}} for details on DeLong's test used in comparisons.
+\code{\link[=dx_compare]{dx_compare()}} to generate the required input object.
+\code{\link[=dx_delong]{dx_delong()}} for details on DeLong's test used in comparisons.
 }

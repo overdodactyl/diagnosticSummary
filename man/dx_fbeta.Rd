@@ -7,7 +7,7 @@
 dx_fbeta(cm, beta = 1, detail = "full", boot = FALSE, bootreps = 1000)
 }
 \arguments{
-\item{cm}{A dx_cm object created by \code{\link{dx_cm}}.}
+\item{cm}{A dx_cm object created by \code{\link[=dx_cm]{dx_cm()}}.}
 
 \item{beta}{The beta value determining the weight of precision in the F-score.}
 
@@ -21,8 +21,8 @@ via bootstrapping.  Note, this can be slow.}
 \item{bootreps}{The number of bootstrap replications for calculating confidence intervals.}
 }
 \value{
-Depending on the `detail` parameter, returns a single numeric value of
-        F-beta or a data frame with the F-beta and its confidence intervals.
+Depending on the \code{detail} parameter, returns a single numeric value of
+F-beta or a data frame with the F-beta and its confidence intervals.
 }
 \description{
 Calculates the F-beta score from a confusion matrix object with an option
@@ -41,6 +41,6 @@ print(simple_f)
 print(detailed_f)
 }
 \seealso{
-\code{\link{dx_f1}}, \code{\link{dx_f2}} for specific F-beta scores.
+\code{\link[=dx_f1]{dx_f1()}}, \code{\link[=dx_f2]{dx_f2()}} for specific F-beta scores.
 }
 \concept{metrics}

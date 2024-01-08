@@ -1,4 +1,4 @@
-#' \code{diagnosticSummary} package
+#' `diagnosticSummary` package
 #'
 #' Diagnostic Summaries
 #'

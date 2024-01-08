@@ -7,19 +7,19 @@
 dx_delong(dx1, dx2, detail = "full", paired = TRUE)
 }
 \arguments{
-\item{dx1}{A `dx` object containing the first ROC curve.}
+\item{dx1}{A \code{dx} object containing the first ROC curve.}
 
-\item{dx2}{A `dx` object containing the second ROC curve.}
+\item{dx2}{A \code{dx} object containing the second ROC curve.}
 
 \item{detail}{Character specifying the level of detail in the output:
 "simple" for p-value only, "full" for detailed test results.}
 
-\item{paired}{Logical indicating if data between `dx1` and `dx2` is paired.}
+\item{paired}{Logical indicating if data between \code{dx1} and \code{dx2} is paired.}
 }
 \value{
-Depending on the `detail` parameter, returns a p-value or a comprehensive
-        summary of the test including the test statistic, p-value, and confidence interval
-        for the difference in AUC.
+Depending on the \code{detail} parameter, returns a p-value or a comprehensive
+summary of the test including the test statistic, p-value, and confidence interval
+for the difference in AUC.
 }
 \description{
 This function applies DeLong's test to compare the areas under two correlated ROC curves,
@@ -27,11 +27,11 @@ providing a statistical approach to assess if there is a significant difference 
 them. It's particularly useful for comparing the performance of two diagnostic models.
 }
 \details{
-The function utilizes the `roc.test` function from the `pROC` package to perform
+The function utilizes the \code{roc.test} function from the \code{pROC} package to perform
 DeLong's test, which is suitable for comparing two correlated ROC curves. This correlation
 typically arises from using the same set of samples to generate both curves. A significant
 p-value indicates a statistically significant difference between the AUCs of the two models.
-When `detail` is "full", additional information about the comparison, including the estimated
+When \code{detail} is "full", additional information about the comparison, including the estimated
 difference in AUC and its confidence interval, is provided. The confidence interval gives a
 range of plausible values for the difference in AUC between the two models.
 }
@@ -44,8 +44,8 @@ print(simple)
 print(detailed)
 }
 \seealso{
-\code{\link[pROC]{roc.test}} for the underlying test implementation.
+\code{\link[pROC:roc.test]{pROC::roc.test()}} for the underlying test implementation.
 
-\code{\link{dx_cm}} to understand how to create a `dx` object.
+\code{\link[=dx_cm]{dx_cm()}} to understand how to create a \code{dx} object.
 }
 \concept{tests}

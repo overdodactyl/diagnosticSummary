@@ -7,16 +7,16 @@
 dx_mcnemars(dx1, dx2, detail = "full")
 }
 \arguments{
-\item{dx1}{The first `dx` object containing predictions and truth values.}
+\item{dx1}{The first \code{dx} object containing predictions and truth values.}
 
-\item{dx2}{The second `dx` object containing predictions and truth values.}
+\item{dx2}{The second \code{dx} object containing predictions and truth values.}
 
 \item{detail}{A string indicating the level of detail for the output: "simple" for
 just the p-value, "full" for a comprehensive result including test statistics.}
 }
 \value{
-Depending on the `detail` parameter, returns either the p-value (simple)
-        or a more comprehensive list including the test statistic and p-value (full).
+Depending on the \code{detail} parameter, returns either the p-value (simple)
+or a more comprehensive list including the test statistic and p-value (full).
 }
 \description{
 Performs McNemar's test to evaluate the difference between two paired proportions.
@@ -33,7 +33,7 @@ This test is suitable for binary classification tasks where you are comparing th
 performance of two classifiers over the same instances. It's not appropriate for
 independent samples or more than two classifiers.
 
-The function expects the input as two `dx` objects, each containing the predictions
+The function expects the input as two \code{dx} objects, each containing the predictions
 and truth values from the classifiers being compared. It calculates the contingency
 table based on the agreements and disagreements between the classifiers and applies
 McNemar's test to this table.
@@ -44,6 +44,6 @@ dx_rf <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "pre
 dx_mcnemars(dx_glm, dx_rf)
 }
 \seealso{
-\code{\link{dx_cm}}, \code{\link{mcnemar.test}}
+\code{\link[=dx_cm]{dx_cm()}}, \code{\link[=mcnemar.test]{mcnemar.test()}}
 }
 \concept{tests}

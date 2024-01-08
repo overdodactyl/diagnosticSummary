@@ -7,16 +7,16 @@
 dx_compare(dx_list, paired = TRUE)
 }
 \arguments{
-\item{dx_list}{A list of `dx` objects representing the models to be compared.
-Each `dx` object should be the result of a call to `dx()`.}
+\item{dx_list}{A list of \code{dx} objects representing the models to be compared.
+Each \code{dx} object should be the result of a call to \code{dx()}.}
 
 \item{paired}{Logical, indicating whether the comparisons should be treated as paired.
 Paired comparisons are appropriate when models are evaluated on the
 same set of instances (e.g., cross-validation or repeated measures).}
 }
 \value{
-A `dx_compare` object containing a list of `dx` objects and a data frame of
-        pairwise comparison results for each test conducted.
+A \code{dx_compare} object containing a list of \code{dx} objects and a data frame of
+pairwise comparison results for each test conducted.
 }
 \description{
 Compares multiple classification models pairwise using various statistical tests
@@ -25,9 +25,9 @@ comparisons.
 }
 \details{
 This function is a utility to perform a comprehensive comparison between
-         multiple classification models. Based on the value of `paired`, it will
-         perform appropriate tests.  The resulting object can be used it further
-         functions like `dx_plot_rocs.`
+multiple classification models. Based on the value of \code{paired}, it will
+perform appropriate tests.  The resulting object can be used it further
+functions like \code{dx_plot_rocs.}
 }
 \examples{
 dx_glm <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted")
@@ -37,6 +37,6 @@ dx_comp <- dx_compare(dx_list, paired = TRUE)
 print(dx_comp$tests)
 }
 \seealso{
-\code{\link{dx_delong}}, \code{\link{dx_z_test}}, \code{\link{dx_mcnemars}}
+\code{\link[=dx_delong]{dx_delong()}}, \code{\link[=dx_z_test]{dx_z_test()}}, \code{\link[=dx_mcnemars]{dx_mcnemars()}}
 for more details on the tests used for comparisons.
 }

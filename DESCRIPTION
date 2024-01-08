@@ -34,3 +34,4 @@ Suggests:
 RoxygenNote: 7.1.2
 Language: en-US
 URL: https://overdodactyl.github.io/diagnosticSummary/, https://github.com/overdodactyl/diagnosticSummary/
+Roxygen: list(markdown = TRUE)

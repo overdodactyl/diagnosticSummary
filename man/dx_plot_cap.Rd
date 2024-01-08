@@ -7,11 +7,11 @@
 dx_plot_cap(dx_obj)
 }
 \arguments{
-\item{dx_obj}{A `dx` object containing rank-based statistics, including cumulative
+\item{dx_obj}{A \code{dx} object containing rank-based statistics, including cumulative
 true positives and percentiles. It's expected to have a 'rank' element with the necessary data.}
 }
 \value{
-A `ggplot` object representing the CAP Curve with actual, perfect, and random
+A \code{ggplot} object representing the CAP Curve with actual, perfect, and random
 model lines, allowing for further customization if desired.
 }
 \description{
@@ -27,10 +27,12 @@ The curve illustrates the cumulative percentage of captured positives (Y-axis) a
 the cumulative percentage of instances (X-axis).
 
 The function plots three lines:
-- Actual Model: Represents the cumulative accuracy of the given model.
-- Perfect Model: Represents the hypothetical scenario where all positive instances are ranked
-  before any negative instances.
-- Random Model: Represents the baseline scenario of randomly guessing the class.
+\itemize{
+\item Actual Model: Represents the cumulative accuracy of the given model.
+\item Perfect Model: Represents the hypothetical scenario where all positive instances are ranked
+before any negative instances.
+\item Random Model: Represents the baseline scenario of randomly guessing the class.
+}
 
 The CAP Curve is useful for understanding not just the accuracy but also the behavior of the
 model across the entire range of classifications. It's particularly insightful for imbalanced

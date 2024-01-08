@@ -15,8 +15,8 @@ dx_auc_pr(precision, recall, detail = "full")
 for just the AUC value, "full" for the AUC value along with confidence intervals.}
 }
 \value{
-Depending on the `detail` parameter, returns a single numeric value of AUC or
-        a data frame with the AUC and its confidence intervals.
+Depending on the \code{detail} parameter, returns a single numeric value of AUC or
+a data frame with the AUC and its confidence intervals.
 }
 \description{
 This function calculates the Area Under the Curve (AUC) for the Precision-Recall curve
@@ -26,9 +26,9 @@ point at recall=1 with the last observed precision.
 }
 \details{
 The function prepares the precision and recall vectors by ensuring they are ordered
-         by increasing recall values. It then calculates the AUC using the trapezoidal rule,
-         which is the sum of areas of trapezoids formed between each consecutive pair of points.
-         The first and last points are added to cover the entire recall range from 0 to 1.
+by increasing recall values. It then calculates the AUC using the trapezoidal rule,
+which is the sum of areas of trapezoids formed between each consecutive pair of points.
+The first and last points are added to cover the entire recall range from 0 to 1.
 }
 \examples{
 # Assuming pr_data is your dataframe with precision and recall columns

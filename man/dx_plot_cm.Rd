@@ -17,11 +17,11 @@ c("#e5eef7", "#0057B8").}
 and positive classes, respectively. Defaults to c("-", "+").}
 }
 \value{
-A `ggplot` object that represents the confusion matrix with additional
+A \code{ggplot} object that represents the confusion matrix with additional
 performance metrics.
 }
 \description{
-Creates a graphical representation of a confusion matrix from a `dx` object.
+Creates a graphical representation of a confusion matrix from a \code{dx} object.
 The plot displays the counts of true positives, false negatives, true negatives,
 and false positives. Additionally, it annotates the plot with relevant performance
 metrics such as Sensitivity, Specificity, PPV, and NPV, along with their

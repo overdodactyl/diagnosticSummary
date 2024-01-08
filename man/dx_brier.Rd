@@ -9,17 +9,17 @@ dx_brier(predprob, truth, detail = "full")
 \arguments{
 \item{predprob}{Numeric vector of predicted probabilities associated with the positive class.}
 
-\item{truth}{Numeric vector of true binary outcomes, typically 0 or 1, with the same length as `predprob`.}
+\item{truth}{Numeric vector of true binary outcomes, typically 0 or 1, with the same length as \code{predprob}.}
 
 \item{detail}{Character specifying the level of detail in the output:
 "simple" for raw estimate, "full" for detailed estimate
 including 95\% confidence intervals.}
 }
 \value{
-Depending on the `detail` parameter, returns a numeric value
-        representing the calculated metric or a data frame/tibble with
-        detailed diagnostics including confidence intervals and possibly other
-        metrics relevant to understanding the metric.
+Depending on the \code{detail} parameter, returns a numeric value
+representing the calculated metric or a data frame/tibble with
+detailed diagnostics including confidence intervals and possibly other
+metrics relevant to understanding the metric.
 }
 \description{
 The Brier score is a proper score function that measures the accuracy of probabilistic predictions.
@@ -33,9 +33,11 @@ The formula for the Brier score in a binary classification is:
 \deqn{BS = \frac{1}{N} \sum_{i=1}^{N} (f_i - o_i)^2}{BS = (1/N) * sum((f_i - o_i)^2)}
 
 where:
-- \(N\) is the number of predictions,
-- \(f_i\) is the predicted probability of the occurrence of the positive class for the ith prediction,
-- \(o_i\) is the actual outcome for the ith prediction, 0 or 1.
+\itemize{
+\item \(N\) is the number of predictions,
+\item \(f_i\) is the predicted probability of the occurrence of the positive class for the ith prediction,
+\item \(o_i\) is the actual outcome for the ith prediction, 0 or 1.
+}
 
 The Brier score ranges from 0 to 1, where 0 represents a perfect model and 1 represents the worst model.
 It is equivalent to the mean squared error used in regression and can be decomposed into calibration loss,

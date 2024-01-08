@@ -34,7 +34,7 @@ rescale <- function(x, to = c(0, 1), from = range(x, na.rm = TRUE, finite = TRUE
 #'     and specificity be shown?
 #' @param breaks A numeric vector of breaks to include on axis ticks.
 #'     If left empty, breaks will be determined using
-#'     the min and max value from 95\% CIs.
+#'     the min and max value from 95% CIs.
 #' @param limits Limits for axis ticks.
 #'     Ticks will be generates using base::breaks.
 #'     Ignored if breaks are passed.

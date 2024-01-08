@@ -12,5 +12,5 @@
 #'   \item{predicted_rf}{Predicted outcome from a Random Forest model}
 #'   \item{AgeSex}{Age and sex group}
 #' }
-#' @source \url{https://www.kaggle.com/imnikhilanand/heart-attack-prediction}
+#' @source <https://www.kaggle.com/imnikhilanand/heart-attack-prediction>
 "dx_heart_failure"

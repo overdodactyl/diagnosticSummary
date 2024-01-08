@@ -7,7 +7,7 @@
 dx_plot_cost(dx_obj, cfp, cfn, ctp = 0, ctn = 0)
 }
 \arguments{
-\item{dx_obj}{A `dx` object containing threshold-based statistics including false
+\item{dx_obj}{A \code{dx} object containing threshold-based statistics including false
 positives (fp) and false negatives (fn) for each threshold.}
 
 \item{cfp}{Cost of a false positive.}

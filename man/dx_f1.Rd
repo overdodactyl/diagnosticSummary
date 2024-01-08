@@ -7,7 +7,7 @@
 dx_f1(cm, detail = "full", boot = FALSE, bootreps = 1000)
 }
 \arguments{
-\item{cm}{A dx_cm object created by \code{\link{dx_cm}}.}
+\item{cm}{A dx_cm object created by \code{\link[=dx_cm]{dx_cm()}}.}
 
 \item{detail}{Character specifying the level of detail in the output:
 "simple" for raw estimate, "full" for detailed estimate
@@ -19,8 +19,8 @@ via bootstrapping.  Note, this can be slow.}
 \item{bootreps}{The number of bootstrap replications for calculating confidence intervals.}
 }
 \value{
-Depending on the `detail` parameter, returns a single numeric value of
-        F1 or a data frame with the F1 and its confidence intervals.
+Depending on the \code{detail} parameter, returns a single numeric value of
+F1 or a data frame with the F1 and its confidence intervals.
 }
 \description{
 Calculates the F1 score from a confusion matrix object with an option to
@@ -38,6 +38,6 @@ print(simple_f)
 print(detailed_f)
 }
 \seealso{
-\code{\link{dx_fbeta}}, \code{\link{dx_f2}} for other F-beta scores.
+\code{\link[=dx_fbeta]{dx_fbeta()}}, \code{\link[=dx_f2]{dx_f2()}} for other F-beta scores.
 }
 \concept{metrics}

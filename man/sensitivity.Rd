@@ -15,20 +15,20 @@ dx_recall(cm, detail = "full", ...)
 dx_tpr(cm, detail = "full", ...)
 }
 \arguments{
-\item{cm}{A dx_cm object created by \code{\link{dx_cm}}.}
+\item{cm}{A dx_cm object created by \code{\link[=dx_cm]{dx_cm()}}.}
 
 \item{detail}{Character specifying the level of detail in the output:
 "simple" for raw estimate, "full" for detailed estimate
 including 95\% confidence intervals.}
 
 \item{...}{Additional arguments to pass to metric_binomial function, such as
-`citype` for type of confidence interval method.}
+\code{citype} for type of confidence interval method.}
 }
 \value{
-Depending on the `detail` parameter, returns a numeric value
-        representing the calculated metric or a data frame/tibble with
-        detailed diagnostics including confidence intervals and possibly other
-        metrics relevant to understanding the metric.
+Depending on the \code{detail} parameter, returns a numeric value
+representing the calculated metric or a data frame/tibble with
+detailed diagnostics including confidence intervals and possibly other
+metrics relevant to understanding the metric.
 }
 \description{
 Calculates Sensitivity, also known as the True Positive Rate (TPR) or recall, which
@@ -57,7 +57,7 @@ print(simple_sensitivity)
 print(detailed_sensitivity)
 }
 \seealso{
-\code{\link{dx_cm}} to understand how to create and interact with a
-         'dx_cm' object.
+\code{\link[=dx_cm]{dx_cm()}} to understand how to create and interact with a
+'dx_cm' object.
 }
 \concept{metrics}

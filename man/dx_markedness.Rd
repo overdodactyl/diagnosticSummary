@@ -7,7 +7,7 @@
 dx_markedness(cm, detail = "full", boot = FALSE, bootreps = 1000)
 }
 \arguments{
-\item{cm}{A dx_cm object created by \code{\link{dx_cm}}.}
+\item{cm}{A dx_cm object created by \code{\link[=dx_cm]{dx_cm()}}.}
 
 \item{detail}{Character specifying the level of detail in the output:
 "simple" for raw estimate, "full" for detailed estimate
@@ -19,10 +19,10 @@ via bootstrapping.  Note, this can be slow.}
 \item{bootreps}{The number of bootstrap replications for calculating confidence intervals.}
 }
 \value{
-Depending on the `detail` parameter, returns a numeric value
-        representing the calculated metric or a data frame/tibble with
-        detailed diagnostics including confidence intervals and possibly other
-        metrics relevant to understanding the metric.
+Depending on the \code{detail} parameter, returns a numeric value
+representing the calculated metric or a data frame/tibble with
+detailed diagnostics including confidence intervals and possibly other
+metrics relevant to understanding the metric.
 }
 \description{
 Calculates Markedness for the provided confusion matrix. Markedness is a combined measure
@@ -46,8 +46,8 @@ print(simple_markedness)
 print(detailed_markedness)
 }
 \seealso{
-\code{\link{dx_cm}} to understand how to create and interact with a 'dx_cm' object.
+\code{\link[=dx_cm]{dx_cm()}} to understand how to create and interact with a 'dx_cm' object.
 
-\code{\link{dx_ppv}}, \code{\link{dx_npv}} for components of markedness.
+\code{\link[=dx_ppv]{dx_ppv()}}, \code{\link[=dx_npv]{dx_npv()}} for components of markedness.
 }
 \concept{metrics}

@@ -266,7 +266,7 @@ dx_group_measure <- function(data, options, group_varname) {
 #' dx_list <- list(dx_glm, dx_rf)
 #' dx_comp <- dx_compare(dx_list, paired = TRUE)
 #' print(dx_comp$tests)
-#' @seealso \code{\link{dx_delong}}, \code{\link{dx_z_test}}, \code{\link{dx_mcnemars}}
+#' @seealso [dx_delong()], [dx_z_test()], [dx_mcnemars()]
 #' for more details on the tests used for comparisons.
 #'
 #' @export

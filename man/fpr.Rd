@@ -11,20 +11,20 @@ dx_fpr(cm, detail = "full", ...)
 dx_fall_out(cm, detail = "full", ...)
 }
 \arguments{
-\item{cm}{A dx_cm object created by \code{\link{dx_cm}}.}
+\item{cm}{A dx_cm object created by \code{\link[=dx_cm]{dx_cm()}}.}
 
 \item{detail}{Character specifying the level of detail in the output:
 "simple" for raw estimate, "full" for detailed estimate
 including 95\% confidence intervals.}
 
 \item{...}{Additional arguments to pass to metric_binomial function, such as
-`citype` for type of confidence interval method.}
+\code{citype} for type of confidence interval method.}
 }
 \value{
-Depending on the `detail` parameter, returns a numeric value
-        representing the calculated metric or a data frame/tibble with
-        detailed diagnostics including confidence intervals and possibly other
-        metrics relevant to understanding the metric.
+Depending on the \code{detail} parameter, returns a numeric value
+representing the calculated metric or a data frame/tibble with
+detailed diagnostics including confidence intervals and possibly other
+metrics relevant to understanding the metric.
 }
 \description{
 Calculates the False Positive Rate (FPR), which is the proportion of actual negatives
@@ -51,7 +51,7 @@ print(simple_fpr)
 print(detailed_fpr)
 }
 \seealso{
-\code{\link{dx_cm}} to understand how to create and interact with a
-         'dx_cm' object.
+\code{\link[=dx_cm]{dx_cm()}} to understand how to create and interact with a
+'dx_cm' object.
 }
 \concept{metrics}

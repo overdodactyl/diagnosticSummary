@@ -7,18 +7,18 @@
 dx_fishers_exact(cm, detail = "full")
 }
 \arguments{
-\item{cm}{A dx_cm object created by \code{\link{dx_cm}}.}
+\item{cm}{A dx_cm object created by \code{\link[=dx_cm]{dx_cm()}}.}
 
 \item{detail}{Character specifying the level of detail in the output:
 "simple" for raw estimate, "full" for detailed estimate
 including 95\% confidence intervals.}
 }
 \value{
-Depending on the `detail` parameter:
-        - if "simple": a single numeric value representing the p-value of
-          Fisher's Exact test.
-        - if "full": a data frame with the Fisher's Exact test result, including
-          the p-value and method note.
+Depending on the \code{detail} parameter:
+- if "simple": a single numeric value representing the p-value of
+Fisher's Exact test.
+- if "full": a data frame with the Fisher's Exact test result, including
+the p-value and method note.
 }
 \description{
 Conducts Fisher's Exact test of independence on a 2x2 confusion matrix derived
@@ -43,6 +43,6 @@ print(simple)
 print(detailed)
 }
 \seealso{
-\code{\link{dx_cm}} for creating a 'dx_cm' object.
+\code{\link[=dx_cm]{dx_cm()}} for creating a 'dx_cm' object.
 }
 \concept{tests}

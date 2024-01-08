@@ -13,9 +13,9 @@ dx_z_test(
 )
 }
 \arguments{
-\item{dx1}{A `dx` object for the first group.}
+\item{dx1}{A \code{dx} object for the first group.}
 
-\item{dx2}{A `dx` object for the second group.}
+\item{dx2}{A \code{dx} object for the second group.}
 
 \item{metric}{A character string specifying the metric to compare between the two groups.
 Options include "accuracy", "ppv", "npv", "fnr", "fpr", "fdr", "sensitivity", "specificity".}
@@ -25,8 +25,8 @@ Options include "accuracy", "ppv", "npv", "fnr", "fpr", "fdr", "sensitivity", "s
 confidence intervals and test statistic.}
 }
 \value{
-Depending on the `detail` parameter, returns the p-value of the test or a
-        more detailed list including the test statistic, confidence interval, and p-value.
+Depending on the \code{detail} parameter, returns the p-value of the test or a
+more detailed list including the test statistic, confidence interval, and p-value.
 }
 \description{
 Conducts a two-sided Z-test (using prop.test for two proportions) to assess whether the success rates (proportions)
@@ -43,16 +43,16 @@ for continuity and provides confidence intervals for the difference in proportio
 The Z-test for two proportions is appropriate when comparing the success rates (proportions) of two independent samples.
 Here are some considerations for using this test:
 \itemize{
-  \item Independence: The samples should be independent. This test is not appropriate for paired or matched data.
-  \item Sample Size**: Both groups should have a sufficiently large number of trials. As a rule of thumb, the test
-   assumes that the number of successes and failures in each group should be at least 5. However, for more accurate
-   results, especially in cases with extreme proportions (close to 0 or 1), larger sample sizes may be necessary.
-  \item Binary Outcome: This test is specific to binary outcomes (success/failure, presence/absence, etc.) represented
-   as proportions. It's not suitable for continuous data or counts that haven't been converted to proportions.
-  \item Normal Approximation: The Z-test is based on the normal approximation of the distribution of the sample proportion.
-   This approximation is more accurate when the sample size is large and the proportion is not extremely close to 0 or 1.
+\item Independence: The samples should be independent. This test is not appropriate for paired or matched data.
+\item Sample Size**: Both groups should have a sufficiently large number of trials. As a rule of thumb, the test
+assumes that the number of successes and failures in each group should be at least 5. However, for more accurate
+results, especially in cases with extreme proportions (close to 0 or 1), larger sample sizes may be necessary.
+\item Binary Outcome: This test is specific to binary outcomes (success/failure, presence/absence, etc.) represented
+as proportions. It's not suitable for continuous data or counts that haven't been converted to proportions.
+\item Normal Approximation: The Z-test is based on the normal approximation of the distribution of the sample proportion.
+This approximation is more accurate when the sample size is large and the proportion is not extremely close to 0 or 1.
 }
-It's also important to note that while `prop.test` adjusts for continuity, this adjustment may not be sufficient for very
+It's also important to note that while \code{prop.test} adjusts for continuity, this adjustment may not be sufficient for very
 small sample sizes or very unbalanced designs. Always consider the context and assumptions of your data when interpreting
 the results of the test.
 }

@@ -7,11 +7,11 @@
 dx_plot_youden_j(dx_obj)
 }
 \arguments{
-\item{dx_obj}{A `dx` object containing a 'thresholds' data frame with columns for
+\item{dx_obj}{A \code{dx} object containing a 'thresholds' data frame with columns for
 'threshold' and 'informedness'.}
 }
 \value{
-A `ggplot` object representing the Youden's J Index curve, which can be
+A \code{ggplot} object representing the Youden's J Index curve, which can be
 further customized as needed.
 }
 \description{

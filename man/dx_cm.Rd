@@ -18,16 +18,16 @@ dx_cm(predprob, truth, threshold, poslabel)
 \value{
 A dataframe object of class "dx_cm" containing the components of the confusion matrix and additional metrics:
 \itemize{
-  \item \code{tp}: True Positives
-  \item \code{fn}: False Negatives
-  \item \code{tn}: True Negatives
-  \item \code{fp}: False Positives
-  \item \code{dispos}: Number of Actual Positives
-  \item \code{disneg}: Number of Actual Negatives
-  \item \code{n}: Total Number of Observations
-  \item \code{correct}: Number of Correct Predictions
-  \item \code{testpos}: Number of Predicted Positives
-  \item \code{testneg}: Number of Predicted Negatives
+\item \code{tp}: True Positives
+\item \code{fn}: False Negatives
+\item \code{tn}: True Negatives
+\item \code{fp}: False Positives
+\item \code{dispos}: Number of Actual Positives
+\item \code{disneg}: Number of Actual Negatives
+\item \code{n}: Total Number of Observations
+\item \code{correct}: Number of Correct Predictions
+\item \code{testpos}: Number of Predicted Positives
+\item \code{testneg}: Number of Predicted Negatives
 }
 }
 \description{

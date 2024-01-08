@@ -7,11 +7,11 @@
 dx_plot_predictive_value(dx_obj)
 }
 \arguments{
-\item{dx_obj}{A `dx` object containing the prevalence analysis data, including calculated
+\item{dx_obj}{A \code{dx} object containing the prevalence analysis data, including calculated
 PPV and NPV for various prevalence levels.}
 }
 \value{
-A `ggplot` object representing the Predictive Value Plot.
+A \code{ggplot} object representing the Predictive Value Plot.
 }
 \description{
 Generates a plot of Positive Predictive Value (PPV) and Negative Predictive Value (NPV)

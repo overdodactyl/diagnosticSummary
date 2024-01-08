@@ -7,18 +7,18 @@
 dx_chi_square(cm, detail = "full")
 }
 \arguments{
-\item{cm}{A dx_cm object created by \code{\link{dx_cm}}.}
+\item{cm}{A dx_cm object created by \code{\link[=dx_cm]{dx_cm()}}.}
 
 \item{detail}{Character specifying the level of detail in the output:
 "simple" for raw estimate, "full" for detailed estimate
 including 95\% confidence intervals.}
 }
 \value{
-Depending on the `detail` parameter:
-        - if "simple": a single numeric value representing the p-value of
-          the Chi-square test.
-        - if "full": a data frame with the Chi-square test result, including
-          the p-value and method note.
+Depending on the \code{detail} parameter:
+- if "simple": a single numeric value representing the p-value of
+the Chi-square test.
+- if "full": a data frame with the Chi-square test result, including
+the p-value and method note.
 }
 \description{
 Conducts a Chi-square test of independence on a 2x2 confusion matrix derived
@@ -46,6 +46,6 @@ print(simple)
 print(detailed)
 }
 \seealso{
-\code{\link{dx_cm}} for creating a 'dx_cm' object.
+\code{\link[=dx_cm]{dx_cm()}} for creating a 'dx_cm' object.
 }
 \concept{tests}

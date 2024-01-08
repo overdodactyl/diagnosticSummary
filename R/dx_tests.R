@@ -137,7 +137,7 @@ variance_a <- function(tilde_a_value, marginals) {
 #' detailed <- dx_chi_square(cm)
 #' print(simple)
 #' print(detailed)
-#' @seealso \code{\link{dx_cm}} for creating a 'dx_cm' object.
+#' @seealso [dx_cm()] for creating a 'dx_cm' object.
 #' @concept tests
 #' @export
 dx_chi_square <- function(cm, detail = "full") {
@@ -190,7 +190,7 @@ dx_chi_square <- function(cm, detail = "full") {
 #' detailed <- dx_fishers_exact(cm)
 #' print(simple)
 #' print(detailed)
-#' @seealso \code{\link{dx_cm}} for creating a 'dx_cm' object.
+#' @seealso [dx_cm()] for creating a 'dx_cm' object.
 #' @concept tests
 #' @export
 dx_fishers_exact <- function(cm, detail = "full") {
@@ -308,8 +308,8 @@ dx_g_test <- function(cm, detail = "full") {
 #' detailed <- dx_delong(dx_glm, dx_rf)
 #' print(simple)
 #' print(detailed)
-#' @seealso \code{\link[pROC]{roc.test}} for the underlying test implementation.
-#' @seealso \code{\link{dx_cm}} to understand how to create a `dx` object.
+#' @seealso [pROC::roc.test()] for the underlying test implementation.
+#' @seealso [dx_cm()] to understand how to create a `dx` object.
 #' @concept tests
 #' @export
 dx_delong <- function(dx1, dx2, detail = "full", paired = TRUE) {
@@ -465,7 +465,7 @@ dx_z_test <- function(dx1, dx2, metric = c("accuracy", "ppv", "npv", "fnr", "fpr
 #' dx_glm <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted")
 #' dx_rf <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted_rf")
 #' dx_mcnemars(dx_glm, dx_rf)
-#' @seealso \code{\link{dx_cm}}, \code{\link{mcnemar.test}}
+#' @seealso [dx_cm()], [mcnemar.test()]
 #' @concept tests
 #' @export
 dx_mcnemars <- function(dx1, dx2, detail = "full") {

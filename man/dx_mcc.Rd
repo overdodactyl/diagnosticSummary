@@ -7,7 +7,7 @@
 dx_mcc(cm, detail = "full", boot = FALSE, bootreps = 1000)
 }
 \arguments{
-\item{cm}{A dx_cm object created by \code{\link{dx_cm}}.}
+\item{cm}{A dx_cm object created by \code{\link[=dx_cm]{dx_cm()}}.}
 
 \item{detail}{Character specifying the level of detail in the output:
 "simple" for raw estimate, "full" for detailed estimate
@@ -19,8 +19,8 @@ via bootstrapping.  Note, this can be slow.}
 \item{bootreps}{The number of bootstrap replications for calculating confidence intervals.}
 }
 \value{
-If `detail` is "simple", returns a single numeric value of MCC.
-If `detail` is "full", returns a data frame that includes MCC, its
+If \code{detail} is "simple", returns a single numeric value of MCC.
+If \code{detail} is "full", returns a data frame that includes MCC, its
 bootstrapped confidence interval, and other key details
 }
 \description{

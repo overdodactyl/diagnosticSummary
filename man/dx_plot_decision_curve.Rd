@@ -7,12 +7,12 @@
 dx_plot_decision_curve(dx_obj, plot_range = c(0.05, 0.95))
 }
 \arguments{
-\item{dx_obj}{A `dx` object containing a 'thresholds' data frame with columns for 'threshold' and 'net_benefit'.}
+\item{dx_obj}{A \code{dx} object containing a 'thresholds' data frame with columns for 'threshold' and 'net_benefit'.}
 
 \item{plot_range}{A numeric vector of length 2 specifying the lower and upper bounds for the range of threshold probabilities to be plotted. Defaults to c(0.05, .95).}
 }
 \value{
-A `ggplot` object representing the decision curve, which can be further customized as needed.
+A \code{ggplot} object representing the decision curve, which can be further customized as needed.
 }
 \description{
 Generates a decision curve to visualize the net benefit of a binary

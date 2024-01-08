@@ -21,7 +21,7 @@ dx_plot_roc(
 )
 }
 \arguments{
-\item{dx_obj}{An object of class `dx` containing the necessary data and statistics for generating the ROC curve.}
+\item{dx_obj}{An object of class \code{dx} containing the necessary data and statistics for generating the ROC curve.}
 
 \item{curve_color}{Color of the ROC curve. Default is "#0057B8".}
 
@@ -45,7 +45,7 @@ dx_plot_roc(
 
 \item{summary_stats}{A vector of integers indicating which statistics to include on the ROC curve. Default is c(1, 2, 3, 4, 5, 6, 7, 8).}
 
-\item{filename}{File name to create on disk using `ggplot2::ggsave`. If left NA, no file will be created.}
+\item{filename}{File name to create on disk using \code{ggplot2::ggsave}. If left NA, no file will be created.}
 }
 \value{
 A ggplot object representing the ROC curve, allowing for further customization if desired.
@@ -58,10 +58,10 @@ the true positive rate (sensitivity) and the false positive rate (1 - specificit
 \details{
 The ROC curve is a widely used tool for diagnosing the performance of binary classification models. It plots the true positive
 rate (sensitivity) against the false positive rate (1 - specificity) for various thresholds. A model with perfect discrimination
-(no overlap in the two distributions) has an ROC curve that passes through the upper left corner (100% sensitivity, 100% specificity).
+(no overlap in the two distributions) has an ROC curve that passes through the upper left corner (100\% sensitivity, 100\% specificity).
 Therefore the closer the ROC curve is to the upper left corner, the higher the overall accuracy of the test.
 
-The `dx_roc` function allows for extensive customization of the ROC curve, including color schemes, reference lines, text annotations,
+The \code{dx_roc} function allows for extensive customization of the ROC curve, including color schemes, reference lines, text annotations,
 and more, to accommodate a variety of visualization needs and preferences.
 
 The area under the ROC curve (AUC) provides a single scalar value summarizing the performance of the test. The AUC can be interpreted as

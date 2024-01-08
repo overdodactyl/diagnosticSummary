@@ -7,15 +7,15 @@
 dx_plot_gain(dx_obj)
 }
 \arguments{
-\item{dx_obj}{A `dx` object containing diagnostic measurements, including a rank data frame
+\item{dx_obj}{A \code{dx} object containing diagnostic measurements, including a rank data frame
 with percentile and gain columns. This object is typically the output of a diagnostic
 function that computes various metrics for evaluating model performance.}
 }
 \value{
-A `ggplot` object representing the Gain chart, allowing for further customization if desired.
+A \code{ggplot} object representing the Gain chart, allowing for further customization if desired.
 }
 \description{
-Constructs a Gain chart from a `dx` object. Gain charts are an evaluative tool for binary
+Constructs a Gain chart from a \code{dx} object. Gain charts are an evaluative tool for binary
 classification models, displaying the effectiveness of the model in identifying positive instances.
 }
 \details{

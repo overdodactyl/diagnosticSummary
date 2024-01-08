@@ -7,14 +7,14 @@
 dx_plot_pr(dx_obj)
 }
 \arguments{
-\item{dx_obj}{A `dx` object containing diagnostic measurements, including a data frame
+\item{dx_obj}{A \code{dx} object containing diagnostic measurements, including a data frame
 with sensitivity (recall) and precision values at various thresholds.}
 }
 \value{
-A `ggplot` object representing the PR curve, which can be further customized as needed.
+A \code{ggplot} object representing the PR curve, which can be further customized as needed.
 }
 \description{
-Plots a Precision-Recall (PR) curve from a `dx` object. The PR curve is a useful tool for
+Plots a Precision-Recall (PR) curve from a \code{dx} object. The PR curve is a useful tool for
 evaluating the performance of a binary classification model, especially in situations where
 classes are imbalanced. It shows the trade-off between precision and recall for different
 thresholds.

@@ -1066,8 +1066,8 @@ pluck_auc_roc_data <- function(dx_obj) {
 #' dx_list <- list(dx_glm, dx_rf)
 #' dx_comp <- dx_compare(dx_list, paired = TRUE)
 #' dx_plot_rocs(dx_comp)
-#' @seealso \code{\link{dx_compare}} to generate the required input object.
-#'          \code{\link{dx_delong}} for details on DeLong's test used in comparisons.
+#' @seealso [dx_compare()] to generate the required input object.
+#'          [dx_delong()] for details on DeLong's test used in comparisons.
 #' @export
 dx_plot_rocs <- function(dx_comp, add_text = TRUE, axis_color = "#333333", text_color = "black") {
   roc_data <- lapply(dx_comp$dx_list, pluck_auc_roc_data)

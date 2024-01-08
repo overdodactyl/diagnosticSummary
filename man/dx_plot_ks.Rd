@@ -7,15 +7,15 @@
 dx_plot_ks(dx_obj)
 }
 \arguments{
-\item{dx_obj}{A `dx` object containing diagnostic measurements, including a rank data frame
+\item{dx_obj}{A \code{dx} object containing diagnostic measurements, including a rank data frame
 with columns for cumulative true positive rate (TPR) and false positive rate (FPR), as well
 as the predicted probabilities associated with each instance.}
 }
 \value{
-A `ggplot` object representing the KS plot, which can be further customized as needed.
+A \code{ggplot} object representing the KS plot, which can be further customized as needed.
 }
 \description{
-Generates a Kolmogorov-Smirnov (KS) plot from a `dx` object. The KS plot is a graphical
+Generates a Kolmogorov-Smirnov (KS) plot from a \code{dx} object. The KS plot is a graphical
 tool used to assess the discriminatory power of a binary classification model by visualizing
 the difference between the cumulative distribution functions of the true positive rate (TPR)
 and false positive rate (FPR) across different thresholds.

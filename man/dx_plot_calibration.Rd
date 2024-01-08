@@ -7,12 +7,12 @@
 dx_plot_calibration(dx_obj, bins = 10)
 }
 \arguments{
-\item{dx_obj}{A list or object containing the model's predicted probabilities (`predicted_probs`) and the actual binary outcomes (`true_labels`).}
+\item{dx_obj}{A list or object containing the model's predicted probabilities (\code{predicted_probs}) and the actual binary outcomes (\code{true_labels}).}
 
 \item{bins}{An integer specifying the number of bins to divide the predicted probabilities into. Default is 10 (deciles).}
 }
 \value{
-A `ggplot` object representing the calibration curve, which can be further customized as needed.
+A \code{ggplot} object representing the calibration curve, which can be further customized as needed.
 }
 \description{
 Generates a calibration plot to assess the calibration of predicted probabilities against observed outcomes.
@@ -23,7 +23,7 @@ for different bins of predicted probabilities.
 The calibration curve is an important diagnostic tool to understand how well a model's predicted probabilities
 match the observed frequencies of the outcomes. A well-calibrated model will have a calibration curve that closely
 follows the diagonal line y = x, indicating that the predicted probabilities are reflective of the true likelihood
-of the event. The curve is constructed by dividing the predicted probabilities into `bins` number of bins and then
+of the event. The curve is constructed by dividing the predicted probabilities into \code{bins} number of bins and then
 plotting the average predicted probability against the observed proportion of positive outcomes in each bin.
 The number of bins can be adjusted to change the granularity of the calibration curve.
 

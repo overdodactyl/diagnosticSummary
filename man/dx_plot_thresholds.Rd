@@ -7,12 +7,12 @@
 dx_plot_thresholds(dx_obj)
 }
 \arguments{
-\item{dx_obj}{A `dx` object containing threshold-based statistics, including values
+\item{dx_obj}{A \code{dx} object containing threshold-based statistics, including values
 for various diagnostic measures at different thresholds.}
 }
 \value{
-A `ggplot` object representing the diagnostic measures across thresholds
-        with the ability to further customize if desired.
+A \code{ggplot} object representing the diagnostic measures across thresholds
+with the ability to further customize if desired.
 }
 \description{
 Generates a line plot to visualize various diagnostic measures across different
@@ -24,7 +24,7 @@ The function plots multiple lines representing different diagnostic measures suc
 as NPV, PPV, sensitivity, specificity, and F1 score across a range of threshold
 values. Each line corresponds to a specific metric, illustrating how the measure
 changes as the classification threshold is varied. A vertical dashed line indicates
-the set threshold in the `dx` object for reference.
+the set threshold in the \code{dx} object for reference.
 
 This plot is particularly useful for understanding the behavior of a classifier
 under different operating conditions and for identifying a threshold that balances

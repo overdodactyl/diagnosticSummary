@@ -15,8 +15,8 @@ dx_auc(truth, predprob, detail = "full")
 for just the AUC value, "full" for the AUC value along with confidence intervals.}
 }
 \value{
-Depending on the `detail` parameter, returns a single numeric value of AUC or
-        a data frame with the AUC and its confidence intervals.
+Depending on the \code{detail} parameter, returns a single numeric value of AUC or
+a data frame with the AUC and its confidence intervals.
 }
 \description{
 Calculates the Area Under the Receiver Operating Characteristic (ROC) Curve from

@@ -1,22 +1,22 @@
 #' Shared Parameters for Diagnostic Metrics
 #'
-#' @param cm A dx_cm object created by \code{\link{dx_cm}}.
+#' @param cm A dx_cm object created by [dx_cm()].
 #' @param detail Character specifying the level of detail in the output:
-#'               "simple" for raw estimate, "full" for detailed estimate
-#'               including 95\% confidence intervals.
+#'    "simple" for raw estimate, "full" for detailed estimate
+#'     including 95% confidence intervals.
 #' @param ... Additional arguments to pass to metric_binomial function, such as
-#'            `citype` for type of confidence interval method.
+#'    `citype` for type of confidence interval method.
 #' @param boot Logical specifying if confidence intervals should be generated
-#'         via bootstrapping.  Note, this can be slow.
+#'    via bootstrapping.  Note, this can be slow.
 #' @param bootreps The number of bootstrap replications for calculating confidence intervals.
 #' @param predprob Numeric vector of predicted probabilities associated with the positive class.
 #' @param truth Numeric vector of true binary outcomes, typically 0 or 1, with the same length as `predprob`.
 #' @param dx1 A `dx` object
 #' @param dx2 A `dx` object
 #' @return Depending on the `detail` parameter, returns a numeric value
-#'         representing the calculated metric or a data frame/tibble with
-#'         detailed diagnostics including confidence intervals and possibly other
-#'         metrics relevant to understanding the metric.
+#'    representing the calculated metric or a data frame/tibble with
+#'    detailed diagnostics including confidence intervals and possibly other
+#'    metrics relevant to understanding the metric.
 #' @name metrics-params
 #' @keywords internal
 metricparams <- function() {
@@ -51,7 +51,7 @@ metricparams <- function() {
 #' detailed_accuracy <- dx_accuracy(cm)
 #' print(simple_accuracy)
 #' print(detailed_accuracy)
-#' @seealso \code{\link{dx_cm}} to understand how to create and interact with a
+#' @seealso [dx_cm()] to understand how to create and interact with a
 #'          'dx_cm' object.
 #' @concept metrics
 #' @export
@@ -86,7 +86,7 @@ dx_accuracy <- function(cm, detail = "full", ...) {
 #' detailed_ppv <- dx_ppv(cm)
 #' print(simple_ppv)
 #' print(detailed_ppv)
-#' @seealso \code{\link{dx_cm}} to understand how to create and interact with a
+#' @seealso [dx_cm()] to understand how to create and interact with a
 #'          'dx_cm' object.
 #' @name ppv
 #' @concept metrics
@@ -128,7 +128,7 @@ dx_precision <- dx_ppv
 #' detailed_npv <- dx_npv(cm)
 #' print(simple_npv)
 #' print(detailed_npv)
-#' @seealso \code{\link{dx_cm}} to understand how to create and interact with a
+#' @seealso [dx_cm()] to understand how to create and interact with a
 #'          'dx_cm' object.
 #' @export
 #' @concept metrics
@@ -164,7 +164,7 @@ dx_npv <- function(cm, detail = "full", ...) {
 #' detailed_fnr <- dx_fnr(cm)
 #' print(simple_fnr)
 #' print(detailed_fnr)
-#' @seealso \code{\link{dx_cm}} to understand how to create and interact with a
+#' @seealso [dx_cm()] to understand how to create and interact with a
 #'          'dx_cm' object.
 #' @export
 #' @concept metrics
@@ -202,7 +202,7 @@ dx_miss_rate <- dx_fnr
 #' detailed_fpr <- dx_fpr(cm)
 #' print(simple_fpr)
 #' print(detailed_fpr)
-#' @seealso \code{\link{dx_cm}} to understand how to create and interact with a
+#' @seealso [dx_cm()] to understand how to create and interact with a
 #'          'dx_cm' object.
 #' @export
 #' @concept metrics
@@ -239,7 +239,7 @@ dx_fall_out <- dx_fpr
 #' detailed_fdr <- dx_fdr(cm)
 #' print(simple_fdr)
 #' print(detailed_fdr)
-#' @seealso \code{\link{dx_cm}} to understand how to create and interact with a
+#' @seealso [dx_cm()] to understand how to create and interact with a
 #'          'dx_cm' object.
 #' @export
 #' @concept metrics
@@ -275,7 +275,7 @@ dx_fdr <- function(cm, detail = "full", ...) {
 #' detailed_sensitivity <- dx_sensitivity(cm)
 #' print(simple_sensitivity)
 #' print(detailed_sensitivity)
-#' @seealso \code{\link{dx_cm}} to understand how to create and interact with a
+#' @seealso [dx_cm()] to understand how to create and interact with a
 #'          'dx_cm' object.
 #' @name sensitivity
 #' @aliases dx_recall, dx_tpr
@@ -318,7 +318,7 @@ dx_tpr <- dx_sensitivity
 #' detailed_specificity <- dx_specificity(cm)
 #' print(simple_specificity)
 #' print(detailed_specificity)
-#' @seealso \code{\link{dx_cm}} to understand how to create and interact with a
+#' @seealso [dx_cm()] to understand how to create and interact with a
 #'          'dx_cm' object.
 #' @name specificity
 #' @aliases dx_tnr
@@ -356,8 +356,8 @@ dx_tnr <- dx_specificity
 #' detailed_balanced_accuracy <- dx_balanced_accuracy(cm)
 #' print(simple_balanced_accuracy)
 #' print(detailed_balanced_accuracy)
-#' @seealso \code{\link{dx_cm}} to understand how to create and interact with a 'dx_cm' object.
-#' @seealso \code{\link{dx_sensitivity}}, \code{\link{dx_specificity}} for the components of balanced accuracy.
+#' @seealso [dx_cm()] to understand how to create and interact with a 'dx_cm' object.
+#' @seealso [dx_sensitivity()], [dx_specificity()] for the components of balanced accuracy.
 #' @export
 #' @concept metrics
 dx_balanced_accuracy <- function(cm, detail = "full", boot = FALSE, bootreps = 1000) {
@@ -404,7 +404,7 @@ calculate_balanced_accuracy <- function(cm) {
 #' detailed_prevalence <- dx_prevalence(cm)
 #' print(simple_prevalence)
 #' print(detailed_prevalence)
-#' @seealso \code{\link{dx_cm}} to understand how to create and interact with a
+#' @seealso [dx_cm()] to understand how to create and interact with a
 #'          'dx_cm' object.
 #' @export
 #' @concept metrics
@@ -442,7 +442,7 @@ dx_prevalence <- function(cm, detail = "full", ...) {
 #' detailed_detection_prevalence <- dx_detection_prevalence(cm)
 #' print(simple_detection_prevalence)
 #' print(detailed_detection_prevalence)
-#' @seealso \code{\link{dx_cm}} to understand how to create and interact with a
+#' @seealso [dx_cm()] to understand how to create and interact with a
 #'          'dx_cm' object.
 #' @export
 #' @concept metrics
@@ -1012,7 +1012,7 @@ calculate_fbeta <- function(cm, beta = 1) {
 #' @param beta The beta value determining the weight of precision in the F-score.
 #' @return Depending on the `detail` parameter, returns a single numeric value of
 #'         F-beta or a data frame with the F-beta and its confidence intervals.
-#' @seealso \code{\link{dx_f1}}, \code{\link{dx_f2}} for specific F-beta scores.
+#' @seealso [dx_f1()], [dx_f2()] for specific F-beta scores.
 #' @export
 #' @examples
 #' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
@@ -1038,7 +1038,7 @@ dx_fbeta <- function(cm, beta = 1, detail = "full", boot = FALSE, bootreps = 100
 #' @inheritParams dx_fbeta
 #' @return Depending on the `detail` parameter, returns a single numeric value of
 #'         F1 or a data frame with the F1 and its confidence intervals.
-#' @seealso \code{\link{dx_fbeta}}, \code{\link{dx_f2}} for other F-beta scores.
+#' @seealso [dx_fbeta()], [dx_f2()] for other F-beta scores.
 #' @export
 #' @concept metrics
 #' @examples
@@ -1064,7 +1064,7 @@ dx_f1 <- function(cm, detail = "full", boot = FALSE, bootreps = 1000) {
 #' @inheritParams dx_fbeta
 #' @return Depending on the `detail` parameter, returns a single numeric value of
 #'         F2 or a data frame with the F2 and its confidence intervals.
-#' @seealso \code{\link{dx_fbeta}}, \code{\link{dx_f1}} for other F-beta scores.
+#' @seealso [dx_fbeta()], [dx_f1()] for other F-beta scores.
 #' @export
 #' @concept metrics
 #' @examples
@@ -1089,7 +1089,7 @@ dx_f2 <- function(cm, detail = "full", boot = FALSE, bootreps = 1000) {
 #' @inherit metrics-params
 #'
 #' @details
-#' Informedness is defined as \code{Informedness = Sensitivity + Specificity - 1}. It is the sum of the true positive rate
+#' Informedness is defined as `Informedness = Sensitivity + Specificity - 1`. It is the sum of the true positive rate
 #' and the true negative rate minus one. It's a useful measure when you want to consider both
 #' the sensitivity and specificity of a test. A higher informedness indicates better overall performance
 #' of the classifier in distinguishing between the classes.
@@ -1104,8 +1104,8 @@ dx_f2 <- function(cm, detail = "full", boot = FALSE, bootreps = 1000) {
 #' detailed_informedness <- dx_informedness(cm)
 #' print(simple_informedness)
 #' print(detailed_informedness)
-#' @seealso \code{\link{dx_cm}} to understand how to create and interact with a 'dx_cm' object.
-#' @seealso \code{\link{dx_sensitivity}}, \code{\link{dx_specificity}} for components of informedness.
+#' @seealso [dx_cm()] to understand how to create and interact with a 'dx_cm' object.
+#' @seealso [dx_sensitivity()], [dx_specificity()] for components of informedness.
 #' @export
 #' @concept metrics
 dx_informedness <- function(cm, detail = "full", boot = FALSE, bootreps = 1000) {
@@ -1134,7 +1134,7 @@ dx_youden_j <- dx_informedness
 #' @inherit metrics-params
 #'
 #' @details
-#' Markedness is defined as \code{Markedness = PPV + NPV - 1}. It is the sum of the proportions
+#' Markedness is defined as `Markedness = PPV + NPV - 1`. It is the sum of the proportions
 #' of predicted positives that are true positives (PPV) and the proportion of predicted negatives
 #' that are true negatives (NPV) minus one. It's a useful measure when you want to consider both
 #' the positive and negative predictive values of a test. A higher markedness indicates better performance.
@@ -1148,8 +1148,8 @@ dx_youden_j <- dx_informedness
 #' detailed_markedness <- dx_markedness(cm)
 #' print(simple_markedness)
 #' print(detailed_markedness)
-#' @seealso \code{\link{dx_cm}} to understand how to create and interact with a 'dx_cm' object.
-#' @seealso \code{\link{dx_ppv}}, \code{\link{dx_npv}} for components of markedness.
+#' @seealso [dx_cm()] to understand how to create and interact with a 'dx_cm' object.
+#' @seealso [dx_ppv()], [dx_npv()] for components of markedness.
 #' @export
 #' @concept metrics
 dx_markedness <- function(cm, detail = "full", boot = FALSE, bootreps = 1000) {
@@ -1191,8 +1191,8 @@ calculate_markedness <- function(cm) {
 #' detailed_g_mean <- dx_g_mean(cm)
 #' print(simple_g_mean)
 #' print(detailed_g_mean)
-#' @seealso \code{\link{dx_cm}} to understand how to create and interact with a 'dx_cm' object.
-#' @seealso \code{\link{dx_sensitivity}}, \code{\link{dx_specificity}} for components of G-mean.
+#' @seealso [dx_cm()] to understand how to create and interact with a 'dx_cm' object.
+#' @seealso [dx_sensitivity()], [dx_specificity()] for components of G-mean.
 #' @export
 #' @concept metrics
 dx_g_mean <- function(cm, detail = "full", boot = FALSE, bootreps = 1000) {
@@ -1232,8 +1232,8 @@ calculate_g_mean <- function(cm) {
 #' detailed_fm_index <- dx_fowlkes_mallows(cm)
 #' print(simple_fm_index)
 #' print(detailed_fm_index)
-#' @seealso \code{\link{dx_cm}} to understand how to create and interact with a 'dx_cm' object.
-#' @seealso \code{\link{dx_ppv}}, \code{\link{dx_sensitivity}} for components of FM Index.
+#' @seealso [dx_cm()] to understand how to create and interact with a 'dx_cm' object.
+#' @seealso [dx_ppv()], [dx_sensitivity()] for components of FM Index.
 #' @export
 #' @concept metrics
 dx_fowlkes_mallows <- function(cm, detail = "full", boot = FALSE, bootreps = 1000) {
@@ -1273,16 +1273,16 @@ check_zero_denominator <- function(denominator, metric) {
 #' @param poslabel The label of the positive class in the truth data.
 #' @return A dataframe object of class "dx_cm" containing the components of the confusion matrix and additional metrics:
 #' \itemize{
-#'   \item \code{tp}: True Positives
-#'   \item \code{fn}: False Negatives
-#'   \item \code{tn}: True Negatives
-#'   \item \code{fp}: False Positives
-#'   \item \code{dispos}: Number of Actual Positives
-#'   \item \code{disneg}: Number of Actual Negatives
-#'   \item \code{n}: Total Number of Observations
-#'   \item \code{correct}: Number of Correct Predictions
-#'   \item \code{testpos}: Number of Predicted Positives
-#'   \item \code{testneg}: Number of Predicted Negatives
+#'   \item `tp`: True Positives
+#'   \item `fn`: False Negatives
+#'   \item `tn`: True Negatives
+#'   \item `fp`: False Positives
+#'   \item `dispos`: Number of Actual Positives
+#'   \item `disneg`: Number of Actual Negatives
+#'   \item `n`: Total Number of Observations
+#'   \item `correct`: Number of Correct Predictions
+#'   \item `testpos`: Number of Predicted Positives
+#'   \item `testneg`: Number of Predicted Negatives
 #' }
 #' @details The function takes predicted probabilities and a threshold to create binary
 #' predictions which are then compared to the true labels to create a confusion matrix.
