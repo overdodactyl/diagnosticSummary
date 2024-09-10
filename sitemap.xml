@@ -1,216 +1,74 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/404.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/index.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/as.data.frame.dx.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/breslow_day_test.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/diagnosticSummary.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_accuracy.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_auc.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_auc_pr.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_balanced_accuracy.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_brier.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_chi_square.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_cm.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_cohens_kappa.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_compare.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_delong.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_detection_prevalence.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_edit_cell.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_f1.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_f2.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_fbeta.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_fdr.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_fishers_exact.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_fowlkes_mallows.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_g_mean.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_g_test.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_heart_failure.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_lrt_neg.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_lrt_pos.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_markedness.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_mcc.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_mcnemars.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_nir.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_npv.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_odds_ratio.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_calibration.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_cap.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_cm.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_cost.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_decision_curve.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_forest.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_gain.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_ks.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_lift.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_pr.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_predictive_value.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_probabilities.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_roc.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_rocs.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_thresholds.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_youden_j.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_prevalence.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_roc_ggtheme.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_z_test.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/expected_cell_count.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/fnr.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/fpr.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/get_roc.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/informedness.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/margin_sums.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/metrics-params.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/ppv.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/sensitivity.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/specificity.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/summary.dx.html</loc>
-  </url>
-  <url>
-    <loc>https://overdodactyl.github.io/diagnosticSummary/reference/variance_a.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/404.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/LICENSE-text.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/LICENSE.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/authors.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/index.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/news/index.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/as.data.frame.dx.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/breslow_day_test.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/diagnosticSummary.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_accuracy.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_auc.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_auc_pr.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_balanced_accuracy.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_brier.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_chi_square.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_cm.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_cohens_kappa.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_compare.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_delong.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_detection_prevalence.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_edit_cell.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_f1.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_f2.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_fbeta.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_fdr.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_fishers_exact.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_fowlkes_mallows.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_g_mean.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_g_test.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_heart_failure.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_lrt_neg.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_lrt_pos.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_markedness.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_mcc.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_mcnemars.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_nir.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_npv.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_odds_ratio.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_calibration.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_cap.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_cm.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_cost.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_decision_curve.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_forest.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_gain.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_ks.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_lift.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_pr.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_predictive_value.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_probabilities.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_roc.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_rocs.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_thresholds.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_youden_j.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_prevalence.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_roc_ggtheme.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/dx_z_test.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/expected_cell_count.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/fnr.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/fpr.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/get_roc.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/index.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/informedness.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/margin_sums.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/metrics-params.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/ppv.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/sensitivity.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/specificity.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/summary.dx.html</loc></url>
+<url><loc>https://overdodactyl.github.io/diagnosticSummary/reference/variance_a.html</loc></url>
 </urlset>
+
