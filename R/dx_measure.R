@@ -32,7 +32,7 @@ dx_thresholds <- function(data, options) {
     f1[i] <- dx_f1(perf, detail = "simple")
     fpr[i] <- dx_fpr(perf, detail = "simple")
     npv[i] <- dx_npv(perf, detail = "simple")
-    ppv[i] <- dx_npv(perf, detail = "simple")
+    ppv[i] <- dx_ppv(perf, detail = "simple")
 
     # Calculate net benefit
     weight <- threshold / (1 - threshold)
