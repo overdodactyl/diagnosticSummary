@@ -14,7 +14,7 @@
 #'     with 1 being the event
 #' @param outcome_label Label for outcome (string)
 #' @param grouping_variables Character vector of variable names to
-#'     be summarized by.  These variables should all be factors.
+#'     be summarized by.  Variables are converted to factors if not already one.
 #' @param citype Confidence interval type.
 #' @param bootreps Number of bootstrap samples used to generate F1 score CI
 #' @param bootseed Seed value to be used when calculating bootsraped CI's
@@ -46,7 +46,7 @@ dx <- function(data,
   if (!identical(grouping_variables, NA)) {
     for (f in grouping_variables) {
       if (!is.factor(data[[f]])) {
-        stop("All variables in `grouping_variables` should be a factor.")
+        data[[f]] <- as.factor(data[[f]])
       }
     }
   }

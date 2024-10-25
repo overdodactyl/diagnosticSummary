@@ -42,7 +42,7 @@ to identify AI prediction}
 with 1 being the event}
 
 \item{grouping_variables}{Character vector of variable names to
-be summarized by.  These variables should all be factors.}
+be summarized by.  Variables are converted to factors if not already one.}
 
 \item{citype}{Confidence interval type.}
 

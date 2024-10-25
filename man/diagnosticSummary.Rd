@@ -2,8 +2,26 @@
 % Please edit documentation in R/diagnosticSummary.R
 \docType{package}
 \name{diagnosticSummary}
+\alias{diagnosticSummary-package}
 \alias{diagnosticSummary}
 \title{\code{diagnosticSummary} package}
 \description{
 Diagnostic Summaries
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://overdodactyl.github.io/diagnosticSummary/}
+  \item \url{https://github.com/overdodactyl/diagnosticSummary/}
+}
+
+}
+\author{
+\strong{Maintainer}: Pat Johnson \email{Johnson.Patrick3@mayo.edu} (\href{https://orcid.org/0000-0001-8365-1375}{ORCID})
+
+Authors:
+\itemize{
+  \item Rickey Carter \email{Carter.Rickey@mayo.edu}
+}
+
 }

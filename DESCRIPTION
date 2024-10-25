@@ -1,6 +1,6 @@
 Package: diagnosticSummary
 Title: Diagnostic Summaries
-Version: 0.0.2.00
+Version: 0.0.2.10
 Authors@R: 
   c(person(given = "Pat",
            family = "Johnson",
@@ -31,7 +31,7 @@ Suggests:
     caret,
     broom,
     tibble
-RoxygenNote: 7.1.2
+RoxygenNote: 7.3.1
 Language: en-US
 URL: https://overdodactyl.github.io/diagnosticSummary/, https://github.com/overdodactyl/diagnosticSummary/
 Roxygen: list(markdown = TRUE)

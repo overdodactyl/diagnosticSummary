@@ -7,8 +7,7 @@
 dx_z_test(
   dx1,
   dx2,
-  metric = c("accuracy", "ppv", "npv", "fnr", "fpr", "fdr", "sensitivity",
-    "specificity"),
+  metric = c("accuracy", "ppv", "npv", "fnr", "fpr", "fdr", "sensitivity", "specificity"),
   detail = "full"
 )
 }
