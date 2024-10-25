@@ -165,7 +165,7 @@ dx_plot_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
   tbl_data <- tbl_data[order]
   rownames(tbl_data) <- NULL
 
-  tbl_data <- rbind_all(tbl_data, NA)
+  tbl_data[nrow(tbl_data) + 1, ] <- NA
 
   tbl_data[is.na(tbl_data)] <- ""
 
