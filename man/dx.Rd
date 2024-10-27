@@ -14,6 +14,7 @@ dx(
   setthreshold = 0.5,
   poslabel = 1,
   grouping_variables = NA,
+  prevalence = NA,
   citype = "exact",
   bootreps = 2000,
   bootseed = 20191015,
@@ -43,6 +44,9 @@ with 1 being the event}
 
 \item{grouping_variables}{Character vector of variable names to
 be summarized by.  Variables are converted to factors if not already one.}
+
+\item{prevalence}{Numeric value between 0 and 1, representing a target
+prevalence for additional NPV and PPV calculations.}
 
 \item{citype}{Confidence interval type.}
 

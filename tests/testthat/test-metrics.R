@@ -365,3 +365,45 @@ test_that("Metric Binomial", {
   }
 
 })
+
+test_that("NPV Prevalence", {
+
+  cm <- list(tp = 240, tn = 288, dispos = 418, disneg = 375)
+
+  npv1 <- dx_npv_prevalence(cm, prevalence = .03)
+
+  expect_equal(npv1$estimate, 0.98314039)
+  expect_equal(npv1$conf_low, 0.98094879)
+  expect_equal(npv1$conf_high, 0.98508370)
+
+
+  npv2 <- dx_npv_prevalence(cm, prevalence = .5)
+
+  expect_equal(npv2$estimate, 0.6433037, tolerance = 1e-7)
+  expect_equal(npv2$conf_low, 0.6142686)
+  expect_equal(npv2$conf_high, 0.6713227, tolerance = 1e-7)
+
+})
+
+test_that("PPV Prevalence", {
+
+  cm <- list(tp = 240, tn = 288, dispos = 418, disneg = 375)
+
+  ppv1 <- dx_ppv_prevalence(cm, prevalence = .03)
+
+  expect_equal(ppv1$estimate, 0.07109937)
+  expect_equal(ppv1$conf_low, 0.05887097)
+  expect_equal(ppv1$conf_high, 0.08563667)
+
+
+  ppv2 <- dx_ppv_prevalence(cm, prevalence = .5)
+
+  expect_equal(ppv2$estimate, 0.7122169)
+  expect_equal(ppv2$conf_low, 0.6691552)
+  expect_equal(ppv2$conf_high, 0.7517531)
+
+})
+
+
+
+

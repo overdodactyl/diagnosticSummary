@@ -9,3 +9,6 @@ docs/
 inst/WORDLIST
 docs
 test_cases
+renv/
+.Rprofile
+renv.lock

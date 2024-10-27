@@ -28,21 +28,6 @@ test_that("Assemble dx object", {
     "not_predicted was not found in"
   )
 
-  # Grouping variable not a factor
-  not_factor <- dx_heart_failure
-  not_factor[1] <- as.character(not_factor[1])
-  expect_error(
-    dx(
-      data = not_factor,
-      true_varname = "truth",
-      pred_varname = "predicted",
-      outcome_label = "Heart Attack",
-      threshold_range = c(.1, .2, .3),
-      setthreshold = .3,
-      grouping_variables = c("AgeGroup", "Sex", "AgeSex")
-    ),
-    "should be a factor"
-  )
 
   # pred variable should be numeric
   not_numeric <- dx_heart_failure

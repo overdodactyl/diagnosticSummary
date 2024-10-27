@@ -197,6 +197,12 @@ dx_measure <- function(data, threshold, options, var = "Overall",
   # Apply the generic function to all metrics and combine results
   metrics_list <- lapply(metric_calculations, call_metric)
 
+  if (!is.na(options$prevalence)) {
+    metrics_list$npv_prevalence <- dx_npv_prevalence(cm, prevalence = options$prevalence)
+    metrics_list$ppv_prevalence <- dx_ppv_prevalence(cm, prevalence = options$prevalence)
+  }
+
+
   # Combine all metric results into one data frame
   results <- do.call(rbind, metrics_list)
 

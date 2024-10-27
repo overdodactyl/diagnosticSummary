@@ -15,6 +15,8 @@
 #' @param outcome_label Label for outcome (string)
 #' @param grouping_variables Character vector of variable names to
 #'     be summarized by.  Variables are converted to factors if not already one.
+#' @param prevalence Numeric value between 0 and 1, representing a target
+#'     prevalence for additional NPV and PPV calculations.
 #' @param citype Confidence interval type.
 #' @param bootreps Number of bootstrap samples used to generate F1 score CI
 #' @param bootseed Seed value to be used when calculating bootsraped CI's
@@ -27,7 +29,7 @@
 dx <- function(data,
                classlabels = c("Negative", "Positive"),
                threshold_range = NA, outcome_label = NA, pred_varname, true_varname,
-               setthreshold = .5, poslabel = 1, grouping_variables = NA,
+               setthreshold = .5, poslabel = 1, grouping_variables = NA, prevalence = NA,
                citype = "exact", bootreps = 2000, bootseed = 20191015,
                doboot = FALSE, direction = "auto", ...) {
 
@@ -84,6 +86,7 @@ dx <- function(data,
     setthreshold = setthreshold,
     poslabel = poslabel,
     grouping_variables = grouping_variables,
+    prevalence = prevalence,
     citype = citype,
     bootreps = bootreps,
     bootseed = bootseed,

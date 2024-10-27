@@ -136,6 +136,124 @@ dx_npv <- function(cm, detail = "full", ...) {
   metric_binomial(cm$tn, cm$testneg, name = "Negative Predictive Value", detail = detail, ...)
 }
 
+metric_npv_ppv_prevalence <- function(est, logit, varlogit, ...) {
+  cc <- stats::qnorm(1 - (1 - 0.95) / 2)
+  lci_logit <- logit - cc * sqrt(varlogit)
+  uci_logit <- logit + cc * sqrt(varlogit)
+
+  lower <- exp(lci_logit) / ( 1 + exp(lci_logit))
+  upper <- exp(uci_logit) / ( 1 + exp(uci_logit))
+
+  formatted_estimate <- conf_int(
+    est,
+    lower,
+    upper,
+    percent = TRUE
+  )
+
+  measure_df(
+    estimate = formatted_estimate,
+    estimate_raw = est,
+    lci_raw = lower,
+    uci_raw = upper,
+    ci_type = "Simple Logit (Mercaldo et al, 2007)",
+    ...
+  )
+}
+
+#' Calculate Negative Predictive Value (NPV) at Target Prevalence
+#'
+#' Computes the Negative Predictive Value (NPV) adjusted to a specified prevalence
+#' level. This function is useful for understanding classifier performance in settings
+#' where the actual prevalence of the condition may differ from that in the initial data.
+#'
+#' @inherit metrics-params
+#'
+#' @param prevalence Numeric value between 0 and 1, representing the target prevalence
+#'        for adjusting the NPV calculation.
+#'
+#' @details
+#' This function calculates the NPV using the formula:
+#' \deqn{NPV = \frac{Specificity \times (1 - Prevalence)}{(1 - Sensitivity) \times Prevalence + Specificity \times (1 - Prevalence)}}
+#' where `Specificity` is the true negative rate and `Sensitivity` is the true positive rate.
+#' Adjusting NPV for prevalence allows better estimation of the classifier’s performance
+#' in different population settings.
+#'
+#' Confidence intervales are calucated using a simple logit (Mercaldo et al, 2007)
+#'
+#' @examples
+#' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
+#'   threshold = 0.5, poslabel = 1
+#' )
+#' # Calculate NPV at a prevalence of 0.1
+#' dx_npv_prevalence(cm, prevalence = 0.1)
+#'
+#' @seealso [dx_cm()], [dx_npv()] for the non-prevalence adjusted NPV.
+#' @export
+#' @concept metrics
+dx_npv_prevalence <- function(cm, prevalence, detail = "full", ...) {
+  spec <- dx_specificity(cm, detail = "simple")
+  sens <- dx_sensitivity(cm, detail = "simple")
+  npv <- (spec * (1 - prevalence)) / ((1 - sens) * prevalence + spec * (1 - prevalence))
+  if (detail == "simple") return(npv)
+  logit <- log((spec * (1 - prevalence)) / ((1 - sens) * prevalence))
+  varlogit <-  (sens / (1 - sens)) * 1 / cm$dispos + ((1 - spec) / spec ) * 1 / cm$disneg
+  metric_npv_ppv_prevalence(
+    est = npv,
+    logit,
+    varlogit,
+    measure = "Negative Predictive Value (Target Prevalence)",
+    notes = paste0("Prevalence value: ", prevalence)
+  )
+}
+
+#' Calculate Positive Predictive Value (PPV) at Target Prevalence
+#'
+#' Computes the Positive Predictive Value (PPV) adjusted to a specified prevalence
+#' level. This function is useful for understanding classifier performance in settings
+#' where the actual prevalence of the condition may differ from that in the initial data.
+#'
+#' @inherit metrics-params
+#'
+#' @param prevalence Numeric value between 0 and 1, representing the target prevalence
+#'        for adjusting the PPV calculation.
+#' @details
+#' This function calculates the PPV using the formula:
+#' \deqn{PPV = \frac{Sensitivity \times Prevalence}{(Sensitivity \times Prevalence) + (1 - Specificity) \times (1 - Prevalence)}}
+#' where `Sensitivity` is the true positive rate and `Specificity` is the true negative rate.
+#' Adjusting PPV for prevalence allows a more accurate assessment of the classifier’s performance
+#' in different population settings.
+#'
+#' Confidence intervales are calucated using a simple logit (Mercaldo et al, 2007)
+#'
+#' @examples
+#' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
+#'   threshold = 0.5, poslabel = 1
+#' )
+#' # Calculate PPV at a prevalence of 0.1
+#' dx_ppv_prevalence(cm, prevalence = 0.1)
+#'
+#' @seealso [dx_cm()], [dx_ppv()] for the non-prevalence adjusted PPV.
+#' @export
+#' @concept metrics
+dx_ppv_prevalence <- function(cm, prevalence, detail = "full", ...) {
+  spec <- dx_specificity(cm, detail = "simple")
+  sens <- dx_sensitivity(cm, detail = "simple")
+  ppv <- (sens * prevalence) / ((sens * prevalence) + (1-spec) * (1 - prevalence))
+
+  if (detail == "simple") return(ppv)
+
+  logit <- log((sens * prevalence) / ((1 - spec) * (1 - prevalence)))
+  varlogit <- ((1 - sens) / sens ) * 1 / cm$dispos + (spec / (1 - spec) ) * 1 / cm$disneg
+  metric_npv_ppv_prevalence(
+    est = ppv,
+    logit,
+    varlogit,
+    measure = "Positive Predictive Value (Target Prevalence)",
+    notes = paste0("Prevalence value: ", prevalence)
+  )
+}
+
 #' Calculate False Negative Rate (FNR)
 #'
 #' Calculates the False Negative Rate (FNR), which is the proportion of actual positives
