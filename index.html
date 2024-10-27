@@ -19,6 +19,7 @@
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Diagnostic Summaries">
 <meta name="description" content="Quickly create diagnostic summaries for binary classification data.">
 <meta property="og:description" content="Quickly create diagnostic summaries for binary classification data.">
+<meta property="og:image" content="https://overdodactyl.github.io/diagnosticSummary/logo.png">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -53,8 +54,10 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9"><div class="section level1">
-<div class="page-header"><h1 id="diagnosticsummary-">diagnosticSummary <img src="reference/figures/logo.png" align="right"><a class="anchor" aria-label="anchor" href="#diagnosticsummary-"></a>
-</h1></div>
+<div class="page-header">
+<img src="logo.png" class="logo" alt=""><h1 id="diagnosticsummary-">diagnosticSummary <a class="anchor" aria-label="anchor" href="#diagnosticsummary-"></a>
+</h1>
+</div>
 <!-- badges: start -->
 
 <p><code>diagnosticSummary</code> is designed to quickly create diagnostic summaries and reports for binary classification data.</p>
@@ -74,14 +77,15 @@
 <span><span class="co"># Load sample data</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"dx_heart_failure"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">dx_heart_failure</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   AgeGroup    Sex truth   predicted           AgeSex</span></span>
-<span><span class="co">#&gt; 1  (20,50]   Male     0 0.016164112   (20,50] - Male</span></span>
-<span><span class="co">#&gt; 2  (20,50]   Male     0 0.074193671   (20,50] - Male</span></span>
-<span><span class="co">#&gt; 3  (20,50] Female     0 0.004677979 (20,50] - Female</span></span>
-<span><span class="co">#&gt; 4  (20,50] Female     0 0.017567313 (20,50] - Female</span></span>
-<span><span class="co">#&gt; 5  (20,50] Female     0 0.017517025 (20,50] - Female</span></span>
-<span><span class="co">#&gt; 6  (20,50]   Male     0 0.051570734   (20,50] - Male</span></span>
-<span></span>
+<span><span class="co">#&gt;   AgeGroup    Sex truth   predicted           AgeSex predicted_rf</span></span>
+<span><span class="co">#&gt; 1  (20,50]   Male     0 0.016164112   (20,50] - Male   0.19774011</span></span>
+<span><span class="co">#&gt; 2  (20,50]   Male     0 0.074193671   (20,50] - Male   0.04624277</span></span>
+<span><span class="co">#&gt; 3  (20,50] Female     0 0.004677979 (20,50] - Female   0.22448980</span></span>
+<span><span class="co">#&gt; 4  (20,50] Female     0 0.017567313 (20,50] - Female   0.09326425</span></span>
+<span><span class="co">#&gt; 5  (20,50] Female     0 0.017517025 (20,50] - Female   0.04878049</span></span>
+<span><span class="co">#&gt; 6  (20,50]   Male     0 0.051570734   (20,50] - Male   0.10982659</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="co"># Create dx object</span></span>
 <span><span class="va">dx_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dx.html">dx</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">dx_heart_failure</span>,</span>
@@ -94,7 +98,7 @@
 <span>  bootreps <span class="op">=</span> <span class="fl">1000</span>,</span>
 <span>  grouping_variables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AgeGroup"</span>, <span class="st">"Sex"</span>, <span class="st">"AgeSex"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">dx_obj</span>, variable <span class="op">=</span> <span class="st">"Overall"</span>, show_var <span class="op">=</span> <span class="cn">F</span>, show_label <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
@@ -140,11 +144,11 @@
 </tr>
 <tr class="even">
 <td align="left">F1 Score</td>
-<td align="left">75.5% (68.3%, 81.5%)</td>
+<td align="left">75.5% (68.6%, 81.2%)</td>
 </tr>
 <tr class="odd">
 <td align="left">F2 Score</td>
-<td align="left">80.7% (74.0%, 86.4%)</td>
+<td align="left">80.7% (73.9%, 86.3%)</td>
 </tr>
 <tr class="even">
 <td align="left">Prevalence</td>
@@ -172,27 +176,27 @@
 </tr>
 <tr class="even">
 <td align="left">Matthews Correlation Coefficient</td>
-<td align="left">59.0% (48.9%, 68.4%)</td>
+<td align="left">59.0% (49.6%, 68.1%)</td>
 </tr>
 <tr class="odd">
 <td align="left">Balanced Accuracy</td>
-<td align="left">80.4% (75.3%, 85.1%)</td>
+<td align="left">80.4% (75.5%, 85.5%)</td>
 </tr>
 <tr class="even">
 <td align="left">Informedness</td>
-<td align="left">60.8% (50.9%, 70.7%)</td>
+<td align="left">60.8% (51.2%, 69.9%)</td>
 </tr>
 <tr class="odd">
 <td align="left">Markedness</td>
-<td align="left">57.2% (47.4%, 67.2%)</td>
+<td align="left">57.2% (47.2%, 66.7%)</td>
 </tr>
 <tr class="even">
 <td align="left">G-mean</td>
-<td align="left">80.3% (75.1%, 84.8%)</td>
+<td align="left">80.3% (75.5%, 85.0%)</td>
 </tr>
 <tr class="odd">
 <td align="left">Fowlkes-Mallows Index</td>
-<td align="left">75.9% (69.6%, 81.4%)</td>
+<td align="left">75.9% (69.7%, 81.7%)</td>
 </tr>
 <tr class="even">
 <td align="left">Brier Score</td>
@@ -203,14 +207,10 @@
 <td align="left">p&lt;0.01</td>
 </tr>
 <tr class="even">
-<td align="left">Pearson’s Chi-squared</td>
-<td align="left">p&lt;0.01</td>
-</tr>
-<tr class="odd">
 <td align="left">Fisher’s Exact</td>
 <td align="left">p&lt;0.01</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">G-Test</td>
 <td align="left">p&lt;0.01</td>
 </tr>
