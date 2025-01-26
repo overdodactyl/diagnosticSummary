@@ -2,7 +2,7 @@
 #'
 #' Diagnostic Summaries
 #'
-#' @docType package
+#' @docType _PACKAGE
 #' @name diagnosticSummary
 NULL
 
