@@ -505,14 +505,17 @@ dx_prep_variable <- function(dx_obj, data,
   # Filter out rows where 'rawestime' is NA
   rawdata <- rawdata[!is.na(rawdata$estimate), ]
 
-  res <- utils::unstack(res_sel, form = summary ~ measure)
-  names(res) <- gsub("\\.", " ", names(res))
-  if (var == "Overall") {
-    res <- as.data.frame(t(res))
-    names(res) <- gsub("\\-", " ", names(res))
-  }
-  res$group <- unique(res_sel$group)
+  res <- stats::reshape(
+    res_sel,
+    idvar = "group",
+    timevar = "measure",
+    direction = "wide"
+  )
+
+  names(res) <- gsub("summary.", "", names(res))
+
   res <- merge(res, rawdata, by = "group", all.x = TRUE)
+
   if (var != "Overall") {
     res$group <- factor(res$group, levels = levels(dx_obj$data[[orig_var]]))
     res <- res[order(res$group), ]
