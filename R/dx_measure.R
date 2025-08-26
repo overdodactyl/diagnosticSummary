@@ -227,7 +227,7 @@ dx_group_measure <- function(data, options, group_varname) {
   datalist <- list()
 
   for (i in seq_along(group_labels)) {
-    subsetdata <- data[data[[group_varname]] == group_labels[i], ]
+    subsetdata <- data[data[[group_varname]] == group_labels[i] & !is.na(data[[group_varname]]), ]
 
     if (dim(subsetdata)[1] > 0) {
       datalist[[i]] <- dx_measure(
