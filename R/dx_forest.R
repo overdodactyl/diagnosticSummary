@@ -656,7 +656,7 @@ dx_forest_to_gg <- function(plot, scale = 1, hjust = 0, vjust = 0, ...) {
   ymin <- xmin <- 1 - scale
   xmax <- ymax <- scale
 
-  ggplot2::ggplot(data.frame(x = 0:1, y = 0:1), ggplot2::aes_(x = ~x, y = ~y)) +
+  ggplot2::ggplot(data.frame(x = 0:1, y = 0:1), ggplot2::aes(x = .data$x, y = .data$y)) +
     ggplot2::geom_blank() +
     ggplot2::scale_x_continuous(limits = c(0, 1), expand = c(0, 0)) +
     ggplot2::scale_y_continuous(limits = c(0, 1), expand = c(0, 0)) +

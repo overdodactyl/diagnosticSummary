@@ -49,3 +49,23 @@ test_that("Confusion Matrix", {
 test_that("ROC", {
   expect_no_error(dx_plot_roc(dx_obj))
 })
+
+test_that("Forest Plot", {
+  skip_if_not_installed("gridExtra")
+  skip_if_not_installed("gtable")
+
+  dx_grp <- dx(
+    data = dx_heart_failure,
+    true_varname = "truth",
+    pred_varname = "predicted",
+    outcome_label = "Heart Attack",
+    setthreshold = .3,
+    grouping_variables = c("AgeGroup", "Sex"),
+    doboot = FALSE
+  )
+
+  op <- options(lifecycle_verbosity = "warning")
+  on.exit(options(op))
+
+  expect_no_warning(dx_plot_forest(dx_grp), class = "lifecycle_warning_deprecated")
+})
