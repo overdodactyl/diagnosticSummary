@@ -5,11 +5,14 @@
 #'
 #' @param data A tbl.
 #' @param classlabels Labels for predicted variable.  Needs to be 0, 1 order.
-#' @param pred_varname Column name containing AI prediction (string)
+#' @param pred_varname Column name containing AI prediction (string). Values
+#'     should be predicted probabilities between 0 and 1, with no missing values.
 #' @param setthreshold A numeric value representing the threshold used
 #'     to identify AI prediction
 #' @param threshold_range Optional. A numeric vector of thresholds to loop over.
-#' @param true_varname Column name containing AI reference standard (string)
+#' @param true_varname Column name containing AI reference standard (string).
+#'     Values should be 0 or 1 (numeric, logical, factor, or character), with
+#'     no missing values, and both classes must be present.
 #' @param poslabel Positive class.  Variable should be coded as 0/1
 #'     with 1 being the event
 #' @param outcome_label Label for outcome (string)
@@ -58,11 +61,59 @@ dx <- function(data,
     stop(paste(pred_varname, "should be numeric"))
   }
 
+  # Check for missing values
+  for (v in c(pred_varname, true_varname)) {
+    n_missing <- sum(is.na(data[[v]]))
+    if (n_missing > 0) {
+      stop(paste0(
+        v, " contains ", n_missing, " missing value(s). ",
+        "Remove or impute missing values before calling dx()."
+      ))
+    }
+  }
+
+  # Check if pred_varname contains probabilities
+  pred_range <- range(data[[pred_varname]])
+  if (pred_range[1] < 0 || pred_range[2] > 1) {
+    stop(paste0(
+      pred_varname, " should contain predicted probabilities between 0 and 1, ",
+      "but ranges from ", signif(pred_range[1], 3), " to ", signif(pred_range[2], 3), ". ",
+      "If these are logits, convert them with plogis()."
+    ))
+  }
+
+  # Convert logical, factor, or character truth coded as 0/1 to numeric
+  truth <- data[[true_varname]]
+  if (is.logical(truth) || is.factor(truth) || is.character(truth)) {
+    if (is.logical(truth)) {
+      truth <- as.numeric(truth)
+    } else if (all(as.character(truth) %in% c("0", "1"))) {
+      truth <- as.numeric(as.character(truth))
+    }
+    data[[true_varname]] <- truth
+  }
+
   # Check if true_varname consists of only c(0,1)
   if (!all(data[[true_varname]] %in% c(0, 1))) {
     stop(paste(
       true_varname,
       "should be numeric vector consisting of only 0's and 1's"
+    ))
+  }
+
+  # Check that both classes are present
+  if (length(unique(data[[true_varname]])) < 2) {
+    stop(paste0(
+      true_varname, " should contain both 0's and 1's, but only contains ",
+      unique(data[[true_varname]]), "'s"
+    ))
+  }
+
+  # Check that predictions vary
+  if (length(unique(data[[pred_varname]])) < 2) {
+    stop(paste0(
+      "All values of ", pred_varname, " are identical (",
+      unique(data[[pred_varname]]), "). At least two distinct values are needed."
     ))
   }
 
