@@ -7,7 +7,8 @@
 #' @param ... Additional arguments to pass to metric_binomial function, such as
 #'    `citype` for type of confidence interval method.
 #' @param boot Logical specifying if confidence intervals should be generated
-#'    via bootstrapping.  Note, this can be slow.
+#'    via a percentile bootstrap of the confusion matrix cell counts. Call
+#'    [set.seed()] first for reproducible intervals.
 #' @param bootreps The number of bootstrap replications for calculating confidence intervals.
 #' @param predprob Numeric vector of predicted probabilities associated with the positive class.
 #' @param truth Numeric vector of true binary outcomes, typically 0 or 1, with the same length as `predprob`.
@@ -482,7 +483,7 @@ dx_tnr <- dx_specificity
 #' @seealso [dx_sensitivity()], [dx_specificity()] for the components of balanced accuracy.
 #' @export
 #' @concept metrics
-dx_balanced_accuracy <- function(cm, detail = "full", boot = FALSE, bootreps = 1000) {
+dx_balanced_accuracy <- function(cm, detail = "full", boot = FALSE, bootreps = 2000) {
   evaluate_metric(
     cm,
     calculate_balanced_accuracy,
@@ -742,7 +743,7 @@ dx_cohens_kappa <- function(cm, detail = "full") {
 #'
 #' @export
 #' @concept metrics
-dx_mcc <- function(cm, detail = "full", boot = FALSE, bootreps = 1000) {
+dx_mcc <- function(cm, detail = "full", boot = FALSE, bootreps = 2000) {
   evaluate_metric(cm, calculate_mcc, "Matthews Correlation Coefficient", detail, boot, bootreps)
 }
 
@@ -1304,7 +1305,7 @@ calculate_fbeta <- function(cm, beta = 1) {
 #' print(simple_f)
 #' print(detailed_f)
 #' @concept metrics
-dx_fbeta <- function(cm, beta = 1, detail = "full", boot = FALSE, bootreps = 1000) {
+dx_fbeta <- function(cm, beta = 1, detail = "full", boot = FALSE, bootreps = 2000) {
   evaluate_metric(cm, calculate_fbeta, paste0("F", beta, " Score"), detail, boot, bootreps, beta = beta)
 }
 
@@ -1330,7 +1331,7 @@ dx_fbeta <- function(cm, beta = 1, detail = "full", boot = FALSE, bootreps = 100
 #' detailed_f <- dx_f1(cm)
 #' print(simple_f)
 #' print(detailed_f)
-dx_f1 <- function(cm, detail = "full", boot = FALSE, bootreps = 1000) {
+dx_f1 <- function(cm, detail = "full", boot = FALSE, bootreps = 2000) {
   dx_fbeta(cm, beta = 1, detail, boot, bootreps)
 }
 
@@ -1356,7 +1357,7 @@ dx_f1 <- function(cm, detail = "full", boot = FALSE, bootreps = 1000) {
 #' detailed_f <- dx_f2(cm)
 #' print(simple_f)
 #' print(detailed_f)
-dx_f2 <- function(cm, detail = "full", boot = FALSE, bootreps = 1000) {
+dx_f2 <- function(cm, detail = "full", boot = FALSE, bootreps = 2000) {
   dx_fbeta(cm, beta = 2, detail, boot, bootreps)
 }
 
@@ -1388,7 +1389,7 @@ dx_f2 <- function(cm, detail = "full", boot = FALSE, bootreps = 1000) {
 #' @seealso [dx_sensitivity()], [dx_specificity()] for components of informedness.
 #' @export
 #' @concept metrics
-dx_informedness <- function(cm, detail = "full", boot = FALSE, bootreps = 1000) {
+dx_informedness <- function(cm, detail = "full", boot = FALSE, bootreps = 2000) {
   evaluate_metric(cm, calculate_informedness, "Informedness", detail, boot, bootreps)
 }
 
@@ -1432,7 +1433,7 @@ dx_youden_j <- dx_informedness
 #' @seealso [dx_ppv()], [dx_npv()] for components of markedness.
 #' @export
 #' @concept metrics
-dx_markedness <- function(cm, detail = "full", boot = FALSE, bootreps = 1000) {
+dx_markedness <- function(cm, detail = "full", boot = FALSE, bootreps = 2000) {
   evaluate_metric(cm, calculate_markedness, "Markedness", detail, boot, bootreps)
 }
 
@@ -1475,7 +1476,7 @@ calculate_markedness <- function(cm) {
 #' @seealso [dx_sensitivity()], [dx_specificity()] for components of G-mean.
 #' @export
 #' @concept metrics
-dx_g_mean <- function(cm, detail = "full", boot = FALSE, bootreps = 1000) {
+dx_g_mean <- function(cm, detail = "full", boot = FALSE, bootreps = 2000) {
   evaluate_metric(cm, calculate_g_mean, "G-mean", detail, boot, bootreps)
 }
 
@@ -1516,7 +1517,7 @@ calculate_g_mean <- function(cm) {
 #' @seealso [dx_ppv()], [dx_sensitivity()] for components of FM Index.
 #' @export
 #' @concept metrics
-dx_fowlkes_mallows <- function(cm, detail = "full", boot = FALSE, bootreps = 1000) {
+dx_fowlkes_mallows <- function(cm, detail = "full", boot = FALSE, bootreps = 2000) {
   evaluate_metric(cm, calculate_fowlkes_mallows, "Fowlkes-Mallows Index", detail, boot, bootreps)
 }
 

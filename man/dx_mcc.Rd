@@ -4,7 +4,7 @@
 \alias{dx_mcc}
 \title{Calculate Matthews Correlation Coefficient (MCC)}
 \usage{
-dx_mcc(cm, detail = "full", boot = FALSE, bootreps = 1000)
+dx_mcc(cm, detail = "full", boot = FALSE, bootreps = 2000)
 }
 \arguments{
 \item{cm}{A dx_cm object created by \code{\link[=dx_cm]{dx_cm()}}.}
@@ -14,7 +14,8 @@ dx_mcc(cm, detail = "full", boot = FALSE, bootreps = 1000)
 including 95\% confidence intervals.}
 
 \item{boot}{Logical specifying if confidence intervals should be generated
-via bootstrapping.  Note, this can be slow.}
+via a percentile bootstrap of the confusion matrix cell counts. Call
+\code{\link[=set.seed]{set.seed()}} first for reproducible intervals.}
 
 \item{bootreps}{The number of bootstrap replications for calculating confidence intervals.}
 }

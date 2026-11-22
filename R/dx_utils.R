@@ -225,45 +225,30 @@ dx_breslow_day <- function(data, options, group_varname) {
   return(measure)
 }
 
-recreate_data_from_cm <- function(cm) {
-  # Create synthetic truth vector based on true positive (tp), false negative (fn),
-  # true negative (tn), and false positive (fp) counts
-  truth <- c(rep(1, cm$tp + cm$fn), rep(0, cm$tn + cm$fp))
+# Percentile bootstrap CI for a metric that depends only on the 2x2 table.
+# Resampling n cases with replacement from the table is the same as drawing
+# the four cell counts from a multinomial distribution with the observed cell
+# proportions, so draw the counts directly and compute every replicate at once.
+# Metrics that use the predictions themselves (e.g. AUC) would need case
+# resampling instead.
+boot_metric <- function(cm, metric_func, metric_args, bootreps, measure_name) {
+  counts <- stats::rmultinom(bootreps, size = cm$n, prob = c(cm$tp, cm$fn, cm$tn, cm$fp))
+  storage.mode(counts) <- "double"
+  cm_boot <- cm_from_counts(tp = counts[1, ], fn = counts[2, ], tn = counts[3, ], fp = counts[4, ])
+  boot_metrics <- do.call(metric_func, c(list(cm = cm_boot), metric_args))
 
-  # Create synthetic predicted probabilities vector
-  # Assuming binary classification
-  # predicted probabilities are either 1 (for positive class) or 0 (for negative class)
-  predprob <- c(rep(1, cm$tp), rep(0, cm$fn), rep(1, cm$fp), rep(0, cm$tn))
-
-  return(list(truth = truth, predprob = predprob))
-}
-
-boot_metric <- function(truth, predprob, metric_func, metric_args, bootreps, measure_name) {
-  boot_metrics <- numeric(bootreps)
-  for (i in 1:bootreps) {
-    indices <- sample(seq_along(truth), length(truth), replace = TRUE)
-    truth_boot <- truth[indices]
-    predprob_boot <- predprob[indices]
-
-    cm_boot <- dx_cm(predprob_boot, truth_boot, threshold = 0.5, poslabel = 1)
-    boot_metrics[i] <- do.call(metric_func, c(list(cm = cm_boot), metric_args))
-  }
-
-  # Example of checking proportion of NAs
-  na_proportion <- sum(is.na(boot_metrics)) / length(boot_metrics)
-  if (na_proportion > 0.05) { # or some other threshold
+  na_proportion <- mean(is.na(boot_metrics))
+  if (na_proportion > 0.05) {
     warning(
       paste0(
-        "High proportion of NAs in bootstrapped samples for ",measure_name,
+        "High proportion of NAs in bootstrapped samples for ", measure_name,
         " (", round(na_proportion, digits = 2), ")"
-        )
+      )
     )
   }
 
-
-  # Calculate bootstrapped confidence intervals
   metric_ci <- stats::quantile(boot_metrics, probs = c(0.025, 0.975), na.rm = TRUE)
-  return(list(lower = metric_ci[[1]], upper = metric_ci[[2]]))
+  list(lower = metric_ci[[1]], upper = metric_ci[[2]])
 }
 
 evaluate_metric <- function(cm, metric_func, measure_name, detail, boot, bootreps, ...) {
@@ -275,15 +260,11 @@ evaluate_metric <- function(cm, metric_func, measure_name, detail, boot, bootrep
     return(metric_raw)
   } else if (detail == "full") {
     if (boot) {
-      data_recreated <- recreate_data_from_cm(cm)
-
-      # Perform bootstrapping
       ci_bounds <- boot_metric(
-        truth = data_recreated$truth,
-        predprob = data_recreated$predprob,
-        metric_func, # Metric calculation function
-        list(...), # Pass additional args if needed
-        bootreps,
+        cm = cm,
+        metric_func = metric_func,
+        metric_args = list(...),
+        bootreps = bootreps,
         measure_name = measure_name
       )
       ci_lower <- ci_bounds$lower
