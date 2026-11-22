@@ -1108,14 +1108,14 @@ dx_auc <- function(truth, predprob, detail = "full", direction = "<") {
 
   rocest <- pROC::roc(truth, predprob, ci = T, direction = direction, quiet = TRUE)
   aucest <- pROC::auc(rocest)
-  auctext <- as.character(pROC::ci(aucest))
-  auc_raw <- as.numeric(auctext[2])
+  auc_raw <- as.numeric(aucest)
 
   if (detail == "simple") {
     return(auc_raw)
   } else if (detail == "full") {
-    auc_lci <- as.numeric(auctext[1])
-    auc_uci <- as.numeric(auctext[3])
+    auc_ci <- as.numeric(pROC::ci(aucest))
+    auc_lci <- auc_ci[1]
+    auc_uci <- auc_ci[3]
     auc <- conf_int(auc_raw, auc_lci, auc_uci, percent = F, accuracy = .001)
 
     return(measure_df(
