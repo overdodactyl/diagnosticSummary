@@ -47,7 +47,8 @@ test_that("Confusion Matrix", {
 })
 
 test_that("ROC", {
-  expect_no_error(dx_plot_roc(dx_obj))
+  # ggplot2 only warns about layer data when the plot is built
+  expect_no_warning(ggplot2::ggplot_build(dx_plot_roc(dx_obj)))
 })
 
 test_that("Forest Plot", {
