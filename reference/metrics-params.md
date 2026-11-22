@@ -2,12 +2,6 @@
 
 Shared Parameters for Diagnostic Metrics
 
-## Usage
-
-``` r
-metricparams()
-```
-
 ## Arguments
 
 - cm:
