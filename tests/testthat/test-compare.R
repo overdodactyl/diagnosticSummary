@@ -56,3 +56,20 @@ test_that("Compare all model pairs", {
   expect_equal(unique(unpaired$tests$models), pairs)
   expect_equal(nrow(unpaired$tests), 9 * length(pairs))
 })
+
+test_that("Unpaired DeLong summary omits missing CI", {
+  d1 <- suppressWarnings(dx_delong(dx_glm, dx_rf, paired = FALSE))
+
+  expect_true(is.na(d1$conf_low) & is.na(d1$conf_high))
+  expect_equal(d1$summary, formatC(d1$estimate, format = "f", digits = 2))
+})
+
+test_that("Compare results keep numeric columns", {
+  dx_list <- list(glm = dx_glm, rf = dx_rf)
+  res <- dx_compare(dx_list, paired = TRUE)$tests
+
+  expect_type(res$estimate, "double")
+  expect_type(res$p_value, "double")
+  expect_type(res$statistic, "double")
+  expect_true(is.na(res$estimate[res$test == "McNemar's Chi-squared Test"]))
+})

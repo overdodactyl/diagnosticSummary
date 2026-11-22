@@ -335,7 +335,11 @@ dx_delong <- function(dx1, dx2, detail = "full", paired = TRUE) {
     low <- ifelse(is.null(low), NA, low)
     high <- ifelse(is.null(high), NA, high)
 
-    summary <- conf_int(estimate, low, high, accuracy = 0.01)
+    if (is.na(low) || is.na(high)) {
+      summary <- formatC(estimate, format = "f", digits = 2)
+    } else {
+      summary <- conf_int(estimate, low, high, accuracy = 0.01)
+    }
 
     compare_df(
       test = "DeLong's test for ROC curves",
