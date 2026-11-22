@@ -15,7 +15,7 @@
 
 **Other bug fixes**
 
-* Subgroups are ordered by factor level, unused factor levels are dropped, and `as.data.frame()` and `summary()` can filter on several values. Bootstrapped measures are displayed as decimals instead of percentages. `dx_plot_roc()` and `dx_plot_forest()` no longer give ggplot2 warnings, forest plots style subgroups with a missing odds ratio correctly, and `dx()` and `dx_plot_forest()` no longer change the session's random seed.
+* Subgroups are ordered by factor level, unused factor levels are dropped, and `as.data.frame()` and `summary()` can filter on several values. Bootstrapped measures are displayed as decimals instead of percentages. `dx_plot_roc()` and `dx_plot_forest()` no longer give ggplot2 warnings, forest plots style subgroups with a missing odds ratio correctly, and `dx()` and `dx_plot_forest()` no longer change the session's random seed. `dx_compare()` no longer mislabels models when only some are named, and `summary()` gives a clear error when given several thresholds.
 
 
 # diagnosticSummary 0.0.2.14
