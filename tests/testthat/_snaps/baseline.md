@@ -19,20 +19,20 @@
       |AgeGroup |(20,50] |LRT-                             |0.21 (0.12, 0.39)    |
       |AgeGroup |(20,50] |Odds Ratio                       |18.57 (7.84, 44.01)  |
       |AgeGroup |(20,50] |F1 Score                         |0.75                 |
-      |AgeGroup |(20,50] |F2 Score                         |0.8                  |
+      |AgeGroup |(20,50] |F2 Score                         |0.80                 |
       |AgeGroup |(20,50] |Prevalence                       |35.3% (27.7%, 43.4%) |
       |AgeGroup |(20,50] |False Negative Rate              |16.7% (7.9%, 29.3%)  |
       |AgeGroup |(20,50] |False Positive Rate              |21.2% (13.6%, 30.6%) |
       |AgeGroup |(20,50] |False Discovery Rate             |31.8% (20.9%, 44.4%) |
-      |AgeGroup |(20,50] |AUC PR                           |0.87                 |
+      |AgeGroup |(20,50] |AUC PR                           |0.872                |
       |AgeGroup |(20,50] |Cohen's Kappa                    |0.59 (0.46, 0.72)    |
-      |AgeGroup |(20,50] |Matthews Correlation Coefficient |0.6                  |
+      |AgeGroup |(20,50] |Matthews Correlation Coefficient |0.60                 |
       |AgeGroup |(20,50] |Balanced Accuracy                |0.81                 |
       |AgeGroup |(20,50] |Informedness                     |0.62                 |
       |AgeGroup |(20,50] |Markedness                       |0.58                 |
       |AgeGroup |(20,50] |G-mean                           |0.81                 |
       |AgeGroup |(20,50] |Fowlkes-Mallows Index            |0.75                 |
-      |AgeGroup |(20,50] |Brier Score                      |0.11                 |
+      |AgeGroup |(20,50] |Brier Score                      |0.114                |
       |AgeGroup |(20,50] |Pearson's Chi-squared            |p<0.01               |
       |AgeGroup |(20,50] |Fisher's Exact                   |p<0.01               |
       |AgeGroup |(20,50] |G-Test                           |p<0.01               |
@@ -51,7 +51,7 @@
       |AgeGroup |(50,80] |False Negative Rate              |13.6% (5.2%, 27.4%)  |
       |AgeGroup |(50,80] |False Positive Rate              |28.1% (17.6%, 40.8%) |
       |AgeGroup |(50,80] |False Discovery Rate             |32.1% (20.3%, 46.0%) |
-      |AgeGroup |(50,80] |AUC PR                           |0.88                 |
+      |AgeGroup |(50,80] |AUC PR                           |0.881                |
       |AgeGroup |(50,80] |Cohen's Kappa                    |0.56 (0.40, 0.71)    |
       |AgeGroup |(50,80] |Matthews Correlation Coefficient |0.57                 |
       |AgeGroup |(50,80] |Balanced Accuracy                |0.79                 |
@@ -59,7 +59,7 @@
       |AgeGroup |(50,80] |Markedness                       |0.56                 |
       |AgeGroup |(50,80] |G-mean                           |0.79                 |
       |AgeGroup |(50,80] |Fowlkes-Mallows Index            |0.77                 |
-      |AgeGroup |(50,80] |Brier Score                      |0.11                 |
+      |AgeGroup |(50,80] |Brier Score                      |0.114                |
       |AgeGroup |(50,80] |Pearson's Chi-squared            |p<0.01               |
       |AgeGroup |(50,80] |Fisher's Exact                   |p<0.01               |
       |AgeGroup |(50,80] |G-Test                           |p<0.01               |
@@ -79,7 +79,7 @@
       |Sex      |Female  |False Negative Rate              |50.0% (21.1%, 78.9%) |
       |Sex      |Female  |False Positive Rate              |14.0% (6.3%, 25.8%)  |
       |Sex      |Female  |False Discovery Rate             |57.1% (28.9%, 82.3%) |
-      |Sex      |Female  |AUC PR                           |0.61                 |
+      |Sex      |Female  |AUC PR                           |0.612                |
       |Sex      |Female  |Cohen's Kappa                    |0.34 (0.03, 0.65)    |
       |Sex      |Female  |Matthews Correlation Coefficient |0.34                 |
       |Sex      |Female  |Balanced Accuracy                |0.68                 |
@@ -87,7 +87,7 @@
       |Sex      |Female  |Markedness                       |0.32                 |
       |Sex      |Female  |G-mean                           |0.66                 |
       |Sex      |Female  |Fowlkes-Mallows Index            |0.46                 |
-      |Sex      |Female  |Brier Score                      |0.11                 |
+      |Sex      |Female  |Brier Score                      |0.109                |
       |Sex      |Female  |Pearson's Chi-squared            |p=0.02               |
       |Sex      |Female  |Fisher's Exact                   |p=0.01               |
       |Sex      |Female  |G-Test                           |p<0.01               |
@@ -106,15 +106,15 @@
       |Sex      |Male    |False Negative Rate              |10.5% (4.9%, 18.9%)  |
       |Sex      |Male    |False Positive Rate              |29.2% (20.8%, 38.9%) |
       |Sex      |Male    |False Discovery Rate             |28.7% (20.4%, 38.2%) |
-      |Sex      |Male    |AUC PR                           |0.9                  |
+      |Sex      |Male    |AUC PR                           |0.900                |
       |Sex      |Male    |Cohen's Kappa                    |0.59 (0.48, 0.70)    |
-      |Sex      |Male    |Matthews Correlation Coefficient |0.6                  |
-      |Sex      |Male    |Balanced Accuracy                |0.8                  |
-      |Sex      |Male    |Informedness                     |0.6                  |
+      |Sex      |Male    |Matthews Correlation Coefficient |0.60                 |
+      |Sex      |Male    |Balanced Accuracy                |0.80                 |
+      |Sex      |Male    |Informedness                     |0.60                 |
       |Sex      |Male    |Markedness                       |0.61                 |
-      |Sex      |Male    |G-mean                           |0.8                  |
-      |Sex      |Male    |Fowlkes-Mallows Index            |0.8                  |
-      |Sex      |Male    |Brier Score                      |0.12                 |
+      |Sex      |Male    |G-mean                           |0.80                 |
+      |Sex      |Male    |Fowlkes-Mallows Index            |0.80                 |
+      |Sex      |Male    |Brier Score                      |0.115                |
       |Sex      |Male    |Pearson's Chi-squared            |p<0.01               |
       |Sex      |Male    |Fisher's Exact                   |p<0.01               |
       |Sex      |Male    |G-Test                           |p<0.01               |
@@ -134,15 +134,15 @@
       |Overall  |Overall |False Negative Rate              |15.3% (8.8%, 24.0%)  |
       |Overall  |Overall |False Positive Rate              |23.9% (17.6%, 31.2%) |
       |Overall  |Overall |False Discovery Rate             |32.0% (23.8%, 41.0%) |
-      |Overall  |Overall |AUC PR                           |0.87                 |
+      |Overall  |Overall |AUC PR                           |0.873                |
       |Overall  |Overall |Cohen's Kappa                    |0.58 (0.48, 0.68)    |
       |Overall  |Overall |Matthews Correlation Coefficient |0.59                 |
-      |Overall  |Overall |Balanced Accuracy                |0.8                  |
+      |Overall  |Overall |Balanced Accuracy                |0.80                 |
       |Overall  |Overall |Informedness                     |0.61                 |
       |Overall  |Overall |Markedness                       |0.57                 |
-      |Overall  |Overall |G-mean                           |0.8                  |
+      |Overall  |Overall |G-mean                           |0.80                 |
       |Overall  |Overall |Fowlkes-Mallows Index            |0.76                 |
-      |Overall  |Overall |Brier Score                      |0.11                 |
+      |Overall  |Overall |Brier Score                      |0.114                |
       |Overall  |Overall |Pearson's Chi-squared            |p<0.01               |
       |Overall  |Overall |Fisher's Exact                   |p<0.01               |
       |Overall  |Overall |G-Test                           |p<0.01               |
@@ -173,7 +173,7 @@
       |Female  |False Negative Rate              |50.0% (21.1%, 78.9%) |
       |Female  |False Positive Rate              |14.0% (6.3%, 25.8%)  |
       |Female  |False Discovery Rate             |57.1% (28.9%, 82.3%) |
-      |Female  |AUC PR                           |0.61                 |
+      |Female  |AUC PR                           |0.612                |
       |Female  |Cohen's Kappa                    |0.34 (0.03, 0.65)    |
       |Female  |Matthews Correlation Coefficient |0.34                 |
       |Female  |Balanced Accuracy                |0.68                 |
@@ -181,7 +181,7 @@
       |Female  |Markedness                       |0.32                 |
       |Female  |G-mean                           |0.66                 |
       |Female  |Fowlkes-Mallows Index            |0.46                 |
-      |Female  |Brier Score                      |0.11                 |
+      |Female  |Brier Score                      |0.109                |
       |Female  |Pearson's Chi-squared            |p=0.02               |
       |Female  |Fisher's Exact                   |p=0.01               |
       |Female  |G-Test                           |p<0.01               |
@@ -200,15 +200,15 @@
       |Male    |False Negative Rate              |10.5% (4.9%, 18.9%)  |
       |Male    |False Positive Rate              |29.2% (20.8%, 38.9%) |
       |Male    |False Discovery Rate             |28.7% (20.4%, 38.2%) |
-      |Male    |AUC PR                           |0.9                  |
+      |Male    |AUC PR                           |0.900                |
       |Male    |Cohen's Kappa                    |0.59 (0.48, 0.70)    |
-      |Male    |Matthews Correlation Coefficient |0.6                  |
-      |Male    |Balanced Accuracy                |0.8                  |
-      |Male    |Informedness                     |0.6                  |
+      |Male    |Matthews Correlation Coefficient |0.60                 |
+      |Male    |Balanced Accuracy                |0.80                 |
+      |Male    |Informedness                     |0.60                 |
       |Male    |Markedness                       |0.61                 |
-      |Male    |G-mean                           |0.8                  |
-      |Male    |Fowlkes-Mallows Index            |0.8                  |
-      |Male    |Brier Score                      |0.12                 |
+      |Male    |G-mean                           |0.80                 |
+      |Male    |Fowlkes-Mallows Index            |0.80                 |
+      |Male    |Brier Score                      |0.115                |
       |Male    |Pearson's Chi-squared            |p<0.01               |
       |Male    |Fisher's Exact                   |p<0.01               |
       |Male    |G-Test                           |p<0.01               |

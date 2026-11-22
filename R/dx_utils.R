@@ -97,18 +97,24 @@ format_pvalue <- function(p, accuracy = 0.01) {
   }
 }
 
-conf_int <- function(est, lower, upper, accuracy = .1, percent = FALSE) {
-  format_num <- function(num) {
-    if (is.na(num)) {
-      "-"
-    } else if (percent) {
-      paste0(formatC(num * 100, format = "f", digits = -log10(accuracy)), "%")
-    } else {
-      formatC(num, format = "f", digits = -log10(accuracy), big.mark = ",")
-    }
+# Format a number with a fixed number of decimals, e.g. accuracy = .01 for 2,
+# optionally as a percent. Missing values are shown as "-".
+format_number <- function(num, accuracy = .1, percent = FALSE) {
+  if (is.na(num)) {
+    "-"
+  } else if (percent) {
+    paste0(formatC(num * 100, format = "f", digits = -log10(accuracy)), "%")
+  } else {
+    formatC(num, format = "f", digits = -log10(accuracy), big.mark = ",")
   }
+}
 
-  paste0(format_num(est), " (", format_num(lower), ", ", format_num(upper), ")")
+conf_int <- function(est, lower, upper, accuracy = .1, percent = FALSE) {
+  paste0(
+    format_number(est, accuracy, percent), " (",
+    format_number(lower, accuracy, percent), ", ",
+    format_number(upper, accuracy, percent), ")"
+  )
 }
 
 backtick <- function(x) {
@@ -296,7 +302,7 @@ evaluate_metric <- function(cm, metric_func, measure_name, detail, boot, bootrep
       # Return results without bootstrapping
       return(measure_df(
         measure = measure_name,
-        estimate = format(metric_raw, digits = 2),
+        estimate = format_number(metric_raw, accuracy = .01),
         estimate_raw = metric_raw,
         ci_type = NA_character_,
         lci_raw = NA_real_,
