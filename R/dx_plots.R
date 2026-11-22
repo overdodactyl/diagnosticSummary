@@ -28,6 +28,8 @@
 #' )
 #' dx_plot_gain(dx_obj)
 dx_plot_gain <- function(dx_obj) {
+  warn_poslabel(dx_obj, "dx_plot_gain()")
+
   data <- dx_obj$rank
 
   ggplot2::ggplot(data, ggplot2::aes(x = .data$percentile, y = .data$gain)) +
@@ -69,6 +71,8 @@ dx_plot_gain <- function(dx_obj) {
 #' )
 #' dx_plot_lift(dx_obj)
 dx_plot_lift <- function(dx_obj) {
+  warn_poslabel(dx_obj, "dx_plot_lift()")
+
   data <- dx_obj$rank
 
   # Plotting the lift curve
@@ -118,6 +122,8 @@ dx_plot_lift <- function(dx_obj) {
 #' )
 #' dx_plot_ks(dx_obj)
 dx_plot_ks <- function(dx_obj) {
+  warn_poslabel(dx_obj, "dx_plot_ks()")
+
   data <- dx_obj$rank
 
   # With tied predictions, only the end of each tie group corresponds to a
@@ -137,7 +143,7 @@ dx_plot_ks <- function(dx_obj) {
   ggplot2::ggplot(long_data, ggplot2::aes(x = .data$predprob, y = .data$Rate, color = .data$Type)) +
     ggplot2::geom_line(linewidth = 1) +
     ggplot2::coord_fixed() +
-    ggplot2::xlab("Prediction Score (Descending)") +
+    ggplot2::xlab("Prediction Score") +
     ggplot2::ylab("Cumulative Proportion") +
     ggplot2::geom_vline(xintercept = data$predprob[ks_point], linetype = "dashed") +
     ggplot2::annotate(
@@ -182,7 +188,7 @@ dx_plot_ks <- function(dx_obj) {
 #' dx_plot_pr(dx_obj)
 dx_plot_pr <- function(dx_obj) {
   data <- dx_obj$thresholds
-  data <- stats::na.omit(data)
+  data <- data[!is.na(data$sensitivity) & !is.na(data$precision), ]
 
   ggplot2::ggplot(data, ggplot2::aes(x = .data$sensitivity, y = .data$precision)) +
     ggplot2::geom_line(color = "#0057B8", linewidth = 1) +
@@ -360,6 +366,8 @@ dx_plot_calibration <- function(dx_obj, bins = 10) {
 #' )
 #' dx_plot_decision_curve(dx_obj)
 dx_plot_decision_curve <- function(dx_obj, plot_range = c(0.05, .95)) {
+  warn_poslabel(dx_obj, "dx_plot_decision_curve()")
+
 
   # Prepare data for plotting
   data_for_plot <- data.frame(
@@ -490,6 +498,8 @@ dx_plot_youden_j <- function(dx_obj) {
 #' )
 #' dx_plot_cap(dx_obj)
 dx_plot_cap <- function(dx_obj) {
+  warn_poslabel(dx_obj, "dx_plot_cap()")
+
   data <- dx_obj$rank
 
   # Total positives in the dataset
@@ -730,28 +740,20 @@ dx_plot_roc <- function(dx_obj, curve_color = "#0057B8", fill_color = "#cfcdcb",
 
   specdf <- measures[measures$measure == "Specificity", ]$estimate
 
-  auc_df <- data.frame(
-    threshold = dx_obj$thresholds$threshold,
-    specificity = dx_obj$thresholds$specificity,
-    sensitivity = dx_obj$thresholds$sensitivity
-  )
+  auc_df <- roc_curve_df(dx_obj)
 
-  auc_df$lead_specificity <- c(auc_df$specificity[-1], NA)
+  # Shade the area under the curve, which equals the AUC
+  area_df <- rbind(auc_df, data.frame(specificity = 0, sensitivity = 0))
 
   p <- ggplot2::ggplot(auc_df) +
-    ggplot2::geom_rect(
-      ggplot2::aes(
-        xmin = .data$specificity,
-        xmax = .data$lead_specificity,
-        ymin = 0,
-        ymax = .data$sensitivity
-      ),
+    ggplot2::geom_polygon(
+      data = area_df,
+      ggplot2::aes(.data$specificity, .data$sensitivity),
       fill = fill_color,
       colour = NA,
-      alpha = 0.5,
-      na.rm = TRUE
+      alpha = 0.5
     ) +
-    ggplot2::geom_line(
+    ggplot2::geom_path(
       ggplot2::aes(.data$specificity, .data$sensitivity),
       color = curve_color,
       linewidth = 1
@@ -818,6 +820,7 @@ dx_plot_roc <- function(dx_obj, curve_color = "#0057B8", fill_color = "#cfcdcb",
     )
 
   if (add_text) {
+    summary_stats <- unique(summary_stats)
     numsummary <- length(summary_stats)
     ystart <- 0.05
     yend <- ystart + (numsummary - 1) * 0.05
@@ -832,7 +835,8 @@ dx_plot_roc <- function(dx_obj, curve_color = "#0057B8", fill_color = "#cfcdcb",
 
     diagsummary_resultsdf <- diagsummary_resultsdf[, -which(names(diagsummary_resultsdf) %in% c("variable", "label"))]
 
-    diagsummary_resultsdf <- diagsummary_resultsdf[seq_len(nrow(diagsummary_resultsdf)) %in% summary_stats, ]
+    # Show the statistics in the order requested
+    diagsummary_resultsdf <- diagsummary_resultsdf[summary_stats, ]
 
     diagsummary_resultsdf$numden <- ifelse(
       !add_fractions | nchar(diagsummary_resultsdf$fraction) == 0,
@@ -1023,13 +1027,7 @@ pluck_auc_roc_data <- function(dx_obj) {
 
   specdf <- measures[measures$measure == "Specificity", ]$estimate
 
-  auc_df <- data.frame(
-    threshold = dx_obj$thresholds$threshold,
-    specificity = dx_obj$thresholds$specificity,
-    sensitivity = dx_obj$thresholds$sensitivity
-  )
-
-  auc_df$lead_specificity <- c(auc_df$specificity[-1], NA)
+  auc_df <- roc_curve_df(dx_obj)
 
   list(
     sensitivity = sensdf,
@@ -1087,10 +1085,8 @@ dx_plot_rocs <- function(dx_comp, add_text = TRUE, axis_color = "#333333", text_
 
   df <- do.call(rbind, lapply(roc_data, function(model) model$auc_df))
 
-  df <- stats::na.omit(df)
-
   p <- ggplot2::ggplot(df) +
-    ggplot2::geom_line(
+    ggplot2::geom_path(
       ggplot2::aes(.data$specificity, .data$sensitivity, color = .data$model),
       linewidth = 1
     ) +
@@ -1137,4 +1133,21 @@ dx_plot_rocs <- function(dx_comp, add_text = TRUE, axis_color = "#333333", text_
   }
 
   return(p)
+}
+
+# ROC curve points from pROC, so the curve matches the AUC (including
+# direction and tied predictions)
+roc_curve_df <- function(dx_obj) {
+  data.frame(
+    specificity = dx_obj$roc$specificities,
+    sensitivity = dx_obj$roc$sensitivities
+  )
+}
+
+warn_poslabel <- function(dx_obj, plot) {
+  if (isTRUE(dx_obj$options$poslabel == 0)) {
+    warning(paste0(
+      plot, " treats 1 as the positive class and ignores poslabel = 0."
+    ), call. = FALSE)
+  }
 }
