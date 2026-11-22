@@ -112,6 +112,10 @@ dx_rank <- function(data, options) {
   data$cumulativeTPR <- data$cumulativeTruePositives / totalPositives # True Positive Rate
   data$cumulativeFPR <- cumsum(!event) / sum(!event) # False Positive Rate
 
+  # Tied predictions are all above or all below any threshold, so only the
+  # last row of each tie group can be reached by a threshold
+  data$reachable <- !duplicated(data$predprob, fromLast = TRUE)
+
   return(data)
 }
 

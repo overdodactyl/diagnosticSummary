@@ -18,6 +18,10 @@
 #' ranks positive cases higher than negatives, capturing a large proportion of positives early in the ranking.
 #' Conversely, a curve close to the diagonal suggests performance close to random chance, where the model does
 #' not effectively differentiate between positive and negative cases.
+#'
+#' With tied predictions, the curve only has points that a threshold can reach
+#' (the end of each group of ties), joined by straight lines. It starts at 0%.
+#'
 #' @examplesIf requireNamespace("ggplot2", quietly = TRUE)
 #' dx_obj <- dx(
 #'   data = dx_heart_failure,
@@ -28,8 +32,10 @@
 #' )
 #' dx_plot_gain(dx_obj)
 dx_plot_gain <- function(dx_obj) {
+  data <- reachable_rank(dx_obj, origin = TRUE)
+
   dx_line_plot(
-    dx_obj$rank, "percentile", "gain",
+    data, "percentile", "gain",
     xlab = "\nPercentile of Population",
     ylab = "Gain (Fraction of Total Positives Captured)\n\n"
   ) +
@@ -57,6 +63,10 @@ dx_plot_gain <- function(dx_obj) {
 #' values representing better performance. A horizontal dashed line at y=1 represents the baseline
 #' lift of a random model. The lift curve should ideally stay above this line to indicate that the
 #' model has predictive power.
+#'
+#' With tied predictions, the curve only has points that a threshold can reach
+#' (the end of each group of ties), joined by straight lines.
+#'
 #' @examplesIf requireNamespace("ggplot2", quietly = TRUE)
 #' dx_obj <- dx(
 #'   data = dx_heart_failure,
@@ -67,8 +77,9 @@ dx_plot_gain <- function(dx_obj) {
 #' )
 #' dx_plot_lift(dx_obj)
 dx_plot_lift <- function(dx_obj) {
+  # Lift is undefined at 0% of the population, so there is no origin
   dx_line_plot(
-    dx_obj$rank, "percentile", "lift",
+    reachable_rank(dx_obj), "percentile", "lift",
     xlab = "\nPercentile of Population", ylab = "Lift\n\n", color = "red"
   ) +
     # Lift of 1 for a random model
@@ -108,11 +119,7 @@ dx_plot_lift <- function(dx_obj) {
 #' )
 #' dx_plot_ks(dx_obj)
 dx_plot_ks <- function(dx_obj) {
-  data <- dx_obj$rank
-
-  # With tied predictions, only the end of each tie group corresponds to a
-  # threshold. Rank is sorted by descending prediction, so keep the last row.
-  data <- data[!duplicated(data$predprob, fromLast = TRUE), ]
+  data <- reachable_rank(dx_obj)
 
   long_data <- rbind(
     data.frame(Rate = data$cumulativeTPR, Type = "TPR", predprob = data$predprob),
@@ -453,6 +460,9 @@ dx_plot_youden_j <- function(dx_obj) {
 #' model across the entire range of classifications. It's particularly insightful for imbalanced
 #' datasets where positive instances are rare or more critical.
 #'
+#' With tied predictions, the curve only has points that a threshold can reach
+#' (the end of each group of ties), joined by straight lines. It starts at 0%.
+#'
 #' @examplesIf requireNamespace("ggplot2", quietly = TRUE)
 #' dx_obj <- dx(
 #'   data = dx_heart_failure,
@@ -463,30 +473,16 @@ dx_plot_youden_j <- function(dx_obj) {
 #' )
 #' dx_plot_cap(dx_obj)
 dx_plot_cap <- function(dx_obj) {
-  data <- dx_obj$rank
+  data <- reachable_rank(dx_obj, origin = TRUE)
 
-  # Total positives (events) in the dataset
-  total_positives <- data$cumulativeTruePositives[nrow(data)]
-
-  # Create the CAP data
-  cap_data <- data.frame(
-    Percent_Instances = data$percentile,
-    CAP = data$cumulativeTruePositives / total_positives
-  )
-
-  # Perfect and Random Model Lines
-  cap_data$PerfectModel <- ifelse(
-    cap_data$Percent_Instances <= total_positives / nrow(data),
-    cap_data$Percent_Instances / (total_positives / nrow(data)),
-    1
-  )
-
-  cap_data$RandomModel <- cap_data$Percent_Instances
+  # Share of the population that are events. A perfect model captures every
+  # event once that share is selected; a random model captures them evenly.
+  prevalence <- dx_prevalence(dx_obj$cm, detail = "simple")
 
   long_data <- rbind(
-    data.frame(x = cap_data$Percent_Instances, y = cap_data$CAP, Model = "Actual Model", lt = "solid"),
-    data.frame(x = cap_data$Percent_Instances, y = cap_data$PerfectModel, Model = "Perfect Model", lt = "dotted"),
-    data.frame(x = cap_data$Percent_Instances, y = cap_data$RandomModel, Model = "Random Model", lt = "dotted")
+    data.frame(x = data$percentile, y = data$gain, Model = "Actual Model", lt = "solid"),
+    data.frame(x = c(0, prevalence, 1), y = c(0, 1, 1), Model = "Perfect Model", lt = "dotted"),
+    data.frame(x = c(0, 1), y = c(0, 1), Model = "Random Model", lt = "dotted")
   )
 
   # Plotting the CAP curve
@@ -496,7 +492,6 @@ dx_plot_cap <- function(dx_obj) {
     ggplot2::scale_linetype_identity() +
     ggplot2::coord_fixed() +
     ggplot2::labs(
-      # title = "Cumulative Accuracy Profile (CAP) Curve",
       x = "Cumulative Percentage of Instances",
       y = "Cumulative Percentage of Captured Positives"
     ) +
@@ -1063,3 +1058,17 @@ text_positions <- function(n) {
 overall_measures <- function(dx_obj) {
   as.data.frame(dx_obj, variable = "Overall", thresh = dx_obj$options$setthreshold)
 }
+
+# Rows of dx$rank that a threshold can reach (the last row of each group of
+# tied predictions), optionally starting from 0% of the population
+reachable_rank <- function(dx_obj, origin = FALSE) {
+  data <- dx_obj$rank[dx_obj$rank$reachable, ]
+  if (origin) {
+    data <- rbind(
+      data.frame(percentile = 0, gain = 0),
+      as.data.frame(data)[c("percentile", "gain")]
+    )
+  }
+  data
+}
+
