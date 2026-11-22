@@ -31,8 +31,8 @@ significant association between the predicted and actual binary classifications.
 It compares the observed frequencies in each cell of the table to the frequencies
 expected if the rows and columns are independent. A low p-value indicates that
 the distributions of actual and predicted classifications are not independent,
-suggesting a significant association between them. The function uses Pearson's
-Chi-squared test with Yates' continuity correction by default, which is more
+suggesting a significant association between them. The function always uses
+Pearson's Chi-squared test with Yates' continuity correction, which is more
 accurate for small sample sizes. The test is most appropriate when each cell
 in the 2x2 table has an expected frequency of 5 or more.
 }

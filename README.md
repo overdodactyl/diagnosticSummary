@@ -84,7 +84,7 @@ summary(dx_obj, variable = "Overall", show_var = F, show_label = F)
 | G-mean                           | 80.3% (75.5%, 85.0%) |
 | Fowlkes-Mallows Index            | 75.9% (69.7%, 81.7%) |
 | Brier Score                      | 0.11                 |
-| Pearson’s Chi-squared            | p\<0.01              |
+| Pearson’s Chi-squared (Yates’ correction) | p\<0.01              |
 | Fisher’s Exact                   | p\<0.01              |
 | G-Test                           | p\<0.01              |
 

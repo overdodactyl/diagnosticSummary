@@ -143,8 +143,8 @@ variance_a <- function(tilde_a_value, marginals) {
 #' It compares the observed frequencies in each cell of the table to the frequencies
 #' expected if the rows and columns are independent. A low p-value indicates that
 #' the distributions of actual and predicted classifications are not independent,
-#' suggesting a significant association between them. The function uses Pearson's
-#' Chi-squared test with Yates' continuity correction by default, which is more
+#' suggesting a significant association between them. The function always uses
+#' Pearson's Chi-squared test with Yates' continuity correction, which is more
 #' accurate for small sample sizes. The test is most appropriate when each cell
 #' in the 2x2 table has an expected frequency of 5 or more.
 #' @examples
@@ -160,13 +160,13 @@ variance_a <- function(tilde_a_value, marginals) {
 #' @export
 dx_chi_square <- function(cm, detail = "full") {
   if (cm$dispos == 0 | cm$disneg == 0) {
-    return(undefined_association("Pearson's Chi-squared", detail))
+    return(undefined_association("Pearson's Chi-squared (Yates' correction)", detail))
   }
   chi_square_result <- suppressWarnings({
     stats::chisq.test(cm_table(cm))
   })
   association_result(
-    chi_square_result$p.value, "Pearson's Chi-squared", detail,
+    chi_square_result$p.value, "Pearson's Chi-squared (Yates' correction)", detail,
     notes = chi_square_result$method
   )
 }
@@ -288,6 +288,11 @@ dx_g_test <- function(cm, detail = "full") {
 #' paired comparisons.
 #' The p-value is `NA` when either curve has fewer than two cases or two controls, since
 #' DeLong's variance is undefined.
+#'
+#' Paired comparisons use DeLong's Z statistic and the standard normal distribution.
+#' Unpaired comparisons use the t statistic from [pROC::roc.test()], with
+#' Welch-Satterthwaite degrees of freedom, and the t distribution. The `notes`
+#' column says which statistic is reported in `statistic`.
 #' @examples
 #' dx_glm <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted")
 #' dx_rf <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted_rf")
@@ -349,9 +354,19 @@ dx_delong <- function(dx1, dx2, detail = "full", paired = TRUE) {
       estimate = estimate,
       conf_low = low,
       conf_high = high,
-      statistic = as.numeric(test$statistic)
+      statistic = as.numeric(test$statistic),
+      notes = delong_statistic_note(test)
     )
   }
+}
+
+# Describe the statistic pROC reports: Z for paired curves, or t with degrees
+# of freedom for unpaired curves
+delong_statistic_note <- function(test) {
+  if (is.null(test$parameter)) {
+    return("Z statistic")
+  }
+  paste0("t statistic, df = ", formatC(as.numeric(test$parameter), format = "f", digits = 1))
 }
 
 #' Z-test for Comparing Two Proportions
