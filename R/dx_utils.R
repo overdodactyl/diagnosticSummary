@@ -328,7 +328,7 @@ validate_dx_list <- function(dx_list) {
   }
   for (i in seq_along(dx_list)) {
     if (names(dx_list)[i] == "") {
-      names(dx_list)[1] <- paste("Model", i)
+      names(dx_list)[i] <- paste("Model", i)
     }
   }
   return(dx_list)

@@ -445,3 +445,13 @@ test_that("KS statistic is not inflated by tied predictions", {
   labels <- unlist(lapply(seq_along(p$layers), function(i) ggplot2::layer_data(p, i)$label))
   expect_equal(labels, "KS = 0")
 })
+
+test_that("dx_compare names only the unnamed models in a partly named list", {
+  dx_glm <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted", setthreshold = .3)
+  dx_rf <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted_rf", setthreshold = .3)
+
+  cmp <- dx_compare(list(glm = dx_glm, dx_rf))
+
+  expect_equal(names(cmp$dx_list), c("glm", "Model 2"))
+  expect_equal(unique(cmp$tests$models), "glm vs. Model 2")
+})
