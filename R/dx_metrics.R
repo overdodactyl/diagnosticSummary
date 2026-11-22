@@ -96,6 +96,7 @@ dx_ppv <- function(cm, detail = "full", ...) {
 }
 
 #' @rdname ppv
+#' @export
 dx_precision <- dx_ppv
 
 #' Calculate Negative Predictive Value (NPV)
@@ -296,6 +297,7 @@ dx_fnr <- function(cm, detail = "full", ...) {
 }
 
 #' @rdname fnr
+#' @export
 dx_miss_rate <- dx_fnr
 
 #' Calculate False Positive Rate (FPR)
@@ -334,6 +336,7 @@ dx_fpr <- function(cm, detail = "full", ...) {
 }
 
 #' @rdname fpr
+#' @export
 dx_fall_out <- dx_fpr
 
 #' Calculate False Discovery Rate (FDR)
@@ -409,9 +412,11 @@ dx_sensitivity <- function(cm, detail = "full", ...) {
 }
 
 #' @rdname sensitivity
+#' @export
 dx_recall <- dx_sensitivity
 
 #' @rdname sensitivity
+#' @export
 dx_tpr <- dx_sensitivity
 
 #' Calculate Specificity (True Negative Rate)
@@ -452,6 +457,7 @@ dx_specificity <- function(cm, detail = "full", ...) {
 }
 
 #' @rdname specificity
+#' @export
 dx_tnr <- dx_specificity
 
 
@@ -1400,6 +1406,7 @@ calculate_informedness <- function(cm) {
 }
 
 #' @rdname informedness
+#' @export
 dx_youden_j <- dx_informedness
 
 
