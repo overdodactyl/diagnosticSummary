@@ -49,17 +49,6 @@ dx <- function(data,
   check_dx_options(poslabel, direction)
   data <- prepare_dx_data(data, pred_varname, true_varname, grouping_variables)
 
-  data$test_binary <- ifelse(
-    data[[pred_varname]] < setthreshold, 0, 1
-  )
-  data$test_binaryf <- factor(data$test_binary,
-    levels = c(0, 1),
-    labels = classlabels
-  )
-  data$true_binaryf <- factor(data[[true_varname]],
-    levels = c(0, 1), labels = classlabels
-  )
-
   options <- list(
     classlabels = classlabels,
     threshold_range = threshold_range,
