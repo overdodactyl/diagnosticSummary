@@ -370,3 +370,29 @@ test_that("poslabel = 0 matches poslabel = 1 with the outcome and predictions fl
   expect_equal(ks0[[2]]$xintercept, 1 - ks1[[2]]$xintercept)
   expect_equal(ks0[[3]]$label, ks1[[3]]$label)
 })
+
+test_that("Gain, lift, and CAP only use points a threshold can reach", {
+  # Four predictions tie at .5, so only 1/6, 5/6, and all of the population
+  # can be selected by a threshold
+  df <- data.frame(p = c(.9, .5, .5, .5, .5, .1), y = c(1, 1, 0, 1, 0, 0))
+  d <- dx(df, pred_varname = "p", true_varname = "y")
+  expect_equal(d$rank$reachable, c(TRUE, FALSE, FALSE, FALSE, TRUE, TRUE))
+
+  gain <- ggplot2::ggplot_build(dx_plot_gain(d))$data[[1]]
+  expect_equal(gain$x, c(0, 1, 5, 6) / 6)
+  expect_equal(gain$y, c(0, 1, 3, 3) / 3)
+
+  lift <- ggplot2::ggplot_build(dx_plot_lift(d))$data[[1]]
+  expect_equal(lift$x, c(1, 5, 6) / 6)
+  expect_equal(lift$y, c(2, 1.2, 1))
+
+  cap <- dx_plot_cap(d)$data
+  actual <- cap[cap$Model == "Actual Model", ]
+  expect_equal(actual$x, gain$x)
+  expect_equal(actual$y, gain$y)
+
+  # The same data in a different row order gives the same curves
+  d2 <- dx(df[c(1, 3, 5, 2, 4, 6), ], pred_varname = "p", true_varname = "y")
+  gain2 <- ggplot2::ggplot_build(dx_plot_gain(d2))$data[[1]]
+  expect_equal(gain2$y, gain$y)
+})

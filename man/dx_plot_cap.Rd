@@ -37,6 +37,9 @@ before any negative instances.
 The CAP Curve is useful for understanding not just the accuracy but also the behavior of the
 model across the entire range of classifications. It's particularly insightful for imbalanced
 datasets where positive instances are rare or more critical.
+
+With tied predictions, the curve only has points that a threshold can reach
+(the end of each group of ties), joined by straight lines. It starts at 0\%.
 }
 \examples{
 \dontshow{if (requireNamespace("ggplot2", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}

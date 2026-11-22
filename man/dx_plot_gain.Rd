@@ -28,6 +28,9 @@ positive cases over negatives. A steep curve towards the top-left indicates a mo
 ranks positive cases higher than negatives, capturing a large proportion of positives early in the ranking.
 Conversely, a curve close to the diagonal suggests performance close to random chance, where the model does
 not effectively differentiate between positive and negative cases.
+
+With tied predictions, the curve only has points that a threshold can reach
+(the end of each group of ties), joined by straight lines. It starts at 0\%.
 }
 \examples{
 \dontshow{if (requireNamespace("ggplot2", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}

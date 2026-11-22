@@ -29,6 +29,9 @@ A value greater than 1 indicates that the model is performing better than random
 values representing better performance. A horizontal dashed line at y=1 represents the baseline
 lift of a random model. The lift curve should ideally stay above this line to indicate that the
 model has predictive power.
+
+With tied predictions, the curve only has points that a threshold can reach
+(the end of each group of ties), joined by straight lines.
 }
 \examples{
 \dontshow{if (requireNamespace("ggplot2", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
