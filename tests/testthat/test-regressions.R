@@ -757,3 +757,29 @@ test_that("DeLong notes say which statistic is reported", {
   expect_match(unpaired$notes, "^t statistic, df = [0-9]+\\.[0-9]$")
   expect_equal(unpaired$p_value, 2 * stats::pt(-abs(unpaired$statistic), test$parameter))
 })
+
+test_that("Generate Confidence Intervals", {
+  est <- .123234213
+  high <- .89123423
+  low <- .24252345
+  c1 <- conf_int(est, low, high)
+
+  # Default Settings
+  expect_equal(
+    conf_int(est, low, high),
+    "0.1 (0.2, 0.9)"
+  )
+
+  # Accuracy
+  expect_equal(
+    conf_int(est, low, high, accuracy = .01),
+    "0.12 (0.24, 0.89)"
+  )
+
+  # Percent
+  expect_equal(
+    conf_int(est, low, high, accuracy = .01, percent = TRUE),
+    "12.32% (24.25%, 89.12%)"
+  )
+})
+
