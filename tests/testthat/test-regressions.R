@@ -303,7 +303,7 @@ test_that("Subgroups with one outcome class report NA instead of failing", {
   )
 
   neg <- d$measures[d$measures$label == "neg_only", ]
-  for (measure in c("AUC ROC", "Odds Ratio", "LRT+", "LRT-", "Pearson's Chi-squared")) {
+  for (measure in c("AUC ROC", "Odds Ratio", "LRT+", "LRT-", "Pearson's Chi-squared", "Fisher's Exact", "G-Test")) {
     expect_true(is.na(neg$estimate[neg$measure == measure]), info = measure)
   }
   expect_equal(neg$summary[neg$measure == "AUC ROC"], "- (-, -)")
@@ -454,4 +454,41 @@ test_that("dx_compare names only the unnamed models in a partly named list", {
 
   expect_equal(names(cmp$dx_list), c("glm", "Model 2"))
   expect_equal(unique(cmp$tests$models), "glm vs. Model 2")
+})
+
+test_that("Breslow-Day does not overflow with large integer counts", {
+  x <- array(c(30000L, 20000L, 25000L, 40000L, 31000L, 19000L, 24000L, 41000L), c(2, 2, 2))
+  expected <- breslow_day_test(array(as.numeric(x), c(2, 2, 2)))
+
+  expect_no_warning(res <- breslow_day_test(x))
+  expect_equal(res$statistic, expected$statistic)
+})
+
+test_that("Association tests are NA with one outcome class", {
+  cm <- make_cm(tp = 0, fn = 0, fp = 5, tn = 15)
+
+  expect_true(is.na(dx_chi_square(cm, "simple")))
+  expect_true(is.na(dx_fishers_exact(cm, "simple")))
+  expect_true(is.na(dx_g_test(cm, "simple")))
+  expect_equal(dx_g_test(cm)$summary, "-")
+})
+
+test_that("Unpaired comparison works when a model has no predicted positives", {
+  low <- dx_heart_failure
+  low$predicted <- low$predicted * .25
+  dx_glm <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted", setthreshold = .3)
+  dx_low <- dx(data = low, true_varname = "truth", pred_varname = "predicted", setthreshold = .3)
+  expect_equal(dx_low$cm$testpos, 0)
+
+  res <- suppressWarnings(dx_compare(list(a = dx_glm, b = dx_low), paired = FALSE))$tests
+  expect_true(is.na(res$p_value[res$test == "Z-test: ppv"]))
+  expect_false(is.na(res$p_value[res$test == "Z-test: sensitivity"]))
+})
+
+test_that("McNemar's test requires the same truth values", {
+  dx_glm <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted", setthreshold = .3)
+  shuffled <- dx_heart_failure[rev(seq_len(nrow(dx_heart_failure))), ]
+  dx_rev <- dx(data = shuffled, true_varname = "truth", pred_varname = "predicted_rf", setthreshold = .3)
+
+  expect_error(dx_mcnemars(dx_glm, dx_rev), "same truth values")
 })
