@@ -52,7 +52,7 @@
       |AgeGroup |(50,80] |False Positive Rate              |28.1% (17.6%, 40.8%) |
       |AgeGroup |(50,80] |False Discovery Rate             |32.1% (20.3%, 46.0%) |
       |AgeGroup |(50,80] |AUC PR                           |0.881                |
-      |AgeGroup |(50,80] |Cohen's Kappa                    |0.56 (0.40, 0.71)    |
+      |AgeGroup |(50,80] |Cohen's Kappa                    |0.56 (0.41, 0.71)    |
       |AgeGroup |(50,80] |Matthews Correlation Coefficient |0.57                 |
       |AgeGroup |(50,80] |Balanced Accuracy                |0.79                 |
       |AgeGroup |(50,80] |Informedness                     |0.58                 |
@@ -80,7 +80,7 @@
       |Sex      |Female  |False Positive Rate              |14.0% (6.3%, 25.8%)  |
       |Sex      |Female  |False Discovery Rate             |57.1% (28.9%, 82.3%) |
       |Sex      |Female  |AUC PR                           |0.612                |
-      |Sex      |Female  |Cohen's Kappa                    |0.34 (0.03, 0.65)    |
+      |Sex      |Female  |Cohen's Kappa                    |0.34 (0.06, 0.61)    |
       |Sex      |Female  |Matthews Correlation Coefficient |0.34                 |
       |Sex      |Female  |Balanced Accuracy                |0.68                 |
       |Sex      |Female  |Informedness                     |0.36                 |
@@ -174,7 +174,7 @@
       |Female  |False Positive Rate              |14.0% (6.3%, 25.8%)  |
       |Female  |False Discovery Rate             |57.1% (28.9%, 82.3%) |
       |Female  |AUC PR                           |0.612                |
-      |Female  |Cohen's Kappa                    |0.34 (0.03, 0.65)    |
+      |Female  |Cohen's Kappa                    |0.34 (0.06, 0.61)    |
       |Female  |Matthews Correlation Coefficient |0.34                 |
       |Female  |Balanced Accuracy                |0.68                 |
       |Female  |Informedness                     |0.36                 |

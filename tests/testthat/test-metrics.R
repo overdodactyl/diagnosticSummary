@@ -151,16 +151,18 @@ test_that("Cohen's Kappa", {
     0.57938402769487884481
   )
 
+  # Fleiss, Cohen, and Everitt (1969) variance; checked from first principles
+  # in test-references.R
   full <- dx_cohens_kappa(cm)
 
   expect_equal(
     full$conf_low,
-    0.4794738179054287
+    0.4813828786525133
   )
 
   expect_equal(
     full$conf_high,
-    0.6792942374843292
+    0.6773851767372446
   )
 
 

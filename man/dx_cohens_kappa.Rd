@@ -43,6 +43,9 @@ better agreement. Typical benchmarks for interpreting Cohen's Kappa are:
 \item 0.6-0.8: Substantial agreement
 \item 0.8-1.0: Almost perfect agreement
 }
+
+The 95\% confidence interval uses the large sample variance of Fleiss, Cohen,
+and Everitt (1969) with a normal approximation, and is limited to -1 to 1.
 }
 \examples{
 # Assuming you have a confusion matrix cm with appropriate structure
@@ -55,5 +58,9 @@ kappa_full <- dx_cohens_kappa(cm)
 print(kappa_simple)
 print(kappa_full)
 
+}
+\references{
+Fleiss JL, Cohen J, Everitt BS. Large sample standard errors of kappa and
+weighted kappa. Psychological Bulletin. 1969;72(5):323-327.
 }
 \concept{metrics}

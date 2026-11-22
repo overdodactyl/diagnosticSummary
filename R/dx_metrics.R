@@ -619,6 +619,13 @@ get_kappa_interpretation <- function(kappa) {
 #' - 0.6-0.8: Substantial agreement
 #' - 0.8-1.0: Almost perfect agreement
 #'
+#' The 95% confidence interval uses the large sample variance of Fleiss, Cohen,
+#' and Everitt (1969) with a normal approximation, and is limited to -1 to 1.
+#'
+#' @references
+#' Fleiss JL, Cohen J, Everitt BS. Large sample standard errors of kappa and
+#' weighted kappa. Psychological Bulletin. 1969;72(5):323-327.
+#'
 #' @examples
 #' # Assuming you have a confusion matrix cm with appropriate structure
 #' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
@@ -656,11 +663,23 @@ dx_cohens_kappa <- function(cm, detail = "full") {
     return(kappa)
   } else if (detail == "full") {
 
-    # Calculate variance of kappa (standard method)
-    var_kappa <- (po * (1 - po)) / (n * (1 - pe)^2)
+    # Large sample variance of Fleiss, Cohen, and Everitt (1969). Cell and
+    # marginal proportions, with rows for the prediction and columns for truth.
+    p11 <- tp / n
+    p12 <- fp / n
+    p21 <- fn / n
+    p22 <- tn / n
+    row1 <- p11 + p12
+    row2 <- p21 + p22
+    col1 <- p11 + p21
+    col2 <- p12 + p22
+    agree <- p11 * (1 - (row1 + col1) * (1 - kappa))^2 +
+      p22 * (1 - (row2 + col2) * (1 - kappa))^2
+    disagree <- (1 - kappa)^2 * (p12 * (col1 + row2)^2 + p21 * (col2 + row1)^2)
+    var_kappa <- (agree + disagree - (kappa - pe * (1 - kappa))^2) / (n * (1 - pe)^2)
 
-    # Calculate standard error of kappa
-    se_kappa <- sqrt(var_kappa)
+    # Rounding can make a variance that is essentially 0 slightly negative
+    se_kappa <- sqrt(max(var_kappa, 0))
 
     # Confidence interval using normal approximation, typically Z = 1.96 for 95%
     z <- 1.96
@@ -674,7 +693,7 @@ dx_cohens_kappa <- function(cm, detail = "full") {
       measure = "Cohen's Kappa",
       estimate = conf_int(kappa, ci_lower, ci_upper, accuracy = .01),
       estimate_raw = kappa,
-      ci_type = "Standard Error+Normal Approximation",
+      ci_type = "Fleiss et al. (1969) SE + normal approximation",
       notes = note,
       lci_raw = ci_lower,
       uci_raw = ci_upper
