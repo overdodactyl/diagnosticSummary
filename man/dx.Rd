@@ -19,7 +19,7 @@ dx(
   bootreps = 2000,
   bootseed = 20191015,
   doboot = FALSE,
-  direction = "auto",
+  direction = "<",
   ...
 )
 }
@@ -59,7 +59,10 @@ prevalence for additional NPV and PPV calculations.}
 
 \item{doboot}{Logical. Generate bootstrap estimate of F1 confidence interval?}
 
-\item{direction}{Direction for roc comparison.  See ?pROC::roc}
+\item{direction}{Direction for roc comparison.  See ?pROC::roc. The default,
+"<", treats higher predicted probabilities as more likely to be positive.
+"auto" lets pROC choose the direction that gives an AUC of at least 0.5,
+which hides models that perform worse than chance.}
 
 \item{...}{currently unused}
 }
