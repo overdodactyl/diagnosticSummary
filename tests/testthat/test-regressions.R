@@ -219,3 +219,13 @@ test_that("AUC is not flipped for worse than chance models", {
   expect_equal(reversed$measures, original$measures)
   expect_equal(reversed$measures, reversed$roc)
 })
+
+test_that("as.data.frame and summary filter on several values", {
+  res <- as.data.frame(dx_grp, variable = c("Sex", "AgeGroup"), measure = c("Accuracy", "Sensitivity"))
+
+  expect_setequal(unique(res$variable), c("Sex", "AgeGroup"))
+  expect_setequal(unique(res$measure), c("Accuracy", "Sensitivity"))
+  expect_equal(nrow(res), 2 * 4)
+
+  expect_no_error(summary(dx_grp, variable = c("Sex", "AgeGroup"), label = c("Male", "(20,50]")))
+})
