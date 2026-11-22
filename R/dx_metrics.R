@@ -911,6 +911,19 @@ dx_lrt_pos <- function(cm, detail = "full", ...) {
 metric_ratio <- function(cm, dx_ratio_func, dx_sd_func, detail = "full", ...) {
   validate_detail(detail)
 
+  # Ratios are undefined unless both outcome classes are present
+  if (cm$dispos == 0 | cm$disneg == 0) {
+    if (detail == "simple") {
+      return(NA_real_)
+    }
+    return(measure_df(
+      measure = list(...)$name,
+      estimate = conf_int(NA, NA, NA),
+      notes = "Requires both outcome classes",
+      estimate_raw = NA_real_
+    ))
+  }
+
   # Extract counts from confusion matrix
   tp <- cm$tp
   tn <- cm$tn
@@ -1079,6 +1092,20 @@ dx_auc_pr <- function(precision, recall, detail = "full") {
 #' @concept metrics
 dx_auc <- function(truth, predprob, detail = "full", direction = "<") {
   validate_detail(detail)
+
+  # AUC is undefined unless both outcome classes are present
+  if (length(unique(truth)) < 2) {
+    if (detail == "simple") {
+      return(NA_real_)
+    }
+    return(measure_df(
+      measure = "AUC ROC",
+      estimate = conf_int(NA, NA, NA),
+      notes = "Requires both outcome classes",
+      estimate_raw = NA_real_
+    ))
+  }
+
   rocest <- pROC::roc(truth, predprob, ci = T, direction = direction, quiet = TRUE)
   aucest <- pROC::auc(rocest)
   auctext <- as.character(pROC::ci(aucest))
