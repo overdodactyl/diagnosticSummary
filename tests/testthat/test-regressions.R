@@ -285,3 +285,94 @@ test_that("Unused factor levels are dropped from subgroups", {
   expect_false("Other" %in% sex$label)
   expect_equal(sum(sex$measure == "Breslow-Day"), 1)
 })
+
+test_that("Subgroups with one outcome class report NA instead of failing", {
+  hf <- dx_heart_failure
+  # Every fifth negative goes into its own subgroup, which has no positives
+  hf$g <- factor(ifelse(hf$truth == 0 & seq_len(nrow(hf)) %% 5 == 0, "neg_only", "rest"))
+
+  expect_warning(
+    d <- dx(
+      data = hf,
+      true_varname = "truth",
+      pred_varname = "predicted",
+      setthreshold = .3,
+      grouping_variables = "g"
+    ),
+    "with only one outcome class: neg_only"
+  )
+
+  neg <- d$measures[d$measures$label == "neg_only", ]
+  for (measure in c("AUC ROC", "Odds Ratio", "LRT+", "LRT-", "Pearson's Chi-squared")) {
+    expect_true(is.na(neg$estimate[neg$measure == measure]), info = measure)
+  }
+  expect_equal(neg$summary[neg$measure == "AUC ROC"], "- (-, -)")
+
+  # Measures that are defined are still reported
+  in_group <- hf$g == "neg_only"
+  expect_equal(
+    neg$estimate[neg$measure == "Specificity"],
+    mean(hf$predicted[in_group] < .3)
+  )
+
+  # Only one informative subgroup remains, so Breslow-Day is skipped
+  expect_false(any(d$measures$measure == "Breslow-Day" & d$measures$variable == "g"))
+})
+
+test_that("Subgroups with one row and single-level variables do not fail", {
+  hf <- dx_heart_failure
+  hf$solo <- factor(c("solo", rep("rest", nrow(hf) - 1)))
+  hf$one <- factor("a")
+
+  expect_warning(
+    d <- dx(
+      data = hf,
+      true_varname = "truth",
+      pred_varname = "predicted",
+      setthreshold = .3,
+      grouping_variables = c("solo", "one")
+    ),
+    "with only one outcome class: solo"
+  )
+
+  m <- d$measures
+  expect_equal(m$n[m$label == "solo" & m$measure == "Accuracy"], 1)
+  expect_equal(m$n[m$variable == "one" & m$measure == "Accuracy"], nrow(hf))
+  expect_false(any(m$measure == "Breslow-Day" & m$variable %in% c("solo", "one")))
+})
+
+test_that("Breslow-Day excludes uninformative subgroups", {
+  hf <- dx_heart_failure
+  # Third level with both outcomes, where every prediction is above the threshold
+  high <- hf[hf$predicted >= .3, ]
+  extra <- rbind(high[high$truth == 1, ][1:10, ], high[high$truth == 0, ][1:10, ])
+  extra$AgeGroup <- "all_positive"
+  hf$AgeGroup <- as.character(hf$AgeGroup)
+  hf2 <- rbind(hf, extra)
+
+  expect_warning(
+    d <- dx(
+      data = hf2,
+      true_varname = "truth",
+      pred_varname = "predicted",
+      setthreshold = .3,
+      grouping_variables = "AgeGroup"
+    ),
+    "excludes subgroup\\(s\\) where all predictions fall on one side of the threshold: all_positive"
+  )
+
+  # Same result as testing only the two informative subgroups
+  pred <- as.numeric(hf$predicted >= .3)
+  expected <- breslow_day_test(table(pred, hf$truth, hf$AgeGroup))$p_value
+  bd <- d$measures[d$measures$measure == "Breslow-Day", ]
+  expect_equal(bd$estimate, unname(expected))
+})
+
+test_that("Standalone AUC and ratios are NA with one outcome class", {
+  cm <- make_cm(tp = 0, fn = 0, fp = 5, tn = 15)
+
+  expect_true(is.na(dx_auc(c(0, 0, 0), c(.1, .4, .8), detail = "simple")))
+  expect_true(is.na(dx_odds_ratio(cm, detail = "simple")))
+  expect_true(is.na(dx_lrt_pos(cm)$estimate))
+  expect_equal(dx_chi_square(cm)$summary, "-")
+})

@@ -82,7 +82,9 @@ format_pvalue <- function(p, accuracy = 0.01) {
   # Define the smallest non-zero number representable with the given accuracy
   smallest_nonzero <- accuracy
 
-  if (p < smallest_nonzero) {
+  if (is.na(p)) {
+    return("-")
+  } else if (p < smallest_nonzero) {
     # Construct the smallest non-zero representation based on accuracy
     smallest_nonzero_str <- formatC(accuracy, format = "f", digits = -log10(accuracy))
     return(paste0("p<", smallest_nonzero_str))
@@ -154,7 +156,38 @@ dx_breslow_day <- function(data, options, group_varname) {
 
   tmp <- tmp[!is.na(tmp$group), ]
 
-  tab <- table(tmp$pred, tmp$truth, tmp$group)
+  # Only subgroups with both outcome classes and both predicted classes
+  # contribute to the test
+  informative <- vapply(levels(tmp$group), function(g) {
+    in_group <- tmp$group %in% g
+    length(unique(tmp$truth[in_group])) == 2 && length(unique(tmp$pred[in_group])) == 2
+  }, logical(1))
+
+  one_class <- vapply(levels(tmp$group), function(g) {
+    length(unique(tmp$truth[tmp$group %in% g])) < 2
+  }, logical(1))
+  no_pred_variation <- !informative & !one_class
+  if (any(no_pred_variation)) {
+    warning(paste0(
+      "Breslow-Day test for ", group_varname, " excludes subgroup(s) where ",
+      "all predictions fall on one side of the threshold: ",
+      paste(levels(tmp$group)[no_pred_variation], collapse = ", "), "."
+    ), call. = FALSE)
+  }
+
+  # The test needs at least two informative subgroups
+  if (sum(informative) < 2) {
+    return(NULL)
+  }
+
+  tmp <- tmp[tmp$group %in% levels(tmp$group)[informative], ]
+  tmp$group <- droplevels(tmp$group)
+
+  tab <- table(
+    factor(tmp$pred, levels = c(0, 1)),
+    factor(tmp$truth, levels = c(0, 1)),
+    tmp$group
+  )
 
   bd <- breslow_day_test(tab, odds_ratio = NA, correct = FALSE)
 

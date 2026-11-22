@@ -221,6 +221,20 @@ dx_group_measure <- function(data, options, group_varname) {
   # Use factor level order
   group_labels <- levels(data[[group_varname]])
 
+  # Warn about subgroups that only contain one outcome class
+  truth <- data[[options$true_varname]]
+  one_class <- vapply(group_labels, function(g) {
+    length(unique(truth[data[[group_varname]] %in% g])) < 2
+  }, logical(1))
+  if (any(one_class)) {
+    warning(paste0(
+      "Subgroup(s) of ", group_varname, " with only one outcome class: ",
+      paste(group_labels[one_class], collapse = ", "), ". ",
+      "AUC, odds ratio, and likelihood ratios are NA, and these subgroups ",
+      "are excluded from the Breslow-Day test."
+    ), call. = FALSE)
+  }
+
   datalist <- list()
 
   for (i in seq_along(group_labels)) {
