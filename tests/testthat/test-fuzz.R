@@ -270,7 +270,9 @@ test_that("Threshold table matches direct calculations at every threshold", {
     expect_equal(th$fpr, fp / (fp + tn), info = info)
     expect_equal(th$informedness, sens + spec - 1, info = info)
     expect_equal(th$f1, ifelse(tp == 0, 0, 2 * tp / (2 * tp + fp + fn)), info = info)
-    weight <- th$threshold / (1 - th$threshold)
+    # Threshold probability of the event, which is outcome 0 when poslabel = 0
+    pt <- if (a$poslabel == 1) th$threshold else 1 - th$threshold
+    weight <- pt / (1 - pt)
     expect_equal(th$net_benefit, tp / n - weight * fp / n, info = info)
 
     # Totals don't depend on the threshold, and sensitivity moves in one
