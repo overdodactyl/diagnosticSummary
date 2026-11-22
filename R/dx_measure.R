@@ -34,11 +34,11 @@ dx_thresholds <- function(data, options) {
     npv[i] <- dx_npv(perf, detail = "simple")
     ppv[i] <- dx_ppv(perf, detail = "simple")
 
-    # Calculate net benefit
+    # Calculate net benefit (Vickers & Elkin, 2006):
+    # true positives and false positives per patient, with false positives
+    # weighted by the odds at the threshold probability
     weight <- threshold / (1 - threshold)
-    tp_rate <- sensitivities[i] # True positive rate is sensitivity
-    fp_rate <- 1 - specificities[i] # False positive rate is 1 - specificity
-    net_benefits[i] <- tp_rate - weight * fp_rate
+    net_benefits[i] <- perf$tp / perf$n - weight * perf$fp / perf$n
   }
 
   res <- data.frame(

@@ -25,12 +25,12 @@ Decision Curve Analysis (DCA) is a method for evaluating and comparing the
 clinical usefulness of prediction models by considering the clinical
 consequences of decision making. The decision curve plots the net benefit of
 using the model across a range of threshold probabilities for making a decision.
-The net benefit is calculated as the true positive rate (sensitivity) minus the
-weighted false positive rate, where the weight is the ratio of the cost of
+The net benefit is calculated as the proportion of true positives minus the
+weighted proportion of false positives, where the weight is the ratio of the cost of
 false positives relative to the benefit of true positives. This ratio is derived from
-the threshold probability:
-\deqn{Net Benefit = Sensitivity - (Weight * False Positive Rate)}
-where Weight = Threshold / (1 - Threshold).
+the threshold probability (Vickers & Elkin, 2006):
+\deqn{Net Benefit = \frac{TP}{N} - Weight \times \frac{FP}{N}}
+where Weight = Threshold / (1 - Threshold) and N is the total number of observations.
 
 The decision curve will typically be compared against two
 default strategies: treating all patients or treating none.
