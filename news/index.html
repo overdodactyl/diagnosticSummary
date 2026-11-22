@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">diagnosticSummary</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2.15</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,6 +31,34 @@
       <small>Source: <a href="https://github.com/overdodactyl/diagnosticSummary/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.0.2.15" id="diagnosticsummary-00215">diagnosticSummary 0.0.2.15<a class="anchor" aria-label="anchor" href="#diagnosticsummary-00215"></a></h2>
+<p><strong>Breaking changes</strong></p>
+<ul><li>
+<code><a href="../reference/dx.html">dx()</a></code> now stops with an error if the prediction or truth variable has missing values, or if predictions are outside 0 to 1. Previously these gave unclear errors or, for predictions outside 0 to 1, results such as a meaningless Brier score.</li>
+<li>
+<code>direction</code> in <code><a href="../reference/dx.html">dx()</a></code> and <code><a href="../reference/dx_auc.html">dx_auc()</a></code> now defaults to <code>"&lt;"</code> (higher predictions indicate the positive class) instead of <code>"auto"</code>. Models that perform worse than chance now report an AUC below 0.5 instead of a flipped AUC. The AUC in <code><a href="../reference/dx.html">dx()</a></code> measures now also respects <code>direction</code>.</li>
+<li>Bootstrapped confidence intervals now use <code>bootseed</code>, which was previously ignored, so their values will change. Results are now reproducible regardless of the session’s random seed.</li>
+<li>
+<code>poslabel</code> must be 0 or 1, and <code><a href="../reference/dx_compare.html">dx_compare()</a></code> requires each model to have a unique name. Previously other values ran silently with wrong results.</li>
+<li>
+<code>direction</code> only affects the AUC and ROC curve, so <code><a href="../reference/dx.html">dx()</a></code> now warns when it isn’t <code>"&lt;"</code>, and plots that always treat 1 as the positive class (gain, lift, KS, CAP, and decision curves) warn when <code>poslabel = 0</code>.</li>
+</ul><p><strong>Bug fixes that change results</strong></p>
+<ul><li>The net benefit in <code><a href="../reference/dx_plot_decision_curve.html">dx_plot_decision_curve()</a></code> (and the <code>net_benefit</code> column of <code>thresholds</code>) used the wrong formula, which overstated the model’s benefit relative to treating all or none. It now uses the standard formula from Vickers &amp; Elkin (2006).</li>
+<li>The KS statistic in <code><a href="../reference/dx_plot_ks.html">dx_plot_ks()</a></code> was inflated when predictions were tied</li>
+<li>Cohen’s kappa was <code>NA</code> for data sets with more than about 46,000 rows due to integer overflow, and its confidence interval could extend beyond -1 to 1</li>
+<li>Subgroups with only one outcome class or very few rows no longer cause <code><a href="../reference/dx.html">dx()</a></code> to fail. Measures that are undefined for these subgroups (AUC, odds ratio, likelihood ratios, chi-square, Fisher’s exact, and G-tests) are <code>NA</code>, with a warning, and the Breslow-Day test only uses subgroups with both outcome classes and both predicted classes.</li>
+<li>
+<code><a href="../reference/dx_plot_forest.html">dx_plot_forest()</a></code> placed axis ticks on a different scale from the odds ratios when breaks did not span the axis limits, and gave incorrect labels for <code>trans = "log10"</code> with <code>breaks</code>. Breaks are now always given as odds ratios.</li>
+<li>
+<code><a href="../reference/dx_plot_roc.html">dx_plot_roc()</a></code> shaded less than the AUC when predictions were tied, and its curve did not match the AUC when <code>direction</code> was not <code>"&lt;"</code>. The curve now comes from the same ROC object as the AUC.</li>
+<li>Thresholds created with <code><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq()</a></code> were duplicated in the results and could not be selected with <code><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame()</a></code> or <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code>
+</li>
+</ul><p><strong>Other bug fixes</strong></p>
+<ul><li>Subgroups are ordered by factor level, unused factor levels are dropped, and <code><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame()</a></code> and <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> can filter on several values. Bootstrapped measures are displayed as decimals instead of percentages. <code><a href="../reference/dx_plot_roc.html">dx_plot_roc()</a></code> and <code><a href="../reference/dx_plot_forest.html">dx_plot_forest()</a></code> no longer give ggplot2 warnings, forest plots style subgroups with a missing odds ratio correctly, and <code><a href="../reference/dx.html">dx()</a></code> and <code><a href="../reference/dx_plot_forest.html">dx_plot_forest()</a></code> no longer change the session’s random seed. <code><a href="../reference/dx_compare.html">dx_compare()</a></code> no longer mislabels models when only some are named, and <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> gives a clear error when given several thresholds.</li>
+<li>
+<code><a href="../reference/dx.html">dx()</a></code> no longer fails with column names that contain spaces or with large subgroups (integer overflow in the Breslow-Day test), and unpaired <code><a href="../reference/dx_compare.html">dx_compare()</a></code> no longer fails when a model has no predicted positives or negatives. <code><a href="../reference/dx_plot_pr.html">dx_plot_pr()</a></code> keeps its end point, <code><a href="../reference/dx_plot_forest.html">dx_plot_forest()</a></code> gives a clear error without grouping variables, and kappa of 1 is interpreted as almost perfect agreement.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.2.14" id="diagnosticsummary-00214">diagnosticSummary 0.0.2.14<a class="anchor" aria-label="anchor" href="#diagnosticsummary-00214"></a></h2>
 <p><strong>Bug fixes</strong></p>

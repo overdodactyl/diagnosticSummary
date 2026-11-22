@@ -21,7 +21,7 @@ dx(
   bootreps = 2000,
   bootseed = 20191015,
   doboot = FALSE,
-  direction = "auto",
+  direction = "<",
   ...
 )
 ```
@@ -46,11 +46,14 @@ dx(
 
 - pred_varname:
 
-  Column name containing AI prediction (string)
+  Column name containing AI prediction (string). Values should be
+  predicted probabilities between 0 and 1, with no missing values.
 
 - true_varname:
 
-  Column name containing AI reference standard (string)
+  Column name containing AI reference standard (string). Values should
+  be 0 or 1 (numeric, logical, factor, or character), with no missing
+  values, and both classes must be present.
 
 - setthreshold:
 
@@ -89,7 +92,13 @@ dx(
 
 - direction:
 
-  Direction for roc comparison. See ?pROC::roc
+  Direction for roc comparison. See ?pROC::roc. The default, "\<",
+  treats higher predicted probabilities as more likely to be positive.
+  "auto" lets pROC choose the direction that gives an AUC of at least
+  0.5, which hides models that perform worse than chance. Only the AUC
+  and ROC curve use `direction`; sensitivity, specificity, and other
+  threshold based results always treat higher predictions as positive,
+  so other values give a warning.
 
 - ...:
 

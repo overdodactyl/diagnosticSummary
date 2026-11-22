@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">diagnosticSummary</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2.15</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -77,15 +77,14 @@ and specificity be shown?</p></dd>
 
 
 <dt id="arg-breaks">breaks<a class="anchor" aria-label="anchor" href="#arg-breaks"></a></dt>
-<dd><p>A numeric vector of breaks to include on axis ticks.
-If left empty, breaks will be determined using
-the min and max value from 95% CIs.</p></dd>
+<dd><p>A numeric vector of odds ratios to show as axis ticks, also
+when <code>trans = "log10"</code>. Breaks outside the axis limits are dropped.
+If left empty, breaks are chosen within the axis limits.</p></dd>
 
 
 <dt id="arg-limits">limits<a class="anchor" aria-label="anchor" href="#arg-limits"></a></dt>
-<dd><p>Limits for axis ticks.
-Ticks will be generates using base::breaks.
-Ignored if breaks are passed.</p></dd>
+<dd><p>Limits of the odds ratio axis. If left empty, the range of
+<code>breaks</code> is used, or limits are chosen from the 95% CIs.</p></dd>
 
 
 <dt id="arg-tick-label-size">tick_label_size<a class="anchor" aria-label="anchor" href="#arg-tick-label-size"></a></dt>

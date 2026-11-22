@@ -42,13 +42,14 @@ dx_plot_forest(
 
 - breaks:
 
-  A numeric vector of breaks to include on axis ticks. If left empty,
-  breaks will be determined using the min and max value from 95% CIs.
+  A numeric vector of odds ratios to show as axis ticks, also when
+  `trans = "log10"`. Breaks outside the axis limits are dropped. If left
+  empty, breaks are chosen within the axis limits.
 
 - limits:
 
-  Limits for axis ticks. Ticks will be generates using base::breaks.
-  Ignored if breaks are passed.
+  Limits of the odds ratio axis. If left empty, the range of `breaks` is
+  used, or limits are chosen from the 95% CIs.
 
 - tick_label_size:
 

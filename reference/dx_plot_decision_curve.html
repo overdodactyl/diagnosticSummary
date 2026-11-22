@@ -13,7 +13,7 @@ threshold probabilities compared to the strategy of treating all or none."><meta
 
     <a class="navbar-brand me-2" href="../index.html">diagnosticSummary</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2.15</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -72,12 +72,12 @@ threshold probabilities compared to the strategy of treating all or none.</p>
 clinical usefulness of prediction models by considering the clinical
 consequences of decision making. The decision curve plots the net benefit of
 using the model across a range of threshold probabilities for making a decision.
-The net benefit is calculated as the true positive rate (sensitivity) minus the
-weighted false positive rate, where the weight is the ratio of the cost of
+The net benefit is calculated as the proportion of true positives minus the
+weighted proportion of false positives, where the weight is the ratio of the cost of
 false positives relative to the benefit of true positives. This ratio is derived from
-the threshold probability:
-$$Net Benefit = Sensitivity - (Weight * False Positive Rate)$$
-where Weight = Threshold / (1 - Threshold).</p>
+the threshold probability (Vickers &amp; Elkin, 2006):
+$$Net Benefit = \frac{TP}{N} - Weight \times \frac{FP}{N}$$
+where Weight = Threshold / (1 - Threshold) and N is the total number of observations.</p>
 <p>The decision curve will typically be compared against two
 default strategies: treating all patients or treating none.
 The net benefit is higher when the model's predictions provide a

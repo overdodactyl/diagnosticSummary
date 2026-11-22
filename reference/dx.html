@@ -9,7 +9,7 @@ diagnostic test"><meta property="og:image" content="https://overdodactyl.github.
 
     <a class="navbar-brand me-2" href="../index.html">diagnosticSummary</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2.15</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,7 +56,7 @@ diagnostic test</p>
 <span>  bootreps <span class="op">=</span> <span class="fl">2000</span>,</span>
 <span>  bootseed <span class="op">=</span> <span class="fl">20191015</span>,</span>
 <span>  doboot <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  direction <span class="op">=</span> <span class="st">"auto"</span>,</span>
+<span>  direction <span class="op">=</span> <span class="st">"&lt;"</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -82,11 +82,14 @@ diagnostic test</p>
 
 
 <dt id="arg-pred-varname">pred_varname<a class="anchor" aria-label="anchor" href="#arg-pred-varname"></a></dt>
-<dd><p>Column name containing AI prediction (string)</p></dd>
+<dd><p>Column name containing AI prediction (string). Values
+should be predicted probabilities between 0 and 1, with no missing values.</p></dd>
 
 
 <dt id="arg-true-varname">true_varname<a class="anchor" aria-label="anchor" href="#arg-true-varname"></a></dt>
-<dd><p>Column name containing AI reference standard (string)</p></dd>
+<dd><p>Column name containing AI reference standard (string).
+Values should be 0 or 1 (numeric, logical, factor, or character), with
+no missing values, and both classes must be present.</p></dd>
 
 
 <dt id="arg-setthreshold">setthreshold<a class="anchor" aria-label="anchor" href="#arg-setthreshold"></a></dt>
@@ -126,7 +129,13 @@ prevalence for additional NPV and PPV calculations.</p></dd>
 
 
 <dt id="arg-direction">direction<a class="anchor" aria-label="anchor" href="#arg-direction"></a></dt>
-<dd><p>Direction for roc comparison.  See ?pROC::roc</p></dd>
+<dd><p>Direction for roc comparison.  See ?pROC::roc. The default,
+"&lt;", treats higher predicted probabilities as more likely to be positive.
+"auto" lets pROC choose the direction that gives an AUC of at least 0.5,
+which hides models that perform worse than chance. Only the AUC and ROC
+curve use <code>direction</code>; sensitivity, specificity, and other threshold based
+results always treat higher predictions as positive, so other values give
+a warning.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>

@@ -8,7 +8,7 @@ and is used as a summary of the ROC curve.
 ## Usage
 
 ``` r
-dx_auc(truth, predprob, detail = "full")
+dx_auc(truth, predprob, detail = "full", direction = "<")
 ```
 
 ## Arguments
@@ -27,6 +27,16 @@ dx_auc(truth, predprob, detail = "full")
   "simple" for just the AUC value, "full" for the AUC value along with
   confidence intervals.
 
+- direction:
+
+  Direction of the comparison, passed to
+  [`pROC::roc()`](https://rdrr.io/pkg/pROC/man/roc.html). The default,
+  "\<", treats higher predicted values as more likely to be positive.
+  Use "\>" if lower values indicate the positive class. "auto" lets pROC
+  choose the direction that gives an AUC of at least 0.5, which hides
+  models that perform worse than chance and biases the AUC upward in
+  small samples.
+
 ## Value
 
 Depending on the `detail` parameter, returns a single numeric value of
@@ -39,7 +49,6 @@ AUC or a data frame with the AUC and its confidence intervals.
 true_classes <- c(1, 0, 1, 1, 0, 0, 1)
 predicted_probs <- c(0.9, 0.1, 0.8, 0.75, 0.33, 0.25, 0.67)
 simple_auc <- dx_auc(true_classes, predicted_probs, detail = "simple")
-#> Warning: ci.auc() of a ROC curve with AUC == 1 is always 1-1 and can be misleading.
 #> Warning: ci.auc() of a ROC curve with AUC == 1 is always 1-1 and can be misleading.
 detailed_auc <- dx_auc(true_classes, predicted_probs)
 #> Warning: ci.auc() of a ROC curve with AUC == 1 is always 1-1 and can be misleading.

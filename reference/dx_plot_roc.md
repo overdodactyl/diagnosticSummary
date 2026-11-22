@@ -132,16 +132,4 @@ dx_obj <- dx(
   grouping_variables = c("AgeGroup", "Sex", "AgeSex")
 )
 dx_plot_roc(dx_obj)
-#> Warning: All aesthetics have length 1, but the data has 263 rows.
-#> ℹ Please consider using `annotate()` or provide this layer with data containing
-#>   a single row.
-#> Warning: All aesthetics have length 1, but the data has 263 rows.
-#> ℹ Please consider using `annotate()` or provide this layer with data containing
-#>   a single row.
-#> Warning: All aesthetics have length 1, but the data has 263 rows.
-#> ℹ Please consider using `annotate()` or provide this layer with data containing
-#>   a single row.
-#> Warning: All aesthetics have length 1, but the data has 263 rows.
-#> ℹ Please consider using `annotate()` or provide this layer with data containing
-#>   a single row.
 ```

@@ -11,7 +11,7 @@ of a classifier to distinguish between classes and is used as a summary of the R
 
     <a class="navbar-brand me-2" href="../index.html">diagnosticSummary</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2.15</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,7 +44,7 @@ of a classifier to distinguish between classes and is used as a summary of the R
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">dx_auc</span><span class="op">(</span><span class="va">truth</span>, <span class="va">predprob</span>, detail <span class="op">=</span> <span class="st">"full"</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">dx_auc</span><span class="op">(</span><span class="va">truth</span>, <span class="va">predprob</span>, detail <span class="op">=</span> <span class="st">"full"</span>, direction <span class="op">=</span> <span class="st">"&lt;"</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -63,6 +63,14 @@ of a classifier to distinguish between classes and is used as a summary of the R
 <dd><p>Character string specifying the level of detail in the output: "simple"
 for just the AUC value, "full" for the AUC value along with confidence intervals.</p></dd>
 
+
+<dt id="arg-direction">direction<a class="anchor" aria-label="anchor" href="#arg-direction"></a></dt>
+<dd><p>Direction of the comparison, passed to <code><a href="https://rdrr.io/pkg/pROC/man/roc.html" class="external-link">pROC::roc()</a></code>. The default,
+"&lt;", treats higher predicted values as more likely to be positive. Use "&gt;" if
+lower values indicate the positive class. "auto" lets pROC choose the direction
+that gives an AUC of at least 0.5, which hides models that perform worse than
+chance and biases the AUC upward in small samples.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -76,7 +84,6 @@ a data frame with the AUC and its confidence intervals.</p>
 <span class="r-in"><span><span class="va">true_classes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">predicted_probs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.9</span>, <span class="fl">0.1</span>, <span class="fl">0.8</span>, <span class="fl">0.75</span>, <span class="fl">0.33</span>, <span class="fl">0.25</span>, <span class="fl">0.67</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">simple_auc</span> <span class="op">&lt;-</span> <span class="fu">dx_auc</span><span class="op">(</span><span class="va">true_classes</span>, <span class="va">predicted_probs</span>, detail <span class="op">=</span> <span class="st">"simple"</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>ci.auc() of a ROC curve with AUC == 1 is always 1-1 and can be misleading.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>ci.auc() of a ROC curve with AUC == 1 is always 1-1 and can be misleading.</span>
 <span class="r-in"><span><span class="va">detailed_auc</span> <span class="op">&lt;-</span> <span class="fu">dx_auc</span><span class="op">(</span><span class="va">true_classes</span>, <span class="va">predicted_probs</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>ci.auc() of a ROC curve with AUC == 1 is always 1-1 and can be misleading.</span>
