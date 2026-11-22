@@ -384,3 +384,18 @@ test_that("AUC estimate is kept when its CI cannot be calculated", {
   expect_equal(res$estimate, 1)
   expect_true(is.na(res$conf_low))
 })
+
+test_that("Net benefit uses the Vickers & Elkin (2006) formula", {
+  thr <- dx_grp$thresholds
+  n <- nrow(dx_heart_failure)
+  prev <- mean(dx_heart_failure$truth)
+  weight <- thr$threshold / (1 - thr$threshold)
+
+  # Net benefit = TP/n - FP/n * pt / (1 - pt)
+  ok <- thr$threshold < 1
+  expect_equal(thr$net_benefit[ok], (thr$tp / n - thr$fp / n * weight)[ok])
+
+  # Treating everyone (threshold 0) gives a net benefit equal to the prevalence,
+  # the same as the treat all line in the decision curve
+  expect_equal(thr$net_benefit[thr$threshold == 0], prev)
+})
