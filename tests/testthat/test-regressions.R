@@ -151,3 +151,45 @@ test_that("Log scale forest range includes odds ratios below 1 (78a8b42)", {
 
   expect_equal(res, c(0.1, 100))
 })
+
+test_that("dx() does not change the user's random number state", {
+  set.seed(1)
+  expected <- stats::runif(3)
+
+  set.seed(1)
+  dx(
+    data = dx_heart_failure,
+    true_varname = "truth",
+    pred_varname = "predicted",
+    setthreshold = .3,
+    grouping_variables = "Sex",
+    doboot = TRUE,
+    bootreps = 50
+  )
+  expect_equal(stats::runif(3), expected)
+})
+
+test_that("Bootstrapped CIs depend only on bootseed", {
+  fit_boot <- function(bootseed) {
+    dx(
+      data = dx_heart_failure,
+      true_varname = "truth",
+      pred_varname = "predicted",
+      setthreshold = .3,
+      grouping_variables = "Sex",
+      doboot = TRUE,
+      bootreps = 50,
+      bootseed = bootseed
+    )$measures
+  }
+
+  set.seed(1)
+  a <- fit_boot(20191015)
+  set.seed(999)
+  b <- fit_boot(20191015)
+  c <- fit_boot(42)
+
+  expect_identical(a, b)
+  f1 <- function(x) x$conf_low[x$measure == "F1 Score"]
+  expect_false(identical(f1(a), f1(c)))
+})

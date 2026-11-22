@@ -144,6 +144,18 @@ dx <- function(data,
     doboot = doboot
   )
 
+  # Use bootseed so bootstrapped CIs are reproducible, and restore the
+  # user's random number state on exit
+  old_seed <- get0(".Random.seed", envir = globalenv(), inherits = FALSE)
+  on.exit({
+    if (is.null(old_seed)) {
+      rm(".Random.seed", envir = globalenv())
+    } else {
+      assign(".Random.seed", old_seed, envir = globalenv())
+    }
+  }, add = TRUE)
+  set.seed(bootseed)
+
   # Get all unique thresholds
   # Set thresholds may not be in threshold_range
   all_thresholds <- unique(c(options$setthreshold, options$threshold_range))
@@ -162,8 +174,6 @@ dx <- function(data,
   threshold_measures <- do.call(rbind, threshold_measures)
 
   ####### Subgroup Analysis
-
-  set.seed(123)
 
   if (!identical(grouping_variables, NA)) {
     subgroups <- list()
