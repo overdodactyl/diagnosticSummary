@@ -688,3 +688,13 @@ test_that("dx$thresholds stores the event's threshold probability", {
     expect_equal(th$event_threshold, expected, info = paste("poslabel", poslabel))
   }
 })
+
+test_that("direction other than the default is deprecated", {
+  expect_warning(
+    dx(dx_heart_failure, true_varname = "truth", pred_varname = "predicted", direction = "auto"),
+    "deprecated"
+  )
+  expect_no_warning(
+    dx(dx_heart_failure, true_varname = "truth", pred_varname = "predicted", direction = "<")
+  )
+})
