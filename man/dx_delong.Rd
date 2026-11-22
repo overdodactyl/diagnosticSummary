@@ -32,8 +32,11 @@ DeLong's test, which is suitable for comparing two correlated ROC curves. This c
 typically arises from using the same set of samples to generate both curves. A significant
 p-value indicates a statistically significant difference between the AUCs of the two models.
 When \code{detail} is "full", additional information about the comparison, including the estimated
-difference in AUC and its confidence interval, is provided. The confidence interval gives a
-range of plausible values for the difference in AUC between the two models.
+difference in AUC and its confidence interval, is provided. The difference is calculated
+as the AUC of \code{dx1} minus the AUC of \code{dx2}, so a negative estimate indicates that \code{dx2}
+has the higher AUC. The confidence interval gives a range of plausible values for the
+difference in AUC between the two models. A confidence interval is only available for
+paired comparisons.
 }
 \examples{
 dx_glm <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted")

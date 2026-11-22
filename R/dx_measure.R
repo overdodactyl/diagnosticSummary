@@ -284,26 +284,26 @@ dx_compare <- function(dx_list, paired = TRUE) {
 
   res <- NULL
 
-  for (i in seq_along(ncol(combinations))) {
+  for (i in seq_len(ncol(combinations))) {
     n1 <- combinations[1, i]
     n2 <- combinations[2, i]
     dx1 <- dx_list[[n1]]
     dx2 <- dx_list[[n2]]
-    delong <- dx_delong(dx1, dx2, paired = paired)
-    res <- rbind(res, delong)
+    pair_res <- dx_delong(dx1, dx2, paired = paired)
 
     if (!paired) {
       metrics <- c("accuracy", "ppv", "npv", "fnr", "fpr", "fdr", "sensitivity", "specificity")
       for (metric in metrics) {
         ztest <- dx_z_test(dx1, dx2, metric = metric)
-        res <- rbind(res, ztest)
+        pair_res <- rbind(pair_res, ztest)
       }
     } else {
       mcnemars <- dx_mcnemars(dx1, dx2)
-      res <- rbind(res, mcnemars)
+      pair_res <- rbind(pair_res, mcnemars)
     }
 
-    res$models <- two_model_name(n1, n2)
+    pair_res$models <- two_model_name(n1, n2)
+    res <- rbind(res, pair_res)
   }
 
   structure(

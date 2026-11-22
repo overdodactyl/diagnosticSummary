@@ -38,6 +38,8 @@ assuming the null hypothesis that the two proportions based on the specified met
 A low p-value indicates a significant difference in the proportions, suggesting that the success rates
 of the two groups are statistically significantly different. The function automatically adjusts
 for continuity and provides confidence intervals for the difference in proportions.
+The difference is calculated as the metric of \code{dx1} minus the metric of \code{dx2}, so a
+negative estimate indicates that \code{dx2} has the higher value.
 
 The Z-test for two proportions is appropriate when comparing the success rates (proportions) of two independent samples.
 Here are some considerations for using this test:

@@ -299,8 +299,11 @@ dx_g_test <- function(cm, detail = "full") {
 #' typically arises from using the same set of samples to generate both curves. A significant
 #' p-value indicates a statistically significant difference between the AUCs of the two models.
 #' When `detail` is "full", additional information about the comparison, including the estimated
-#' difference in AUC and its confidence interval, is provided. The confidence interval gives a
-#' range of plausible values for the difference in AUC between the two models.
+#' difference in AUC and its confidence interval, is provided. The difference is calculated
+#' as the AUC of `dx1` minus the AUC of `dx2`, so a negative estimate indicates that `dx2`
+#' has the higher AUC. The confidence interval gives a range of plausible values for the
+#' difference in AUC between the two models. A confidence interval is only available for
+#' paired comparisons.
 #' @examples
 #' dx_glm <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted")
 #' dx_rf <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted_rf")
@@ -326,7 +329,7 @@ dx_delong <- function(dx1, dx2, detail = "full", paired = TRUE) {
     roc1 <- as.numeric(test$roc1$auc)
     roc2 <- as.numeric(test$roc2$auc)
 
-    estimate <- abs(roc1 - roc2)
+    estimate <- roc1 - roc2
     low <- test$conf.int[1]
     high <- test$conf.int[2]
     low <- ifelse(is.null(low), NA, low)
@@ -338,7 +341,7 @@ dx_delong <- function(dx1, dx2, detail = "full", paired = TRUE) {
       test = "DeLong's test for ROC curves",
       summary = summary,
       p_value = test$p.value,
-      estimate = abs(roc1 - roc2),
+      estimate = estimate,
       conf_low = low,
       conf_high = high,
       statistic = as.numeric(test$statistic)
@@ -366,6 +369,8 @@ dx_delong <- function(dx1, dx2, detail = "full", paired = TRUE) {
 #' A low p-value indicates a significant difference in the proportions, suggesting that the success rates
 #' of the two groups are statistically significantly different. The function automatically adjusts
 #' for continuity and provides confidence intervals for the difference in proportions.
+#' The difference is calculated as the metric of `dx1` minus the metric of `dx2`, so a
+#' negative estimate indicates that `dx2` has the higher value.
 #'
 #' The Z-test for two proportions is appropriate when comparing the success rates (proportions) of two independent samples.
 #' Here are some considerations for using this test:
@@ -416,7 +421,7 @@ dx_z_test <- function(dx1, dx2, metric = c("accuracy", "ppv", "npv", "fnr", "fpr
     val1 <- as.numeric(test$estimate[1])
     val2 <- as.numeric(test$estimate[2])
 
-    estimate <- abs(val1 - val2)
+    estimate <- val1 - val2
     low <- test$conf.int[1]
     high <- test$conf.int[2]
 
