@@ -34,13 +34,12 @@ dx_plot_forest(
 \item{fraction}{Logical.  Should the fraction for sensitivity
 and specificity be shown?}
 
-\item{breaks}{A numeric vector of breaks to include on axis ticks.
-If left empty, breaks will be determined using
-the min and max value from 95\% CIs.}
+\item{breaks}{A numeric vector of odds ratios to show as axis ticks, also
+when \code{trans = "log10"}. Breaks outside the axis limits are dropped.
+If left empty, breaks are chosen within the axis limits.}
 
-\item{limits}{Limits for axis ticks.
-Ticks will be generates using base::breaks.
-Ignored if breaks are passed.}
+\item{limits}{Limits of the odds ratio axis. If left empty, the range of
+\code{breaks} is used, or limits are chosen from the 95\% CIs.}
 
 \item{tick_label_size}{Font size for axis labels.}
 
