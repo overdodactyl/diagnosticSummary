@@ -155,7 +155,7 @@ dx_measure <- function(data, threshold, options, var = "Overall",
   common_ratio_args <- list(cm = cm)
 
   metric_calculations <- list(
-    auc = list(fun = dx_auc, params = list(truth = truth, predprob = predprob)),
+    auc = list(fun = dx_auc, params = list(truth = truth, predprob = predprob, direction = options$direction)),
     accuracy = list(fun = dx_accuracy, params = common_cm_args),
     sensitivity = list(fun = dx_sensitivity, params = common_cm_args),
     specificity = list(fun = dx_specificity, params = common_cm_args),

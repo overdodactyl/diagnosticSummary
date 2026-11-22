@@ -24,7 +24,10 @@
 #' @param bootreps Number of bootstrap samples used to generate F1 score CI
 #' @param bootseed Seed value to be used when calculating bootsraped CI's
 #' @param doboot Logical. Generate bootstrap estimate of F1 confidence interval?
-#' @param direction Direction for roc comparison.  See ?pROC::roc
+#' @param direction Direction for roc comparison.  See ?pROC::roc. The default,
+#'     "<", treats higher predicted probabilities as more likely to be positive.
+#'     "auto" lets pROC choose the direction that gives an AUC of at least 0.5,
+#'     which hides models that perform worse than chance.
 #' @param ... currently unused
 #'
 #' @export
@@ -34,7 +37,7 @@ dx <- function(data,
                threshold_range = NA, outcome_label = NA, pred_varname, true_varname,
                setthreshold = .5, poslabel = 1, grouping_variables = NA, prevalence = NA,
                citype = "exact", bootreps = 2000, bootseed = 20191015,
-               doboot = FALSE, direction = "auto", ...) {
+               doboot = FALSE, direction = "<", ...) {
 
 
   # Check if pred_varname in data
@@ -141,7 +144,8 @@ dx <- function(data,
     citype = citype,
     bootreps = bootreps,
     bootseed = bootseed,
-    doboot = doboot
+    doboot = doboot,
+    direction = direction
   )
 
   # Use bootseed so bootstrapped CIs are reproducible, and restore the

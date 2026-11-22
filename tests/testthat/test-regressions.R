@@ -193,3 +193,29 @@ test_that("Bootstrapped CIs depend only on bootseed", {
   f1 <- function(x) x$conf_low[x$measure == "F1 Score"]
   expect_false(identical(f1(a), f1(c)))
 })
+
+test_that("AUC is not flipped for worse than chance models", {
+  inverted <- dx_heart_failure
+  inverted$predicted <- 1 - inverted$predicted
+
+  auc <- function(data, ...) {
+    d <- dx(data = data, true_varname = "truth", pred_varname = "predicted", setthreshold = .3, ...)
+    m <- d$measures
+    list(
+      measures = m$estimate[m$variable == "Overall" & m$measure == "AUC ROC"],
+      roc = as.numeric(d$roc$auc)
+    )
+  }
+
+  original <- auc(dx_heart_failure)
+  flipped <- auc(inverted)
+
+  expect_lt(flipped$measures, .5)
+  expect_equal(flipped$measures, 1 - original$measures)
+  expect_equal(flipped$measures, flipped$roc)
+
+  # An explicit direction is used for both the measures and the ROC curve
+  reversed <- auc(inverted, direction = ">")
+  expect_equal(reversed$measures, original$measures)
+  expect_equal(reversed$measures, reversed$roc)
+})

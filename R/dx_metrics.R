@@ -1059,6 +1059,11 @@ dx_auc_pr <- function(precision, recall, detail = "full") {
 #' @param predprob Vector of prediction probabilities corresponding to the true outcomes.
 #' @param detail Character string specifying the level of detail in the output: "simple"
 #'        for just the AUC value, "full" for the AUC value along with confidence intervals.
+#' @param direction Direction of the comparison, passed to [pROC::roc()]. The default,
+#'        "<", treats higher predicted values as more likely to be positive. Use ">" if
+#'        lower values indicate the positive class. "auto" lets pROC choose the direction
+#'        that gives an AUC of at least 0.5, which hides models that perform worse than
+#'        chance and biases the AUC upward in small samples.
 #' @return Depending on the `detail` parameter, returns a single numeric value of AUC or
 #'         a data frame with the AUC and its confidence intervals.
 #' @examples
@@ -1071,9 +1076,9 @@ dx_auc_pr <- function(precision, recall, detail = "full") {
 #' print(detailed_auc)
 #' @export
 #' @concept metrics
-dx_auc <- function(truth, predprob, detail = "full") {
+dx_auc <- function(truth, predprob, detail = "full", direction = "<") {
   validate_detail(detail)
-  rocest <- pROC::roc(truth, predprob, ci = T, quiet = TRUE)
+  rocest <- pROC::roc(truth, predprob, ci = T, direction = direction, quiet = TRUE)
   aucest <- pROC::auc(rocest)
   auctext <- as.character(pROC::ci(aucest))
   auc_raw <- as.numeric(auctext[2])

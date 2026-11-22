@@ -4,7 +4,7 @@
 \alias{dx_auc}
 \title{Calculate Area Under the ROC Curve (AUC)}
 \usage{
-dx_auc(truth, predprob, detail = "full")
+dx_auc(truth, predprob, detail = "full", direction = "<")
 }
 \arguments{
 \item{truth}{Vector of true binary class outcomes (0 and 1).}
@@ -13,6 +13,12 @@ dx_auc(truth, predprob, detail = "full")
 
 \item{detail}{Character string specifying the level of detail in the output: "simple"
 for just the AUC value, "full" for the AUC value along with confidence intervals.}
+
+\item{direction}{Direction of the comparison, passed to \code{\link[pROC:roc]{pROC::roc()}}. The default,
+"<", treats higher predicted values as more likely to be positive. Use ">" if
+lower values indicate the positive class. "auto" lets pROC choose the direction
+that gives an AUC of at least 0.5, which hides models that perform worse than
+chance and biases the AUC upward in small samples.}
 }
 \value{
 Depending on the \code{detail} parameter, returns a single numeric value of AUC or
