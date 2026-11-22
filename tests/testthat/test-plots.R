@@ -6,6 +6,13 @@ dx_obj <- dx(
   setthreshold = .3
 )
 
+# Area of a polygon from built layer data (shoelace formula)
+polygon_area <- function(d) {
+  x <- d$x
+  y <- d$y
+  abs(sum(x * c(y[-1], y[1]) - c(x[-1], x[1]) * y)) / 2
+}
+
 # ggplot2 only warns about layer data when a plot is built, so build each plot
 # instead of only creating it
 expect_builds <- function(p) {
@@ -65,10 +72,8 @@ test_that("ROC plot shades the AUC and marks the chosen threshold", {
   b <- expect_builds(dx_plot_roc(dx_obj))
   cm <- dx_obj$cm
 
-  # The shaded rectangles under the curve add up to the AUC
-  rects <- b$data[[1]]
-  area <- sum(abs(rects$xmax - rects$xmin) * rects$ymax, na.rm = TRUE)
-  expect_equal(area, as.numeric(dx_obj$roc$auc))
+  # The shaded area under the curve equals the AUC
+  expect_equal(polygon_area(b$data[[1]]), as.numeric(dx_obj$roc$auc))
 
   # The reference circle sits at the sensitivity and specificity at setthreshold.
   # The x axis is reversed, so built x values are negated.
@@ -234,4 +239,48 @@ test_that("ROC and forest plots can be saved to a file", {
 
   expect_true(file.exists(roc_file))
   expect_true(file.exists(forest_file))
+})
+
+test_that("ROC plot matches the AUC with tied predictions and any direction", {
+  ties <- data.frame(truth = c(1, 1, 0, 0, 1, 0, 1, 0), p = c(.5, .5, .5, .5, .2, .2, .9, .1))
+  d <- dx(data = ties, true_varname = "truth", pred_varname = "p", setthreshold = .5)
+  expect_equal(polygon_area(expect_builds(dx_plot_roc(d))$data[[1]]), as.numeric(d$roc$auc))
+
+  inverted <- dx_heart_failure
+  inverted$predicted <- 1 - inverted$predicted
+  d <- suppressWarnings(dx(data = inverted, true_varname = "truth", pred_varname = "predicted", setthreshold = .7, direction = ">"))
+  expect_equal(polygon_area(expect_builds(dx_plot_roc(d))$data[[1]]), as.numeric(d$roc$auc))
+})
+
+test_that("PR curve reaches full recall", {
+  d <- dx(
+    data = data.frame(truth = c(1, 0, 1, 0, 0, 1), p = c(.9, .8, .7, .4, .3, .1)),
+    true_varname = "truth", pred_varname = "p", setthreshold = .5
+  )
+  pr <- expect_builds(dx_plot_pr(d))$data[[1]]
+  expect_equal(max(pr$x), 1)
+})
+
+test_that("ROC summary statistics follow the requested order", {
+  b <- expect_builds(dx_plot_roc(dx_obj, summary_stats = c(3, 1, 3)))
+  text <- b$data[[length(b$data)]]$label
+  expect_length(text, 2)
+  expect_match(text[1], "^Sensitivity")
+  expect_match(text[2], "^AUC ROC")
+})
+
+test_that("Plots that ignore poslabel = 0 warn", {
+  d0 <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted", setthreshold = .3, poslabel = 0)
+
+  expect_warning(dx_plot_gain(d0), "ignores poslabel = 0")
+  expect_warning(dx_plot_lift(d0), "ignores poslabel = 0")
+  expect_warning(dx_plot_ks(d0), "ignores poslabel = 0")
+  expect_warning(dx_plot_cap(d0), "ignores poslabel = 0")
+  expect_warning(dx_plot_decision_curve(d0), "ignores poslabel = 0")
+  expect_no_warning(dx_plot_gain(dx_obj))
+})
+
+test_that("KS axis label matches the axis direction", {
+  p <- dx_plot_ks(dx_obj)
+  expect_equal(p$labels$x, "Prediction Score")
 })
