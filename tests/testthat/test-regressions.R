@@ -376,3 +376,11 @@ test_that("Standalone AUC and ratios are NA with one outcome class", {
   expect_true(is.na(dx_lrt_pos(cm)$estimate))
   expect_equal(dx_chi_square(cm)$summary, "-")
 })
+
+test_that("AUC estimate is kept when its CI cannot be calculated", {
+  # With one observation per class the DeLong variance is undefined
+  res <- suppressWarnings(dx_auc(c(0, 1), c(.2, .7)))
+
+  expect_equal(res$estimate, 1)
+  expect_true(is.na(res$conf_low))
+})
