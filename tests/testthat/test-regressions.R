@@ -434,3 +434,14 @@ test_that("Forest plot does not change the user's random number state", {
   dx_plot_forest(dx_grp)
   expect_equal(stats::runif(3), expected)
 })
+
+test_that("KS statistic is not inflated by tied predictions", {
+  # Four tied predictions with positives listed first. No threshold separates
+  # the classes, so KS = 0, but stepping through the tie row by row gives 0.67.
+  df <- data.frame(truth = c(1, 1, 0, 0, 1, 0), p = c(.5, .5, .5, .5, .2, .2))
+  d <- dx(data = df, true_varname = "truth", pred_varname = "p", setthreshold = .3)
+
+  p <- dx_plot_ks(d)
+  labels <- unlist(lapply(seq_along(p$layers), function(i) ggplot2::layer_data(p, i)$label))
+  expect_equal(labels, "KS = 0")
+})
