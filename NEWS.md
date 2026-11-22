@@ -1,3 +1,13 @@
+# diagnosticSummary 0.0.2.14
+
+**Bug fixes**
+
+* `dx_compare()` now compares all pairs of models instead of only the first pair, and labels each row with its own pair
+* `dx_z_test()` and `dx_delong()` now report the signed difference (`dx1` minus `dx2`) so the estimate matches its confidence interval. Previously the absolute difference was reported, so estimates may now be negative.
+* `dx_compare()` results now keep `estimate`, `p_value`, and `statistic` as numeric columns
+* Unpaired `dx_delong()` summaries no longer show an empty confidence interval
+
+
 # diagnosticSummary 0.0.2.00
 
 **New metrics**
