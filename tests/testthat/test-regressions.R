@@ -719,3 +719,17 @@ test_that("dx_auc_pr() rejects inputs from the old precision/recall signature", 
   expect_error(dx_auc_pr(c(0, 1), c(.2, .8), poslabel = 2), "poslabel")
   expect_no_error(dx_auc_pr(c(TRUE, FALSE), c(.8, .2)))
 })
+
+test_that("dx() does not overwrite user columns", {
+  renamed <- dx_heart_failure
+  names(renamed)[names(renamed) == "truth"] <- "test_binary"
+  names(renamed)[names(renamed) == "Sex"] <- "true_binaryf"
+
+  a <- dx(dx_heart_failure, true_varname = "truth", pred_varname = "predicted", grouping_variables = "Sex")
+  b <- dx(renamed, true_varname = "test_binary", pred_varname = "predicted", grouping_variables = "true_binaryf")
+
+  cols <- c("label", "measure", "estimate", "conf_low", "conf_high")
+  expect_equal(b$measures[cols], a$measures[cols])
+  expect_equal(b$cm, a$cm)
+  expect_identical(names(b$data), names(renamed))
+})
