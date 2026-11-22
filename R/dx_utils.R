@@ -56,16 +56,16 @@ as.data.frame.dx <- function(x, row.names = NULL, optional = TRUE, thresh = NA,
                              variable = NA, label = NA, measure = NA, ...) {
   tmp <- x$measures
 
-  if (!is.na(thresh)) {
+  if (!identical(thresh, NA)) {
     tmp <- tmp[tmp$threshold %in% thresh, ]
   }
-  if (!is.na(variable)) {
+  if (!identical(variable, NA)) {
     tmp <- tmp[tmp$variable %in% variable, ]
   }
-  if (!is.na(label)) {
+  if (!identical(label, NA)) {
     tmp <- tmp[tmp$label %in% label, ]
   }
-  if (!is.na(measure)) {
+  if (!identical(measure, NA)) {
     tmp <- tmp[tmp$measure %in% measure, ]
   }
 
