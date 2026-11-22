@@ -338,10 +338,7 @@ test_that("poslabel = 0 matches poslabel = 1 with the outcome and predictions fl
 
   expect_equal(unclass(d0$cm), unclass(d1$cm))
   cols <- c("measure", "estimate", "conf_low", "conf_high")
-  # AUC PR is a trapezoid over the threshold table, which treats tied
-  # predictions differently in the two directions
-  keep <- d0$measures$measure != "AUC PR"
-  expect_equal(d0$measures[keep, cols], d1$measures[keep, cols])
+  expect_equal(d0$measures[cols], d1$measures[cols])
   expect_equal(d0$prevalence, d1$prevalence)
 
   # Plots built from the cm, rank, or ROC curve draw the same layers

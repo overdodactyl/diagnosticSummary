@@ -330,3 +330,44 @@ test_that("Kappa CI uses the Fleiss, Cohen, and Everitt (1969) variance", {
     expect_equal(res$conf_high, expected_high, tolerance = 1e-6, info = name)
   }
 })
+
+test_that("AUC-PR uses Davis & Goadrich (2006) interpolation", {
+  # Two events, two non-events, and a tie at .5. Selecting by threshold gives
+  # (tp, fp) = (0, 0), (1, 0), (2, 1), (2, 2). From (1, 0) to (2, 1) both
+  # increase together, so precision is (1 + x) / (1 + 2x) for x in [0, 1],
+  # with integral 1/2 + log(3) / 4. The first step has precision 1.
+  truth <- c(1, 1, 0, 0)
+  predprob <- c(.9, .5, .5, .1)
+  expected <- (1 + 1 / 2 + log(3) / 4) / 2
+  expect_equal(dx_auc_pr(truth, predprob, "simple"), expected)
+
+  # The trapezoidal rule would give 0.917, overstating the area
+  expect_lt(dx_auc_pr(truth, predprob, "simple"), .5 * 1 + .5 * (1 + 2 / 3) / 2)
+
+  # poslabel = 0 matches poslabel = 1 with the outcome and predictions flipped
+  hf <- dx_heart_failure
+  expect_equal(
+    dx_auc_pr(hf$truth, hf$predicted_rf, "simple", poslabel = 0),
+    dx_auc_pr(1 - hf$truth, 1 - hf$predicted_rf, "simple")
+  )
+
+  # Undefined with one outcome class
+  expect_true(is.na(dx_auc_pr(c(1, 1, 1), c(.2, .5, .9), "simple")))
+  expect_equal(dx_auc_pr(c(1, 1, 1), c(.2, .5, .9))$summary, "-")
+})
+
+test_that("PR plot draws the curve whose area is the AUC-PR", {
+  # Coarse scores, so most steps are tie groups drawn as curves
+  hf <- dx_heart_failure
+  hf$score <- round(hf$predicted, 1)
+  d <- dx(hf, true_varname = "truth", pred_varname = "score")
+  pr <- ggplot2::ggplot_build(dx_plot_pr(d))$data[[1]]
+
+  expect_equal(range(pr$x), c(0, 1))
+  expect_equal(pr$y[pr$x == 1][1], mean(hf$truth))
+
+  # A trapezoidal sum over the drawn points is close to the exact area
+  area <- sum(diff(pr$x) * (pr$y[-1] + pr$y[-nrow(pr)]) / 2)
+  auc <- d$measures$estimate[d$measures$measure == "AUC PR"]
+  expect_equal(area, auc, tolerance = 1e-3)
+})

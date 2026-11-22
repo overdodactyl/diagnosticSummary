@@ -102,16 +102,9 @@ dx <- function(data,
     poslabel = poslabel
   )
 
-  # Results at every threshold, computed once and shared
-  threshold_analysis <- dx_thresholds(data, options)
-
   # Overall measures at each threshold
   threshold_measures <- do.call(rbind, lapply(all_thresholds, function(t) {
-    dx_measure(data,
-      threshold = t,
-      options = options,
-      threshold_analysis = threshold_analysis
-    )
+    dx_measure(data, threshold = t, options = options)
   }))
 
   # Subgroup measures at setthreshold
@@ -126,7 +119,7 @@ dx <- function(data,
     data = data,
     options = options,
     measures = threshold_measures,
-    thresholds = threshold_analysis,
+    thresholds = dx_thresholds(data, options),
     prevalence = dx_prevalence_analysis(cm),
     rank = dx_rank(data, options),
     cm = cm,

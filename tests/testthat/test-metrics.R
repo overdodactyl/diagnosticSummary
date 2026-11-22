@@ -215,16 +215,11 @@ test_that("ROC AUC", {
 test_that("PR AUC", {
 
 
-  auc_pr <- dx_auc_pr(
-    dx_obj$thresholds$precision,
-    dx_obj$thresholds$sensitivity,
-    detail = "simple"
-  )
+  # Davis & Goadrich (2006) interpolation; checked by hand in test-references.R
+  auc_pr <- dx_auc_pr(dx_heart_failure$truth, dx_heart_failure$predicted, detail = "simple")
 
-  expect_equal(
-    auc_pr,
-    0.87271242708725860204
-  )
+  # With no tied predictions this is close to the trapezoidal value, 0.8727124
+  expect_equal(auc_pr, 0.8727, tolerance = 1e-4)
 
 })
 
