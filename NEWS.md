@@ -1,3 +1,23 @@
+# diagnosticSummary 0.0.2.15
+
+**Breaking changes**
+
+* `dx()` now stops with an error if the prediction or truth variable has missing values, or if predictions are outside 0 to 1. Previously these gave unclear errors or, for predictions outside 0 to 1, results such as a meaningless Brier score.
+* `direction` in `dx()` and `dx_auc()` now defaults to `"<"` (higher predictions indicate the positive class) instead of `"auto"`. Models that perform worse than chance now report an AUC below 0.5 instead of a flipped AUC. The AUC in `dx()` measures now also respects `direction`.
+* Bootstrapped confidence intervals now use `bootseed`, which was previously ignored, so their values will change. Results are now reproducible regardless of the session's random seed.
+
+**Bug fixes that change results**
+
+* The net benefit in `dx_plot_decision_curve()` (and the `net_benefit` column of `thresholds`) used the wrong formula, which overstated the model's benefit relative to treating all or none. It now uses the standard formula from Vickers & Elkin (2006).
+* The KS statistic in `dx_plot_ks()` was inflated when predictions were tied
+* Cohen's kappa was `NA` for data sets with more than about 46,000 rows due to integer overflow, and its confidence interval could extend beyond -1 to 1
+* Subgroups with only one outcome class or very few rows no longer cause `dx()` to fail. Measures that are undefined for these subgroups (AUC, odds ratio, likelihood ratios, chi-square) are `NA`, with a warning, and the Breslow-Day test only uses subgroups with both outcome classes and both predicted classes.
+
+**Other bug fixes**
+
+* Subgroups are ordered by factor level, unused factor levels are dropped, and `as.data.frame()` and `summary()` can filter on several values. Bootstrapped measures are displayed as decimals instead of percentages. `dx_plot_roc()` and `dx_plot_forest()` no longer give ggplot2 warnings, forest plots style subgroups with a missing odds ratio correctly, and `dx()` and `dx_plot_forest()` no longer change the session's random seed.
+
+
 # diagnosticSummary 0.0.2.14
 
 **Bug fixes**
