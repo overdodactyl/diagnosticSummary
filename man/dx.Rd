@@ -26,11 +26,11 @@ dx(
 \arguments{
 \item{data}{A tbl.}
 
-\item{classlabels}{Labels for predicted variable.  Needs to be 0, 1 order.}
+\item{classlabels}{Deprecated; has no effect.}
 
 \item{threshold_range}{Optional. A numeric vector of thresholds to loop over.}
 
-\item{outcome_label}{Label for outcome (string)}
+\item{outcome_label}{Deprecated; has no effect.}
 
 \item{pred_varname}{Column name containing AI prediction (string). Values
 should be predicted probabilities that the outcome is 1, between 0 and 1,

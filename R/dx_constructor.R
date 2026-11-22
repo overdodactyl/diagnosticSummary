@@ -4,7 +4,7 @@
 #' diagnostic test
 #'
 #' @param data A tbl.
-#' @param classlabels Labels for predicted variable.  Needs to be 0, 1 order.
+#' @param classlabels Deprecated; has no effect.
 #' @param pred_varname Column name containing AI prediction (string). Values
 #'     should be predicted probabilities that the outcome is 1, between 0 and 1,
 #'     with no missing values.
@@ -17,7 +17,7 @@
 #' @param poslabel The outcome class that is the event: 1 (default) or 0.
 #'     Predictions are still probabilities that the outcome is 1, so with
 #'     `poslabel = 0` a prediction below the threshold is a positive test.
-#' @param outcome_label Label for outcome (string)
+#' @param outcome_label Deprecated; has no effect.
 #' @param grouping_variables Character vector of variable names to
 #'     be summarized by.  Variables are converted to factors if not already one.
 #' @param prevalence Numeric value between 0 and 1, representing a target
@@ -47,12 +47,12 @@ dx <- function(data,
                citype = "exact", bootreps = 2000, bootseed = 20191015,
                doboot = FALSE, direction = "<", ...) {
   check_dx_options(poslabel, direction)
+  if (!missing(classlabels)) warn_deprecated_unused("classlabels")
+  if (!missing(outcome_label)) warn_deprecated_unused("outcome_label")
   data <- prepare_dx_data(data, pred_varname, true_varname, grouping_variables)
 
   options <- list(
-    classlabels = classlabels,
     threshold_range = threshold_range,
-    outcome_label = outcome_label,
     pred_varname = pred_varname,
     true_varname = true_varname,
     setthreshold = setthreshold,
@@ -137,6 +137,14 @@ check_dx_options <- function(poslabel, direction) {
       "and ROC curve, not sensitivity, specificity, or other threshold based results."
     ), call. = FALSE)
   }
+}
+
+# Warn about arguments that are deprecated and have no effect
+warn_deprecated_unused <- function(arg) {
+  warning(paste0(
+    arg, " is deprecated and will be removed in a future version. ",
+    "It has no effect."
+  ), call. = FALSE)
 }
 
 # Validate the prediction and truth columns, convert truth to numeric 0/1,
