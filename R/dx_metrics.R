@@ -628,11 +628,18 @@ get_kappa_interpretation <- function(kappa) {
 #' @concept metrics
 dx_cohens_kappa <- function(cm, detail = "full") {
   validate_detail(detail)
+  # Convert to numeric to avoid integer overflow
+  tp <- as.numeric(cm$tp)
+  tn <- as.numeric(cm$tn)
+  fp <- as.numeric(cm$fp)
+  fn <- as.numeric(cm$fn)
+  n <- as.numeric(cm$n)
+
   # Calculate observed agreement (po)
-  po <- (cm$tp + cm$tn) / cm$n
+  po <- (tp + tn) / n
 
   # Calculate expected agreement (pe)
-  pe <- ((cm$tp + cm$fp) * (cm$tp + cm$fn) + (cm$fn + cm$tn) * (cm$fp + cm$tn)) / (cm$n^2)
+  pe <- ((tp + fp) * (tp + fn) + (fn + tn) * (fp + tn)) / (n^2)
 
   # Calculate Cohen's Kappa
   kappa <- (po - pe) / (1 - pe)
@@ -642,7 +649,7 @@ dx_cohens_kappa <- function(cm, detail = "full") {
   } else if (detail == "full") {
 
     # Calculate variance of kappa (standard method)
-    var_kappa <- (po * (1 - po)) / (cm$n * (1 - pe)^2)
+    var_kappa <- (po * (1 - po)) / (n * (1 - pe)^2)
 
     # Calculate standard error of kappa
     se_kappa <- sqrt(var_kappa)
