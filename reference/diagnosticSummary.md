@@ -1,0 +1,3 @@
+# `diagnosticSummary` package
+
+Diagnostic Summaries
