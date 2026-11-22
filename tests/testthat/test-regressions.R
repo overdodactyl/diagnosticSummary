@@ -783,3 +783,11 @@ test_that("Generate Confidence Intervals", {
   )
 })
 
+
+test_that("Metric aliases are exported", {
+  aliases <- c(
+    "dx_recall", "dx_tpr", "dx_tnr", "dx_precision",
+    "dx_miss_rate", "dx_fall_out", "dx_youden_j"
+  )
+  expect_true(all(aliases %in% getNamespaceExports("diagnosticSummary")))
+})
