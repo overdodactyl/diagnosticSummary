@@ -142,6 +142,12 @@ metric_npv_ppv_prevalence <- function(est, logit, varlogit, ...) {
   lower <- exp(lci_logit) / ( 1 + exp(lci_logit))
   upper <- exp(uci_logit) / ( 1 + exp(uci_logit))
 
+  # The logit CI is undefined when sensitivity or specificity is 0 or 1
+  if (!is.finite(logit) || !is.finite(varlogit)) {
+    lower <- NA_real_
+    upper <- NA_real_
+  }
+
   formatted_estimate <- conf_int(
     est,
     lower,
@@ -569,7 +575,7 @@ dx_detection_prevalence <- function(cm, detail = "full", ...) {
 
 get_kappa_interpretation <- function(kappa) {
   # Define the breaks and labels for the categories
-  breaks <- c(-Inf, 0, 0.2, 0.4, 0.6, 0.8, 1)
+  breaks <- c(-Inf, 0, 0.2, 0.4, 0.6, 0.8, Inf)
   labels <- c(
     "Less than chance agreement", "Slight Agreement", "Fair Agreement",
     "Moderate Agreement", "Substantial Agreement", "Almost Perfect Agreement"
@@ -641,8 +647,10 @@ dx_cohens_kappa <- function(cm, detail = "full") {
   # Calculate expected agreement (pe)
   pe <- ((tp + fp) * (tp + fn) + (fn + tn) * (fp + tn)) / (n^2)
 
-  # Calculate Cohen's Kappa
-  kappa <- (po - pe) / (1 - pe)
+  # Calculate Cohen's Kappa. When every case falls in one cell, expected
+  # agreement is 1 and kappa is undefined, so return 0 like MCC and F1.
+  undefined <- pe == 1
+  kappa <- if (undefined) 0 else (po - pe) / (1 - pe)
 
   if (detail == "simple") {
     return(kappa)
@@ -657,8 +665,8 @@ dx_cohens_kappa <- function(cm, detail = "full") {
     # Confidence interval using normal approximation, typically Z = 1.96 for 95%
     z <- 1.96
     # Kappa is bounded by -1 and 1
-    ci_lower <- max(kappa - z * se_kappa, -1)
-    ci_upper <- min(kappa + z * se_kappa, 1)
+    ci_lower <- if (undefined) NA_real_ else max(kappa - z * se_kappa, -1)
+    ci_upper <- if (undefined) NA_real_ else min(kappa + z * se_kappa, 1)
 
     note <- get_kappa_interpretation(kappa)
 

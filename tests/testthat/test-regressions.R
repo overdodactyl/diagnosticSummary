@@ -492,3 +492,24 @@ test_that("McNemar's test requires the same truth values", {
 
   expect_error(dx_mcnemars(dx_glm, dx_rev), "same truth values")
 })
+
+test_that("Kappa of 1 is interpreted as almost perfect agreement", {
+  expect_equal(dx_cohens_kappa(make_cm(tp = 30, fn = 0, fp = 0, tn = 70))$notes, "Almost Perfect Agreement")
+})
+
+test_that("Kappa is 0 when every case falls in one cell", {
+  res <- dx_cohens_kappa(make_cm(tp = 0, fn = 0, fp = 0, tn = 10))
+
+  expect_equal(res$estimate, 0)
+  expect_true(is.na(res$conf_low))
+})
+
+test_that("Predictive value at a prevalence has an NA CI when undefined", {
+  # Specificity of 1 makes the PPV logit infinite
+  res <- dx_ppv_prevalence(make_cm(tp = 8, fn = 2, fp = 0, tn = 20), prevalence = .1)
+
+  expect_equal(res$estimate, 1)
+  # NA rather than NaN
+  expect_identical(res$conf_low, NA_real_)
+  expect_identical(res$conf_high, NA_real_)
+})
