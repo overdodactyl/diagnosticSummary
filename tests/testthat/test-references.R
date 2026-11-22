@@ -301,3 +301,32 @@ test_that("Tarone's correction matches Tarone (1985)", {
 test_that("Breslow-Day requires a 2x2xK table", {
   expect_error(breslow_day_test(matrix(1:4, 2)), "2x2xK array")
 })
+
+test_that("Kappa CI uses the Fleiss, Cohen, and Everitt (1969) variance", {
+  # Their variance is the delta method variance of kappa under multinomial
+  # sampling, so compute that from first principles: a numerical gradient of
+  # kappa with respect to the cell proportions and the multinomial covariance.
+  kappa_of <- function(p) {
+    # p = (tp, fn, fp, tn) proportions
+    po <- p[1] + p[4]
+    pe <- (p[1] + p[3]) * (p[1] + p[2]) + (p[2] + p[4]) * (p[3] + p[4])
+    (po - pe) / (1 - pe)
+  }
+  for (name in names(cm_grid)) {
+    x <- cm_grid[[name]]
+    n <- sum(x)
+    p <- c(x[["tp"]], x[["fn"]], x[["fp"]], x[["tn"]]) / n
+    h <- 1e-6
+    grad <- vapply(1:4, function(i) {
+      e <- replace(numeric(4), i, h)
+      (kappa_of(p + e) - kappa_of(p - e)) / (2 * h)
+    }, numeric(1))
+    se <- sqrt(drop(t(grad) %*% (diag(p) - p %o% p) %*% grad) / n)
+
+    res <- dx_cohens_kappa(grid_cm(x))
+    expected_low <- max(res$estimate - 1.96 * se, -1)
+    expected_high <- min(res$estimate + 1.96 * se, 1)
+    expect_equal(res$conf_low, expected_low, tolerance = 1e-6, info = name)
+    expect_equal(res$conf_high, expected_high, tolerance = 1e-6, info = name)
+  }
+})
