@@ -20,6 +20,43 @@
   [`dx_delong()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_delong.md)
   summaries no longer show an empty confidence interval
 
+## diagnosticSummary 0.0.2.13
+
+**Bug fixes**
+
+- Subgroup analyses no longer include rows where the grouping variable
+  is missing
+
+## diagnosticSummary 0.0.2.12
+
+**New metrics**
+
+- Added `dx_npv_prevalence` and `dx_ppv_prevalence` to calculate NPV and
+  PPV at a specified prevalence
+- New `prevalence` argument in `dx` adds prevalence-adjusted NPV and PPV
+  to the output
+
+**Bug fixes**
+
+- `dx_plot_forest` keeps measures in the requested order
+
+## diagnosticSummary 0.0.2.11
+
+**Bug fixes**
+
+- Fixed a row bind warning in `dx_plot_forest` with newer versions of R
+
+## diagnosticSummary 0.0.2.10
+
+**Changes**
+
+- Variables in `grouping_variables` are converted to factors instead of
+  throwing an error
+
+**Bug fixes**
+
+- PPV in `thresholds` output was calculated using NPV
+
 ## diagnosticSummary 0.0.2.00
 
 **New metrics**
@@ -97,6 +134,9 @@ true positive rate for sensitivity)*
   installed
 - `levels` argument in `as.data.frame` and `summary` didn’t filter to
   `label` column
+- Matthews Correlation Coefficient no longer overflows with large
+  confusion matrix counts
+- Chi-square test was included twice in `dx` measures
 
 **Dependencies**
 

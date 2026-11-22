@@ -43,6 +43,32 @@
 <li>Unpaired <code><a href="../reference/dx_delong.html">dx_delong()</a></code> summaries no longer show an empty confidence interval</li>
 </ul></div>
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.0.2.13" id="diagnosticsummary-00213">diagnosticSummary 0.0.2.13<a class="anchor" aria-label="anchor" href="#diagnosticsummary-00213"></a></h2>
+<p><strong>Bug fixes</strong></p>
+<ul><li>Subgroup analyses no longer include rows where the grouping variable is missing</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.0.2.12" id="diagnosticsummary-00212">diagnosticSummary 0.0.2.12<a class="anchor" aria-label="anchor" href="#diagnosticsummary-00212"></a></h2>
+<p><strong>New metrics</strong></p>
+<ul><li>Added <code>dx_npv_prevalence</code> and <code>dx_ppv_prevalence</code> to calculate NPV and PPV at a specified prevalence</li>
+<li>New <code>prevalence</code> argument in <code>dx</code> adds prevalence-adjusted NPV and PPV to the output</li>
+</ul><p><strong>Bug fixes</strong></p>
+<ul><li>
+<code>dx_plot_forest</code> keeps measures in the requested order</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.0.2.11" id="diagnosticsummary-00211">diagnosticSummary 0.0.2.11<a class="anchor" aria-label="anchor" href="#diagnosticsummary-00211"></a></h2>
+<p><strong>Bug fixes</strong></p>
+<ul><li>Fixed a row bind warning in <code>dx_plot_forest</code> with newer versions of R</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.0.2.10" id="diagnosticsummary-00210">diagnosticSummary 0.0.2.10<a class="anchor" aria-label="anchor" href="#diagnosticsummary-00210"></a></h2>
+<p><strong>Changes</strong></p>
+<ul><li>Variables in <code>grouping_variables</code> are converted to factors instead of throwing an error</li>
+</ul><p><strong>Bug fixes</strong></p>
+<ul><li>PPV in <code>thresholds</code> output was calculated using NPV</li>
+</ul></div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.2.00" id="diagnosticsummary-00200">diagnosticSummary 0.0.2.00<a class="anchor" aria-label="anchor" href="#diagnosticsummary-00200"></a></h2>
 <p><strong>New metrics</strong></p>
 <ul><li>Prevalence</li>
@@ -119,6 +145,8 @@
 <ul><li>Breslow-Day test no longer silently left out if DescTools not installed</li>
 <li>
 <code>levels</code> argument in <code>as.data.frame</code> and <code>summary</code> didn’t filter to <code>label</code> column</li>
+<li>Matthews Correlation Coefficient no longer overflows with large confusion matrix counts</li>
+<li>Chi-square test was included twice in <code>dx</code> measures</li>
 </ul><p><strong>Dependencies</strong></p>
 <ul><li>Removed <code>dplyr</code>, <code>scales</code>, <code>boot</code>, and <code>tidyr</code> from Imports</li>
 <li>Moved <code>gtable</code>, <code>grid</code>, and <code>gridExtra</code> to Suggests</li>
