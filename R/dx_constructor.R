@@ -23,9 +23,13 @@
 #' @param prevalence Numeric value between 0 and 1, representing a target
 #'     prevalence for additional NPV and PPV calculations.
 #' @param citype Confidence interval type.
-#' @param bootreps Number of bootstrap samples used to generate F1 score CI
-#' @param bootseed Seed value to be used when calculating bootsraped CI's
-#' @param doboot Logical. Generate bootstrap estimate of F1 confidence interval?
+#' @param bootreps Number of bootstrap samples used for the bootstrapped CIs.
+#' @param bootseed Seed used for the bootstrapped CIs, so results are reproducible.
+#' @param doboot Logical. Generate percentile bootstrap CIs for the measures
+#'     without a closed-form CI (F1, F2, MCC, balanced accuracy, informedness,
+#'     markedness, G-mean, and Fowlkes-Mallows)? The confusion matrix cell
+#'     counts are resampled from a multinomial distribution, which is
+#'     equivalent to resampling cases.
 #' @param direction Deprecated. Predictions are probabilities that the outcome
 #'     is 1, so higher predictions always point to outcome 1; use `poslabel` to
 #'     choose which outcome is the event. Values other than the default, "<",

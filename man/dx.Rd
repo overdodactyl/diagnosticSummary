@@ -55,11 +55,15 @@ prevalence for additional NPV and PPV calculations.}
 
 \item{citype}{Confidence interval type.}
 
-\item{bootreps}{Number of bootstrap samples used to generate F1 score CI}
+\item{bootreps}{Number of bootstrap samples used for the bootstrapped CIs.}
 
-\item{bootseed}{Seed value to be used when calculating bootsraped CI's}
+\item{bootseed}{Seed used for the bootstrapped CIs, so results are reproducible.}
 
-\item{doboot}{Logical. Generate bootstrap estimate of F1 confidence interval?}
+\item{doboot}{Logical. Generate percentile bootstrap CIs for the measures
+without a closed-form CI (F1, F2, MCC, balanced accuracy, informedness,
+markedness, G-mean, and Fowlkes-Mallows)? The confusion matrix cell
+counts are resampled from a multinomial distribution, which is
+equivalent to resampling cases.}
 
 \item{direction}{Deprecated. Predictions are probabilities that the outcome
 is 1, so higher predictions always point to outcome 1; use \code{poslabel} to

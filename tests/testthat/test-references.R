@@ -371,3 +371,27 @@ test_that("PR plot draws the curve whose area is the AUC-PR", {
   auc <- d$measures$estimate[d$measures$measure == "AUC PR"]
   expect_equal(area, auc, tolerance = 1e-3)
 })
+
+test_that("Bootstrap of cell counts matches resampling cases", {
+  # Resampling cases with replacement gives multinomial cell counts, so both
+  # bootstraps estimate the same percentile CI
+  cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold = .3, poslabel = 1)
+  bootreps <- 5000
+
+  set.seed(1)
+  res <- dx_mcc(cm, boot = TRUE, bootreps = bootreps)
+
+  truth <- c(rep(1, cm$tp + cm$fn), rep(0, cm$tn + cm$fp))
+  pred <- c(rep(1, cm$tp), rep(0, cm$fn), rep(0, cm$tn), rep(1, cm$fp))
+  set.seed(2)
+  mcc <- vapply(seq_len(bootreps), function(i) {
+    idx <- sample.int(cm$n, replace = TRUE)
+    t <- truth[idx]
+    p <- pred[idx]
+    stats::cor(t, p)
+  }, numeric(1))
+  expected <- stats::quantile(mcc, c(.025, .975), names = FALSE)
+
+  # Monte Carlo SD of each limit is about 0.003 here
+  expect_equal(c(res$conf_low, res$conf_high), expected, tolerance = .015)
+})

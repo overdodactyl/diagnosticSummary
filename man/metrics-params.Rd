@@ -14,7 +14,8 @@ including 95\% confidence intervals.}
 \code{citype} for type of confidence interval method.}
 
 \item{boot}{Logical specifying if confidence intervals should be generated
-via bootstrapping.  Note, this can be slow.}
+via a percentile bootstrap of the confusion matrix cell counts. Call
+\code{\link[=set.seed]{set.seed()}} first for reproducible intervals.}
 
 \item{bootreps}{The number of bootstrap replications for calculating confidence intervals.}
 
