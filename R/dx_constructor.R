@@ -50,12 +50,13 @@ dx <- function(data,
     stop(paste(true_varname, "was not found in `data`"))
   }
 
-  # Check if grouping variables are factors
+  # Check if grouping variables are factors, and drop unused levels
   if (!identical(grouping_variables, NA)) {
     for (f in grouping_variables) {
       if (!is.factor(data[[f]])) {
         data[[f]] <- as.factor(data[[f]])
       }
+      data[[f]] <- droplevels(data[[f]])
     }
   }
 
