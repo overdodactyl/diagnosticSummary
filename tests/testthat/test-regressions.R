@@ -698,3 +698,14 @@ test_that("direction other than the default is deprecated", {
     dx(dx_heart_failure, true_varname = "truth", pred_varname = "predicted", direction = "<")
   )
 })
+
+test_that("Estimates without a CI use a fixed number of decimals", {
+  # Balanced accuracy is exactly 0.8, which format(digits = 2) showed as "0.8"
+  cm <- make_cm(tp = 8, fn = 2, fp = 2, tn = 8)
+
+  expect_equal(dx_balanced_accuracy(cm)$summary, "0.80")
+  expect_equal(dx_g_mean(cm)$summary, "0.80")
+  expect_equal(dx_brier(c(.9, .1), c(1, 0))$summary, "0.010")
+  expect_equal(dx_auc_pr(c(1, .5), c(.5, 1))$summary, sprintf("%.3f", dx_auc_pr(c(1, .5), c(.5, 1), "simple")))
+  expect_equal(dx_nir(cm)$summary, "50.0%")
+})

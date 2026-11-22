@@ -1062,7 +1062,7 @@ dx_auc_pr <- function(precision, recall, detail = "full") {
   } else {
     res <- measure_df(
       measure = "AUC PR",
-      estimate = as.character(round(auc, 2)),
+      estimate = format_number(auc, accuracy = .001),
       estimate_raw = auc,
     )
     return(res)
@@ -1548,7 +1548,7 @@ dx_brier <- function(predprob, truth, detail = "full") {
   } else if (detail == "full") {
     return(measure_df(
       measure = "Brier Score",
-      estimate = format(brier, digits = 2),
+      estimate = format_number(brier, accuracy = .001),
       estimate_raw = brier,
       notes = "CIs not yet implemented"
     ))
@@ -1591,7 +1591,7 @@ dx_nir <- function(cm, detail = "full") {
   } else if (detail == "full") {
     return(measure_df(
       measure = "No Information Rate",
-      estimate = format(nir, digits = 2),
+      estimate = format_number(nir, accuracy = .1, percent = TRUE),
       estimate_raw = nir,
       fraction = paste0(comma(num), "/", comma(den))
     ))
