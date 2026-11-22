@@ -1,7 +1,7 @@
-dx_thresholds <- function(data, options) {
-  predprob <- data[[options$pred_varname]]
-  truth <- data[[options$true_varname]]
-
+# Confusion matrix counts at every distinct prediction (plus 0 and 1), from
+# the highest threshold to the lowest. Predictions at or above the threshold
+# are positive; poslabel = 0 swaps the positive class.
+threshold_counts <- function(predprob, truth, poslabel) {
   # Predictions can include 0 or 1, so remove duplicates after adding them
   thresholds <- sort(unique(c(0, predprob, 1)), decreasing = TRUE)
 
@@ -14,9 +14,7 @@ dx_thresholds <- function(data, options) {
   n_1 <- sum(truth == 1)
   n_0 <- sum(truth == 0)
 
-  # Predictions at or above the threshold are positive; poslabel = 0 swaps
-  # the positive class
-  if (options$poslabel == 1) {
+  if (poslabel == 1) {
     tp <- above_1
     fp <- above_0
     fn <- n_1 - above_1
@@ -29,12 +27,24 @@ dx_thresholds <- function(data, options) {
   }
 
   # Store counts as doubles
-  cm <- cm_from_counts(
+  list(
+    thresholds = thresholds,
     tp = as.numeric(tp),
     fn = as.numeric(fn),
     tn = as.numeric(tn),
     fp = as.numeric(fp)
   )
+}
+
+dx_thresholds <- function(data, options) {
+  counts <- threshold_counts(
+    predprob = data[[options$pred_varname]],
+    truth = data[[options$true_varname]],
+    poslabel = options$poslabel
+  )
+  thresholds <- counts$thresholds
+
+  cm <- cm_from_counts(tp = counts$tp, fn = counts$fn, tn = counts$tn, fp = counts$fp)
 
   # Net benefit (Vickers & Elkin, 2006): true positives and false positives
   # per patient, with false positives weighted by the odds at the threshold
@@ -123,8 +133,7 @@ dx_rank <- function(data, options) {
 
 
 dx_measure <- function(data, threshold, options, var = "Overall",
-                       label = "Overall",
-                       threshold_analysis = dx_thresholds(data, options)) {
+                       label = "Overall") {
 
   # create vector for the prediction
   predprob <- data[[options$pred_varname]]
@@ -160,10 +169,8 @@ dx_measure <- function(data, threshold, options, var = "Overall",
     fdr = list(fun = dx_fdr, params = common_cm_args),
     pr_auc = list(
       fun = dx_auc_pr,
-      params = list(
-        precision = threshold_analysis$precision,
-        recall = threshold_analysis$sensitivity)
-      ),
+      params = list(truth = truth, predprob = predprob, poslabel = options$poslabel)
+    ),
     kappa = list(fun = dx_cohens_kappa, params = list(cm = cm)),
     mcc = list(fun = dx_mcc, params = common_boot_args),
     balanced_accuracy = list(fun = dx_balanced_accuracy, params = common_boot_args),

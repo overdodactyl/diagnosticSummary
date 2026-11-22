@@ -706,6 +706,16 @@ test_that("Estimates without a CI use a fixed number of decimals", {
   expect_equal(dx_balanced_accuracy(cm)$summary, "0.80")
   expect_equal(dx_g_mean(cm)$summary, "0.80")
   expect_equal(dx_brier(c(.9, .1), c(1, 0))$summary, "0.010")
-  expect_equal(dx_auc_pr(c(1, .5), c(.5, 1))$summary, sprintf("%.3f", dx_auc_pr(c(1, .5), c(.5, 1), "simple")))
+  expect_equal(dx_auc_pr(c(1, 1, 0, 0), c(.9, .5, .5, .1))$summary, "0.887")
   expect_equal(dx_nir(cm)$summary, "50.0%")
+})
+
+test_that("dx_auc_pr() rejects inputs from the old precision/recall signature", {
+  d <- dx(dx_heart_failure, true_varname = "truth", pred_varname = "predicted")
+  th <- d$thresholds
+  expect_error(dx_auc_pr(th$precision, th$sensitivity), "not precision and recall")
+  expect_error(dx_auc_pr(c(0, 1, 1), c(.2, .8)), "same length")
+  expect_error(dx_auc_pr(c(0, 1), c(.2, 1.5)), "between 0 and 1")
+  expect_error(dx_auc_pr(c(0, 1), c(.2, .8), poslabel = 2), "poslabel")
+  expect_no_error(dx_auc_pr(c(TRUE, FALSE), c(.8, .2)))
 })

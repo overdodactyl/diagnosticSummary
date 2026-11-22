@@ -24,10 +24,14 @@ The PR curve is a plot that demonstrates the relationship between precision (the
 of true positive predictions among all positive predictions) and recall (the proportion of
 true positive predictions among all actual positives), for each possible cut-off threshold.
 A model with perfect performance would show a line that reaches the top-right corner of the
-plot, indicating both high precision and recall. The area under the PR curve (AUPRC) can also
-be used as a summary measure of the model performance, with higher values indicating better
-performance. This function generates the curve without calculating the area; separate functions
-should be used if AUPRC is required.
+plot, indicating both high precision and recall.
+
+Between neighboring thresholds, the curve uses the interpolation of Davis and
+Goadrich (2006) rather than a straight line: false positives are assumed to
+increase in proportion to true positives, so precision follows a curve. This
+matters mostly when predictions are tied. The curve runs from no predictions
+positive to all predictions positive, and the area under it is the AUC-PR
+from \code{\link[=dx_auc_pr]{dx_auc_pr()}}.
 }
 \examples{
 \dontshow{if (requireNamespace("ggplot2", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}

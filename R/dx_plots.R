@@ -164,10 +164,14 @@ dx_plot_ks <- function(dx_obj) {
 #' of true positive predictions among all positive predictions) and recall (the proportion of
 #' true positive predictions among all actual positives), for each possible cut-off threshold.
 #' A model with perfect performance would show a line that reaches the top-right corner of the
-#' plot, indicating both high precision and recall. The area under the PR curve (AUPRC) can also
-#' be used as a summary measure of the model performance, with higher values indicating better
-#' performance. This function generates the curve without calculating the area; separate functions
-#' should be used if AUPRC is required.
+#' plot, indicating both high precision and recall.
+#'
+#' Between neighboring thresholds, the curve uses the interpolation of Davis and
+#' Goadrich (2006) rather than a straight line: false positives are assumed to
+#' increase in proportion to true positives, so precision follows a curve. This
+#' matters mostly when predictions are tied. The curve runs from no predictions
+#' positive to all predictions positive, and the area under it is the AUC-PR
+#' from [dx_auc_pr()].
 #' @examplesIf requireNamespace("ggplot2", quietly = TRUE)
 #' dx_obj <- dx(
 #'   data = dx_heart_failure,
@@ -178,10 +182,14 @@ dx_plot_ks <- function(dx_obj) {
 #' )
 #' dx_plot_pr(dx_obj)
 dx_plot_pr <- function(dx_obj) {
-  data <- dx_obj$thresholds
-  data <- data[!is.na(data$sensitivity) & !is.na(data$precision), ]
+  th <- dx_obj$thresholds
+  curve <- pr_curve_counts(
+    th$tp, th$fp,
+    events = th$tp[1] + th$fn[1], n = nrow(dx_obj$data)
+  )
+  points <- pr_curve_points(curve$tp, curve$fp)
 
-  dx_line_plot(data, "sensitivity", "precision", xlab = "Recall", ylab = "Precision") +
+  dx_line_plot(points, "recall", "precision", xlab = "Recall", ylab = "Precision") +
     ggplot2::coord_fixed(ylim = c(0, 1))
 }
 

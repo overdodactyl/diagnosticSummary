@@ -1019,73 +1019,171 @@ ci_ratio <- function(tp, tn, fp, fn, ratio, ratio_sd, name, continuity_correctio
 
 #' Calculate Area Under the Precision-Recall Curve (AUC-PR)
 #'
-#' This function calculates the Area Under the Curve (AUC) for the Precision-Recall curve
-#' using the trapezoidal rule. It ensures proper alignment of precision and recall values
-#' by adding a starting point at recall=0 with the first observed precision and an ending
-#' point at recall=1 with the last observed precision.
+#' Calculates the area under the precision-recall (PR) curve, using the
+#' interpolation of Davis and Goadrich (2006) between thresholds.
 #'
-#' @param precision Numeric vector of precision values corresponding to different thresholds.
-#' @param recall Numeric vector of recall values corresponding to different thresholds.
+#' @param truth Numeric vector of true binary outcomes (0 or 1).
+#' @param predprob Numeric vector of predicted probabilities that the outcome
+#'   is 1, the same length as `truth`.
 #' @param detail Character string specifying the level of detail in the output: "simple"
-#'        for just the AUC value, "full" for the AUC value along with confidence intervals.
+#'        for just the AUC value, "full" for a data frame of results.
+#' @param poslabel The outcome class that is the event: 1 (default) or 0. With
+#'   `poslabel = 0`, a prediction below the threshold is a positive test.
 #' @return Depending on the `detail` parameter, returns a single numeric value of AUC or
-#'         a data frame with the AUC and its confidence intervals.
-#' @details The function prepares the precision and recall vectors by ensuring they are ordered
-#'          by increasing recall values. It then calculates the AUC using the trapezoidal rule,
-#'          which is the sum of areas of trapezoids formed between each consecutive pair of points.
-#'          The first and last points are added to cover the entire recall range from 0 to 1.
+#'         a data frame with the AUC. Confidence intervals are not calculated.
+#' @details
+#' Precision and recall are calculated at every distinct prediction. Between two
+#' neighboring thresholds, true and false positives increase together, so
+#' precision follows a curve rather than a straight line. Joining the points
+#' with straight lines (the trapezoidal rule) overstates the area, especially
+#' when many predictions are tied (Davis and Goadrich, 2006).
+#'
+#' Instead, between neighboring thresholds false positives are assumed to
+#' increase in proportion to true positives, which is the expected path when
+#' tied predictions are ordered at random. Precision is integrated exactly along
+#' that path. The curve starts with no predictions positive and ends with all
+#' predictions positive (recall of 1 and precision equal to the prevalence).
+#'
+#' The AUC-PR is `NA` unless both outcome classes are present. A classifier that
+#' guesses at random has an expected AUC-PR equal to the prevalence, so compare
+#' values with the prevalence rather than with 0.5.
+#'
+#' The same curve is drawn by [dx_plot_pr()].
+#' @references
+#' Davis J, Goadrich M. The relationship between precision-recall and ROC
+#' curves. Proceedings of the 23rd International Conference on Machine
+#' Learning. 2006:233-240.
 #' @examples
-#' # Assuming pr_data is your dataframe with precision and recall columns
-#' dx_obj <- dx(
-#'   data = dx_heart_failure,
-#'   true_varname = "truth",
-#'   pred_varname = "predicted",
-#'   outcome_label = "Heart Attack",
-#'   setthreshold = .3
-#' )
-#' auc_pr <- dx_auc_pr(dx_obj$thresholds$precision, dx_obj$thresholds$sensitivity)
-#' print(auc_pr)
+#' dx_auc_pr(dx_heart_failure$truth, dx_heart_failure$predicted)
+#' dx_auc_pr(dx_heart_failure$truth, dx_heart_failure$predicted, detail = "simple")
 #' @export
 #' @concept metrics
-dx_auc_pr <- function(precision, recall, detail = "full") {
+dx_auc_pr <- function(truth, predprob, detail = "full", poslabel = 1) {
   validate_detail(detail)
-  # Remove any NA values that could cause issues in the calculation
-  valid_indices <- !is.na(precision) & !is.na(recall)
-  precision <- precision[valid_indices]
-  recall <- recall[valid_indices]
+  check_truth_predprob(truth, predprob)
+  if (length(poslabel) != 1 || !poslabel %in% c(0, 1)) {
+    stop("poslabel should be 0 or 1", call. = FALSE)
+  }
 
-  # Ensure the vectors are ordered by recall
-  ord <- order(recall, decreasing = FALSE)
-  precision <- precision[ord]
-  recall <- recall[ord]
+  # AUC-PR is undefined unless both outcome classes are present
+  if (length(unique(truth)) < 2) {
+    if (detail == "simple") {
+      return(NA_real_)
+    }
+    return(measure_df(
+      measure = "AUC PR",
+      estimate = "-",
+      notes = "Requires both outcome classes",
+      estimate_raw = NA_real_
+    ))
+  }
 
-  # Add a starting point for recall at 0 with the first precision
-  recall <- c(0, recall)
-  precision <- c(precision[1], precision)
-
-  # Add an ending point for recall at 1 with the last precision
-  recall <- c(recall, 1)
-  precision <- c(precision, precision[length(precision)])
-
-  # Calculate differences in recall (x-axis)
-  delta_recall <- diff(recall)
-
-  # Calculate the average precision for each segment (y-axis)
-  avg_precision <- (precision[-length(precision)] + precision[-1]) / 2
-
-  # Calculate the area under the curve (AUC)
-  auc <- sum(delta_recall * avg_precision)
+  counts <- threshold_counts(predprob, truth, poslabel)
+  curve <- pr_curve_counts(
+    counts$tp, counts$fp,
+    events = sum(truth == poslabel), n = length(truth)
+  )
+  auc <- pr_area(curve$tp, curve$fp)
 
   if (detail == "simple") {
     return(auc)
-  } else {
-    res <- measure_df(
-      measure = "AUC PR",
-      estimate = format_number(auc, accuracy = .001),
-      estimate_raw = auc,
-    )
-    return(res)
   }
+  measure_df(
+    measure = "AUC PR",
+    estimate = format_number(auc, accuracy = .001),
+    estimate_raw = auc,
+    notes = "Davis & Goadrich (2006) interpolation"
+  )
+}
+
+# True and false positive counts along the PR curve, ordered from no
+# predictions positive to all predictions positive. `events` and `n` are the
+# number of events and cases.
+pr_curve_counts <- function(tp, fp, events, n) {
+  ord <- order(tp + fp)
+  tp <- c(0, tp[ord], events)
+  fp <- c(0, fp[ord], n - events)
+  # Drop repeated points, e.g. when a threshold already has none or all positive
+  keep <- !duplicated(paste(tp, fp))
+  list(tp = tp[keep], fp = fp[keep])
+}
+
+# Area under the PR curve with Davis & Goadrich (2006) interpolation. Between
+# neighboring points, false positives increase by `slope` per true positive, so
+# precision is (tp0 + x) / (tp0 + fp0 + (1 + slope) * x) for x from 0 to the
+# increase in true positives. Integrating gives
+#   x / k + (tp0 - c / k) / k * log(1 + k * x / c),  k = 1 + slope, c = tp0 + fp0
+# and when c = 0 (nothing positive yet) precision is the constant 1 / k.
+pr_area <- function(tp, fp) {
+  events <- tp[length(tp)]
+  i <- seq_len(length(tp) - 1)
+  d_tp <- tp[i + 1] - tp[i]
+  d_fp <- fp[i + 1] - fp[i]
+
+  # Steps that only add false positives don't change recall, so add no area
+  step <- d_tp > 0
+  tp0 <- tp[i][step]
+  c0 <- tp0 + fp[i][step]
+  k <- 1 + d_fp[step] / d_tp[step]
+  x <- d_tp[step]
+  # ifelse() evaluates both branches, so avoid dividing by c0 = 0
+  safe_c0 <- ifelse(c0 > 0, c0, 1)
+  area <- x / k + ifelse(c0 > 0, (tp0 - c0 / k) / k * log1p(k * x / safe_c0), 0)
+
+  sum(area) / events
+}
+
+# Points to draw the PR curve with the same interpolation as pr_area(). Steps
+# that add both true and false positives (e.g. tied predictions) are drawn
+# with intermediate points.
+# Check outcome and prediction vectors passed directly to a metric. The
+# signature of dx_auc_pr() changed from (precision, recall), so old calls
+# should fail here rather than return a wrong result.
+check_truth_predprob <- function(truth, predprob) {
+  if (length(truth) != length(predprob)) {
+    stop("truth and predprob should be the same length", call. = FALSE)
+  }
+  if (anyNA(truth) || !all(truth %in% c(0, 1))) {
+    stop(paste(
+      "truth should contain only 0's and 1's, with no missing values.",
+      "dx_auc_pr() takes truth and predprob, not precision and recall."
+    ), call. = FALSE)
+  }
+  if (!is.numeric(predprob) || anyNA(predprob) || any(predprob < 0 | predprob > 1)) {
+    stop("predprob should contain probabilities between 0 and 1, with no missing values", call. = FALSE)
+  }
+}
+
+pr_curve_points <- function(tp, fp, n_between = 20) {
+  events <- tp[length(tp)]
+  k <- length(tp) - 1
+  d_tp <- diff(tp)
+  d_fp <- diff(fp)
+
+  # Steps that add both true and false positives are curved, so draw
+  # n_between points inside them; other steps are straight lines
+  m <- ifelse(d_tp > 0 & d_fp > 0, n_between + 2, 2)
+  seg <- rep(seq_len(k), m)
+  frac <- (sequence(m) - 1) / (m[seg] - 1)
+
+  # Along a step, true and false positives grow in proportion
+  seg_tp <- tp[seg] + frac * d_tp[seg]
+  seg_fp <- fp[seg] + frac * d_fp[seg]
+  precision <- seg_tp / (seg_tp + seg_fp)
+
+  # With nothing positive yet, precision is the limit along the step
+  start <- which(frac == 0 & tp[seg] + fp[seg] == 0)
+  precision[start] <- ifelse(
+    d_tp[seg[start]] > 0,
+    d_tp[seg[start]] / (d_tp[seg[start]] + d_fp[seg[start]]),
+    NA_real_
+  )
+
+  points <- data.frame(recall = seg_tp / events, precision = precision)
+  points <- points[!is.na(points$precision), ]
+  points <- points[!duplicated(points), ]
+  rownames(points) <- NULL
+  points
 }
 
 #' Calculate Area Under the ROC Curve (AUC)
