@@ -64,7 +64,6 @@ rescale <- function(x, to = c(0, 1), from = range(x, na.rm = TRUE, finite = TRUE
 #'   data = dx_heart_failure,
 #'   true_varname = "truth",
 #'   pred_varname = "predicted",
-#'   outcome_label = "Heart Attack",
 #'   threshold_range = c(.1, .2, .3),
 #'   setthreshold = .3,
 #'   grouping_variables = c("AgeGroup", "Sex", "AgeSex")

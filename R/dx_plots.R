@@ -27,7 +27,6 @@
 #'   data = dx_heart_failure,
 #'   true_varname = "truth",
 #'   pred_varname = "predicted",
-#'   outcome_label = "Heart Attack",
 #'   setthreshold = .3
 #' )
 #' dx_plot_gain(dx_obj)
@@ -72,7 +71,6 @@ dx_plot_gain <- function(dx_obj) {
 #'   data = dx_heart_failure,
 #'   true_varname = "truth",
 #'   pred_varname = "predicted",
-#'   outcome_label = "Heart Attack",
 #'   setthreshold = .3
 #' )
 #' dx_plot_lift(dx_obj)
@@ -114,7 +112,6 @@ dx_plot_lift <- function(dx_obj) {
 #'   data = dx_heart_failure,
 #'   true_varname = "truth",
 #'   pred_varname = "predicted",
-#'   outcome_label = "Heart Attack",
 #'   setthreshold = .3
 #' )
 #' dx_plot_ks(dx_obj)
@@ -177,7 +174,6 @@ dx_plot_ks <- function(dx_obj) {
 #'   data = dx_heart_failure,
 #'   true_varname = "truth",
 #'   pred_varname = "predicted",
-#'   outcome_label = "Heart Attack",
 #'   setthreshold = .3
 #' )
 #' dx_plot_pr(dx_obj)
@@ -224,7 +220,6 @@ dx_plot_pr <- function(dx_obj) {
 #'   data = dx_heart_failure,
 #'   true_varname = "truth",
 #'   pred_varname = "predicted",
-#'   outcome_label = "Heart Attack",
 #'   setthreshold = .3
 #' )
 #' dx_plot_predictive_value(dx_obj)
@@ -287,7 +282,6 @@ dx_plot_predictive_value <- function(dx_obj) {
 #'   data = dx_heart_failure,
 #'   true_varname = "truth",
 #'   pred_varname = "predicted",
-#'   outcome_label = "Heart Attack",
 #'   setthreshold = .3
 #' )
 #' dx_plot_calibration(dx_obj)
@@ -353,7 +347,6 @@ dx_plot_calibration <- function(dx_obj, bins = 10) {
 #'   data = dx_heart_failure,
 #'   true_varname = "truth",
 #'   pred_varname = "predicted",
-#'   outcome_label = "Heart Attack",
 #'   setthreshold = .3
 #' )
 #' dx_plot_decision_curve(dx_obj)
@@ -416,7 +409,6 @@ dx_plot_decision_curve <- function(dx_obj, plot_range = c(0.05, .95)) {
 #'   data = dx_heart_failure,
 #'   true_varname = "truth",
 #'   pred_varname = "predicted",
-#'   outcome_label = "Heart Attack",
 #'   setthreshold = .3
 #' )
 #' dx_plot_youden_j(dx_obj)
@@ -476,7 +468,6 @@ dx_plot_youden_j <- function(dx_obj) {
 #'   data = dx_heart_failure,
 #'   true_varname = "truth",
 #'   pred_varname = "predicted",
-#'   outcome_label = "Heart Attack",
 #'   setthreshold = .3
 #' )
 #' dx_plot_cap(dx_obj)
@@ -547,7 +538,6 @@ dx_plot_cap <- function(dx_obj) {
 #'   data = dx_heart_failure,
 #'   true_varname = "truth",
 #'   pred_varname = "predicted",
-#'   outcome_label = "Heart Attack",
 #'   setthreshold = .3
 #' )
 #' dx_plot_cost(dx_obj, cfp = 1000, cfn = 8000)
@@ -582,7 +572,6 @@ dx_plot_cost <- function(dx_obj, cfp, cfn, ctp = 0, ctn = 0) {
 #'   data = dx_heart_failure,
 #'   true_varname = "truth",
 #'   pred_varname = "predicted",
-#'   outcome_label = "Heart Attack",
 #'   setthreshold = .3
 #' )
 #' dx_plot_cm(dx_obj)
@@ -678,7 +667,6 @@ dx_plot_cm <- function(dx_obj, palette = c("#e5eef7", "#0057B8"), levels = c("-"
 #'   data = dx_heart_failure,
 #'   true_varname = "truth",
 #'   pred_varname = "predicted",
-#'   outcome_label = "Heart Attack",
 #'   threshold_range = c(.1, .2, .3),
 #'   setthreshold = .3,
 #'   grouping_variables = c("AgeGroup", "Sex", "AgeSex")
@@ -847,7 +835,6 @@ dx_roc_ggtheme <- function() {
 #'   data = dx_heart_failure,
 #'   true_varname = "truth",
 #'   pred_varname = "predicted",
-#'   outcome_label = "Heart Attack",
 #'   setthreshold = .3
 #' )
 #' dx_plot_probabilities(dx_obj, plot_type = "histogram", bins = 30)
@@ -909,7 +896,6 @@ dx_plot_probabilities <- function(dx_obj, plot_type = "histogram", bins = NULL, 
 #'   data = dx_heart_failure,
 #'   true_varname = "truth",
 #'   pred_varname = "predicted",
-#'   outcome_label = "Heart Attack",
 #'   setthreshold = .3
 #' )
 #' dx_plot_thresholds(dx_obj)

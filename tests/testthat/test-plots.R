@@ -2,7 +2,6 @@ dx_obj <- dx(
   data = dx_heart_failure,
   true_varname = "truth",
   pred_varname = "predicted",
-  outcome_label = "Heart Attack",
   setthreshold = .3
 )
 
@@ -52,7 +51,6 @@ test_that("Forest plot builds without warnings", {
     data = dx_heart_failure,
     true_varname = "truth",
     pred_varname = "predicted",
-    outcome_label = "Heart Attack",
     setthreshold = .3,
     grouping_variables = c("AgeGroup", "Sex")
   )

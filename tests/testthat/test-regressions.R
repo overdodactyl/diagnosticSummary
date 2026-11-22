@@ -733,3 +733,14 @@ test_that("dx() does not overwrite user columns", {
   expect_equal(b$cm, a$cm)
   expect_identical(names(b$data), names(renamed))
 })
+
+test_that("classlabels and outcome_label are deprecated and have no effect", {
+  fit <- function(...) dx(dx_heart_failure, true_varname = "truth", pred_varname = "predicted", ...)
+  expected <- fit()
+
+  expect_warning(a <- fit(outcome_label = "Heart Attack"), "outcome_label is deprecated")
+  expect_warning(b <- fit(classlabels = c("No", "Yes")), "classlabels is deprecated")
+  expect_equal(a$measures, expected$measures)
+  expect_equal(b$measures, expected$measures)
+  expect_false(any(c("classlabels", "outcome_label") %in% names(expected$options)))
+})

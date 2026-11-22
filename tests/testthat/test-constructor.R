@@ -6,7 +6,6 @@ test_that("Assemble dx object", {
       data = dx_heart_failure,
       true_varname = "not_truth",
       pred_varname = "predicted",
-      outcome_label = "Heart Attack",
       threshold_range = c(.1, .2, .3),
       setthreshold = .3,
       grouping_variables = c("AgeGroup", "Sex", "AgeSex")
@@ -20,7 +19,6 @@ test_that("Assemble dx object", {
       data = dx_heart_failure,
       true_varname = "truth",
       pred_varname = "not_predicted",
-      outcome_label = "Heart Attack",
       threshold_range = c(.1, .2, .3),
       setthreshold = .3,
       grouping_variables = c("AgeGroup", "Sex", "AgeSex")
@@ -37,7 +35,6 @@ test_that("Assemble dx object", {
       data = not_numeric,
       true_varname = "truth",
       pred_varname = "predicted",
-      outcome_label = "Heart Attack",
       threshold_range = c(.1, .2, .3),
       setthreshold = .3,
       grouping_variables = c("AgeGroup", "Sex", "AgeSex")
@@ -53,7 +50,6 @@ test_that("Assemble dx object", {
       data = not_binary,
       true_varname = "truth",
       pred_varname = "predicted",
-      outcome_label = "Heart Attack",
       threshold_range = c(.1, .2, .3),
       setthreshold = .3,
       grouping_variables = c("AgeGroup", "Sex", "AgeSex")
@@ -67,7 +63,6 @@ test_that("Assemble dx object", {
       data = dx_heart_failure,
       true_varname = "truth",
       pred_varname = "predicted",
-      outcome_label = "Heart Attack",
       threshold_range = c(.1, .2, .3),
       setthreshold = .3,
       grouping_variables = c("AgeGroup", "Sex", "AgeSex")
