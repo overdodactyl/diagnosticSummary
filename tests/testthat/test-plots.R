@@ -230,8 +230,8 @@ test_that("ROC and forest plots can be saved to a file", {
     grouping_variables = "Sex"
   )
 
-  roc_file <- tempfile(fileext = ".png")
-  forest_file <- tempfile(fileext = ".png")
+  roc_file <- tempfile(fileext = ".pdf")
+  forest_file <- tempfile(fileext = ".pdf")
   on.exit(unlink(c(roc_file, forest_file)))
 
   dx_plot_roc(dx_grp, filename = roc_file)
