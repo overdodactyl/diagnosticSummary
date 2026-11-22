@@ -665,3 +665,17 @@ test_that("Binomial confidence intervals stay within 0 and 1", {
     expect_false(grepl("10[1-9]", sens$summary), info = citype)
   }
 })
+
+test_that("Net benefit uses the event's threshold probability when poslabel = 0", {
+  # With poslabel = 0 the event is outcome 0, test positive means a
+  # prediction below the threshold, and the event's threshold probability is
+  # 1 - threshold. At threshold .75: tp = 2 (p = .1, .3), fp = 1 (p = .6), and
+  # net benefit = 2/5 - 1/5 * (.25 / .75) = 1/3.
+  df <- data.frame(p = c(.1, .3, .6, .75, .9), y = c(0, 0, 1, 0, 1))
+  d <- dx(df, pred_varname = "p", true_varname = "y", poslabel = 0)
+  thr <- d$thresholds
+
+  expect_equal(thr$tp[thr$threshold == .75], 2)
+  expect_equal(thr$fp[thr$threshold == .75], 1)
+  expect_equal(thr$net_benefit[thr$threshold == .75], 1 / 3)
+})

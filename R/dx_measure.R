@@ -38,7 +38,10 @@ dx_thresholds <- function(data, options) {
 
   # Net benefit (Vickers & Elkin, 2006): true positives and false positives
   # per patient, with false positives weighted by the odds at the threshold
-  weight <- thresholds / (1 - thresholds)
+  # probability of the event. Predictions are probabilities of outcome 1, so
+  # with poslabel = 0 the event's threshold probability is 1 - threshold.
+  event_threshold <- if (options$poslabel == 1) thresholds else 1 - thresholds
+  weight <- event_threshold / (1 - event_threshold)
   net_benefit <- cm$tp / cm$n - weight * cm$fp / cm$n
 
   res <- data.frame(
