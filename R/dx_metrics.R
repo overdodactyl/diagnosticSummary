@@ -1494,7 +1494,8 @@ dx_cm <- function(predprob, truth, threshold, poslabel) {
 #' @param direction Direction for roc comparison.  See ?pROC::roc
 get_roc <- function(true_varname, pred_varname, data, direction) {
   # truth ~ predicted
-  f <- stats::as.formula(paste0(true_varname, "~", pred_varname))
+  # Backticks allow column names that aren't syntactic, e.g. with spaces
+  f <- stats::as.formula(paste0(backtick(true_varname), "~", backtick(pred_varname)))
   # Use eval and bquote so the "Call" output of the model is human readable
   eval(bquote(
     pROC::roc(.(f), data = data, ci = TRUE, direction = .(direction), quiet = TRUE)

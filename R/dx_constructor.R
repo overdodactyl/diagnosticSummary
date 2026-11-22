@@ -27,7 +27,10 @@
 #' @param direction Direction for roc comparison.  See ?pROC::roc. The default,
 #'     "<", treats higher predicted probabilities as more likely to be positive.
 #'     "auto" lets pROC choose the direction that gives an AUC of at least 0.5,
-#'     which hides models that perform worse than chance.
+#'     which hides models that perform worse than chance. Only the AUC and ROC
+#'     curve use `direction`; sensitivity, specificity, and other threshold based
+#'     results always treat higher predictions as positive, so other values give
+#'     a warning.
 #' @param ... currently unused
 #'
 #' @export
@@ -58,6 +61,21 @@ dx <- function(data,
       }
       data[[f]] <- droplevels(data[[f]])
     }
+  }
+
+  # Check that poslabel is 0 or 1
+  if (length(poslabel) != 1 || !poslabel %in% c(0, 1)) {
+    stop("poslabel should be 0 or 1")
+  }
+
+  # direction is only used for the AUC; threshold based results always treat
+  # higher predictions as the positive class
+  if (direction != "<") {
+    warning(paste0(
+      "direction = \"", direction, "\" only affects the AUC. Sensitivity, ",
+      "specificity, and other threshold based results treat higher ",
+      "predictions as the positive class."
+    ), call. = FALSE)
   }
 
   # Check if pred_varname is numeric
@@ -122,13 +140,13 @@ dx <- function(data,
   }
 
   data$test_binary <- ifelse(
-    eval(parse(text = paste0("data$", pred_varname))) < setthreshold, 0, 1
+    data[[pred_varname]] < setthreshold, 0, 1
   )
   data$test_binaryf <- factor(data$test_binary,
     levels = c(0, 1),
     labels = classlabels
   )
-  data$true_binaryf <- factor(eval(parse(text = paste0("data$", true_varname))),
+  data$true_binaryf <- factor(data[[true_varname]],
     levels = c(0, 1), labels = classlabels
   )
 
@@ -163,7 +181,8 @@ dx <- function(data,
 
   # Get all unique thresholds
   # Set thresholds may not be in threshold_range
-  all_thresholds <- unique(c(options$setthreshold, options$threshold_range))
+  # Round so floating point differences (e.g. from seq()) don't create duplicates
+  all_thresholds <- unique(round(c(options$setthreshold, options$threshold_range), 10))
   all_thresholds <- all_thresholds[!is.na(all_thresholds)]
 
   # Loop through all thresholds and get measures
