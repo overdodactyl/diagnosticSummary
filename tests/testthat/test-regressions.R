@@ -215,7 +215,7 @@ test_that("AUC is not flipped for worse than chance models", {
   expect_equal(flipped$measures, flipped$roc)
 
   # An explicit direction is used for both the measures and the ROC curve
-  reversed <- auc(inverted, direction = ">")
+  expect_warning(reversed <- auc(inverted, direction = ">"), "only affects the AUC")
   expect_equal(reversed$measures, original$measures)
   expect_equal(reversed$measures, reversed$roc)
 })
@@ -512,4 +512,44 @@ test_that("Predictive value at a prevalence has an NA CI when undefined", {
   # NA rather than NaN
   expect_identical(res$conf_low, NA_real_)
   expect_identical(res$conf_high, NA_real_)
+})
+
+test_that("Thresholds from seq() are not duplicated and can be filtered", {
+  d <- dx(
+    data = dx_heart_failure,
+    true_varname = "truth",
+    pred_varname = "predicted",
+    setthreshold = .3,
+    threshold_range = seq(.1, .9, .1)
+  )
+  m <- d$measures
+
+  expect_equal(sum(m$measure == "Sensitivity"), 9)
+  expect_equal(nrow(as.data.frame(d, thresh = .7, measure = "Sensitivity")), 1)
+  expect_equal(nrow(as.data.frame(d, thresh = .3, measure = "Sensitivity")), 1)
+})
+
+test_that("Column names with spaces work", {
+  renamed <- dx_heart_failure
+  names(renamed)[names(renamed) == "predicted"] <- "pred score"
+
+  d <- dx(data = renamed, true_varname = "truth", pred_varname = "pred score", setthreshold = .3)
+  ref <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted", setthreshold = .3)
+
+  expect_equal(d$measures, ref$measures)
+  expect_equal(as.numeric(d$roc$auc), as.numeric(ref$roc$auc))
+})
+
+test_that("poslabel must be 0 or 1", {
+  expect_error(
+    dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted", poslabel = 2),
+    "poslabel should be 0 or 1"
+  )
+})
+
+test_that("dx_compare requires unique model names", {
+  dx_glm <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted", setthreshold = .3)
+  dx_rf <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted_rf", setthreshold = .3)
+
+  expect_error(dx_compare(list(a = dx_glm, a = dx_rf)), "unique name")
 })

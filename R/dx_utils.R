@@ -57,7 +57,9 @@ as.data.frame.dx <- function(x, row.names = NULL, optional = TRUE, thresh = NA,
   tmp <- x$measures
 
   if (!identical(thresh, NA)) {
-    tmp <- tmp[tmp$threshold %in% thresh, ]
+    # Match with a tolerance to allow for floating point differences
+    keep <- vapply(tmp$threshold, function(t) any(abs(t - thresh) < 1e-8), logical(1))
+    tmp <- tmp[keep, ]
   }
   if (!identical(variable, NA)) {
     tmp <- tmp[tmp$variable %in% variable, ]
@@ -330,6 +332,9 @@ validate_dx_list <- function(dx_list) {
     if (names(dx_list)[i] == "") {
       names(dx_list)[i] <- paste("Model", i)
     }
+  }
+  if (any(duplicated(names(dx_list)))) {
+    stop("Each `dx` object in dx_list must have a unique name")
   }
   return(dx_list)
 }

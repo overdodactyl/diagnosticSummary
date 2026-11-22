@@ -62,7 +62,10 @@ prevalence for additional NPV and PPV calculations.}
 \item{direction}{Direction for roc comparison.  See ?pROC::roc. The default,
 "<", treats higher predicted probabilities as more likely to be positive.
 "auto" lets pROC choose the direction that gives an AUC of at least 0.5,
-which hides models that perform worse than chance.}
+which hides models that perform worse than chance. Only the AUC and ROC
+curve use \code{direction}; sensitivity, specificity, and other threshold based
+results always treat higher predictions as positive, so other values give
+a warning.}
 
 \item{...}{currently unused}
 }
