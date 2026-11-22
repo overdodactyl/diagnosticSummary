@@ -28,8 +28,6 @@ Suggests:
     knitr,
     ggplot2,
     testthat (>= 2.1.0),
-    caret,
-    broom,
     tibble
 RoxygenNote: 7.3.1
 Language: en-US
