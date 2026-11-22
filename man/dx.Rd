@@ -32,9 +32,12 @@ dx(
 
 \item{outcome_label}{Label for outcome (string)}
 
-\item{pred_varname}{Column name containing AI prediction (string)}
+\item{pred_varname}{Column name containing AI prediction (string). Values
+should be predicted probabilities between 0 and 1, with no missing values.}
 
-\item{true_varname}{Column name containing AI reference standard (string)}
+\item{true_varname}{Column name containing AI reference standard (string).
+Values should be 0 or 1 (numeric, logical, factor, or character), with
+no missing values, and both classes must be present.}
 
 \item{setthreshold}{A numeric value representing the threshold used
 to identify AI prediction}
