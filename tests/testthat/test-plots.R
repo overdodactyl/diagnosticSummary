@@ -172,10 +172,14 @@ test_that("Gain, lift, and CAP curves reach their end points", {
   lift <- lift[[which(vapply(lift, nrow, numeric(1)) > 1)[1]]]
   expect_equal(lift$y[which.max(lift$x)], 1)
 
-  # The perfect model captures every positive once the top prev share is selected
+  # The perfect model captures every positive once the top prev share is
+  # selected. Compare with a tolerance, since exact equality differs by platform.
   cap <- dx_plot_cap(dx_obj)$data
   perfect <- cap[cap$Model == "Perfect Model", ]
-  expect_equal(min(perfect$x[perfect$y == 1]), min(perfect$x[perfect$x >= prev]))
+  at_prev <- which.min(abs(perfect$x - prev))
+  expect_equal(perfect$y[at_prev], 1)
+  expect_equal(perfect$y[perfect$x >= perfect$x[at_prev]], rep(1, sum(perfect$x >= perfect$x[at_prev])))
+  expect_true(all(perfect$y[perfect$x < perfect$x[at_prev]] < 1))
 })
 
 test_that("Multiple ROC plot draws each model and reports DeLong p-values", {
