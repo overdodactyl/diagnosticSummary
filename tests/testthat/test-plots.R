@@ -184,3 +184,54 @@ test_that("Multiple ROC plot draws each model and reports DeLong p-values", {
   delong <- cmp$tests[cmp$tests$test == "DeLong's test for ROC curves", ]
   expect_equal(text, paste0(delong$models, ": ", format_pvalue(delong$p_value)))
 })
+
+test_that("Forest plot shows Breslow-Day and custom axes", {
+  skip_if_not_installed("gridExtra")
+  skip_if_not_installed("gtable")
+
+  dx_grp <- dx(
+    data = dx_heart_failure,
+    true_varname = "truth",
+    pred_varname = "predicted",
+    setthreshold = .3,
+    grouping_variables = c("AgeGroup", "Sex")
+  )
+  grob_labels <- function(g) unlist(lapply(g$grobs, function(x) if (inherits(x, "text")) x$label))
+
+  # Breslow-Day p-values appear in each variable's header row
+  g <- dx_plot_forest(
+    dx_grp,
+    measures = c("AUC ROC", "Sensitivity", "Odds Ratio", "Breslow-Day"),
+    return = "grid"
+  )
+  bd <- dx_grp$measures[dx_grp$measures$measure == "Breslow-Day", ]
+  expect_true(all(bd$summary %in% grob_labels(g)))
+
+  # User supplied breaks become the axis ticks
+  g <- dx_plot_forest(dx_grp, limits = c(0, 60), breaks = c(0, 20, 40, 60), return = "grid")
+  ticks <- sub("^tick_label_", "", grep("^tick_label_", g$layout$name, value = TRUE))
+  expect_setequal(ticks, c("0", "20", "40", "60"))
+})
+
+test_that("ROC and forest plots can be saved to a file", {
+  skip_if_not_installed("gridExtra")
+  skip_if_not_installed("gtable")
+
+  dx_grp <- dx(
+    data = dx_heart_failure,
+    true_varname = "truth",
+    pred_varname = "predicted",
+    setthreshold = .3,
+    grouping_variables = "Sex"
+  )
+
+  roc_file <- tempfile(fileext = ".png")
+  forest_file <- tempfile(fileext = ".png")
+  on.exit(unlink(c(roc_file, forest_file)))
+
+  dx_plot_roc(dx_grp, filename = roc_file)
+  dx_plot_forest(dx_grp, filename = forest_file)
+
+  expect_true(file.exists(roc_file))
+  expect_true(file.exists(forest_file))
+})
