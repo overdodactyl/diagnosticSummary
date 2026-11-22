@@ -120,6 +120,10 @@ dx_plot_lift <- function(dx_obj) {
 dx_plot_ks <- function(dx_obj) {
   data <- dx_obj$rank
 
+  # With tied predictions, only the end of each tie group corresponds to a
+  # threshold. Rank is sorted by descending prediction, so keep the last row.
+  data <- data[!duplicated(data$predprob, fromLast = TRUE), ]
+
   long_data <- rbind(
     data.frame(Rate = data$cumulativeTPR, Type = "TPR", predprob = data$predprob),
     data.frame(Rate = data$cumulativeFPR, Type = "FPR", predprob = data$predprob)
