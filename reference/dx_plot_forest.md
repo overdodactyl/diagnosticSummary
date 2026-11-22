@@ -134,10 +134,6 @@ dx_obj <- dx(
   grouping_variables = c("AgeGroup", "Sex", "AgeSex")
 )
 dx_plot_forest(dx_obj)
-#> Warning: `aes_()` was deprecated in ggplot2 3.0.0.
-#> ℹ Please use tidy evaluation idioms with `aes()`
-#> ℹ The deprecated feature was likely used in the diagnosticSummary package.
-#>   Please report the issue to the authors.
 
 dx_plot_forest(dx_obj, trans = "log10")
 ```
