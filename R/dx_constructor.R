@@ -26,13 +26,12 @@
 #' @param bootreps Number of bootstrap samples used to generate F1 score CI
 #' @param bootseed Seed value to be used when calculating bootsraped CI's
 #' @param doboot Logical. Generate bootstrap estimate of F1 confidence interval?
-#' @param direction Direction for roc comparison.  See ?pROC::roc. The default,
-#'     "<", treats higher predicted probabilities as more likely to be positive.
+#' @param direction Deprecated. Predictions are probabilities that the outcome
+#'     is 1, so higher predictions always point to outcome 1; use `poslabel` to
+#'     choose which outcome is the event. Values other than the default, "<",
+#'     give a warning and only affect the AUC and ROC curve (see ?pROC::roc).
 #'     "auto" lets pROC choose the direction that gives an AUC of at least 0.5,
-#'     which hides models that perform worse than chance. Only the AUC and ROC
-#'     curve use `direction`; sensitivity, specificity, and other threshold based
-#'     results always treat higher predictions as positive, so other values give
-#'     a warning.
+#'     which hides models that perform worse than chance.
 #' @param ... currently unused
 #'
 #' @export
@@ -143,13 +142,13 @@ check_dx_options <- function(poslabel, direction) {
     stop("poslabel should be 0 or 1", call. = FALSE)
   }
 
-  # direction is only used for the AUC; threshold based results always treat
-  # higher predictions as the positive class
+  # direction is deprecated and only used for the AUC and ROC curve
   if (direction != "<") {
     warning(paste0(
-      "direction = \"", direction, "\" only affects the AUC. Sensitivity, ",
-      "specificity, and other threshold based results treat higher ",
-      "predictions as the positive class."
+      "direction is deprecated and will be removed in a future version. ",
+      "Predictions should be probabilities that the outcome is 1; use poslabel ",
+      "to choose the event. direction = \"", direction, "\" only affects the AUC ",
+      "and ROC curve, not sensitivity, specificity, or other threshold based results."
     ), call. = FALSE)
   }
 }

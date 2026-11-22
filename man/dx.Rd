@@ -61,13 +61,12 @@ prevalence for additional NPV and PPV calculations.}
 
 \item{doboot}{Logical. Generate bootstrap estimate of F1 confidence interval?}
 
-\item{direction}{Direction for roc comparison.  See ?pROC::roc. The default,
-"<", treats higher predicted probabilities as more likely to be positive.
+\item{direction}{Deprecated. Predictions are probabilities that the outcome
+is 1, so higher predictions always point to outcome 1; use \code{poslabel} to
+choose which outcome is the event. Values other than the default, "<",
+give a warning and only affect the AUC and ROC curve (see ?pROC::roc).
 "auto" lets pROC choose the direction that gives an AUC of at least 0.5,
-which hides models that perform worse than chance. Only the AUC and ROC
-curve use \code{direction}; sensitivity, specificity, and other threshold based
-results always treat higher predictions as positive, so other values give
-a warning.}
+which hides models that perform worse than chance.}
 
 \item{...}{currently unused}
 }
