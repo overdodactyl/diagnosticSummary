@@ -399,3 +399,26 @@ test_that("Net benefit uses the Vickers & Elkin (2006) formula", {
   # the same as the treat all line in the decision curve
   expect_equal(thr$net_benefit[thr$threshold == 0], prev)
 })
+
+test_that("Forest plot indents subgroups with a missing odds ratio", {
+  skip_if_not_installed("gridExtra")
+  skip_if_not_installed("gtable")
+
+  hf <- dx_heart_failure
+  hf$g <- factor(ifelse(hf$truth == 0 & seq_len(nrow(hf)) %% 5 == 0, "neg_only", "rest"))
+  d <- suppressWarnings(dx(
+    data = hf,
+    true_varname = "truth",
+    pred_varname = "predicted",
+    setthreshold = .3,
+    grouping_variables = c("g", "Sex")
+  ))
+
+  prep <- dx_prep_forest(d, fraction = FALSE, fraction_multiline = FALSE, measures = c("AUC ROC", "Odds Ratio"))
+  expect_equal(prep$group[prep$header], c("g", "Sex"))
+
+  g <- dx_plot_forest(d, return = "grid")
+  labels <- unlist(lapply(g$grobs, function(x) if (inherits(x, "text")) x$label))
+  expect_true(any(grepl("^\\s+neg_only$", labels)))
+  expect_true("g" %in% labels)
+})

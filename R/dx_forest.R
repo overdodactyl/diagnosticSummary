@@ -101,9 +101,9 @@ dx_plot_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
     measures = measures
   )
 
-  indent_rows <- which(!is.na(data$estimate))
-  bold_rows <- setdiff(1:(nrow(data)), indent_rows)
-  indent_rows <- indent_rows[indent_rows != nrow(data)]
+  # Variable headers are bold, subgroups are indented, and Overall (last) is neither
+  bold_rows <- which(data$header)
+  indent_rows <- setdiff(seq_len(nrow(data)), c(bold_rows, nrow(data)))
 
   overall_or <- data[data$group == "Overall", ]$estimate
 
@@ -516,11 +516,14 @@ dx_prep_variable <- function(dx_obj, data,
 
   res <- merge(res, rawdata, by = "group", all.x = TRUE)
 
+  # Flag variable header rows so they can be styled separately
+  res$header <- FALSE
+
   if (var != "Overall") {
     res$group <- factor(res$group, levels = levels(dx_obj$data[[orig_var]]))
     res <- res[order(res$group), ]
     res$group <- as.character(res$group)
-    empty_df <- data.frame(group = var, stringsAsFactors = FALSE)
+    empty_df <- data.frame(group = var, header = TRUE, stringsAsFactors = FALSE)
     res <- rbind_all(empty_df, res)
 
     if (nrow(bd_test) == 1) {
