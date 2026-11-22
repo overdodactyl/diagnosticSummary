@@ -402,7 +402,8 @@ dx_edit_cell <- function(table, row, col, name = "core-fg", ...) {
 
 dx_forest_add_or <- function(grob, row, low, est, high,
                              or_col = 4, col = "black", lwd = .8, pch = 16, size = .35) {
-  i <- sample(1:100000, 1)
+  # Name grobs by row, which is unique within the plot
+  i <- row
 
   tmp <- dx_hline(
     grob,

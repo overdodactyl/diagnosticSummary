@@ -422,3 +422,15 @@ test_that("Forest plot indents subgroups with a missing odds ratio", {
   expect_true(any(grepl("^\\s+neg_only$", labels)))
   expect_true("g" %in% labels)
 })
+
+test_that("Forest plot does not change the user's random number state", {
+  skip_if_not_installed("gridExtra")
+  skip_if_not_installed("gtable")
+
+  set.seed(1)
+  expected <- stats::runif(3)
+
+  set.seed(1)
+  dx_plot_forest(dx_grp)
+  expect_equal(stats::runif(3), expected)
+})
