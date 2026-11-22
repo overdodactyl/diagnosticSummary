@@ -553,3 +553,50 @@ test_that("dx_compare requires unique model names", {
 
   expect_error(dx_compare(list(a = dx_glm, a = dx_rf)), "unique name")
 })
+
+test_that("Forest plot ticks are placed on the odds ratio scale", {
+  skip_if_not_installed("gridExtra")
+  skip_if_not_installed("gtable")
+
+  tick_x <- function(g) {
+    i <- grep("^tick_label_", g$layout$name)
+    x <- vapply(g$grobs[i], function(t) as.numeric(t$children[[1]]$x), numeric(1))
+    setNames(x, sub("^tick_label_", "", g$layout$name[i]))
+  }
+  forest <- function(...) dx_plot_forest(dx_grp, return = "grid", ...)
+
+  # Breaks that don't span the limits
+  x <- tick_x(forest(limits = c(0, 40), breaks = c(10, 20, 30)))
+  expect_equal(unname(x), c(.25, .5, .75))
+
+  # Default breaks outside the limits are dropped
+  x <- tick_x(forest(limits = c(.5, 7)))
+  expect_equal(names(x), as.character(1:7))
+  expect_equal(unname(x), (1:7 - .5) / 6.5)
+
+  # Log scale breaks are given as odds ratios
+  x <- tick_x(forest(trans = "log10", breaks = c(1, 10, 100)))
+  expect_equal(names(x), c("1", "10", "100"))
+  expect_equal(unname(x), c(0, .5, 1))
+
+  # Log scale default breaks are powers of 10 placed on the log scale
+  x <- tick_x(forest(trans = "log10", limits = c(.2, 30)))
+  expect_equal(names(x), c("1", "10"))
+  expect_equal(unname(x), (log10(c(1, 10)) - log10(.2)) / (log10(30) - log10(.2)))
+})
+
+test_that("Forest plot clips the overall odds ratio line to its column", {
+  skip_if_not_installed("gridExtra")
+  skip_if_not_installed("gtable")
+
+  g <- dx_plot_forest(dx_grp, limits = c(.5, 7), return = "grid")
+  expect_equal(g$layout$clip[g$layout$name == "overall_or"], "on")
+})
+
+test_that("Forest plot needs grouping variables", {
+  skip_if_not_installed("gridExtra")
+  skip_if_not_installed("gtable")
+
+  d <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted", setthreshold = .3)
+  expect_error(dx_plot_forest(d), "needs a dx object created with grouping_variables")
+})

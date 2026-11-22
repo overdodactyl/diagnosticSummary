@@ -32,12 +32,11 @@ rescale <- function(x, to = c(0, 1), from = range(x, na.rm = TRUE, finite = TRUE
 #' @param dx_obj An object of class dx
 #' @param fraction Logical.  Should the fraction for sensitivity
 #'     and specificity be shown?
-#' @param breaks A numeric vector of breaks to include on axis ticks.
-#'     If left empty, breaks will be determined using
-#'     the min and max value from 95% CIs.
-#' @param limits Limits for axis ticks.
-#'     Ticks will be generates using base::breaks.
-#'     Ignored if breaks are passed.
+#' @param breaks A numeric vector of odds ratios to show as axis ticks, also
+#'     when `trans = "log10"`. Breaks outside the axis limits are dropped.
+#'     If left empty, breaks are chosen within the axis limits.
+#' @param limits Limits of the odds ratio axis. If left empty, the range of
+#'     `breaks` is used, or limits are chosen from the 95% CIs.
 #' @param tick_label_size Font size for axis labels.
 #' @param return Should a grid or ggplot object be returned?
 #' @param trans Method to transform the odds ratio by.
@@ -94,6 +93,10 @@ dx_plot_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
 
   stopifnot("Odds Ratio" %in% measures)
 
+  if (identical(dx_obj$options$grouping_variables, NA)) {
+    stop("dx_plot_forest() needs a dx object created with grouping_variables")
+  }
+
   data <- dx_prep_forest(
     dx_obj,
     fraction = fraction,
@@ -133,8 +136,10 @@ dx_plot_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
     range <- log10(range)
   }
 
-  # Rescale data between 0 and 1
-  breaks_scaled <- rescale(breaks)
+  # Rescale data between 0 and 1. Breaks are odds ratios, so they are
+  # transformed and rescaled the same way as the data.
+  breaks_t <- if (!is.na(trans) && trans == "log10") log10(breaks) else breaks
+  breaks_scaled <- rescale(breaks_t, from = range)
   lower <- rescale(lower, from = range)
   estimate <- rescale(estimate, from = range)
   upper <- rescale(upper, from = range)
@@ -244,7 +249,7 @@ dx_plot_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
   # Add dashed line for overall OR
   g <- dx_vline(g,
     x = overall_or, y0 = 0, y1 = 1, t = 2, b = nrows, l = or_col,
-    name = "overall_or", gp = grid::gpar(lwd = .8, lty = 2)
+    name = "overall_or", gp = grid::gpar(lwd = .8, lty = 2), clip = "on"
   )
 
   # Add OR's
@@ -630,16 +635,22 @@ plot_range <- function(limits = NA, breaks = NA, trans = NA,
 ### Find breaks
 # Breaks: use these
 # No trans: use pretty()
-# Trans: use 0:pos within limits
+# Trans: powers of 10 within limits
 plot_breaks <- function(range, breaks = NA, trans = NA) {
   if (!identical(breaks, NA)) {
     res <- breaks
   } else if (is.na(trans)) {
     res <- pretty(c(range[1], range[2]), n = 6)
   } else {
-    first <- log10(range[1])
-    last <- log10(range[2])
-    res <- first:last
+    # Powers of 10 within the range
+    res <- 10^(ceiling(log10(range[1])):floor(log10(range[2])))
+  }
+
+  # Keep breaks within the plot range (and positive on a log scale)
+  tol <- 1e-8 * diff(range)
+  res <- res[res >= range[1] - tol & res <= range[2] + tol]
+  if (!is.na(trans)) {
+    res <- res[res > 0]
   }
   res
 }
@@ -649,11 +660,8 @@ plot_breaks <- function(range, breaks = NA, trans = NA) {
 # No trans: breaks
 # Trans: use 10^breaks
 plot_labels <- function(breaks, trans) {
-  if (is.na(trans)) {
-    breaks
-  } else {
-    10^breaks
-  }
+  # Breaks are on the odds ratio scale, so label them with their values
+  breaks
 }
 
 dx_forest_to_gg <- function(plot, scale = 1, hjust = 0, vjust = 0, ...) {
