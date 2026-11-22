@@ -19,6 +19,9 @@ breslow_day_test <- function(contingency_table, odds_ratio = NA, correct = FALSE
     stop("The input 'contingency_table' must be a 2x2xK array.")
   }
 
+  # Use doubles, since mantelhaen.test() overflows on large integer counts
+  storage.mode(contingency_table) <- "double"
+
   if (is.na(odds_ratio)) {
     # Calculate the common OR based on Mantel-Haenszel
     odds_ratio <- stats::mantelhaen.test(contingency_table)$estimate
@@ -141,6 +144,9 @@ variance_a <- function(tilde_a_value, marginals) {
 #' @concept tests
 #' @export
 dx_chi_square <- function(cm, detail = "full") {
+  if (cm$dispos == 0 | cm$disneg == 0) {
+    return(undefined_association("Pearson's Chi-squared", detail))
+  }
   conf_matrix <- matrix(c(cm$tp, cm$fn, cm$fp, cm$tn), nrow = 2)
   chi_square_result <- suppressWarnings({
     stats::chisq.test(conf_matrix)
@@ -194,6 +200,9 @@ dx_chi_square <- function(cm, detail = "full") {
 #' @concept tests
 #' @export
 dx_fishers_exact <- function(cm, detail = "full") {
+  if (cm$dispos == 0 | cm$disneg == 0) {
+    return(undefined_association("Fisher's Exact", detail))
+  }
   conf_matrix <- matrix(c(cm$tp, cm$fn, cm$fp, cm$tn), nrow = 2)
   fisher_result <- stats::fisher.test(conf_matrix)
 
@@ -240,6 +249,9 @@ dx_fishers_exact <- function(cm, detail = "full") {
 #' @concept tests
 #' @export
 dx_g_test <- function(cm, detail = "full") {
+  if (cm$dispos == 0 | cm$disneg == 0) {
+    return(undefined_association("G-Test", detail))
+  }
   # Convert confusion matrix to table and calculate expected frequencies
   conf_matrix <- matrix(c(cm$tp, cm$fn, cm$fp, cm$tn), nrow = 2)
   row_totals <- apply(conf_matrix, 1, sum)
@@ -417,6 +429,18 @@ dx_z_test <- function(dx1, dx2, metric = c("accuracy", "ppv", "npv", "fnr", "fpr
   p <- c(dx1$cm[[vals[1]]], dx2$cm[[vals[1]]])
   n <- c(dx1$cm[[vals[2]]], dx2$cm[[vals[2]]])
 
+  # The proportion is undefined if either denominator is 0
+  if (any(n == 0)) {
+    if (detail == "simple") {
+      return(NA_real_)
+    }
+    return(compare_df(
+      test = paste0("Z-test: ", metric),
+      summary = "-",
+      notes = "Undefined: a denominator is 0"
+    ))
+  }
+
   test <- stats::prop.test(p, n, alternative = "two.sided")
 
   if (detail == "simple") {
@@ -478,6 +502,9 @@ dx_z_test <- function(dx1, dx2, metric = c("accuracy", "ppv", "npv", "fnr", "fpr
 #' @concept tests
 #' @export
 dx_mcnemars <- function(dx1, dx2, detail = "full") {
+  if (!identical(pluck_truths(dx1), pluck_truths(dx2))) {
+    stop("McNemar's test needs paired data: dx1 and dx2 must have the same truth values in the same order.")
+  }
   truth <- pluck_truths(dx1)
   predictions1 <- pluck_predicted(dx1)
   predictions2 <- pluck_predicted(dx2)
@@ -508,4 +535,16 @@ dx_mcnemars <- function(dx1, dx2, detail = "full") {
       statistic = as.numeric(test$statistic)
     )
   }
+}
+
+undefined_association <- function(measure, detail) {
+  if (detail == "simple") {
+    return(NA_real_)
+  }
+  measure_df(
+    measure = measure,
+    estimate = "-",
+    notes = "Requires both outcome classes",
+    estimate_raw = NA_real_
+  )
 }
