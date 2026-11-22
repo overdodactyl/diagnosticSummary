@@ -234,20 +234,26 @@ test_that("Unpaired DeLong test matches independent variances", {
 # Independent implementation: the expected count in each stratum makes the
 # stratum odds ratio equal the Mantel-Haenszel common odds ratio, given fixed
 # margins (Breslow & Day, 1980). Solved with uniroot rather than the quadratic.
-bd_reference <- function(x) {
+bd_parts <- function(x) {
   or_mh <- stats::mantelhaen.test(x)$estimate
-  stat <- 0
-  for (j in seq_len(dim(x)[3])) {
+  k <- dim(x)[3]
+  a <- a_t <- v <- numeric(k)
+  for (j in seq_len(k)) {
     t <- x[, , j]
     m1 <- sum(t[1, ])
     m2 <- sum(t[2, ])
     n1 <- sum(t[, 1])
     f <- function(a) a * (m2 - n1 + a) - or_mh * (m1 - a) * (n1 - a)
-    a_t <- stats::uniroot(f, c(max(0, n1 - m2), min(n1, m1)), tol = 1e-12)$root
-    v <- 1 / (1 / a_t + 1 / (m1 - a_t) + 1 / (n1 - a_t) + 1 / (m2 - n1 + a_t))
-    stat <- stat + (t[1, 1] - a_t)^2 / v
+    a[j] <- t[1, 1]
+    a_t[j] <- stats::uniroot(f, c(max(0, n1 - m2), min(n1, m1)), tol = 1e-12)$root
+    v[j] <- 1 / (1 / a_t[j] + 1 / (m1 - a_t[j]) + 1 / (n1 - a_t[j]) + 1 / (m2 - n1 + a_t[j]))
   }
-  unname(stat)
+  list(a = a, a_t = a_t, v = v)
+}
+
+bd_reference <- function(x) {
+  p <- bd_parts(x)
+  sum((p$a - p$a_t)^2 / p$v)
 }
 
 test_that("Breslow-Day matches the published UCB admissions example", {
@@ -275,4 +281,23 @@ test_that("Breslow-Day in dx() matches an independent implementation", {
       info = var
     )
   }
+})
+
+test_that("Tarone's correction matches Tarone (1985)", {
+  # Corrected statistic: X2_BD - (sum(a) - sum(expected a))^2 / sum(var(a))
+  pred <- as.numeric(hf$predicted >= .3)
+  tabs <- list(UCBAdmissions, table(pred, hf$truth, hf$AgeSex))
+
+  for (x in tabs) {
+    p <- bd_parts(x)
+    expected <- bd_reference(x) - (sum(p$a) - sum(p$a_t))^2 / sum(p$v)
+    res <- breslow_day_test(x, correct = TRUE)
+
+    expect_equal(unname(res$statistic), expected, tolerance = 1e-8)
+    expect_equal(res$method, "Tarone's corrected Breslow-Day")
+  }
+})
+
+test_that("Breslow-Day requires a 2x2xK table", {
+  expect_error(breslow_day_test(matrix(1:4, 2)), "2x2xK array")
 })
