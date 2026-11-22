@@ -246,7 +246,7 @@ evaluate_metric <- function(cm, metric_func, measure_name, detail, boot, bootrep
       # Build and return the result with confidence intervals
       return(measure_df(
         measure = measure_name,
-        estimate = conf_int(metric_raw, ci_lower, ci_upper, percent = TRUE),
+        estimate = conf_int(metric_raw, ci_lower, ci_upper, accuracy = .01),
         estimate_raw = metric_raw,
         ci_type = "Bootstrapped",
         lci_raw = ci_lower,
