@@ -767,22 +767,25 @@ dx_plot_roc <- function(dx_obj, curve_color = "#0057B8", fill_color = "#cfcdcb",
 
   if (add_ref_lines) {
     p <- p +
-      ggplot2::geom_segment(
-        ggplot2::aes(x = 1, y = 0, xend = 0, yend = 1),
+      ggplot2::annotate(
+        "segment",
+        x = 1, y = 0, xend = 0, yend = 1,
         linewidth = .2,
         linetype = "dotted",
         color = ref_lines_color
       ) +
       # horizontal line
-      ggplot2::geom_segment(
-        ggplot2::aes(x = 0, xend = 1.05, y = sensdf, yend = sensdf),
+      ggplot2::annotate(
+        "segment",
+        x = 0, xend = 1.05, y = sensdf, yend = sensdf,
         linewidth = .2,
         linetype = "dashed",
         color = ref_lines_color
       ) +
       # vertical line
-      ggplot2::geom_segment(
-        ggplot2::aes(x = specdf, xend = specdf, y = 0, yend = 1.05),
+      ggplot2::annotate(
+        "segment",
+        x = specdf, xend = specdf, y = 0, yend = 1.05,
         linewidth = .2,
         linetype = "dashed",
         color = ref_lines_color
@@ -791,14 +794,14 @@ dx_plot_roc <- function(dx_obj, curve_color = "#0057B8", fill_color = "#cfcdcb",
 
   if (add_ref_circle) {
     p <- p +
-      ggplot2::geom_point(
-        mapping = ggplot2::aes(x = specdf, y = sensdf),
+      ggplot2::annotate(
+        "point",
+        x = specdf, y = sensdf,
         fill = NA,
         size = 6,
         shape = 1,
         stroke = 1,
-        color = circle_ref_color,
-        inherit.aes = FALSE
+        color = circle_ref_color
       )
   }
 
