@@ -229,3 +229,14 @@ test_that("as.data.frame and summary filter on several values", {
 
   expect_no_error(summary(dx_grp, variable = c("Sex", "AgeGroup"), label = c("Male", "(20,50]")))
 })
+
+test_that("Bootstrapped metrics are not formatted as percentages", {
+  cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth, threshold = .3, poslabel = 1)
+
+  set.seed(1)
+  res <- dx_mcc(cm, boot = TRUE, bootreps = 50)
+  expected <- conf_int(res$estimate, res$conf_low, res$conf_high, accuracy = .01)
+
+  expect_equal(res$summary, expected)
+  expect_false(grepl("%", res$summary))
+})
