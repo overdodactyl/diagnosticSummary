@@ -1205,11 +1205,8 @@ pr_curve_points <- function(tp, fp, n_between = 20) {
 #' @return Depending on the `detail` parameter, returns a single numeric value of AUC or
 #'         a data frame with the AUC and its confidence intervals.
 #' @examples
-#' # Assuming you have a vector of true class labels and predicted probabilities
-#' true_classes <- c(1, 0, 1, 1, 0, 0, 1)
-#' predicted_probs <- c(0.9, 0.1, 0.8, 0.75, 0.33, 0.25, 0.67)
-#' simple_auc <- dx_auc(true_classes, predicted_probs, detail = "simple")
-#' detailed_auc <- dx_auc(true_classes, predicted_probs)
+#' simple_auc <- dx_auc(dx_heart_failure$truth, dx_heart_failure$predicted, detail = "simple")
+#' detailed_auc <- dx_auc(dx_heart_failure$truth, dx_heart_failure$predicted)
 #' print(simple_auc)
 #' print(detailed_auc)
 #' @export

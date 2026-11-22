@@ -39,6 +39,11 @@ difference in AUC between the two models. A confidence interval is only availabl
 paired comparisons.
 The p-value is \code{NA} when either curve has fewer than two cases or two controls, since
 DeLong's variance is undefined.
+
+Paired comparisons use DeLong's Z statistic and the standard normal distribution.
+Unpaired comparisons use the t statistic from \code{\link[pROC:roc.test]{pROC::roc.test()}}, with
+Welch-Satterthwaite degrees of freedom, and the t distribution. The \code{notes}
+column says which statistic is reported in \code{statistic}.
 }
 \examples{
 dx_glm <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted")

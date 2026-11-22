@@ -33,7 +33,7 @@ test_that("Cohen's kappa does not overflow with large counts", {
 })
 
 test_that("Chi-square is only reported once (69b1582)", {
-  chisq <- dx_grp$measures[dx_grp$measures$measure == "Pearson's Chi-squared", ]
+  chisq <- dx_grp$measures[dx_grp$measures$measure == "Pearson's Chi-squared (Yates' correction)", ]
   counts <- table(paste(chisq$variable, chisq$label))
 
   expect_true(all(counts == 1))
@@ -303,7 +303,7 @@ test_that("Subgroups with one outcome class report NA instead of failing", {
   )
 
   neg <- d$measures[d$measures$label == "neg_only", ]
-  for (measure in c("AUC ROC", "Odds Ratio", "LRT+", "LRT-", "Pearson's Chi-squared", "Fisher's Exact", "G-Test")) {
+  for (measure in c("AUC ROC", "Odds Ratio", "LRT+", "LRT-", "Pearson's Chi-squared (Yates' correction)", "Fisher's Exact", "G-Test")) {
     expect_true(is.na(neg$estimate[neg$measure == measure]), info = measure)
   }
   expect_equal(neg$summary[neg$measure == "AUC ROC"], "- (-, -)")
@@ -743,4 +743,17 @@ test_that("classlabels and outcome_label are deprecated and have no effect", {
   expect_equal(a$measures, expected$measures)
   expect_equal(b$measures, expected$measures)
   expect_false(any(c("classlabels", "outcome_label") %in% names(expected$options)))
+})
+
+test_that("DeLong notes say which statistic is reported", {
+  a <- dx(dx_heart_failure, true_varname = "truth", pred_varname = "predicted")
+  b <- dx(dx_heart_failure, true_varname = "truth", pred_varname = "predicted_rf")
+
+  paired <- dx_delong(a, b, paired = TRUE)
+  expect_equal(paired$notes, "Z statistic")
+
+  unpaired <- suppressWarnings(dx_delong(a, b, paired = FALSE))
+  test <- suppressWarnings(pROC::roc.test(a$roc, b$roc, paired = FALSE, method = "delong"))
+  expect_match(unpaired$notes, "^t statistic, df = [0-9]+\\.[0-9]$")
+  expect_equal(unpaired$p_value, 2 * stats::pt(-abs(unpaired$statistic), test$parameter))
 })
