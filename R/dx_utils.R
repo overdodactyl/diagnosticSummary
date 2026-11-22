@@ -11,7 +11,7 @@
 summary.dx <- function(object, thresh = object$options$setthreshold,
                        variable = NA, label = NA, show_var = T,
                        show_label = T, measure = NA, ...) {
-  if (is.na(thresh) | length(thresh) > 1) {
+  if (length(thresh) != 1 || is.na(thresh)) {
     stop("Must pass a numeric value to thresh")
   }
 
