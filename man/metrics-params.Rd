@@ -2,11 +2,7 @@
 % Please edit documentation in R/dx_metrics.R
 \name{metrics-params}
 \alias{metrics-params}
-\alias{metricparams}
 \title{Shared Parameters for Diagnostic Metrics}
-\usage{
-metricparams()
-}
 \arguments{
 \item{cm}{A dx_cm object created by \code{\link[=dx_cm]{dx_cm()}}.}
 

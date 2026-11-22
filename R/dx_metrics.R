@@ -19,9 +19,7 @@
 #'    metrics relevant to understanding the metric.
 #' @name metrics-params
 #' @keywords internal
-metricparams <- function() {
-
-}
+NULL
 
 #' Calculate Accuracy
 #'
