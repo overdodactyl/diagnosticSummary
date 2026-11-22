@@ -218,11 +218,8 @@ dx_measure <- function(data, threshold, options, var = "Overall",
 
 
 dx_group_measure <- function(data, options, group_varname) {
-  group_col <- unique(data[[group_varname]])
-
-  # Convert them to character
-  group_labels <- as.character(group_col)
-  group_labels <- group_labels[!is.na(group_labels)]
+  # Use factor level order
+  group_labels <- levels(data[[group_varname]])
 
   datalist <- list()
 

@@ -249,3 +249,39 @@ test_that("Cohen's kappa CI stays within -1 and 1", {
   expect_equal(res$conf_high, 1)
   expect_gte(res$conf_low, -1)
 })
+
+test_that("Subgroups follow factor level order", {
+  hf <- dx_heart_failure
+  hf$num <- as.integer(hf$Sex) * 10
+  hf$chr <- as.character(hf$AgeGroup)
+
+  d <- dx(
+    data = hf,
+    true_varname = "truth",
+    pred_varname = "predicted",
+    setthreshold = .3,
+    grouping_variables = c("Sex", "num", "chr")
+  )
+  labels <- function(var) unique(d$measures$label[d$measures$variable == var & d$measures$measure == "Accuracy"])
+
+  expect_equal(labels("Sex"), levels(hf$Sex))
+  expect_equal(labels("num"), c("10", "20"))
+  expect_equal(labels("chr"), sort(unique(hf$chr)))
+})
+
+test_that("Unused factor levels are dropped from subgroups", {
+  hf <- dx_heart_failure
+  hf$Sex <- factor(hf$Sex, levels = c("Female", "Male", "Other"))
+
+  d <- dx(
+    data = hf,
+    true_varname = "truth",
+    pred_varname = "predicted",
+    setthreshold = .3,
+    grouping_variables = "Sex"
+  )
+  sex <- d$measures[d$measures$variable == "Sex", ]
+
+  expect_false("Other" %in% sex$label)
+  expect_equal(sum(sex$measure == "Breslow-Day"), 1)
+})
