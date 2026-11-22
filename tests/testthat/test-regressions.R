@@ -240,3 +240,12 @@ test_that("Bootstrapped metrics are not formatted as percentages", {
   expect_equal(res$summary, expected)
   expect_false(grepl("%", res$summary))
 })
+
+test_that("Cohen's kappa CI stays within -1 and 1", {
+  # n = 10, kappa = 0.6; the normal approximation upper bound is about 1.10
+  res <- dx_cohens_kappa(make_cm(tp = 4, fn = 1, fp = 1, tn = 4))
+
+  expect_equal(res$estimate, .6)
+  expect_equal(res$conf_high, 1)
+  expect_gte(res$conf_low, -1)
+})

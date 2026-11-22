@@ -656,8 +656,9 @@ dx_cohens_kappa <- function(cm, detail = "full") {
 
     # Confidence interval using normal approximation, typically Z = 1.96 for 95%
     z <- 1.96
-    ci_lower <- kappa - z * se_kappa
-    ci_upper <- kappa + z * se_kappa
+    # Kappa is bounded by -1 and 1
+    ci_lower <- max(kappa - z * se_kappa, -1)
+    ci_upper <- min(kappa + z * se_kappa, 1)
 
     note <- get_kappa_interpretation(kappa)
 
