@@ -22,6 +22,16 @@ test_that("MCC does not overflow with large counts (9125b9a)", {
   expect_equal(dx_mcc(cm, detail = "simple"), 0.5)
 })
 
+test_that("Cohen's kappa does not overflow with large counts", {
+  # Same counts as above: po = 0.75, pe = 0.5, so kappa = 0.5
+  truth <- rep(c(1, 0, 1, 0), times = c(60000, 60000, 20000, 20000))
+  predicted <- rep(c(1, 0, 0, 1), times = c(60000, 60000, 20000, 20000))
+  cm <- dx_cm(predicted, truth, threshold = .5, poslabel = 1)
+
+  expect_equal(dx_cohens_kappa(cm, detail = "simple"), 0.5)
+  expect_false(is.na(dx_cohens_kappa(cm)$conf_low))
+})
+
 test_that("Chi-square is only reported once (69b1582)", {
   chisq <- dx_grp$measures[dx_grp$measures$measure == "Pearson's Chi-squared", ]
   counts <- table(paste(chisq$variable, chisq$label))
