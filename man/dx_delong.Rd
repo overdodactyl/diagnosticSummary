@@ -37,6 +37,8 @@ as the AUC of \code{dx1} minus the AUC of \code{dx2}, so a negative estimate ind
 has the higher AUC. The confidence interval gives a range of plausible values for the
 difference in AUC between the two models. A confidence interval is only available for
 paired comparisons.
+The p-value is \code{NA} when either curve has fewer than two cases or two controls, since
+DeLong's variance is undefined.
 }
 \examples{
 dx_glm <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted")

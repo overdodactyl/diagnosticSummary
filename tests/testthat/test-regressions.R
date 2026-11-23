@@ -600,3 +600,68 @@ test_that("Forest plot needs grouping variables", {
   d <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted", setthreshold = .3)
   expect_error(dx_plot_forest(d), "needs a dx object created with grouping_variables")
 })
+
+test_that("Measures use the exact threshold when it equals a prediction", {
+  # Rounding the threshold to 10 digits moved it above the prediction equal
+  # to it, so measures disagreed with the confusion matrix
+  df <- data.frame(p = c(.1, .2, .12345678906, .9), y = c(0, 0, 1, 1))
+  d <- dx(df, pred_varname = "p", true_varname = "y", setthreshold = .12345678906)
+  sens <- d$measures[d$measures$measure == "Sensitivity", ]
+
+  expect_equal(d$cm$tp, 2)
+  expect_equal(sens$estimate, 1)
+  expect_equal(sens$threshold, .12345678906)
+})
+
+test_that("Thresholds are not duplicated when predictions include 0 and 1", {
+  df <- data.frame(p = c(0, .2, .7, 1), y = c(0, 1, 0, 1))
+  d <- dx(df, pred_varname = "p", true_varname = "y")
+
+  expect_equal(d$thresholds$threshold, c(1, .7, .2, 0))
+})
+
+test_that("Breslow-Day is NA when every subgroup is perfectly separated", {
+  # No false positives or negatives, so the Mantel-Haenszel OR is infinite
+  df <- data.frame(
+    p = c(.1, .8, .9, .2, .7, .6),
+    y = c(0, 1, 1, 0, 1, 1),
+    g = rep(c("a", "b"), each = 3)
+  )
+  d <- suppressWarnings(dx(df, pred_varname = "p", true_varname = "y", grouping_variables = "g"))
+  bd <- d$measures[d$measures$measure == "Breslow-Day", ]
+
+  expect_true(is.na(bd$estimate))
+  expect_equal(bd$summary, "-")
+  expect_match(bd$notes, "Undefined")
+
+  x <- array(c(5, 0, 0, 5, 3, 0, 0, 4), c(2, 2, 2))
+  expect_true(is.na(breslow_day_test(x)$p_value))
+})
+
+test_that("DeLong's test is NA when a class has one observation", {
+  # AUCs are 1/3 and 2/3
+  df <- data.frame(p1 = c(.1, .4, .35, .8), p2 = c(.2, .3, .6, .7), y = c(0, 0, 1, 0))
+  d1 <- dx(df, pred_varname = "p1", true_varname = "y")
+  d2 <- dx(df, pred_varname = "p2", true_varname = "y")
+
+  for (paired in c(TRUE, FALSE)) {
+    res <- dx_delong(d1, d2, paired = paired)
+    expect_true(is.na(res$p_value), info = paired)
+    expect_equal(res$estimate, -1 / 3, info = paired)
+    expect_match(res$notes, "Undefined", info = paired)
+    expect_true(is.na(dx_delong(d1, d2, detail = "simple", paired = paired)))
+  }
+  expect_no_error(dx_compare(list(d1, d2), paired = TRUE))
+})
+
+test_that("Binomial confidence intervals stay within 0 and 1", {
+  cm <- make_cm(tp = 1, fn = 0, fp = 0, tn = 3)
+
+  for (citype in c("agresti-coull", "asymptotic")) {
+    sens <- dx_sensitivity(cm, citype = citype)
+    fnr <- dx_fnr(cm, citype = citype)
+    expect_equal(sens$conf_high, 1, info = citype)
+    expect_equal(fnr$conf_low, 0, info = citype)
+    expect_false(grepl("10[1-9]", sens$summary), info = citype)
+  }
+})

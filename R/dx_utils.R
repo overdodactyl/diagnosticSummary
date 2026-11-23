@@ -192,13 +192,18 @@ dx_breslow_day <- function(data, options, group_varname) {
   )
 
   bd <- breslow_day_test(tab, odds_ratio = NA, correct = FALSE)
+  undefined <- is.na(bd$p_value)
 
   measure <- measure_df(
     measure = "Breslow-Day",
-    estimate = format_pvalue(bd$p_value[[1]], accuracy = 0.01),
+    estimate = if (undefined) "-" else format_pvalue(bd$p_value[[1]], accuracy = 0.01),
     fraction = "",
     ci_type = "",
-    notes = "Mantel-Haenszel OR estimate",
+    notes = if (undefined) {
+      "Undefined: the Mantel-Haenszel OR is 0 or infinite"
+    } else {
+      "Mantel-Haenszel OR estimate"
+    },
     estimate_raw = bd$p_value,
     lci_raw = NA,
     uci_raw = NA

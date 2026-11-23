@@ -181,9 +181,12 @@ dx <- function(data,
 
   # Get all unique thresholds
   # Set thresholds may not be in threshold_range
-  # Round so floating point differences (e.g. from seq()) don't create duplicates
-  all_thresholds <- unique(round(c(options$setthreshold, options$threshold_range), 10))
+  # Compare rounded values so floating point differences (e.g. from seq())
+  # don't create duplicates, but keep the original values so predictions equal
+  # to a threshold are classified the same way as in the confusion matrix
+  all_thresholds <- c(options$setthreshold, options$threshold_range)
   all_thresholds <- all_thresholds[!is.na(all_thresholds)]
+  all_thresholds <- all_thresholds[!duplicated(round(all_thresholds, 10))]
 
   # Loop through all thresholds and get measures
   threshold_measures <- list()
