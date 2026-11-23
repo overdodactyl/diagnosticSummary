@@ -10,6 +10,8 @@
 #' If not provided, the Mantel-Haenszel odds ratio is calculated.
 #' @param correct Logical indicating whether to apply Tarone's correction.
 #' @return A list with the Breslow-Day test statistic, p-value, method used, and data name.
+#' The statistic and p-value are `NA` when the common odds ratio is 0 or infinite,
+#' e.g. when the outcome is perfectly separated in every stratum.
 #' @export
 #' @references
 #' Breslow NE, Day NE. Statistical methods in cancer research. Volume I -
@@ -25,6 +27,19 @@ breslow_day_test <- function(contingency_table, odds_ratio = NA, correct = FALSE
   if (is.na(odds_ratio)) {
     # Calculate the common OR based on Mantel-Haenszel
     odds_ratio <- stats::mantelhaen.test(contingency_table)$estimate
+  }
+
+  method <- if (correct) "Tarone's corrected Breslow-Day" else "Breslow-Day"
+  data_name <- deparse(substitute(contingency_table))
+
+  # The test is undefined when the common odds ratio is 0 or infinite
+  if (!is.finite(odds_ratio) || odds_ratio <= 0) {
+    return(list(
+      statistic = NA_real_,
+      p_value = NA_real_,
+      method = method,
+      data_name = data_name
+    ))
   }
 
   num_strata <- dim(contingency_table)[3]
@@ -56,8 +71,8 @@ breslow_day_test <- function(contingency_table, odds_ratio = NA, correct = FALSE
   list(
     statistic = breslow_day_statistic,
     p_value = p_value,
-    method = if (correct) "Tarone's corrected Breslow-Day" else "Breslow-Day",
-    data_name = deparse(substitute(contingency_table))
+    method = method,
+    data_name = data_name
   )
 }
 
@@ -316,6 +331,8 @@ dx_g_test <- function(cm, detail = "full") {
 #' has the higher AUC. The confidence interval gives a range of plausible values for the
 #' difference in AUC between the two models. A confidence interval is only available for
 #' paired comparisons.
+#' The p-value is `NA` when either curve has fewer than two cases or two controls, since
+#' DeLong's variance is undefined.
 #' @examples
 #' dx_glm <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted")
 #' dx_rf <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted_rf")
@@ -328,6 +345,23 @@ dx_g_test <- function(cm, detail = "full") {
 #' @concept tests
 #' @export
 dx_delong <- function(dx1, dx2, detail = "full", paired = TRUE) {
+  # DeLong's variance needs at least two cases and two controls per curve
+  too_small <- vapply(list(dx1$roc, dx2$roc), function(r) {
+    min(length(r$cases), length(r$controls)) < 2
+  }, logical(1))
+  if (any(too_small)) {
+    if (detail == "simple") {
+      return(NA_real_)
+    }
+    estimate <- as.numeric(dx1$roc$auc) - as.numeric(dx2$roc$auc)
+    return(compare_df(
+      test = "DeLong's test for ROC curves",
+      summary = formatC(estimate, format = "f", digits = 2),
+      estimate = estimate,
+      notes = "Undefined: needs at least 2 cases and 2 controls"
+    ))
+  }
+
   test <- pROC::roc.test(
     roc1 = dx1$roc,
     roc2 = dx2$roc,

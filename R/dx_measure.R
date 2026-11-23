@@ -2,8 +2,9 @@ dx_thresholds <- function(data, options) {
   predprob <- data[[options$pred_varname]]
   truth <- data[[options$true_varname]]
 
-  unique_thresholds <- unique(data[[options$pred_varname]])
-  unique_thresholds <- sort(c(0, unique_thresholds, 1), decreasing = TRUE)
+  # Predictions can include 0 or 1, so remove duplicates after adding them
+  unique_thresholds <- unique(c(0, data[[options$pred_varname]], 1))
+  unique_thresholds <- sort(unique_thresholds, decreasing = TRUE)
 
   # Initialize vectors to store sensitivity and specificity values
   sensitivities <- numeric(length(unique_thresholds))

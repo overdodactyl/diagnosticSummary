@@ -788,6 +788,10 @@ metric_binomial <- function(x, n, name, detail = "full", citype = "exact", ...) 
 ci_binomial <- function(x, n, citype = "exact", ...) {
   res <- binom::binom.confint(x, n, conf.level = 0.95, methods = citype)
 
+  # Some methods (e.g. agresti-coull, asymptotic) can extend past 0 or 1
+  res$lower <- pmax(res$lower, 0)
+  res$upper <- pmin(res$upper, 1)
+
   formatted_estimate <- conf_int(
     res$mean,
     res$lower,

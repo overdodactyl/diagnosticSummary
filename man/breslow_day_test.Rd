@@ -16,6 +16,8 @@ If not provided, the Mantel-Haenszel odds ratio is calculated.}
 }
 \value{
 A list with the Breslow-Day test statistic, p-value, method used, and data name.
+The statistic and p-value are \code{NA} when the common odds ratio is 0 or infinite,
+e.g. when the outcome is perfectly separated in every stratum.
 }
 \description{
 Performs the Breslow-Day test for homogeneity of the odds ratios across different
