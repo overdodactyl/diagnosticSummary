@@ -24,7 +24,9 @@
 #'     prevalence for additional NPV and PPV calculations.
 #' @param citype Confidence interval type.
 #' @param bootreps Number of bootstrap samples used for the bootstrapped CIs.
-#' @param bootseed Seed used for the bootstrapped CIs, so results are reproducible.
+#' @param bootseed Seed used for the bootstrapped CIs, so results are reproducible
+#'     on the same R version and platform. Bootstrap draws can differ across
+#'     platforms and R versions by Monte Carlo error.
 #' @param doboot Logical. Generate percentile bootstrap CIs for the measures
 #'     without a closed-form CI (F1, F2, MCC, balanced accuracy, informedness,
 #'     markedness, G-mean, and Fowlkes-Mallows)? The confusion matrix cell

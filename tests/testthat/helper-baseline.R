@@ -22,7 +22,7 @@ baseline_outputs <- function() {
   overall <- fit()
   grouped <- fit(grouping_variables = c("AgeGroup", "Sex", "AgeSex"))
   options <- fit(citype = "wilson", threshold_range = c(.1, .2, .5), prevalence = .1)
-  boot <- fit(grouping_variables = "Sex", doboot = TRUE, bootreps = 200)
+  boot <- fit(grouping_variables = "Sex", doboot = TRUE)
   pos0 <- fit(poslabel = 0)
 
   rf <- dx(data = hf, true_varname = "truth", pred_varname = "predicted_rf", setthreshold = .3)
