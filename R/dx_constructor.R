@@ -41,103 +41,8 @@ dx <- function(data,
                setthreshold = .5, poslabel = 1, grouping_variables = NA, prevalence = NA,
                citype = "exact", bootreps = 2000, bootseed = 20191015,
                doboot = FALSE, direction = "<", ...) {
-
-
-  # Check if pred_varname in data
-  if (!pred_varname %in% names(data)) {
-    stop(paste(pred_varname, "was not found in `data`"))
-  }
-
-  # Check if true_varname in data
-  if (!true_varname %in% names(data)) {
-    stop(paste(true_varname, "was not found in `data`"))
-  }
-
-  # Check if grouping variables are factors, and drop unused levels
-  if (!identical(grouping_variables, NA)) {
-    for (f in grouping_variables) {
-      if (!is.factor(data[[f]])) {
-        data[[f]] <- as.factor(data[[f]])
-      }
-      data[[f]] <- droplevels(data[[f]])
-    }
-  }
-
-  # Check that poslabel is 0 or 1
-  if (length(poslabel) != 1 || !poslabel %in% c(0, 1)) {
-    stop("poslabel should be 0 or 1")
-  }
-
-  # direction is only used for the AUC; threshold based results always treat
-  # higher predictions as the positive class
-  if (direction != "<") {
-    warning(paste0(
-      "direction = \"", direction, "\" only affects the AUC. Sensitivity, ",
-      "specificity, and other threshold based results treat higher ",
-      "predictions as the positive class."
-    ), call. = FALSE)
-  }
-
-  # Check if pred_varname is numeric
-  if (!is.numeric(data[[pred_varname]])) {
-    stop(paste(pred_varname, "should be numeric"))
-  }
-
-  # Check for missing values
-  for (v in c(pred_varname, true_varname)) {
-    n_missing <- sum(is.na(data[[v]]))
-    if (n_missing > 0) {
-      stop(paste0(
-        v, " contains ", n_missing, " missing value(s). ",
-        "Remove or impute missing values before calling dx()."
-      ))
-    }
-  }
-
-  # Check if pred_varname contains probabilities
-  pred_range <- range(data[[pred_varname]])
-  if (pred_range[1] < 0 || pred_range[2] > 1) {
-    stop(paste0(
-      pred_varname, " should contain predicted probabilities between 0 and 1, ",
-      "but ranges from ", signif(pred_range[1], 3), " to ", signif(pred_range[2], 3), ". ",
-      "If these are logits, convert them with plogis()."
-    ))
-  }
-
-  # Convert logical, factor, or character truth coded as 0/1 to numeric
-  truth <- data[[true_varname]]
-  if (is.logical(truth) || is.factor(truth) || is.character(truth)) {
-    if (is.logical(truth)) {
-      truth <- as.numeric(truth)
-    } else if (all(as.character(truth) %in% c("0", "1"))) {
-      truth <- as.numeric(as.character(truth))
-    }
-    data[[true_varname]] <- truth
-  }
-
-  # Check if true_varname consists of only c(0,1)
-  if (!all(data[[true_varname]] %in% c(0, 1))) {
-    stop(paste(
-      true_varname,
-      "should be numeric vector consisting of only 0's and 1's"
-    ))
-  }
-
-  # Check that both classes are present
-  if (length(unique(data[[true_varname]])) < 2) {
-    stop(paste0(
-      true_varname, " should contain both 0's and 1's, but only contains ",
-      unique(data[[true_varname]]), "'s"
-    ))
-  }
-
-  # Check that predictions vary
-  if (length(unique(data[[pred_varname]])) < 2) {
-    stop(paste0(
-      "All values of ", pred_varname, " are identical (",
-      unique(data[[pred_varname]]), "). At least two distinct values are needed."
-    ))
-  }
+  check_dx_options(poslabel, direction)
+  data <- prepare_dx_data(data, pred_varname, true_varname, grouping_variables)
 
   data$test_binary <- ifelse(
     data[[pred_varname]] < setthreshold, 0, 1
@@ -188,70 +93,134 @@ dx <- function(data,
   all_thresholds <- all_thresholds[!is.na(all_thresholds)]
   all_thresholds <- all_thresholds[!duplicated(round(all_thresholds, 10))]
 
-  ####### Threshold Analysis
+  # Confusion matrix at setthreshold
+  cm <- dx_cm(
+    predprob = data[[pred_varname]],
+    truth = data[[true_varname]],
+    threshold = setthreshold,
+    poslabel = poslabel
+  )
+
+  # Results at every threshold, computed once and shared
   threshold_analysis <- dx_thresholds(data, options)
 
-  # Loop through all thresholds and get measures
-  threshold_measures <- list()
-
-  for (i in seq_along(all_thresholds)) {
-    threshold_measures[[i]] <- dx_measure(data,
-      threshold = all_thresholds[i],
+  # Overall measures at each threshold
+  threshold_measures <- do.call(rbind, lapply(all_thresholds, function(t) {
+    dx_measure(data,
+      threshold = t,
       options = options,
       threshold_analysis = threshold_analysis
     )
-  }
+  }))
 
-  threshold_measures <- do.call(rbind, threshold_measures)
-
-  ####### Subgroup Analysis
-
+  # Subgroup measures at setthreshold
   if (!identical(grouping_variables, NA)) {
-    subgroups <- list()
-    for (i in seq_along(options$grouping_variables)) {
-      subgroups[[i]] <- dx_group_measure(
-        data = data, options = options,
-        group_varname = options$grouping_variables[i]
-      )
-    }
-    subgroups <- do.call(rbind, subgroups)
-
+    subgroups <- do.call(rbind, lapply(grouping_variables, function(v) {
+      dx_group_measure(data = data, options = options, group_varname = v)
+    }))
     threshold_measures <- rbind(subgroups, threshold_measures)
   }
-
-  ####### Prevalence Analysis
-  prevalence_analysis <- dx_prevalence_analysis(data, options)
-
-  ###### Rank Analysis
-  rank_analysis <- dx_rank(data, options)
-
-
-  # Number of unique levels
-  n_levels <- length(unique(threshold_measures$label))
-
-  roc <- get_roc(true_varname, pred_varname, data, direction)
-
-  # main confusion matrix
-  predprob <- data[[options$pred_varname]]
-  truth <- data[[options$true_varname]]
-
-  cm <- dx_cm(
-    predprob = predprob,
-    truth = truth,
-    threshold = setthreshold,
-    poslabel = options$poslabel
-  )
-
 
   structure(list(
     data = data,
     options = options,
     measures = threshold_measures,
     thresholds = threshold_analysis,
-    prevalence = prevalence_analysis,
-    rank = rank_analysis,
+    prevalence = dx_prevalence_analysis(cm),
+    rank = dx_rank(data, options),
     cm = cm,
-    n_levels = n_levels,
-    roc = roc
+    n_levels = length(unique(threshold_measures$label)),
+    roc = get_roc(true_varname, pred_varname, data, direction)
   ), class = "dx")
+}
+
+# Check options that don't depend on the data
+check_dx_options <- function(poslabel, direction) {
+  # Check that poslabel is 0 or 1
+  if (length(poslabel) != 1 || !poslabel %in% c(0, 1)) {
+    stop("poslabel should be 0 or 1", call. = FALSE)
+  }
+
+  # direction is only used for the AUC; threshold based results always treat
+  # higher predictions as the positive class
+  if (direction != "<") {
+    warning(paste0(
+      "direction = \"", direction, "\" only affects the AUC. Sensitivity, ",
+      "specificity, and other threshold based results treat higher ",
+      "predictions as the positive class."
+    ), call. = FALSE)
+  }
+}
+
+# Validate the prediction and truth columns, convert truth to numeric 0/1,
+# and convert grouping variables to factors without unused levels
+prepare_dx_data <- function(data, pred_varname, true_varname, grouping_variables) {
+  for (v in c(pred_varname, true_varname)) {
+    if (!v %in% names(data)) {
+      stop(paste(v, "was not found in `data`"), call. = FALSE)
+    }
+  }
+
+  if (!identical(grouping_variables, NA)) {
+    for (f in grouping_variables) {
+      data[[f]] <- droplevels(as.factor(data[[f]]))
+    }
+  }
+
+  pred <- data[[pred_varname]]
+  if (!is.numeric(pred)) {
+    stop(paste(pred_varname, "should be numeric"), call. = FALSE)
+  }
+
+  for (v in c(pred_varname, true_varname)) {
+    n_missing <- sum(is.na(data[[v]]))
+    if (n_missing > 0) {
+      stop(paste0(
+        v, " contains ", n_missing, " missing value(s). ",
+        "Remove or impute missing values before calling dx()."
+      ), call. = FALSE)
+    }
+  }
+
+  pred_range <- range(pred)
+  if (pred_range[1] < 0 || pred_range[2] > 1) {
+    stop(paste0(
+      pred_varname, " should contain predicted probabilities between 0 and 1, ",
+      "but ranges from ", signif(pred_range[1], 3), " to ", signif(pred_range[2], 3), ". ",
+      "If these are logits, convert them with plogis()."
+    ), call. = FALSE)
+  }
+
+  if (length(unique(pred)) < 2) {
+    stop(paste0(
+      "All values of ", pred_varname, " are identical (",
+      unique(pred), "). At least two distinct values are needed."
+    ), call. = FALSE)
+  }
+
+  # Convert logical, factor, or character truth coded as 0/1 to numeric
+  truth <- data[[true_varname]]
+  if (is.logical(truth)) {
+    truth <- as.numeric(truth)
+  } else if ((is.factor(truth) || is.character(truth)) &&
+    all(as.character(truth) %in% c("0", "1"))) {
+    truth <- as.numeric(as.character(truth))
+  }
+
+  if (!all(truth %in% c(0, 1))) {
+    stop(paste(
+      true_varname,
+      "should be numeric vector consisting of only 0's and 1's"
+    ), call. = FALSE)
+  }
+
+  if (length(unique(truth)) < 2) {
+    stop(paste0(
+      true_varname, " should contain both 0's and 1's, but only contains ",
+      unique(truth), "'s"
+    ), call. = FALSE)
+  }
+
+  data[[true_varname]] <- truth
+  data
 }
