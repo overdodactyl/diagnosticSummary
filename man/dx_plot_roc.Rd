@@ -60,6 +60,8 @@ The ROC curve is a widely used tool for diagnosing the performance of binary cla
 rate (sensitivity) against the false positive rate (1 - specificity) for various thresholds. A model with perfect discrimination
 (no overlap in the two distributions) has an ROC curve that passes through the upper left corner (100\% sensitivity, 100\% specificity).
 Therefore the closer the ROC curve is to the upper left corner, the higher the overall accuracy of the test.
+With \code{poslabel = 0}, sensitivity and specificity are for outcome 0 as the event, so the curve
+is drawn for that event and the reference circle marks the threshold on it.
 
 The \code{dx_roc} function allows for extensive customization of the ROC curve, including color schemes, reference lines, text annotations,
 and more, to accommodate a variety of visualization needs and preferences.

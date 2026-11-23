@@ -46,6 +46,7 @@ dx_thresholds <- function(data, options) {
 
   res <- data.frame(
     threshold = thresholds,
+    event_threshold = event_threshold,
     sensitivity = dx_sensitivity(cm, detail = "simple"),
     specificity = dx_specificity(cm, detail = "simple"),
     precision = dx_precision(cm, detail = "simple"),
@@ -84,15 +85,17 @@ dx_rank <- function(data, options) {
   truth <- data[[options$true_varname]]
   predprob <- data[[options$pred_varname]]
 
-  # Combine and sort by predicted probability in descending order
+  # Rank cases from most to least likely to be the event. Predictions are
+  # probabilities of outcome 1, so with poslabel = 0 the lowest come first.
   data <- data.frame(truth, predprob)
-  data <- data[order(-data$predprob), ]
+  data <- data[order(if (options$poslabel == 1) -data$predprob else data$predprob), ]
+  event <- as.numeric(data$truth == options$poslabel)
 
   # Calculate cumulative true positives
-  data$cumulativeTruePositives <- cumsum(data$truth)
+  data$cumulativeTruePositives <- cumsum(event)
 
   # Calculate the fraction of positives at each threshold
-  totalPositives <- sum(data$truth)
+  totalPositives <- sum(event)
   data$gain <- data$cumulativeTruePositives / totalPositives
 
   # Calculate the lift for each percentile
@@ -107,7 +110,7 @@ dx_rank <- function(data, options) {
 
   # Calculate cumulative true positive and true negative rates for KS Plot
   data$cumulativeTPR <- data$cumulativeTruePositives / totalPositives # True Positive Rate
-  data$cumulativeFPR <- cumsum(!data$truth) / sum(!data$truth) # False Positive Rate
+  data$cumulativeFPR <- cumsum(!event) / sum(!event) # False Positive Rate
 
   return(data)
 }

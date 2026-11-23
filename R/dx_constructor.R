@@ -6,15 +6,17 @@
 #' @param data A tbl.
 #' @param classlabels Labels for predicted variable.  Needs to be 0, 1 order.
 #' @param pred_varname Column name containing AI prediction (string). Values
-#'     should be predicted probabilities between 0 and 1, with no missing values.
+#'     should be predicted probabilities that the outcome is 1, between 0 and 1,
+#'     with no missing values.
 #' @param setthreshold A numeric value representing the threshold used
 #'     to identify AI prediction
 #' @param threshold_range Optional. A numeric vector of thresholds to loop over.
 #' @param true_varname Column name containing AI reference standard (string).
 #'     Values should be 0 or 1 (numeric, logical, factor, or character), with
 #'     no missing values, and both classes must be present.
-#' @param poslabel Positive class.  Variable should be coded as 0/1
-#'     with 1 being the event
+#' @param poslabel The outcome class that is the event: 1 (default) or 0.
+#'     Predictions are still probabilities that the outcome is 1, so with
+#'     `poslabel = 0` a prediction below the threshold is a positive test.
 #' @param outcome_label Label for outcome (string)
 #' @param grouping_variables Character vector of variable names to
 #'     be summarized by.  Variables are converted to factors if not already one.

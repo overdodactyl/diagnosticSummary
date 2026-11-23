@@ -295,7 +295,13 @@ test_that("Rank and prevalence tables satisfy their definitions", {
     d <- suppressWarnings(do.call(dx, a))
 
     r <- d$rank
-    expect_true(all(diff(r$predprob) <= 0), info = info)
+    # Ranked from most to least likely to be the event
+    if (a$poslabel == 1) {
+      expect_true(all(diff(r$predprob) <= 0), info = info)
+    } else {
+      expect_true(all(diff(r$predprob) >= 0), info = info)
+    }
+    expect_equal(r$cumulativeTruePositives, cumsum(r$truth == a$poslabel), info = info)
     for (col in c("gain", "cumulativeTPR", "cumulativeFPR", "percentile")) {
       expect_true(all(diff(r[[col]]) >= 0), info = paste(info, col))
       expect_equal(utils::tail(r[[col]], 1), 1, info = paste(info, col))

@@ -28,8 +28,6 @@
 #' )
 #' dx_plot_gain(dx_obj)
 dx_plot_gain <- function(dx_obj) {
-  warn_poslabel(dx_obj, "dx_plot_gain()")
-
   dx_line_plot(
     dx_obj$rank, "percentile", "gain",
     xlab = "\nPercentile of Population",
@@ -69,8 +67,6 @@ dx_plot_gain <- function(dx_obj) {
 #' )
 #' dx_plot_lift(dx_obj)
 dx_plot_lift <- function(dx_obj) {
-  warn_poslabel(dx_obj, "dx_plot_lift()")
-
   dx_line_plot(
     dx_obj$rank, "percentile", "lift",
     xlab = "\nPercentile of Population", ylab = "Lift\n\n", color = "red"
@@ -112,8 +108,6 @@ dx_plot_lift <- function(dx_obj) {
 #' )
 #' dx_plot_ks(dx_obj)
 dx_plot_ks <- function(dx_obj) {
-  warn_poslabel(dx_obj, "dx_plot_ks()")
-
   data <- dx_obj$rank
 
   # With tied predictions, only the end of each tie group corresponds to a
@@ -326,6 +320,8 @@ dx_plot_calibration <- function(dx_obj, bins = 10) {
 #' the threshold probability (Vickers & Elkin, 2006):
 #' \deqn{Net Benefit = \frac{TP}{N} - Weight \times \frac{FP}{N}}
 #' where Weight = Threshold / (1 - Threshold) and N is the total number of observations.
+#' The threshold is the probability of the event, so with `poslabel = 0` it is
+#' 1 minus the threshold on the predictions.
 #'
 #' The decision curve will typically be compared against two
 #' default strategies: treating all patients or treating none.
@@ -347,12 +343,9 @@ dx_plot_calibration <- function(dx_obj, bins = 10) {
 #' )
 #' dx_plot_decision_curve(dx_obj)
 dx_plot_decision_curve <- function(dx_obj, plot_range = c(0.05, .95)) {
-  warn_poslabel(dx_obj, "dx_plot_decision_curve()")
-
-
-  # Prepare data for plotting
+  # Net benefit is plotted against the threshold probability of the event
   data_for_plot <- data.frame(
-    threshold = dx_obj$thresholds$threshold,
+    threshold = dx_obj$thresholds$event_threshold,
     net_benefit = dx_obj$thresholds$net_benefit
   )
 
@@ -361,7 +354,7 @@ dx_plot_decision_curve <- function(dx_obj, plot_range = c(0.05, .95)) {
   data_for_plot <- data_for_plot[data_for_plot$threshold >= plot_range[1], ]
   data_for_plot <- data_for_plot[data_for_plot$threshold <= plot_range[2], ]
 
-  prevalence <- mean(dx_obj$data[[dx_obj$options$true_varname]])
+  prevalence <- dx_prevalence(dx_obj$cm, detail = "simple")
 
   # Net benefit when everyone is treated, and when no one is (always 0)
   data_for_plot$treat_all <- prevalence - (1 - prevalence) * data_for_plot$threshold / (1 - data_for_plot$threshold)
@@ -470,12 +463,10 @@ dx_plot_youden_j <- function(dx_obj) {
 #' )
 #' dx_plot_cap(dx_obj)
 dx_plot_cap <- function(dx_obj) {
-  warn_poslabel(dx_obj, "dx_plot_cap()")
-
   data <- dx_obj$rank
 
-  # Total positives in the dataset
-  total_positives <- sum(data$truth)
+  # Total positives (events) in the dataset
+  total_positives <- data$cumulativeTruePositives[nrow(data)]
 
   # Create the CAP data
   cap_data <- data.frame(
@@ -666,6 +657,8 @@ dx_plot_cm <- function(dx_obj, palette = c("#e5eef7", "#0057B8"), levels = c("-"
 #' rate (sensitivity) against the false positive rate (1 - specificity) for various thresholds. A model with perfect discrimination
 #' (no overlap in the two distributions) has an ROC curve that passes through the upper left corner (100% sensitivity, 100% specificity).
 #' Therefore the closer the ROC curve is to the upper left corner, the higher the overall accuracy of the test.
+#' With `poslabel = 0`, sensitivity and specificity are for outcome 0 as the event, so the curve
+#' is drawn for that event and the reference circle marks the threshold on it.
 #'
 #' The `dx_roc` function allows for extensive customization of the ROC curve, including color schemes, reference lines, text annotations,
 #' and more, to accommodate a variety of visualization needs and preferences.
@@ -1028,18 +1021,16 @@ dx_plot_rocs <- function(dx_comp, add_text = TRUE, axis_color = "#333333", text_
 # ROC curve points from pROC, so the curve matches the AUC (including
 # direction and tied predictions)
 roc_curve_df <- function(dx_obj) {
-  data.frame(
-    specificity = dx_obj$roc$specificities,
-    sensitivity = dx_obj$roc$sensitivities
-  )
-}
+  sens <- dx_obj$roc$sensitivities
+  spec <- dx_obj$roc$specificities
 
-warn_poslabel <- function(dx_obj, plot) {
-  if (isTRUE(dx_obj$options$poslabel == 0)) {
-    warning(paste0(
-      plot, " treats 1 as the positive class and ignores poslabel = 0."
-    ), call. = FALSE)
+  # pROC treats outcome 1 as the case. With poslabel = 0, sensitivity for the
+  # event is specificity for outcome 1 and vice versa, so swap them (and
+  # reverse the order to keep the same path direction). The AUC is unchanged.
+  if (dx_obj$options$poslabel == 0) {
+    return(data.frame(specificity = rev(sens), sensitivity = rev(spec)))
   }
+  data.frame(specificity = spec, sensitivity = sens)
 }
 
 # One curve with axis labels and the minimal theme, shared by several plots

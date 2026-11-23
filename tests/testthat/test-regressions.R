@@ -679,3 +679,12 @@ test_that("Net benefit uses the event's threshold probability when poslabel = 0"
   expect_equal(thr$fp[thr$threshold == .75], 1)
   expect_equal(thr$net_benefit[thr$threshold == .75], 1 / 3)
 })
+
+test_that("dx$thresholds stores the event's threshold probability", {
+  for (poslabel in c(0, 1)) {
+    d <- dx(dx_heart_failure, true_varname = "truth", pred_varname = "predicted", poslabel = poslabel)
+    th <- d$thresholds
+    expected <- if (poslabel == 1) th$threshold else 1 - th$threshold
+    expect_equal(th$event_threshold, expected, info = paste("poslabel", poslabel))
+  }
+})
