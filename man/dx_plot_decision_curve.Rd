@@ -31,6 +31,8 @@ false positives relative to the benefit of true positives. This ratio is derived
 the threshold probability (Vickers & Elkin, 2006):
 \deqn{Net Benefit = \frac{TP}{N} - Weight \times \frac{FP}{N}}
 where Weight = Threshold / (1 - Threshold) and N is the total number of observations.
+The threshold is the probability of the event, so with \code{poslabel = 0} it is
+1 minus the threshold on the predictions.
 
 The decision curve will typically be compared against two
 default strategies: treating all patients or treating none.

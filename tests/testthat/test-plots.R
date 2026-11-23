@@ -273,18 +273,100 @@ test_that("ROC summary statistics follow the requested order", {
   expect_match(text[2], "^AUC ROC")
 })
 
-test_that("Plots that ignore poslabel = 0 warn", {
-  d0 <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted", setthreshold = .3, poslabel = 0)
+test_that("Rank-based plots and the decision curve use poslabel = 0", {
+  hf <- dx_heart_failure
+  d0 <- dx(data = hf, true_varname = "truth", pred_varname = "predicted", setthreshold = .3, poslabel = 0)
 
-  expect_warning(dx_plot_gain(d0), "ignores poslabel = 0")
-  expect_warning(dx_plot_lift(d0), "ignores poslabel = 0")
-  expect_warning(dx_plot_ks(d0), "ignores poslabel = 0")
-  expect_warning(dx_plot_cap(d0), "ignores poslabel = 0")
-  expect_warning(dx_plot_decision_curve(d0), "ignores poslabel = 0")
-  expect_no_warning(dx_plot_gain(dx_obj))
+  # poslabel = 0 matches poslabel = 1 with the outcome and predictions flipped
+  flipped <- hf
+  flipped$truth <- 1 - flipped$truth
+  flipped$predicted <- 1 - flipped$predicted
+  d1 <- dx(data = flipped, true_varname = "truth", pred_varname = "predicted", setthreshold = .7)
+
+  cols <- c("cumulativeTruePositives", "gain", "percentile", "lift", "cumulativeTPR", "cumulativeFPR")
+  expect_equal(as.data.frame(d0$rank)[cols], as.data.frame(d1$rank)[cols], check.attributes = FALSE)
+
+  for (f in list(dx_plot_gain, dx_plot_lift, dx_plot_ks, dx_plot_cap, dx_plot_decision_curve)) {
+    expect_no_warning(ggplot2::ggplot_build(f(d0)))
+  }
+
+  # Gain and CAP reach 1 when every event is captured
+  expect_equal(utils::tail(d0$rank$gain, 1), 1)
+
+  # The decision curve is on the event's threshold probability, and treat all
+  # uses the prevalence of the event
+  b <- ggplot2::ggplot_build(dx_plot_decision_curve(d0))
+  model <- b$data[[1]]
+  treat_all <- b$data[[2]]
+  prev0 <- mean(hf$truth == 0)
+  expect_equal(treat_all$y, prev0 - (1 - prev0) * treat_all$x / (1 - treat_all$x))
+  thr <- d0$thresholds
+  expected <- thr$net_benefit[match(round(1 - model$x, 10), round(thr$threshold, 10))]
+  expect_equal(model$y, expected)
 })
 
 test_that("KS axis label matches the axis direction", {
   p <- dx_plot_ks(dx_obj)
   expect_equal(p$labels$x, "Prediction Score")
+})
+
+test_that("ROC reference circle is on the curve for either poslabel", {
+  for (poslabel in c(0, 1)) {
+    d <- dx(
+      data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted",
+      setthreshold = .3, poslabel = poslabel
+    )
+    b <- ggplot2::ggplot_build(dx_plot_roc(d, add_text = FALSE))
+    curve <- b$data[[2]]
+    circle <- b$data[[length(b$data)]]
+    dist <- min(sqrt((curve$x - circle$x)^2 + (curve$y - circle$y)^2))
+    expect_equal(dist, 0, info = paste("poslabel", poslabel))
+  }
+})
+
+test_that("poslabel = 0 matches poslabel = 1 with the outcome and predictions flipped", {
+  # setthreshold is not equal to any prediction, so ties at the threshold
+  # (where pred < t and 1 - pred >= 1 - t differ) don't matter
+  hf <- dx_heart_failure
+  expect_false(any(hf$predicted == .3))
+  flipped <- hf
+  flipped$truth <- 1 - flipped$truth
+  flipped$predicted <- 1 - flipped$predicted
+
+  d0 <- dx(data = hf, true_varname = "truth", pred_varname = "predicted", setthreshold = .3, poslabel = 0)
+  d1 <- dx(data = flipped, true_varname = "truth", pred_varname = "predicted", setthreshold = .7)
+
+  expect_equal(unclass(d0$cm), unclass(d1$cm))
+  cols <- c("measure", "estimate", "conf_low", "conf_high")
+  # AUC PR is a trapezoid over the threshold table, which treats tied
+  # predictions differently in the two directions
+  keep <- d0$measures$measure != "AUC PR"
+  expect_equal(d0$measures[keep, cols], d1$measures[keep, cols])
+  expect_equal(d0$prevalence, d1$prevalence)
+
+  # Plots built from the cm, rank, or ROC curve draw the same layers
+  layers <- function(d, f) {
+    lapply(ggplot2::ggplot_build(f(d))$data, function(l) {
+      l <- l[intersect(c("x", "y", "xend", "yend"), names(l))]
+      l[do.call(order, l), , drop = FALSE]
+    })
+  }
+  plots <- list(
+    roc = function(d) dx_plot_roc(d, add_text = FALSE),
+    cm = dx_plot_cm, gain = dx_plot_gain, lift = dx_plot_lift, cap = dx_plot_cap
+  )
+  for (p in names(plots)) {
+    expect_equal(layers(d0, plots[[p]]), layers(d1, plots[[p]]), check.attributes = FALSE, info = p)
+  }
+
+  # The KS plot's x axis is the prediction, which is mirrored in the flipped data
+  ks0 <- ggplot2::ggplot_build(dx_plot_ks(d0))$data
+  ks1 <- ggplot2::ggplot_build(dx_plot_ks(d1))$data
+  key <- function(l, mirror = FALSE) {
+    l <- data.frame(group = l$group, x = if (mirror) 1 - l$x else l$x, y = l$y)
+    l[do.call(order, l), ]
+  }
+  expect_equal(key(ks0[[1]]), key(ks1[[1]], mirror = TRUE), check.attributes = FALSE)
+  expect_equal(ks0[[2]]$xintercept, 1 - ks1[[2]]$xintercept)
+  expect_equal(ks0[[3]]$label, ks1[[3]]$label)
 })
