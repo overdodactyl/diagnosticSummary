@@ -162,27 +162,13 @@ dx_chi_square <- function(cm, detail = "full") {
   if (cm$dispos == 0 | cm$disneg == 0) {
     return(undefined_association("Pearson's Chi-squared", detail))
   }
-  conf_matrix <- matrix(c(cm$tp, cm$fn, cm$fp, cm$tn), nrow = 2)
   chi_square_result <- suppressWarnings({
-    stats::chisq.test(conf_matrix)
+    stats::chisq.test(cm_table(cm))
   })
-
-  if (detail == "simple") {
-    return(chi_square_result$p.value)
-  } else if (detail == "full") {
-    return(measure_df(
-      measure = "Pearson's Chi-squared",
-      estimate = format_pvalue(chi_square_result$p.value, accuracy = 0.01),
-      fraction = "",
-      ci_type = "",
-      notes = chi_square_result$method,
-      estimate_raw = chi_square_result$p.value,
-      lci_raw = NA,
-      uci_raw = NA
-    ))
-  } else {
-    stop("Invalid detail parameter: should be 'simple' or 'full'")
-  }
+  association_result(
+    chi_square_result$p.value, "Pearson's Chi-squared", detail,
+    notes = chi_square_result$method
+  )
 }
 
 #' Fisher's Exact Test for Independence in a 2x2 Table
@@ -218,25 +204,8 @@ dx_fishers_exact <- function(cm, detail = "full") {
   if (cm$dispos == 0 | cm$disneg == 0) {
     return(undefined_association("Fisher's Exact", detail))
   }
-  conf_matrix <- matrix(c(cm$tp, cm$fn, cm$fp, cm$tn), nrow = 2)
-  fisher_result <- stats::fisher.test(conf_matrix)
-
-  if (detail == "simple") {
-    return(fisher_result$p.value)
-  } else if (detail == "full") {
-    return(measure_df(
-      measure = "Fisher's Exact",
-      estimate = format_pvalue(fisher_result$p.value, accuracy = 0.01),
-      fraction = "",
-      ci_type = "",
-      notes = "Exact test",
-      estimate_raw = fisher_result$p.value,
-      lci_raw = NA,
-      uci_raw = NA
-    ))
-  } else {
-    stop("Invalid detail parameter: should be 'simple' or 'full'")
-  }
+  fisher_result <- stats::fisher.test(cm_table(cm))
+  association_result(fisher_result$p.value, "Fisher's Exact", detail, notes = "Exact test")
 }
 
 
@@ -267,8 +236,8 @@ dx_g_test <- function(cm, detail = "full") {
   if (cm$dispos == 0 | cm$disneg == 0) {
     return(undefined_association("G-Test", detail))
   }
-  # Convert confusion matrix to table and calculate expected frequencies
-  conf_matrix <- matrix(c(cm$tp, cm$fn, cm$fp, cm$tn), nrow = 2)
+  # Expected frequencies
+  conf_matrix <- cm_table(cm)
   row_totals <- apply(conf_matrix, 1, sum)
   col_totals <- apply(conf_matrix, 2, sum)
   expected <- outer(row_totals, col_totals) / sum(conf_matrix)
@@ -287,21 +256,7 @@ dx_g_test <- function(cm, detail = "full") {
   # Calculate p-value
   p_value <- stats::pchisq(G, df, lower.tail = FALSE)
 
-  if (detail == "simple") {
-    return(p_value)
-  } else if (detail == "full") {
-    return(measure_df(
-      measure = "G-Test",
-      estimate = format_pvalue(p_value, accuracy = 0.01),
-      fraction = "",
-      ci_type = "",
-      estimate_raw = p_value,
-      lci_raw = NA,
-      uci_raw = NA
-    ))
-  } else {
-    stop("Invalid detail parameter: should be 'simple' or 'full'")
-  }
+  association_result(p_value, "G-Test", detail)
 }
 
 
@@ -569,6 +524,25 @@ dx_mcnemars <- function(dx1, dx2, detail = "full") {
       statistic = as.numeric(test$statistic)
     )
   }
+}
+
+# The confusion matrix as a 2x2 table
+cm_table <- function(cm) {
+  matrix(c(cm$tp, cm$fn, cm$fp, cm$tn), nrow = 2)
+}
+
+# Result of a test of association: the p-value, or a row of results
+association_result <- function(p_value, measure, detail, notes = "") {
+  validate_detail(detail)
+  if (detail == "simple") {
+    return(p_value)
+  }
+  measure_df(
+    measure = measure,
+    estimate = format_pvalue(p_value, accuracy = 0.01),
+    notes = notes,
+    estimate_raw = p_value
+  )
 }
 
 undefined_association <- function(measure, detail) {

@@ -759,7 +759,6 @@ calculate_mcc <- function(cm) {
 #'         or a data frame with the metric and confidence intervals.
 #' @noRd
 metric_binomial <- function(x, n, name, detail = "full", citype = "exact", ...) {
-  # if (check_zero_denominator(n, name)) return(NA)
   validate_detail(detail)
   if (detail == "simple") {
     return(x / n)
@@ -1416,14 +1415,6 @@ calculate_fowlkes_mallows <- function(cm) {
 }
 
 
-check_zero_denominator <- function(denominator, metric) {
-  if (denominator == 0) {
-    warning(paste0(metric, " is undefined because the denominator is 0. Returning NA."))
-    return(TRUE)
-  }
-  return(FALSE)
-}
-
 #' Create a Confusion Matrix from Predictions and Truth
 #'
 #' This function calculates a confusion matrix from predicted probabilities,
@@ -1605,7 +1596,4 @@ dx_nir <- function(cm, detail = "full") {
       fraction = paste0(comma(num), "/", comma(den))
     ))
   }
-
-
-  return(nir)
 }
