@@ -30,14 +30,12 @@
 dx_plot_gain <- function(dx_obj) {
   warn_poslabel(dx_obj, "dx_plot_gain()")
 
-  data <- dx_obj$rank
-
-  ggplot2::ggplot(data, ggplot2::aes(x = .data$percentile, y = .data$gain)) +
-    ggplot2::theme_minimal() +
-    ggplot2::geom_line(color = "#0057B8", linewidth = 1) +
-    ggplot2::coord_fixed() +
-    ggplot2::xlab("\nPercentile of Population") +
-    ggplot2::ylab("Gain (Fraction of Total Positives Captured)\n\n")
+  dx_line_plot(
+    dx_obj$rank, "percentile", "gain",
+    xlab = "\nPercentile of Population",
+    ylab = "Gain (Fraction of Total Positives Captured)\n\n"
+  ) +
+    ggplot2::coord_fixed()
 }
 
 #' Plot Lift Curve
@@ -73,20 +71,12 @@ dx_plot_gain <- function(dx_obj) {
 dx_plot_lift <- function(dx_obj) {
   warn_poslabel(dx_obj, "dx_plot_lift()")
 
-  data <- dx_obj$rank
-
-  # Plotting the lift curve
-  ggplot2::ggplot(data, ggplot2::aes(x = .data$percentile, y = .data$lift)) +
-    ggplot2::geom_line(color = "red", linewidth = 1) +
-    ggplot2::theme_minimal() +
-    # dx_roc_ggtheme() +
-    ggplot2::geom_hline(
-      yintercept = 1, # Lift of 1 for random model
-      linetype = "dashed",
-      color = "gray"
-    ) +
-    ggplot2::xlab("\nPercentile of Population") +
-    ggplot2::ylab("Lift\n\n")
+  dx_line_plot(
+    dx_obj$rank, "percentile", "lift",
+    xlab = "\nPercentile of Population", ylab = "Lift\n\n", color = "red"
+  ) +
+    # Lift of 1 for a random model
+    ggplot2::geom_hline(yintercept = 1, linetype = "dashed", color = "gray")
 }
 
 
@@ -190,12 +180,8 @@ dx_plot_pr <- function(dx_obj) {
   data <- dx_obj$thresholds
   data <- data[!is.na(data$sensitivity) & !is.na(data$precision), ]
 
-  ggplot2::ggplot(data, ggplot2::aes(x = .data$sensitivity, y = .data$precision)) +
-    ggplot2::geom_line(color = "#0057B8", linewidth = 1) +
-    ggplot2::coord_fixed(ylim = c(0, 1)) +
-    ggplot2::xlab("Recall") +
-    ggplot2::ylab("Precision") +
-    ggplot2::theme_minimal()
+  dx_line_plot(data, "sensitivity", "precision", xlab = "Recall", ylab = "Precision") +
+    ggplot2::coord_fixed(ylim = c(0, 1))
 }
 
 #' Plot Predictive Values Against Prevalence
@@ -307,17 +293,12 @@ dx_plot_calibration <- function(dx_obj, bins = 10) {
   calibration_data <- stats::aggregate(cbind(predicted_probs, true_labels) ~ prob_bins, FUN = mean)
   names(calibration_data) <- c("prob_bins", "mean_predicted_prob", "observed_proportion")
 
-  # Create calibration plot
-  ggplot2::ggplot(
-    calibration_data,
-    ggplot2::aes(x = .data$mean_predicted_prob, y = .data$observed_proportion)
+  dx_line_plot(
+    calibration_data, "mean_predicted_prob", "observed_proportion",
+    xlab = "Mean Predicted Probability", ylab = "Observed Proportion"
   ) +
-    ggplot2::geom_line(color = "#0057B8", linewidth = 1) +
-    ggplot2::geom_abline(intercept = 0, slope = 1, linetype = 2, color = "red") + # Diagonal line for perfect calibration
-    ggplot2::xlab("Mean Predicted Probability") +
-    ggplot2::ylab("Observed Proportion") +
-    # ggplot2::ggtitle("Calibration Curve") +
-    ggplot2::theme_minimal()
+    # Diagonal line for perfect calibration
+    ggplot2::geom_abline(intercept = 0, slope = 1, linetype = 2, color = "red")
 }
 
 #' Plot Decision Curve
@@ -382,23 +363,16 @@ dx_plot_decision_curve <- function(dx_obj, plot_range = c(0.05, .95)) {
 
   prevalence <- mean(dx_obj$data[[dx_obj$options$true_varname]])
 
-  # Treat All Strategy: Net Benefit when everyone is treated
-  treat_all_net_benefit <- prevalence - (1 - prevalence) * data_for_plot$threshold / (1 - data_for_plot$threshold)
+  # Net benefit when everyone is treated, and when no one is (always 0)
+  data_for_plot$treat_all <- prevalence - (1 - prevalence) * data_for_plot$threshold / (1 - data_for_plot$threshold)
+  data_for_plot$treat_none <- 0
 
-  # Treat None Strategy: Net Benefit when no one is treated (always 0)
-  treat_none_net_benefit <- rep(0, length(data_for_plot$threshold))
-
-
-
-
-  # Create the decision curve plot
-  ggplot2::ggplot(data_for_plot, ggplot2::aes(x = .data$threshold, y = .data$net_benefit)) +
-    ggplot2::geom_line(color = "#0057B8", linewidth = 1) +
-    ggplot2::geom_line(ggplot2::aes(x = data_for_plot$threshold, y = treat_all_net_benefit), color = "red", linetype = "dashed") +
-    ggplot2::geom_line(ggplot2::aes(x = data_for_plot$threshold, y = treat_none_net_benefit), color = "green", linetype = "dashed") +
-    ggplot2::xlab("Threshold Probability") +
-    ggplot2::ylab("Net Benefit") +
-    ggplot2::theme_minimal()
+  dx_line_plot(
+    data_for_plot, "threshold", "net_benefit",
+    xlab = "Threshold Probability", ylab = "Net Benefit"
+  ) +
+    ggplot2::geom_line(ggplot2::aes(y = .data$treat_all), color = "red", linetype = "dashed") +
+    ggplot2::geom_line(ggplot2::aes(y = .data$treat_none), color = "green", linetype = "dashed")
 }
 
 #' Plot Youden's J Index Curve
@@ -449,12 +423,10 @@ dx_plot_youden_j <- function(dx_obj) {
   data_for_plot <- stats::na.omit(data_for_plot)
 
 
-  # Plot Youden's J Index
-  ggplot2::ggplot(data_for_plot, ggplot2::aes(x = .data$threshold, y = .data$youden_j)) +
-    ggplot2::geom_line(color = "#0057B8", linewidth = 1) +
-    ggplot2::xlab("Threshold Probability") +
-    ggplot2::ylab("Youden's J Index") +
-    ggplot2::theme_minimal()
+  dx_line_plot(
+    data_for_plot, "threshold", "youden_j",
+    xlab = "Threshold Probability", ylab = "Youden's J Index"
+  )
 }
 
 #' Plot Cumulative Accuracy Profile (CAP) Curve
@@ -591,11 +563,7 @@ dx_plot_cost <- function(dx_obj, cfp, cfn, ctp = 0, ctn = 0) {
   # Calculate total cost at each threshold
   thresholds$total_cost <- cfp * thresholds$fp + cfn * thresholds$fn - ctp * thresholds$tp - ctn * thresholds$tn
 
-  ggplot2::ggplot(thresholds, ggplot2::aes(x = .data$threshold, y = .data$total_cost)) +
-    ggplot2::geom_line(color = "#0057B8", linewidth = 1) +
-    ggplot2::xlab("Threshold") +
-    ggplot2::ylab("Total Cost") +
-    ggplot2::theme_minimal()
+  dx_line_plot(thresholds, "threshold", "total_cost", xlab = "Threshold", ylab = "Total Cost")
 }
 
 #' Plot Confusion Matrix with Metrics
@@ -626,18 +594,8 @@ dx_plot_cost <- function(dx_obj, cfp, cfn, ctp = 0, ctn = 0) {
 #' dx_plot_cm(dx_obj)
 dx_plot_cm <- function(dx_obj, palette = c("#e5eef7", "#0057B8"), levels = c("-", "+")) {
 
-  # Obtain the metrics as a dataframe
-  metrics <- as.data.frame(dx_obj, thresh = dx_obj$options$setthreshold, variable = "Overall")
-
-  predprob <- dx_obj$data[[dx_obj$options$pred_varname]]
-  truth <- dx_obj$data[[dx_obj$options$true_varname]]
-
-  perfdf <- dx_cm(
-    predprob = predprob,
-    truth = truth,
-    threshold = dx_obj$options$setthreshold,
-    poslabel = dx_obj$options$poslabel
-  )
+  metrics <- overall_measures(dx_obj)
+  perfdf <- dx_obj$cm
 
   mat <- data.frame(
     truth = factor(c(0, 1, 0, 1)),
@@ -646,10 +604,13 @@ dx_plot_cm <- function(dx_obj, palette = c("#e5eef7", "#0057B8"), levels = c("-"
     count = c(perfdf$tn, perfdf$fn, perfdf$fp, perfdf$tp)
   )
 
-  sens_label <- paste0("Sensitivity", "\n", metrics[metrics$measure == "Sensitivity", "summary"])
-  spec_label <- paste0("Specificity", "\n", metrics[metrics$measure == "Specificity", "summary"])
-  npv_label <- paste0("NPV", "\n", metrics[metrics$measure == "Negative Predictive Value", "summary"])
-  ppv_label <- paste0("PPV", "\n", metrics[metrics$measure == "Positive Predictive Value", "summary"])
+  cell_label <- function(label, measure) {
+    paste0(label, "\n", metrics$summary[metrics$measure == measure])
+  }
+  sens_label <- cell_label("Sensitivity", "Sensitivity")
+  spec_label <- cell_label("Specificity", "Specificity")
+  npv_label <- cell_label("NPV", "Negative Predictive Value")
+  ppv_label <- cell_label("PPV", "Positive Predictive Value")
 
 
   ggplot2::ggplot(mat, mapping = ggplot2::aes(x = .data$truth, y = .data$predicted)) +
@@ -662,7 +623,6 @@ dx_plot_cm <- function(dx_obj, palette = c("#e5eef7", "#0057B8"), levels = c("-"
     ggplot2::scale_x_discrete(expand = c(0.2, 0), breaks = c(0, 1), labels = levels) +
     ggplot2::theme(
       legend.position = "none",
-      # panel.border = ggplot2::element_rect(fill = NA, colour = "black", size = 1.5),
       panel.grid.major = ggplot2::element_blank(),
       panel.grid.minor = ggplot2::element_blank(),
       panel.border = ggplot2::element_blank(),
@@ -734,11 +694,9 @@ dx_plot_roc <- function(dx_obj, curve_color = "#0057B8", fill_color = "#cfcdcb",
                         add_ref_circle = TRUE, ref_lines_color = "#8a8887",
                         circle_ref_color = "#E4002B",
                         summary_stats = c(1, 2, 3, 4, 5, 6, 7, 8), filename = NA) {
-  measures <- as.data.frame(dx_obj, variable = "Overall", thresh = dx_obj$options$setthreshold)
-
-  sensdf <- measures[measures$measure == "Sensitivity", ]$estimate
-
-  specdf <- measures[measures$measure == "Specificity", ]$estimate
+  measures <- overall_measures(dx_obj)
+  sensdf <- measures$estimate[measures$measure == "Sensitivity"]
+  specdf <- measures$estimate[measures$measure == "Specificity"]
 
   auc_df <- roc_curve_df(dx_obj)
 
@@ -758,17 +716,7 @@ dx_plot_roc <- function(dx_obj, curve_color = "#0057B8", fill_color = "#cfcdcb",
       color = curve_color,
       linewidth = 1
     ) +
-    ggplot2::scale_x_reverse() +
-    ggplot2::geom_hline(
-      yintercept = 0,
-      linewidth = 1,
-      colour = axis_color
-    ) +
-    ggplot2::geom_vline(
-      xintercept = 1.05,
-      linewidth = 1,
-      colour = axis_color
-    )
+    roc_axes(axis_color)
 
 
   if (add_ref_lines) {
@@ -811,29 +759,11 @@ dx_plot_roc <- function(dx_obj, curve_color = "#0057B8", fill_color = "#cfcdcb",
       )
   }
 
-  p <- p +
-    ggplot2::coord_fixed() +
-    dx_roc_ggtheme() +
-    ggplot2::labs(
-      x = "\nSpecificity",
-      y = "Sensitivity\n\n"
-    )
-
   if (add_text) {
     summary_stats <- unique(summary_stats)
-    numsummary <- length(summary_stats)
-    ystart <- 0.05
-    yend <- ystart + (numsummary - 1) * 0.05
-    location_vector <- seq(yend, ystart, -0.05)
+    location_vector <- text_positions(length(summary_stats))
 
-    diagsummary_resultsdf <-
-      as.data.frame(
-        dx_obj,
-        thresh = dx_obj$options$setthreshold,
-        variable = "Overall"
-      )
-
-    diagsummary_resultsdf <- diagsummary_resultsdf[, -which(names(diagsummary_resultsdf) %in% c("variable", "label"))]
+    diagsummary_resultsdf <- measures[, setdiff(names(measures), c("variable", "label"))]
 
     # Show the statistics in the order requested
     diagsummary_resultsdf <- diagsummary_resultsdf[summary_stats, ]
@@ -1020,23 +950,6 @@ dx_plot_thresholds <- function(dx_obj) {
     ggplot2::labs(x = "Threshold", y = "Measure", color = "Metric")
 }
 
-pluck_auc_roc_data <- function(dx_obj) {
-  measures <- as.data.frame(dx_obj, variable = "Overall", thresh = dx_obj$options$setthreshold)
-
-  sensdf <- measures[measures$measure == "Sensitivity", ]$estimate
-
-  specdf <- measures[measures$measure == "Specificity", ]$estimate
-
-  auc_df <- roc_curve_df(dx_obj)
-
-  list(
-    sensitivity = sensdf,
-    specificity = specdf,
-    auc_df = auc_df
-  )
-}
-
-
 #' Plot ROC Curves for Multiple Models
 #'
 #' Generates Receiver Operating Characteristic (ROC) curves for multiple models
@@ -1075,52 +988,29 @@ pluck_auc_roc_data <- function(dx_obj) {
 #'          [dx_delong()] for details on DeLong's test used in comparisons.
 #' @export
 dx_plot_rocs <- function(dx_comp, add_text = TRUE, axis_color = "#333333", text_color = "black") {
-  roc_data <- lapply(dx_comp$dx_list, pluck_auc_roc_data)
   delong <- dx_comp$tests
   delong <- delong[delong$test == "DeLong's test for ROC curves", ]
 
-  for (i in seq_along(roc_data)) {
-    roc_data[[i]]$auc_df$model <- names(roc_data)[i]
-  }
-
-  df <- do.call(rbind, lapply(roc_data, function(model) model$auc_df))
+  models <- names(dx_comp$dx_list)
+  df <- do.call(rbind, lapply(models, function(m) {
+    curve <- roc_curve_df(dx_comp$dx_list[[m]])
+    curve$model <- m
+    curve
+  }))
 
   p <- ggplot2::ggplot(df) +
     ggplot2::geom_path(
       ggplot2::aes(.data$specificity, .data$sensitivity, color = .data$model),
       linewidth = 1
     ) +
-    ggplot2::scale_x_reverse() +
-    ggplot2::geom_hline(
-      yintercept = 0,
-      linewidth = 1,
-      colour = axis_color
-    ) +
-    ggplot2::geom_vline(
-      xintercept = 1.05,
-      linewidth = 1,
-      colour = axis_color
-    ) +
-    ggplot2::coord_fixed() +
-    dx_roc_ggtheme() +
-    ggplot2::labs(
-      x = "\nSpecificity",
-      y = "Sensitivity\n\n",
-      color = "Model"
-    ) +
+    roc_axes(axis_color) +
+    ggplot2::labs(color = "Model") +
     ggplot2::theme(legend.position = "bottom")
 
 
   if (add_text) {
-    numsummary <- nrow(delong)
-    ystart <- 0.05
-    yend <- ystart + (numsummary - 1) * 0.05
-    location_vector <- seq(yend, ystart, -0.05)
-
-
-
     text_df <- data.frame(
-      y = location_vector,
+      y = text_positions(nrow(delong)),
       label = paste0(delong$models, ": ", sapply(delong$p_value, format_pvalue))
     )
 
@@ -1150,4 +1040,35 @@ warn_poslabel <- function(dx_obj, plot) {
       plot, " treats 1 as the positive class and ignores poslabel = 0."
     ), call. = FALSE)
   }
+}
+
+# One curve with axis labels and the minimal theme, shared by several plots
+dx_line_plot <- function(data, x, y, xlab, ylab, color = "#0057B8") {
+  ggplot2::ggplot(data, ggplot2::aes(x = .data[[x]], y = .data[[y]])) +
+    ggplot2::geom_line(color = color, linewidth = 1) +
+    ggplot2::xlab(xlab) +
+    ggplot2::ylab(ylab) +
+    ggplot2::theme_minimal()
+}
+
+# Axes, theme, and labels shared by the ROC plots
+roc_axes <- function(axis_color) {
+  list(
+    ggplot2::scale_x_reverse(),
+    ggplot2::geom_hline(yintercept = 0, linewidth = 1, colour = axis_color),
+    ggplot2::geom_vline(xintercept = 1.05, linewidth = 1, colour = axis_color),
+    ggplot2::coord_fixed(),
+    dx_roc_ggtheme(),
+    ggplot2::labs(x = "\nSpecificity", y = "Sensitivity\n\n")
+  )
+}
+
+# Heights for lines of text stacked up from the bottom of a ROC plot
+text_positions <- function(n) {
+  seq(0.05 + (n - 1) * 0.05, 0.05, -0.05)
+}
+
+# Overall measures at setthreshold
+overall_measures <- function(dx_obj) {
+  as.data.frame(dx_obj, variable = "Overall", thresh = dx_obj$options$setthreshold)
 }

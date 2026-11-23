@@ -83,9 +83,6 @@ dx_plot_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
                            fraction_multiline = FALSE,
                            or_lwd = .8, or_size = .35,
                            body_or_col = "black", footer_or_col = footer_col) {
-
-
-
   check_package(c("gridExtra", "grid", "gtable"))
 
   trans <- match.arg(trans)
@@ -108,81 +105,42 @@ dx_plot_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
   bold_rows <- which(data$header)
   indent_rows <- setdiff(seq_len(nrow(data)), c(bold_rows, nrow(data)))
 
-  overall_or <- data[data$group == "Overall", ]$estimate
-
-
-  lower <- data$conf_low
-  estimate <- data$estimate
-  upper <- data$conf_high
-
-  # Find range of OR's
-  min_or <- min(data$conf_low, na.rm = T)
-  max_or <- max(data$conf_high, na.rm = T)
-
-  # Get plot range, breaks, and labels
+  # Plot range and breaks, on the odds ratio scale
   range <- plot_range(
     limits = limits, breaks = breaks, trans = trans,
-    min_or = min_or, max_or = max_or
+    min_or = min(data$conf_low, na.rm = TRUE),
+    max_or = max(data$conf_high, na.rm = TRUE)
   )
   breaks <- plot_breaks(range = range, breaks = breaks, trans = trans)
-  labels <- plot_labels(breaks = breaks, trans = trans)
+  labels <- breaks
 
-  ### Transform data
-  if (!is.na(trans) & trans == "log10") {
-    lower <- log10(lower)
-    estimate <- log10(estimate)
-    upper <- log10(upper)
-    overall_or <- log10(overall_or)
-    range <- log10(range)
-  }
+  # Transform odds ratios to the axis scale, then rescale between 0 and 1
+  transform <- if (!is.na(trans) && trans == "log10") log10 else identity
+  to_axis <- function(x) rescale(transform(x), from = transform(range))
+  breaks_scaled <- to_axis(breaks)
+  lower <- to_axis(data$conf_low)
+  estimate <- to_axis(data$estimate)
+  upper <- to_axis(data$conf_high)
+  overall_or <- to_axis(data$estimate[data$group == "Overall"])
 
-  # Rescale data between 0 and 1. Breaks are odds ratios, so they are
-  # transformed and rescaled the same way as the data.
-  breaks_t <- if (!is.na(trans) && trans == "log10") log10(breaks) else breaks
-  breaks_scaled <- rescale(breaks_t, from = range)
-  lower <- rescale(lower, from = range)
-  estimate <- rescale(estimate, from = range)
-  upper <- rescale(upper, from = range)
-  overall_or <- rescale(overall_or, from = range)
-
-
-  select_measuers <- measures[!measures %in% c("Breslow-Day")]
-
-  # Create a new column with spaces
+  # Table columns, with a blank column for the odds ratio plot placed just
+  # before the odds ratio estimates
   data$` ` <- "                                          "
-
-  # Format the 'n' column
-  data$n <- comma(data$n)
-
-  cols_to_select <- c("group", "N", select_measuers, " ")
-  names(data)[names(data) == "n"] <- "N"
-  tbl_data <- data[cols_to_select]
-
-  # Order the columns, moving the space column before 'Odds Ratio'
-  # Assuming 'Odds Ratio' is one of the 'select_measures'
-  odds_ratio_index <- which(names(tbl_data) == "Odds Ratio")
-  tbl_data[c("group", "N", select_measuers, " ")]
-
-
-  order <- append(names(tbl_data), " ", after = odds_ratio_index - 1)
-  order <- order[seq_along(order) - 1]
-
-  tbl_data <- tbl_data[order]
+  data$N <- comma(data$n)
+  measure_cols <- setdiff(measures, "Breslow-Day")
+  measure_cols <- append(measure_cols, " ", after = match("Odds Ratio", measure_cols) - 1)
+  tbl_data <- data[c("group", "N", measure_cols)]
   rownames(tbl_data) <- NULL
 
   tbl_data[nrow(tbl_data) + 1, ] <- NA
 
   tbl_data[is.na(tbl_data)] <- ""
 
-  # Create a sequence of row numbers
-  row_nums <- seq_len(nrow(tbl_data))
-
-  # Use ifelse to conditionally prepend spaces to the 'group' column
-  tbl_data$group <- ifelse(row_nums %in% indent_rows, paste("   ", tbl_data$group), tbl_data$group)
+  # Indent subgroups
+  indent <- seq_len(nrow(tbl_data)) %in% indent_rows
+  tbl_data$group[indent] <- paste("   ", tbl_data$group[indent])
 
   names(tbl_data)[names(tbl_data) == "group"] <- "Group"
-
-
   names(tbl_data) <- gsub("Positive Predictive Value", "PPV", names(tbl_data))
   names(tbl_data) <- gsub("Negative Predictive Value", "NPV", names(tbl_data))
 
@@ -202,17 +160,12 @@ dx_plot_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
   nrows <- nrow(tbl_data)
   ncols <- ncol(tbl_data)
 
-  # Copy tbl_data to a new variable and apply gsub to retain only the second line
-  cell_width <- lapply(tbl_data, function(x) gsub("(.*)\n(.*)", "\\2", x))
-  # Calculate the number of characters in each cell
-  cell_width <- lapply(cell_width, nchar)
-  # Convert the list back to a data frame
-  cell_width <- as.data.frame(cell_width)
-
-  column_widths <- apply(cell_width, 2, max)
-
+  # Column widths in proportion to the longest cell, using the second line of
+  # multiline cells
+  column_widths <- vapply(tbl_data, function(x) {
+    max(nchar(gsub("(.*)\n(.*)", "\\2", x)))
+  }, numeric(1))
   column_widths <- column_widths / sum(column_widths)
-
 
   # Convert df to grob
   g <- gridExtra::tableGrob(tbl_data,
@@ -346,15 +299,16 @@ dx_plot_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
 }
 
 
-dx_hline <- function(table, y, x0, x1, t, b = t, l, r = l, name,
-                     gp = grid::gpar(lwd = .8), clip = "off") {
+# Add a line segment to cells of a gtable. Coordinates are within the cells.
+dx_segment <- function(table, x0, y0, x1, y1, t, b = t, l, r = l, name,
+                       gp = grid::gpar(lwd = .8), clip = "off") {
   gtable::gtable_add_grob(table,
     grobs = grid::grobTree(
       grid::segmentsGrob(
         x0 = grid::unit(x0, "npc"),
-        y0 = grid::unit(y, "npc"),
+        y0 = grid::unit(y0, "npc"),
         x1 = grid::unit(x1, "npc"),
-        y1 = grid::unit(y, "npc"),
+        y1 = grid::unit(y1, "npc"),
         gp = gp
       )
     ),
@@ -365,23 +319,13 @@ dx_hline <- function(table, y, x0, x1, t, b = t, l, r = l, name,
   )
 }
 
-dx_vline <- function(table, x, y0, y1, t, b = t, l, r = l, name,
-                     gp = grid::gpar(lwd = .8, col = "black"), clip = "off") {
-  gtable::gtable_add_grob(table,
-    grobs = grid::grobTree(
-      grid::segmentsGrob(
-        x0 = grid::unit(x, "npc"),
-        y0 = grid::unit(y0, "npc"),
-        x1 = grid::unit(x, "npc"),
-        y1 = grid::unit(y1, "npc"),
-        gp = gp
-      )
-    ),
-    t = t, b = b, l = l, r = r,
-    name = name,
-    z = Inf,
-    clip = clip
-  )
+# t is named so it isn't partially matched to table
+dx_hline <- function(table, y, x0, x1, t, ...) {
+  dx_segment(table, x0 = x0, y0 = y, x1 = x1, y1 = y, t = t, ...)
+}
+
+dx_vline <- function(table, x, y0, y1, t, ...) {
+  dx_segment(table, x0 = x, y0 = y0, x1 = x, y1 = y1, t = t, ...)
 }
 
 #' Edit a cell within an object returned from dx_forest
@@ -655,14 +599,6 @@ plot_breaks <- function(range, breaks = NA, trans = NA) {
   res
 }
 
-
-### Find labels
-# No trans: breaks
-# Trans: use 10^breaks
-plot_labels <- function(breaks, trans) {
-  # Breaks are on the odds ratio scale, so label them with their values
-  breaks
-}
 
 dx_forest_to_gg <- function(plot, scale = 1, hjust = 0, vjust = 0, ...) {
   ymin <- xmin <- 1 - scale
