@@ -16,7 +16,7 @@
 * `poslabel = 0` is now used by the rank table and the ROC, gain, lift, KS, CAP, and decision curves, which previously always treated 1 as the event and gave a warning. Net benefit for `poslabel = 0` now weights by the event's threshold probability, 1 minus the threshold.
 * AUC-PR and the PR curve use Davis & Goadrich (2006) interpolation instead of straight lines between points. Values change slightly.
 * The kappa confidence interval uses the Fleiss, Cohen & Everitt (1969) variance
-* Bootstrapped confidence intervals resample confusion matrix cell counts, which is equivalent to resampling cases and much faster. Intervals differ by Monte Carlo error at the same `bootseed`, and the default `bootreps` in the metric functions is now 2000, matching `dx()`.
+* Bootstrapped confidence intervals resample confusion matrix cell counts, which is equivalent to resampling cases and much faster. Intervals differ by Monte Carlo error at the same `bootseed`, can differ across platforms and R versions, and the default `bootreps` in the metric functions is now 2000, matching `dx()`.
 * With tied predictions, gain, lift, and CAP curves only pass through points a threshold can reach, and gain and CAP curves start at the origin. `rank` has a new `reachable` column.
 * Agresti-Coull confidence intervals are truncated to 0 to 1
 * Estimates without a confidence interval are shown with a fixed number of decimals (3 for the Brier score and AUC-PR), and the no information rate is shown as a percent

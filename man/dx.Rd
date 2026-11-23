@@ -57,7 +57,9 @@ prevalence for additional NPV and PPV calculations.}
 
 \item{bootreps}{Number of bootstrap samples used for the bootstrapped CIs.}
 
-\item{bootseed}{Seed used for the bootstrapped CIs, so results are reproducible.}
+\item{bootseed}{Seed used for the bootstrapped CIs, so results are reproducible
+on the same R version and platform. Bootstrap draws can differ across
+platforms and R versions by Monte Carlo error.}
 
 \item{doboot}{Logical. Generate percentile bootstrap CIs for the measures
 without a closed-form CI (F1, F2, MCC, balanced accuracy, informedness,
