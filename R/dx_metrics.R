@@ -738,13 +738,8 @@ calculate_mcc <- function(cm) {
   numerator <- (tp * tn) - (fp * fn)
   denominator <- sqrt((tp + fp) * (tp + fn) * (tn + fp) * (tn + fn))
 
-  # Handle cases where the denominator is 0 to avoid division by zero
-  if (denominator == 0) {
-    return(0)
-  }
-
-  # Calculate and return MCC
-  numerator / denominator
+  # MCC is 0 when the denominator is 0
+  ifelse(denominator == 0, 0, numerator / denominator)
 }
 
 
@@ -1156,17 +1151,18 @@ calculate_fbeta <- function(cm, beta = 1) {
   fp <- cm$fp
   fn <- cm$fn
 
-  # Calculate precision and recall
-  precision <- if (tp + fp == 0) 0 else tp / (tp + fp)
-  recall <- if (tp + fn == 0) 0 else tp / (tp + fn)
+  # Precision and recall are 0 when undefined. Vectorized so it also works
+  # on the threshold table.
+  precision <- ifelse(tp + fp == 0, 0, tp / (tp + fp))
+  recall <- ifelse(tp + fn == 0, 0, tp / (tp + fn))
 
-  # Calculate F-beta score
+  # F-beta is 0 when precision and recall are both 0
   beta_sq <- beta^2
-  if (precision + recall == 0) {
-    0 # Return 0 to handle division by zero
-  } else {
+  ifelse(
+    precision + recall == 0,
+    0,
     (1 + beta_sq) * (precision * recall) / (beta_sq * precision + recall)
-  }
+  )
 }
 
 #' Calculate F-beta Score with Confidence Intervals
@@ -1476,19 +1472,27 @@ dx_cm <- function(predprob, truth, threshold, poslabel) {
   tn <- sum(testresult == 0 & trueresult == 0)
   fp <- sum(testresult == 1 & trueresult == 0)
 
-  # Calculate additional metrics
-  dispos <- tp + fn # Actual positives
-  disneg <- tn + fp # Actual negatives
-  n <- length(truth) # Total observations, assuming 'truth' is complete
-  correct <- tp + tn # Correct predictions
-  testpos <- tp + fp # Predicted positives
-  testneg <- tn + fn # Predicted negatives
+  cm_from_counts(tp, fn, tn, fp)
+}
 
-  # Compile performance dataframe
-  cm <- data.frame(tp, fn, tn, fp, dispos, disneg, n, correct, testpos, testneg)
+# Build a dx_cm object from cell counts. The counts can be vectors, e.g. one
+# element per threshold, so the metric functions work on every row at once.
+cm_from_counts <- function(tp, fn, tn, fp) {
+  cm <- data.frame(
+    tp = tp,
+    fn = fn,
+    tn = tn,
+    fp = fp,
+    dispos = tp + fn, # Actual positives
+    disneg = tn + fp, # Actual negatives
+    n = tp + fn + tn + fp,
+    correct = tp + tn, # Correct predictions
+    testpos = tp + fp, # Predicted positives
+    testneg = tn + fn # Predicted negatives
+  )
 
   class(cm) <- c("dx_cm", class(cm))
-  return(cm)
+  cm
 }
 
 #' Return an pROC::roc object for a dx object
