@@ -3,60 +3,59 @@ dx_thresholds <- function(data, options) {
   truth <- data[[options$true_varname]]
 
   # Predictions can include 0 or 1, so remove duplicates after adding them
-  unique_thresholds <- unique(c(0, data[[options$pred_varname]], 1))
-  unique_thresholds <- sort(unique_thresholds, decreasing = TRUE)
+  thresholds <- sort(unique(c(0, predprob, 1)), decreasing = TRUE)
 
-  # Initialize vectors to store sensitivity and specificity values
-  sensitivities <- numeric(length(unique_thresholds))
-  specificities <- numeric(length(unique_thresholds))
-  precision <- numeric(length(unique_thresholds))
-  net_benefits <- numeric(length(unique_thresholds))
-  informedness <- numeric(length(unique_thresholds))
+  # Count predictions at or above each threshold in each outcome class
+  n_at_or_above <- function(x) {
+    length(x) - findInterval(thresholds, sort(x), left.open = TRUE)
+  }
+  above_1 <- n_at_or_above(predprob[truth == 1])
+  above_0 <- n_at_or_above(predprob[truth == 0])
+  n_1 <- sum(truth == 1)
+  n_0 <- sum(truth == 0)
 
-  sensitivities <- specificities <- numeric(length(unique_thresholds))
-  precision <- net_benefits <- informedness <- sensitivities
-  tp <- fp <- fn <- tn <- f1 <- fpr <- npv <- ppv <- sensitivities
-
-  # Step 2: Calculate sensitivity and specificity for each unique threshold
-  for (i in seq_along(unique_thresholds)) {
-    threshold <- unique_thresholds[i]
-    perf <- dx_cm(predprob, truth, threshold, options$poslabel)
-
-    sensitivities[i] <- dx_sensitivity(perf, detail = "simple")
-    specificities[i] <- dx_specificity(perf, detail = "simple")
-    precision[i] <- dx_precision(perf, detail = "simple")
-    informedness[i] <- dx_informedness(perf, detail = "simple")
-    tp[i] <- perf$tp
-    fp[i] <- perf$fp
-    fn[i] <- perf$fn
-    tn[i] <- perf$tn
-    f1[i] <- dx_f1(perf, detail = "simple")
-    fpr[i] <- dx_fpr(perf, detail = "simple")
-    npv[i] <- dx_npv(perf, detail = "simple")
-    ppv[i] <- dx_ppv(perf, detail = "simple")
-
-    # Calculate net benefit (Vickers & Elkin, 2006):
-    # true positives and false positives per patient, with false positives
-    # weighted by the odds at the threshold probability
-    weight <- threshold / (1 - threshold)
-    net_benefits[i] <- perf$tp / perf$n - weight * perf$fp / perf$n
+  # Predictions at or above the threshold are positive; poslabel = 0 swaps
+  # the positive class
+  if (options$poslabel == 1) {
+    tp <- above_1
+    fp <- above_0
+    fn <- n_1 - above_1
+    tn <- n_0 - above_0
+  } else {
+    tp <- n_0 - above_0
+    fp <- n_1 - above_1
+    fn <- above_0
+    tn <- above_1
   }
 
+  # Store counts as doubles
+  cm <- cm_from_counts(
+    tp = as.numeric(tp),
+    fn = as.numeric(fn),
+    tn = as.numeric(tn),
+    fp = as.numeric(fp)
+  )
+
+  # Net benefit (Vickers & Elkin, 2006): true positives and false positives
+  # per patient, with false positives weighted by the odds at the threshold
+  weight <- thresholds / (1 - thresholds)
+  net_benefit <- cm$tp / cm$n - weight * cm$fp / cm$n
+
   res <- data.frame(
-    threshold = unique_thresholds,
-    sensitivity = sensitivities,
-    specificity = specificities,
-    precision = precision,
-    net_benefit = net_benefits,
-    informedness = informedness,
-    npv = npv,
-    ppv = ppv,
-    f1 = f1,
-    fpr = fpr,
-    tp = tp,
-    tn = tn,
-    fp = fp,
-    fn = fn
+    threshold = thresholds,
+    sensitivity = dx_sensitivity(cm, detail = "simple"),
+    specificity = dx_specificity(cm, detail = "simple"),
+    precision = dx_precision(cm, detail = "simple"),
+    net_benefit = net_benefit,
+    informedness = dx_informedness(cm, detail = "simple"),
+    npv = dx_npv(cm, detail = "simple"),
+    ppv = dx_ppv(cm, detail = "simple"),
+    f1 = dx_f1(cm, detail = "simple"),
+    fpr = dx_fpr(cm, detail = "simple"),
+    tp = cm$tp,
+    tn = cm$tn,
+    fp = cm$fp,
+    fn = cm$fn
   )
 
   return_df(res)
@@ -135,7 +134,8 @@ dx_rank <- function(data, options) {
 
 
 dx_measure <- function(data, threshold, options, var = "Overall",
-                       label = "Overall") {
+                       label = "Overall",
+                       threshold_analysis = dx_thresholds(data, options)) {
 
   # create vector for the prediction
   predprob <- data[[options$pred_varname]]
@@ -147,8 +147,6 @@ dx_measure <- function(data, threshold, options, var = "Overall",
     threshold = threshold,
     poslabel = options$poslabel
   )
-
-  threshold_analysis <- dx_thresholds(data, options)
 
   # Common arguments for metrics that use a confusion matrix and citype
   common_cm_args <- list(cm = cm, citype = options$citype)

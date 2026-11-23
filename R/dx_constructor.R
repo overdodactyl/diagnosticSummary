@@ -188,13 +188,17 @@ dx <- function(data,
   all_thresholds <- all_thresholds[!is.na(all_thresholds)]
   all_thresholds <- all_thresholds[!duplicated(round(all_thresholds, 10))]
 
+  ####### Threshold Analysis
+  threshold_analysis <- dx_thresholds(data, options)
+
   # Loop through all thresholds and get measures
   threshold_measures <- list()
 
   for (i in seq_along(all_thresholds)) {
     threshold_measures[[i]] <- dx_measure(data,
       threshold = all_thresholds[i],
-      options = options
+      options = options,
+      threshold_analysis = threshold_analysis
     )
   }
 
@@ -214,9 +218,6 @@ dx <- function(data,
 
     threshold_measures <- rbind(subgroups, threshold_measures)
   }
-
-  ####### Threshold Analysis
-  threshold_analysis <- dx_thresholds(data, options)
 
   ####### Prevalence Analysis
   prevalence_analysis <- dx_prevalence_analysis(data, options)
