@@ -61,40 +61,19 @@ dx_thresholds <- function(data, options) {
   return_df(res)
 }
 
-dx_prevalence_analysis <- function(data, options) {
-  # create vector for the prediction
-  predprob <- data[[options$pred_varname]]
-  truth <- data[[options$true_varname]]
-
-  perfdf <- dx_cm(
-    predprob = predprob,
-    truth = truth,
-    threshold = options$setthreshold,
-    poslabel = options$poslabel
-  )
-
-  sensitivity <- dx_sensitivity(perfdf, detail = "simple")
-  specificity <- dx_specificity(perfdf, detail = "simple")
-
-  prevalences <- seq(0.01, 0.99, by = 0.005)
-
-  # Initialize vectors for PPV and NPV
-  ppv_values <- numeric(length(prevalences))
-  npv_values <- numeric(length(prevalences))
-
-  # Iterate over prevalences to calculate PPV and NPV
-  for (i in seq_along(prevalences)) {
-    prevalence <- prevalences[i]
-
-    # Calculate PPV and NPV using prevalence, sensitivity, and specificity
-    ppv_values[i] <- (sensitivity * prevalence) / (sensitivity * prevalence + (1 - specificity) * (1 - prevalence))
-    npv_values[i] <- (specificity * (1 - prevalence)) / ((1 - sensitivity) * prevalence + specificity * (1 - prevalence))
-  }
+# PPV and NPV across a range of prevalences, from the sensitivity and
+# specificity in a confusion matrix
+dx_prevalence_analysis <- function(cm) {
+  sensitivity <- dx_sensitivity(cm, detail = "simple")
+  specificity <- dx_specificity(cm, detail = "simple")
+  prevalence <- seq(0.01, 0.99, by = 0.005)
 
   data.frame(
-    prevalence = prevalences,
-    ppv = ppv_values,
-    npv = npv_values
+    prevalence = prevalence,
+    ppv = (sensitivity * prevalence) /
+      (sensitivity * prevalence + (1 - specificity) * (1 - prevalence)),
+    npv = (specificity * (1 - prevalence)) /
+      ((1 - sensitivity) * prevalence + specificity * (1 - prevalence))
   )
 }
 
@@ -234,21 +213,16 @@ dx_group_measure <- function(data, options, group_varname) {
     ), call. = FALSE)
   }
 
-  datalist <- list()
-
-  for (i in seq_along(group_labels)) {
-    subsetdata <- data[data[[group_varname]] == group_labels[i] & !is.na(data[[group_varname]]), ]
-
-    if (dim(subsetdata)[1] > 0) {
-      datalist[[i]] <- dx_measure(
-        data = subsetdata,
-        threshold = options$setthreshold,
-        options = options,
-        var = group_varname,
-        label = group_labels[i]
-      )
-    }
-  }
+  # Levels were dropped in dx(), so every level has rows
+  datalist <- lapply(group_labels, function(g) {
+    dx_measure(
+      data = data[data[[group_varname]] %in% g, ],
+      threshold = options$setthreshold,
+      options = options,
+      var = group_varname,
+      label = g
+    )
+  })
   res <- do.call(rbind, datalist)
   bd <- dx_breslow_day(data, options, group_varname)
 
