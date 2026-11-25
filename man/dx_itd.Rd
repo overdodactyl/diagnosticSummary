@@ -93,7 +93,7 @@ independent, truncated to -1 to 1.
 }
 \examples{
 data <- dx_heart_failure
-data$predicted[c(3, 10, 25, 40, 77, 120)] <- NA
+data$predicted[seq(5, 261, by = 20)] <- NA
 fit <- dx_itd(data, pred_varname = "predicted", true_varname = "truth")
 summary(fit)
 dx_itd_table(fit)

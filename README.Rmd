@@ -57,3 +57,21 @@ dx_obj <- dx(
 summary(dx_obj, variable = "Overall", show_var = F, show_label = F)
 ```
 
+
+## Missing predictions
+
+If some predictions are missing, for example because a case failed quality control, `dx_itd()` keeps those cases as ungradable results in a 3x2 intention-to-diagnose analysis. It reports the diagnostic yield, post-test disease risks and likelihood ratios for each result, and worst-case performance, which counts every ungradable result as incorrect.
+
+```{r itd}
+data_missing <- dx_heart_failure
+data_missing$predicted[seq(5, 261, by = 20)] <- NA
+
+itd_obj <- dx_itd(
+  data = data_missing,
+  true_varname = "truth",
+  pred_varname = "predicted",
+  setthreshold = .3
+)
+
+dx_itd_table(itd_obj)
+```

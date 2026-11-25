@@ -27,7 +27,7 @@ diagnostic yield and worst-case performance below.
 }
 \examples{
 data <- dx_heart_failure
-data$predicted[c(3, 10, 25, 40, 77, 120)] <- NA
+data$predicted[seq(5, 261, by = 20)] <- NA
 fit <- dx_itd(data, pred_varname = "predicted", true_varname = "truth")
 dx_itd_table(fit)
 dx_itd_table(fit, show_ci = FALSE)
