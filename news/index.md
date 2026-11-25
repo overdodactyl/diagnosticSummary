@@ -1,5 +1,34 @@
 # Changelog
 
+## diagnosticSummary 0.0.2.17
+
+**Breaking changes**
+
+- [`dx()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx.md)
+  now gives an error unless `setthreshold` is a single number between 0
+  and 1. Previously other values failed later with an unclear error or
+  gave results with every case on one side of the threshold.
+
+**New features**
+
+- [`dx_itd()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_itd.md)
+  summarizes a diagnostic test when some predictions are missing, for
+  example because a case failed quality control. Missing predictions are
+  kept as ungradable results in a 3x2 intention-to-diagnose analysis
+  instead of being excluded. It reports the diagnostic yield, pre-test
+  disease risk, predictive values, post-test disease risk and likelihood
+  ratio for each result, and worst-case sensitivity, specificity, and
+  Youden’s J, which count ungradable results as incorrect.
+  [`dx_itd_table()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_itd_table.md)
+  lays the results out as a 3x2 table, and
+  [`summary()`](https://rdrr.io/r/base/summary.html) and
+  [`as.data.frame()`](https://rdrr.io/r/base/as.data.frame.html) methods
+  are included.
+- [`dx()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx.md)
+  still gives an error for missing predictions, and the message now
+  points to
+  [`dx_itd()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_itd.md)
+
 ## diagnosticSummary 0.0.2.16
 
 **Breaking changes**

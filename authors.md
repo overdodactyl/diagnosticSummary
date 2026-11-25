@@ -13,13 +13,13 @@ Source:
 [`DESCRIPTION`](https://github.com/overdodactyl/diagnosticSummary/blob/master/DESCRIPTION)
 
 Johnson P, Carter R (2026). *diagnosticSummary: Diagnostic Summaries*. R
-package version 0.0.2.16,
+package version 0.0.2.17,
 <https://overdodactyl.github.io/diagnosticSummary/>.
 
     @Manual{,
       title = {diagnosticSummary: Diagnostic Summaries},
       author = {Pat Johnson and Rickey Carter},
       year = {2026},
-      note = {R package version 0.0.2.16},
+      note = {R package version 0.0.2.17},
       url = {https://overdodactyl.github.io/diagnosticSummary/},
     }
