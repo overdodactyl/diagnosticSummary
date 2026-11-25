@@ -13,7 +13,7 @@ across different strata."><meta property="og:image" content="https://overdodacty
 
     <a class="navbar-brand me-2" href="../index.html">diagnosticSummary</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2.15</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2.16</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,7 +69,9 @@ If not provided, the Mantel-Haenszel odds ratio is calculated.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A list with the Breslow-Day test statistic, p-value, method used, and data name.</p>
+    <p>A list with the Breslow-Day test statistic, p-value, method used, and data name.
+The statistic and p-value are <code>NA</code> when the common odds ratio is 0 or infinite,
+e.g. when the outcome is perfectly separated in every stratum.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>

@@ -59,6 +59,15 @@ Kappa are:
 
 - 0.8-1.0: Almost perfect agreement
 
+The 95% confidence interval uses the large sample variance of Fleiss,
+Cohen, and Everitt (1969) with a normal approximation, and is limited to
+-1 to 1.
+
+## References
+
+Fleiss JL, Cohen J, Everitt BS. Large sample standard errors of kappa
+and weighted kappa. Psychological Bulletin. 1969;72(5):323-327.
+
 ## Examples
 
 ``` r
@@ -75,5 +84,5 @@ print(kappa_full)
 #> # A tibble: 1 × 8
 #>   measure       summary     estimate conf_low conf_high fraction conf_type notes
 #>   <chr>         <chr>          <dbl>    <dbl>     <dbl> <chr>    <chr>     <chr>
-#> 1 Cohen's Kappa 0.64 (0.54…    0.636    0.537     0.736 ""       Standard… Subs…
+#> 1 Cohen's Kappa 0.64 (0.54…    0.636    0.538     0.734 ""       Fleiss e… Subs…
 ```

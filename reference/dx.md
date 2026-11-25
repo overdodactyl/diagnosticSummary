@@ -34,7 +34,7 @@ dx(
 
 - classlabels:
 
-  Labels for predicted variable. Needs to be 0, 1 order.
+  Deprecated; has no effect.
 
 - threshold_range:
 
@@ -42,12 +42,13 @@ dx(
 
 - outcome_label:
 
-  Label for outcome (string)
+  Deprecated; has no effect.
 
 - pred_varname:
 
   Column name containing AI prediction (string). Values should be
-  predicted probabilities between 0 and 1, with no missing values.
+  predicted probabilities that the outcome is 1, between 0 and 1, with
+  no missing values.
 
 - true_varname:
 
@@ -62,7 +63,9 @@ dx(
 
 - poslabel:
 
-  Positive class. Variable should be coded as 0/1 with 1 being the event
+  The outcome class that is the event: 1 (default) or 0. Predictions are
+  still probabilities that the outcome is 1, so with `poslabel = 0` a
+  prediction below the threshold is a positive test.
 
 - grouping_variables:
 
@@ -80,25 +83,30 @@ dx(
 
 - bootreps:
 
-  Number of bootstrap samples used to generate F1 score CI
+  Number of bootstrap samples used for the bootstrapped CIs.
 
 - bootseed:
 
-  Seed value to be used when calculating bootsraped CI's
+  Seed used for the bootstrapped CIs, so results are reproducible on the
+  same R version and platform. Bootstrap draws can differ across
+  platforms and R versions by Monte Carlo error.
 
 - doboot:
 
-  Logical. Generate bootstrap estimate of F1 confidence interval?
+  Logical. Generate percentile bootstrap CIs for the measures without a
+  closed-form CI (F1, F2, MCC, balanced accuracy, informedness,
+  markedness, G-mean, and Fowlkes-Mallows)? The confusion matrix cell
+  counts are resampled from a multinomial distribution, which is
+  equivalent to resampling cases.
 
 - direction:
 
-  Direction for roc comparison. See ?pROC::roc. The default, "\<",
-  treats higher predicted probabilities as more likely to be positive.
+  Deprecated. Predictions are probabilities that the outcome is 1, so
+  higher predictions always point to outcome 1; use `poslabel` to choose
+  which outcome is the event. Values other than the default, "\<", give
+  a warning and only affect the AUC and ROC curve (see ?pROC::roc).
   "auto" lets pROC choose the direction that gives an AUC of at least
-  0.5, which hides models that perform worse than chance. Only the AUC
-  and ROC curve use `direction`; sensitivity, specificity, and other
-  threshold based results always treat higher predictions as positive,
-  so other values give a warning.
+  0.5, which hides models that perform worse than chance.
 
 - ...:
 

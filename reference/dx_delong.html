@@ -11,7 +11,7 @@ them. It's particularly useful for comparing the performance of two diagnostic m
 
     <a class="navbar-brand me-2" href="../index.html">diagnosticSummary</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2.15</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2.16</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -85,7 +85,13 @@ difference in AUC and its confidence interval, is provided. The difference is ca
 as the AUC of <code>dx1</code> minus the AUC of <code>dx2</code>, so a negative estimate indicates that <code>dx2</code>
 has the higher AUC. The confidence interval gives a range of plausible values for the
 difference in AUC between the two models. A confidence interval is only available for
-paired comparisons.</p>
+paired comparisons.
+The p-value is <code>NA</code> when either curve has fewer than two cases or two controls, since
+DeLong's variance is undefined.</p>
+<p>Paired comparisons use DeLong's Z statistic and the standard normal distribution.
+Unpaired comparisons use the t statistic from <code><a href="https://rdrr.io/pkg/pROC/man/roc.test.html" class="external-link">pROC::roc.test()</a></code>, with
+Welch-Satterthwaite degrees of freedom, and the t distribution. The <code>notes</code>
+column says which statistic is reported in <code>statistic</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -105,7 +111,7 @@ paired comparisons.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 9</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   models test        summary p_value estimate conf_low conf_high statistic notes</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> <span style="color: #949494;">""</span>     DeLong's t… 0.04 (… 5.89<span style="color: #949494;">e</span><span style="color: #BB0000;">-4</span>   0.041<span style="text-decoration: underline;">3</span>   0.017<span style="text-decoration: underline;">8</span>    0.064<span style="text-decoration: underline;">9</span>      3.44 <span style="color: #949494;">""</span>   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> <span style="color: #949494;">""</span>     DeLong's t… 0.04 (… 5.89<span style="color: #949494;">e</span><span style="color: #BB0000;">-4</span>   0.041<span style="text-decoration: underline;">3</span>   0.017<span style="text-decoration: underline;">8</span>    0.064<span style="text-decoration: underline;">9</span>      3.44 Z st…</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

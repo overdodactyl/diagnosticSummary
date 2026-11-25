@@ -8,7 +8,7 @@ precision and recall via the beta parameter.
 ## Usage
 
 ``` r
-dx_fbeta(cm, beta = 1, detail = "full", boot = FALSE, bootreps = 1000)
+dx_fbeta(cm, beta = 1, detail = "full", boot = FALSE, bootreps = 2000)
 ```
 
 ## Arguments
@@ -30,8 +30,10 @@ dx_fbeta(cm, beta = 1, detail = "full", boot = FALSE, bootreps = 1000)
 
 - boot:
 
-  Logical specifying if confidence intervals should be generated via
-  bootstrapping. Note, this can be slow.
+  Logical specifying if confidence intervals should be generated via a
+  percentile bootstrap of the confusion matrix cell counts. Call
+  [`set.seed()`](https://rdrr.io/r/base/Random.html) first for
+  reproducible intervals.
 
 - bootreps:
 

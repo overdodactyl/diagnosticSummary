@@ -40,5 +40,5 @@ print(nir)
 #> # A tibble: 1 × 8
 #>   measure           summary estimate conf_low conf_high fraction conf_type notes
 #>   <chr>             <chr>      <dbl> <lgl>    <lgl>     <chr>    <chr>     <chr>
-#> 1 No Information R… 0.62       0.625 NA       NA        163/261  ""        ""   
+#> 1 No Information R… 62.5%      0.625 NA       NA        163/261  ""        ""   
 ```

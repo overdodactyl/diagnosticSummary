@@ -11,7 +11,7 @@ distribution differs from the expected distribution."><meta property="og:image" 
 
     <a class="navbar-brand me-2" href="../index.html">diagnosticSummary</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2.15</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2.16</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -76,8 +76,8 @@ significant association between the predicted and actual binary classifications.
 It compares the observed frequencies in each cell of the table to the frequencies
 expected if the rows and columns are independent. A low p-value indicates that
 the distributions of actual and predicted classifications are not independent,
-suggesting a significant association between them. The function uses Pearson's
-Chi-squared test with Yates' continuity correction by default, which is more
+suggesting a significant association between them. The function always uses
+Pearson's Chi-squared test with Yates' continuity correction, which is more
 accurate for small sample sizes. The test is most appropriate when each cell
 in the 2x2 table has an expected frequency of 5 or more.</p>
     </div>

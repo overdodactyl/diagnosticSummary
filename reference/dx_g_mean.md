@@ -8,7 +8,7 @@ Rate), especially useful in imbalanced datasets.
 ## Usage
 
 ``` r
-dx_g_mean(cm, detail = "full", boot = FALSE, bootreps = 1000)
+dx_g_mean(cm, detail = "full", boot = FALSE, bootreps = 2000)
 ```
 
 ## Arguments
@@ -26,8 +26,10 @@ dx_g_mean(cm, detail = "full", boot = FALSE, bootreps = 1000)
 
 - boot:
 
-  Logical specifying if confidence intervals should be generated via
-  bootstrapping. Note, this can be slow.
+  Logical specifying if confidence intervals should be generated via a
+  percentile bootstrap of the confusion matrix cell counts. Call
+  [`set.seed()`](https://rdrr.io/r/base/Random.html) first for
+  reproducible intervals.
 
 - bootreps:
 
@@ -72,5 +74,5 @@ print(detailed_g_mean)
 #> # A tibble: 1 × 8
 #>   measure summary estimate conf_low conf_high fraction conf_type notes          
 #>   <chr>   <chr>      <dbl>    <dbl>     <dbl> <chr>    <chr>     <chr>          
-#> 1 G-mean  0.8        0.799       NA        NA ""       NA        Specify `boot …
+#> 1 G-mean  0.80       0.799       NA        NA ""       NA        Specify `boot …
 ```

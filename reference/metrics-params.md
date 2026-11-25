@@ -22,8 +22,10 @@ Shared Parameters for Diagnostic Metrics
 
 - boot:
 
-  Logical specifying if confidence intervals should be generated via
-  bootstrapping. Note, this can be slow.
+  Logical specifying if confidence intervals should be generated via a
+  percentile bootstrap of the confusion matrix cell counts. Call
+  [`set.seed()`](https://rdrr.io/r/base/Random.html) first for
+  reproducible intervals.
 
 - bootreps:
 

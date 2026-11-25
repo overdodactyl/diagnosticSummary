@@ -55,6 +55,6 @@ print(dx_comp$tests)
 #> # A tibble: 2 × 9
 #>   models       test  summary p_value estimate conf_low conf_high statistic notes
 #>   <chr>        <chr> <chr>     <dbl>    <dbl>    <dbl>     <dbl>     <dbl> <chr>
-#> 1 Model 1 vs.… DeLo… 0.04 (… 5.89e-4   0.0413   0.0178    0.0649      3.44 ""   
+#> 1 Model 1 vs.… DeLo… 0.04 (… 5.89e-4   0.0413   0.0178    0.0649      3.44 "Z s…
 #> 2 Model 1 vs.… McNe… p=0.02  1.80e-2  NA       NA        NA           5.6  ""   
 ```

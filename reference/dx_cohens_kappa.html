@@ -13,7 +13,7 @@ Kappa takes into account the agreement occurring by chance."><meta property="og:
 
     <a class="navbar-brand me-2" href="../index.html">diagnosticSummary</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2.15</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2.16</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -86,7 +86,14 @@ better agreement. Typical benchmarks for interpreting Cohen's Kappa are:</p><ul>
 <li><p>0.4-0.6: Moderate agreement</p></li>
 <li><p>0.6-0.8: Substantial agreement</p></li>
 <li><p>0.8-1.0: Almost perfect agreement</p></li>
-</ul></div>
+</ul><p>The 95% confidence interval uses the large sample variance of Fleiss, Cohen,
+and Everitt (1969) with a normal approximation, and is limited to -1 to 1.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
+    <p>Fleiss JL, Cohen J, Everitt BS. Large sample standard errors of kappa and
+weighted kappa. Psychological Bulletin. 1969;72(5):323-327.</p>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
@@ -103,7 +110,7 @@ better agreement. Typical benchmarks for interpreting Cohen's Kappa are:</p><ul>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 8</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   measure       summary     estimate conf_low conf_high fraction conf_type notes</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Cohen's Kappa 0.64 (0.54…    0.636    0.537     0.736 <span style="color: #949494;">""</span>       Standard… Subs…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Cohen's Kappa 0.64 (0.54…    0.636    0.538     0.734 <span style="color: #949494;">""</span>       Fleiss e… Subs…</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

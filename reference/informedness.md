@@ -8,9 +8,9 @@ classifier is informed about the true class, ranging from -1 to 1.
 ## Usage
 
 ``` r
-dx_informedness(cm, detail = "full", boot = FALSE, bootreps = 1000)
+dx_informedness(cm, detail = "full", boot = FALSE, bootreps = 2000)
 
-dx_youden_j(cm, detail = "full", boot = FALSE, bootreps = 1000)
+dx_youden_j(cm, detail = "full", boot = FALSE, bootreps = 2000)
 ```
 
 ## Arguments
@@ -28,8 +28,10 @@ dx_youden_j(cm, detail = "full", boot = FALSE, bootreps = 1000)
 
 - boot:
 
-  Logical specifying if confidence intervals should be generated via
-  bootstrapping. Note, this can be slow.
+  Logical specifying if confidence intervals should be generated via a
+  percentile bootstrap of the confusion matrix cell counts. Call
+  [`set.seed()`](https://rdrr.io/r/base/Random.html) first for
+  reproducible intervals.
 
 - bootreps:
 

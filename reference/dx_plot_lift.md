@@ -40,6 +40,9 @@ represents the baseline lift of a random model. The lift curve should
 ideally stay above this line to indicate that the model has predictive
 power.
 
+With tied predictions, the curve only has points that a threshold can
+reach (the end of each group of ties), joined by straight lines.
+
 ## Examples
 
 ``` r
@@ -47,7 +50,6 @@ dx_obj <- dx(
   data = dx_heart_failure,
   true_varname = "truth",
   pred_varname = "predicted",
-  outcome_label = "Heart Attack",
   setthreshold = .3
 )
 dx_plot_lift(dx_obj)

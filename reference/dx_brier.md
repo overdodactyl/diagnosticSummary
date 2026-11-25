@@ -73,5 +73,5 @@ print(detailed)
 #> # A tibble: 1 × 8
 #>   measure     summary estimate conf_low conf_high fraction conf_type notes      
 #>   <chr>       <chr>      <dbl> <lgl>    <lgl>     <chr>    <chr>     <chr>      
-#> 1 Brier Score 0.11       0.114 NA       NA        ""       ""        CIs not ye…
+#> 1 Brier Score 0.114      0.114 NA       NA        ""       ""        CIs not ye…
 ```

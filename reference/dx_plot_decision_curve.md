@@ -42,7 +42,9 @@ the weight is the ratio of the cost of false positives relative to the
 benefit of true positives. This ratio is derived from the threshold
 probability (Vickers & Elkin, 2006): \$\$Net Benefit = \frac{TP}{N} -
 Weight \times \frac{FP}{N}\$\$ where Weight = Threshold / (1 -
-Threshold) and N is the total number of observations.
+Threshold) and N is the total number of observations. The threshold is
+the probability of the event, so with `poslabel = 0` it is 1 minus the
+threshold on the predictions.
 
 The decision curve will typically be compared against two default
 strategies: treating all patients or treating none. The net benefit is
@@ -62,7 +64,6 @@ dx_obj <- dx(
   data = dx_heart_failure,
   true_varname = "truth",
   pred_varname = "predicted",
-  outcome_label = "Heart Attack",
   setthreshold = .3
 )
 dx_plot_decision_curve(dx_obj)

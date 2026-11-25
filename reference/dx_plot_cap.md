@@ -48,6 +48,10 @@ the behavior of the model across the entire range of classifications.
 It's particularly insightful for imbalanced datasets where positive
 instances are rare or more critical.
 
+With tied predictions, the curve only has points that a threshold can
+reach (the end of each group of ties), joined by straight lines. It
+starts at 0%.
+
 ## Examples
 
 ``` r
@@ -55,7 +59,6 @@ dx_obj <- dx(
   data = dx_heart_failure,
   true_varname = "truth",
   pred_varname = "predicted",
-  outcome_label = "Heart Attack",
   setthreshold = .3
 )
 dx_plot_cap(dx_obj)

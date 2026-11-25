@@ -29,7 +29,9 @@ breslow_day_test(contingency_table, odds_ratio = NA, correct = FALSE)
 ## Value
 
 A list with the Breslow-Day test statistic, p-value, method used, and
-data name.
+data name. The statistic and p-value are `NA` when the common odds ratio
+is 0 or infinite, e.g. when the outcome is perfectly separated in every
+stratum.
 
 ## References
 

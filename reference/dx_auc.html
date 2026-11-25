@@ -11,7 +11,7 @@ of a classifier to distinguish between classes and is used as a summary of the R
 
     <a class="navbar-brand me-2" href="../index.html">diagnosticSummary</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2.15</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2.16</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -80,21 +80,15 @@ a data frame with the AUC and its confidence intervals.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Assuming you have a vector of true class labels and predicted probabilities</span></span></span>
-<span class="r-in"><span><span class="va">true_classes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">predicted_probs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.9</span>, <span class="fl">0.1</span>, <span class="fl">0.8</span>, <span class="fl">0.75</span>, <span class="fl">0.33</span>, <span class="fl">0.25</span>, <span class="fl">0.67</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">simple_auc</span> <span class="op">&lt;-</span> <span class="fu">dx_auc</span><span class="op">(</span><span class="va">true_classes</span>, <span class="va">predicted_probs</span>, detail <span class="op">=</span> <span class="st">"simple"</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>ci.auc() of a ROC curve with AUC == 1 is always 1-1 and can be misleading.</span>
-<span class="r-in"><span><span class="va">detailed_auc</span> <span class="op">&lt;-</span> <span class="fu">dx_auc</span><span class="op">(</span><span class="va">true_classes</span>, <span class="va">predicted_probs</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>ci.auc() of a ROC curve with AUC == 1 is always 1-1 and can be misleading.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>ci.auc() of a ROC curve with AUC == 1 is always 1-1 and can be misleading.</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">simple_auc</span> <span class="op">&lt;-</span> <span class="fu">dx_auc</span><span class="op">(</span><span class="va">dx_heart_failure</span><span class="op">$</span><span class="va">truth</span>, <span class="va">dx_heart_failure</span><span class="op">$</span><span class="va">predicted</span>, detail <span class="op">=</span> <span class="st">"simple"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">detailed_auc</span> <span class="op">&lt;-</span> <span class="fu">dx_auc</span><span class="op">(</span><span class="va">dx_heart_failure</span><span class="op">$</span><span class="va">truth</span>, <span class="va">dx_heart_failure</span><span class="op">$</span><span class="va">predicted</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">simple_auc</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.9036559</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">detailed_auc</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 8</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   measure summary           estimate conf_low conf_high fraction conf_type notes</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> AUC ROC 1.000 (1.000, 1.…        1        1         1 <span style="color: #949494;">""</span>       DeLong    <span style="color: #949494;">""</span>   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> AUC ROC 0.904 (0.864, 0.…    0.904    0.864     0.943 <span style="color: #949494;">""</span>       DeLong    <span style="color: #949494;">""</span>   </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

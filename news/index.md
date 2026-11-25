@@ -1,5 +1,86 @@
 # Changelog
 
+## diagnosticSummary 0.0.2.16
+
+**Breaking changes**
+
+- [`dx_auc_pr()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_auc_pr.md)
+  now takes `truth` and `predprob` (plus `detail` and `poslabel`)
+  instead of `precision` and `recall`, and checks its inputs, so calls
+  with the old arguments give an error
+- The chi-squared measure is renamed from “Pearson’s Chi-squared” to
+  “Pearson’s Chi-squared (Yates’ correction)”. Code that filters results
+  on the old name needs updating.
+- [`dx()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx.md)
+  no longer adds `test_binary`, `test_binaryf`, and `true_binaryf`
+  columns to `data`. Previously it overwrote user columns with these
+  names, so a truth column named `test_binary` gave a perfect model.
+
+**Deprecated**
+
+- `classlabels` and `outcome_label` in
+  [`dx()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx.md)
+  have no effect and now give a warning. They are no longer stored in
+  `options`.
+- `direction` values other than `"<"` are deprecated. Predictions are
+  probabilities that the outcome is 1; use `poslabel` to choose the
+  event.
+
+**Changes that affect results**
+
+- `poslabel = 0` is now used by the rank table and the ROC, gain, lift,
+  KS, CAP, and decision curves, which previously always treated 1 as the
+  event and gave a warning. Net benefit for `poslabel = 0` now weights
+  by the event’s threshold probability, 1 minus the threshold.
+- AUC-PR and the PR curve use Davis & Goadrich (2006) interpolation
+  instead of straight lines between points. Values change slightly.
+- The kappa confidence interval uses the Fleiss, Cohen & Everitt (1969)
+  variance
+- Bootstrapped confidence intervals resample confusion matrix cell
+  counts, which is equivalent to resampling cases and much faster.
+  Intervals differ by Monte Carlo error at the same `bootseed`, can
+  differ across platforms and R versions, and the default `bootreps` in
+  the metric functions is now 2000, matching
+  [`dx()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx.md).
+- With tied predictions, gain, lift, and CAP curves only pass through
+  points a threshold can reach, and gain and CAP curves start at the
+  origin. `rank` has a new `reachable` column.
+- Agresti-Coull confidence intervals are truncated to 0 to 1
+- Estimates without a confidence interval are shown with a fixed number
+  of decimals (3 for the Brier score and AUC-PR), and the no information
+  rate is shown as a percent
+
+**Bug fixes**
+
+- Measures in
+  [`dx()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx.md)
+  could disagree with `cm` when `setthreshold` equaled a prediction, and
+  `thresholds` had duplicate rows when predictions included exactly 0
+  or 1. The Breslow-Day test and paired
+  [`dx_delong()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_delong.md)
+  now return `NA` with a note instead of an error when they are
+  undefined (every subgroup separates perfectly, or a class has one
+  observation).
+
+**New features**
+
+- [`dx_recall()`](https://overdodactyl.github.io/diagnosticSummary/reference/sensitivity.md),
+  [`dx_tpr()`](https://overdodactyl.github.io/diagnosticSummary/reference/sensitivity.md),
+  [`dx_tnr()`](https://overdodactyl.github.io/diagnosticSummary/reference/specificity.md),
+  [`dx_precision()`](https://overdodactyl.github.io/diagnosticSummary/reference/ppv.md),
+  [`dx_miss_rate()`](https://overdodactyl.github.io/diagnosticSummary/reference/fnr.md),
+  [`dx_fall_out()`](https://overdodactyl.github.io/diagnosticSummary/reference/fpr.md),
+  and
+  [`dx_youden_j()`](https://overdodactyl.github.io/diagnosticSummary/reference/informedness.md)
+  are now exported, as documented
+- `thresholds` has a new `event_threshold` column, the threshold as a
+  probability of the event
+- [`dx_delong()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_delong.md)
+  notes say whether a Z or t statistic was used
+- [`dx()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx.md)
+  is much faster for large data sets, especially with `doboot = TRUE`.
+  caret and broom are no longer suggested packages.
+
 ## diagnosticSummary 0.0.2.15
 
 **Breaking changes**

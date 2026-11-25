@@ -66,7 +66,6 @@ dx_obj <- dx(
   data = dx_heart_failure,
   true_varname = "truth",
   pred_varname = "predicted",
-  outcome_label = "Heart Attack",
   setthreshold = .3
 )
 dx_plot_cost(dx_obj, cfp = 1000, cfn = 8000)

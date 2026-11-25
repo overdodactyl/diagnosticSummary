@@ -103,7 +103,9 @@ various thresholds. A model with perfect discrimination (no overlap in
 the two distributions) has an ROC curve that passes through the upper
 left corner (100% sensitivity, 100% specificity). Therefore the closer
 the ROC curve is to the upper left corner, the higher the overall
-accuracy of the test.
+accuracy of the test. With `poslabel = 0`, sensitivity and specificity
+are for outcome 0 as the event, so the curve is drawn for that event and
+the reference circle marks the threshold on it.
 
 The `dx_roc` function allows for extensive customization of the ROC
 curve, including color schemes, reference lines, text annotations, and
@@ -126,7 +128,6 @@ dx_obj <- dx(
   data = dx_heart_failure,
   true_varname = "truth",
   pred_varname = "predicted",
-  outcome_label = "Heart Attack",
   threshold_range = c(.1, .2, .3),
   setthreshold = .3,
   grouping_variables = c("AgeGroup", "Sex", "AgeSex")

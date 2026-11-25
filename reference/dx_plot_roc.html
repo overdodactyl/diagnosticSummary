@@ -11,7 +11,7 @@ the true positive rate (sensitivity) and the false positive rate (1 - specificit
 
     <a class="navbar-brand me-2" href="../index.html">diagnosticSummary</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2.15</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2.16</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -126,7 +126,9 @@ the true positive rate (sensitivity) and the false positive rate (1 - specificit
     <p>The ROC curve is a widely used tool for diagnosing the performance of binary classification models. It plots the true positive
 rate (sensitivity) against the false positive rate (1 - specificity) for various thresholds. A model with perfect discrimination
 (no overlap in the two distributions) has an ROC curve that passes through the upper left corner (100% sensitivity, 100% specificity).
-Therefore the closer the ROC curve is to the upper left corner, the higher the overall accuracy of the test.</p>
+Therefore the closer the ROC curve is to the upper left corner, the higher the overall accuracy of the test.
+With <code>poslabel = 0</code>, sensitivity and specificity are for outcome 0 as the event, so the curve
+is drawn for that event and the reference circle marks the threshold on it.</p>
 <p>The <code>dx_roc</code> function allows for extensive customization of the ROC curve, including color schemes, reference lines, text annotations,
 and more, to accommodate a variety of visualization needs and preferences.</p>
 <p>The area under the ROC curve (AUC) provides a single scalar value summarizing the performance of the test. The AUC can be interpreted as
@@ -141,7 +143,6 @@ line (chance line) and lines for the chosen threshold's specificity and sensitiv
 <span class="r-in"><span>  data <span class="op">=</span> <span class="va">dx_heart_failure</span>,</span></span>
 <span class="r-in"><span>  true_varname <span class="op">=</span> <span class="st">"truth"</span>,</span></span>
 <span class="r-in"><span>  pred_varname <span class="op">=</span> <span class="st">"predicted"</span>,</span></span>
-<span class="r-in"><span>  outcome_label <span class="op">=</span> <span class="st">"Heart Attack"</span>,</span></span>
 <span class="r-in"><span>  threshold_range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">.1</span>, <span class="fl">.2</span>, <span class="fl">.3</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  setthreshold <span class="op">=</span> <span class="fl">.3</span>,</span></span>
 <span class="r-in"><span>  grouping_variables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AgeGroup"</span>, <span class="st">"Sex"</span>, <span class="st">"AgeSex"</span><span class="op">)</span></span></span>

@@ -9,7 +9,7 @@ diagnostic test"><meta property="og:image" content="https://overdodactyl.github.
 
     <a class="navbar-brand me-2" href="../index.html">diagnosticSummary</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2.15</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2.16</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,7 +70,7 @@ diagnostic test</p>
 
 
 <dt id="arg-classlabels">classlabels<a class="anchor" aria-label="anchor" href="#arg-classlabels"></a></dt>
-<dd><p>Labels for predicted variable.  Needs to be 0, 1 order.</p></dd>
+<dd><p>Deprecated; has no effect.</p></dd>
 
 
 <dt id="arg-threshold-range">threshold_range<a class="anchor" aria-label="anchor" href="#arg-threshold-range"></a></dt>
@@ -78,12 +78,13 @@ diagnostic test</p>
 
 
 <dt id="arg-outcome-label">outcome_label<a class="anchor" aria-label="anchor" href="#arg-outcome-label"></a></dt>
-<dd><p>Label for outcome (string)</p></dd>
+<dd><p>Deprecated; has no effect.</p></dd>
 
 
 <dt id="arg-pred-varname">pred_varname<a class="anchor" aria-label="anchor" href="#arg-pred-varname"></a></dt>
 <dd><p>Column name containing AI prediction (string). Values
-should be predicted probabilities between 0 and 1, with no missing values.</p></dd>
+should be predicted probabilities that the outcome is 1, between 0 and 1,
+with no missing values.</p></dd>
 
 
 <dt id="arg-true-varname">true_varname<a class="anchor" aria-label="anchor" href="#arg-true-varname"></a></dt>
@@ -98,8 +99,9 @@ to identify AI prediction</p></dd>
 
 
 <dt id="arg-poslabel">poslabel<a class="anchor" aria-label="anchor" href="#arg-poslabel"></a></dt>
-<dd><p>Positive class.  Variable should be coded as 0/1
-with 1 being the event</p></dd>
+<dd><p>The outcome class that is the event: 1 (default) or 0.
+Predictions are still probabilities that the outcome is 1, so with
+<code>poslabel = 0</code> a prediction below the threshold is a positive test.</p></dd>
 
 
 <dt id="arg-grouping-variables">grouping_variables<a class="anchor" aria-label="anchor" href="#arg-grouping-variables"></a></dt>
@@ -117,25 +119,30 @@ prevalence for additional NPV and PPV calculations.</p></dd>
 
 
 <dt id="arg-bootreps">bootreps<a class="anchor" aria-label="anchor" href="#arg-bootreps"></a></dt>
-<dd><p>Number of bootstrap samples used to generate F1 score CI</p></dd>
+<dd><p>Number of bootstrap samples used for the bootstrapped CIs.</p></dd>
 
 
 <dt id="arg-bootseed">bootseed<a class="anchor" aria-label="anchor" href="#arg-bootseed"></a></dt>
-<dd><p>Seed value to be used when calculating bootsraped CI's</p></dd>
+<dd><p>Seed used for the bootstrapped CIs, so results are reproducible
+on the same R version and platform. Bootstrap draws can differ across
+platforms and R versions by Monte Carlo error.</p></dd>
 
 
 <dt id="arg-doboot">doboot<a class="anchor" aria-label="anchor" href="#arg-doboot"></a></dt>
-<dd><p>Logical. Generate bootstrap estimate of F1 confidence interval?</p></dd>
+<dd><p>Logical. Generate percentile bootstrap CIs for the measures
+without a closed-form CI (F1, F2, MCC, balanced accuracy, informedness,
+markedness, G-mean, and Fowlkes-Mallows)? The confusion matrix cell
+counts are resampled from a multinomial distribution, which is
+equivalent to resampling cases.</p></dd>
 
 
 <dt id="arg-direction">direction<a class="anchor" aria-label="anchor" href="#arg-direction"></a></dt>
-<dd><p>Direction for roc comparison.  See ?pROC::roc. The default,
-"&lt;", treats higher predicted probabilities as more likely to be positive.
+<dd><p>Deprecated. Predictions are probabilities that the outcome
+is 1, so higher predictions always point to outcome 1; use <code>poslabel</code> to
+choose which outcome is the event. Values other than the default, "&lt;",
+give a warning and only affect the AUC and ROC curve (see ?pROC::roc).
 "auto" lets pROC choose the direction that gives an AUC of at least 0.5,
-which hides models that perform worse than chance. Only the AUC and ROC
-curve use <code>direction</code>; sensitivity, specificity, and other threshold based
-results always treat higher predictions as positive, so other values give
-a warning.</p></dd>
+which hides models that perform worse than chance.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>

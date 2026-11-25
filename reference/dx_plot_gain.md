@@ -40,6 +40,10 @@ close to the diagonal suggests performance close to random chance, where
 the model does not effectively differentiate between positive and
 negative cases.
 
+With tied predictions, the curve only has points that a threshold can
+reach (the end of each group of ties), joined by straight lines. It
+starts at 0%.
+
 ## Examples
 
 ``` r
@@ -47,7 +51,6 @@ dx_obj <- dx(
   data = dx_heart_failure,
   true_varname = "truth",
   pred_varname = "predicted",
-  outcome_label = "Heart Attack",
   setthreshold = .3
 )
 dx_plot_gain(dx_obj)

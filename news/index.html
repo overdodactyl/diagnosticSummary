@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">diagnosticSummary</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2.15</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2.16</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,6 +31,40 @@
       <small>Source: <a href="https://github.com/overdodactyl/diagnosticSummary/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.0.2.16" id="diagnosticsummary-00216">diagnosticSummary 0.0.2.16<a class="anchor" aria-label="anchor" href="#diagnosticsummary-00216"></a></h2>
+<p><strong>Breaking changes</strong></p>
+<ul><li>
+<code><a href="../reference/dx_auc_pr.html">dx_auc_pr()</a></code> now takes <code>truth</code> and <code>predprob</code> (plus <code>detail</code> and <code>poslabel</code>) instead of <code>precision</code> and <code>recall</code>, and checks its inputs, so calls with the old arguments give an error</li>
+<li>The chi-squared measure is renamed from “Pearson’s Chi-squared” to “Pearson’s Chi-squared (Yates’ correction)”. Code that filters results on the old name needs updating.</li>
+<li>
+<code><a href="../reference/dx.html">dx()</a></code> no longer adds <code>test_binary</code>, <code>test_binaryf</code>, and <code>true_binaryf</code> columns to <code>data</code>. Previously it overwrote user columns with these names, so a truth column named <code>test_binary</code> gave a perfect model.</li>
+</ul><p><strong>Deprecated</strong></p>
+<ul><li>
+<code>classlabels</code> and <code>outcome_label</code> in <code><a href="../reference/dx.html">dx()</a></code> have no effect and now give a warning. They are no longer stored in <code>options</code>.</li>
+<li>
+<code>direction</code> values other than <code>"&lt;"</code> are deprecated. Predictions are probabilities that the outcome is 1; use <code>poslabel</code> to choose the event.</li>
+</ul><p><strong>Changes that affect results</strong></p>
+<ul><li>
+<code>poslabel = 0</code> is now used by the rank table and the ROC, gain, lift, KS, CAP, and decision curves, which previously always treated 1 as the event and gave a warning. Net benefit for <code>poslabel = 0</code> now weights by the event’s threshold probability, 1 minus the threshold.</li>
+<li>AUC-PR and the PR curve use Davis &amp; Goadrich (2006) interpolation instead of straight lines between points. Values change slightly.</li>
+<li>The kappa confidence interval uses the Fleiss, Cohen &amp; Everitt (1969) variance</li>
+<li>Bootstrapped confidence intervals resample confusion matrix cell counts, which is equivalent to resampling cases and much faster. Intervals differ by Monte Carlo error at the same <code>bootseed</code>, can differ across platforms and R versions, and the default <code>bootreps</code> in the metric functions is now 2000, matching <code><a href="../reference/dx.html">dx()</a></code>.</li>
+<li>With tied predictions, gain, lift, and CAP curves only pass through points a threshold can reach, and gain and CAP curves start at the origin. <code>rank</code> has a new <code>reachable</code> column.</li>
+<li>Agresti-Coull confidence intervals are truncated to 0 to 1</li>
+<li>Estimates without a confidence interval are shown with a fixed number of decimals (3 for the Brier score and AUC-PR), and the no information rate is shown as a percent</li>
+</ul><p><strong>Bug fixes</strong></p>
+<ul><li>Measures in <code><a href="../reference/dx.html">dx()</a></code> could disagree with <code>cm</code> when <code>setthreshold</code> equaled a prediction, and <code>thresholds</code> had duplicate rows when predictions included exactly 0 or 1. The Breslow-Day test and paired <code><a href="../reference/dx_delong.html">dx_delong()</a></code> now return <code>NA</code> with a note instead of an error when they are undefined (every subgroup separates perfectly, or a class has one observation).</li>
+</ul><p><strong>New features</strong></p>
+<ul><li>
+<code><a href="../reference/sensitivity.html">dx_recall()</a></code>, <code><a href="../reference/sensitivity.html">dx_tpr()</a></code>, <code><a href="../reference/specificity.html">dx_tnr()</a></code>, <code><a href="../reference/ppv.html">dx_precision()</a></code>, <code><a href="../reference/fnr.html">dx_miss_rate()</a></code>, <code><a href="../reference/fpr.html">dx_fall_out()</a></code>, and <code><a href="../reference/informedness.html">dx_youden_j()</a></code> are now exported, as documented</li>
+<li>
+<code>thresholds</code> has a new <code>event_threshold</code> column, the threshold as a probability of the event</li>
+<li>
+<code><a href="../reference/dx_delong.html">dx_delong()</a></code> notes say whether a Z or t statistic was used</li>
+<li>
+<code><a href="../reference/dx.html">dx()</a></code> is much faster for large data sets, especially with <code>doboot = TRUE</code>. caret and broom are no longer suggested packages.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.2.15" id="diagnosticsummary-00215">diagnosticSummary 0.0.2.15<a class="anchor" aria-label="anchor" href="#diagnosticsummary-00215"></a></h2>
 <p><strong>Breaking changes</strong></p>

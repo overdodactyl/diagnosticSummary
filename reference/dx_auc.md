@@ -45,19 +45,13 @@ AUC or a data frame with the AUC and its confidence intervals.
 ## Examples
 
 ``` r
-# Assuming you have a vector of true class labels and predicted probabilities
-true_classes <- c(1, 0, 1, 1, 0, 0, 1)
-predicted_probs <- c(0.9, 0.1, 0.8, 0.75, 0.33, 0.25, 0.67)
-simple_auc <- dx_auc(true_classes, predicted_probs, detail = "simple")
-#> Warning: ci.auc() of a ROC curve with AUC == 1 is always 1-1 and can be misleading.
-detailed_auc <- dx_auc(true_classes, predicted_probs)
-#> Warning: ci.auc() of a ROC curve with AUC == 1 is always 1-1 and can be misleading.
-#> Warning: ci.auc() of a ROC curve with AUC == 1 is always 1-1 and can be misleading.
+simple_auc <- dx_auc(dx_heart_failure$truth, dx_heart_failure$predicted, detail = "simple")
+detailed_auc <- dx_auc(dx_heart_failure$truth, dx_heart_failure$predicted)
 print(simple_auc)
-#> [1] 1
+#> [1] 0.9036559
 print(detailed_auc)
 #> # A tibble: 1 × 8
 #>   measure summary           estimate conf_low conf_high fraction conf_type notes
 #>   <chr>   <chr>                <dbl>    <dbl>     <dbl> <chr>    <chr>     <chr>
-#> 1 AUC ROC 1.000 (1.000, 1.…        1        1         1 ""       DeLong    ""   
+#> 1 AUC ROC 0.904 (0.864, 0.…    0.904    0.864     0.943 ""       DeLong    ""   
 ```

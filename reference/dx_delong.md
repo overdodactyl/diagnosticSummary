@@ -49,7 +49,15 @@ is provided. The difference is calculated as the AUC of `dx1` minus the
 AUC of `dx2`, so a negative estimate indicates that `dx2` has the higher
 AUC. The confidence interval gives a range of plausible values for the
 difference in AUC between the two models. A confidence interval is only
-available for paired comparisons.
+available for paired comparisons. The p-value is `NA` when either curve
+has fewer than two cases or two controls, since DeLong's variance is
+undefined.
+
+Paired comparisons use DeLong's Z statistic and the standard normal
+distribution. Unpaired comparisons use the t statistic from
+[`pROC::roc.test()`](https://rdrr.io/pkg/pROC/man/roc.test.html), with
+Welch-Satterthwaite degrees of freedom, and the t distribution. The
+`notes` column says which statistic is reported in `statistic`.
 
 ## See also
 
@@ -72,5 +80,5 @@ print(detailed)
 #> # A tibble: 1 × 9
 #>   models test        summary p_value estimate conf_low conf_high statistic notes
 #>   <chr>  <chr>       <chr>     <dbl>    <dbl>    <dbl>     <dbl>     <dbl> <chr>
-#> 1 ""     DeLong's t… 0.04 (… 5.89e-4   0.0413   0.0178    0.0649      3.44 ""   
+#> 1 ""     DeLong's t… 0.04 (… 5.89e-4   0.0413   0.0178    0.0649      3.44 Z st…
 ```
