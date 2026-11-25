@@ -384,3 +384,200 @@ test_that("dx_compare() runs on random pairs of models", {
     }
   }
 })
+
+# dx_itd(): random cases from fuzz_case() with some predictions set to missing
+itd_fuzz_case <- function(seed) {
+  case <- fuzz_case(seed)
+  with_seed(seed + 200000, {
+    n <- nrow(case$data)
+    missing <- switch(sample(4, 1),
+      rep(FALSE, n), # none missing
+      stats::runif(n) < stats::runif(1, 0, .5),
+      case$truth == sample(0:1, 1) & stats::runif(n) < .5, # only one class
+      stats::runif(n) < .9 # most missing
+    )
+    # At least one prediction is needed
+    if (all(missing)) missing[sample(n, 1)] <- FALSE
+    case$data$pred[missing] <- NA
+  })
+  a <- case$args
+  case$args <- list(
+    data = case$data,
+    pred_varname = "pred",
+    true_varname = "truth",
+    setthreshold = a$setthreshold,
+    poslabel = a$poslabel,
+    grouping_variables = a$grouping_variables,
+    citype = a$citype
+  )
+  case
+}
+
+# 3x2 counts calculated directly: ungradable (missing) results by outcome class
+direct_itd_counts <- function(pred, truth, threshold, poslabel) {
+  gradable <- !is.na(pred)
+  true_pos <- truth == poslabel
+  c(
+    direct_counts(pred[gradable], truth[gradable], threshold, poslabel),
+    up = sum(!gradable & true_pos),
+    un = sum(!gradable & !true_pos)
+  )
+}
+
+# Likelihood ratio for one row (x with the event, y without) and its log scale
+# CI, with 0.5 added to the cells of the row's 2x2 table if any is zero
+direct_row_lr <- function(x, y, n1, n0) {
+  if (n1 == 0 || n0 == 0 || x + y == 0) return(rep(NA_real_, 3))
+  cc <- if (any(c(x, n1 - x, y, n0 - y) == 0)) .5 else 0
+  x <- x + cc
+  y <- y + cc
+  n1 <- n1 + 2 * cc
+  n0 <- n0 + 2 * cc
+  lr <- (x / n1) / (y / n0)
+  se <- sqrt(1 / x - 1 / n1 + 1 / y - 1 / n0)
+  c(lr, exp(log(lr) + c(-1, 1) * stats::qnorm(.975) * se))
+}
+
+test_that("dx_itd() runs on random inputs without unexpected errors or warnings", {
+  skip_on_cran()
+  for (seed in fuzz_seeds()) {
+    case <- itd_fuzz_case(seed)
+    info <- paste("seed", seed)
+    res <- tryCatch(
+      collect_warnings(do.call(dx_itd, case$args)),
+      error = function(e) e
+    )
+    expect_false(inherits(res, "error"), info = paste(info, "-", conditionMessage(res)))
+    if (inherits(res, "error")) next
+    expect_allowed_warnings(res$warnings, info)
+    expect_equal(nrow(dx_itd_table(res$value)), 6, info = info)
+  }
+})
+
+test_that("dx_itd() counts and measures match direct calculations", {
+  skip_on_cran()
+  for (seed in fuzz_seeds()) {
+    case <- itd_fuzz_case(seed)
+    info <- paste("seed", seed)
+    a <- case$args
+    d <- suppressWarnings(do.call(dx_itd, a))
+    pred <- case$data$pred
+    truth <- case$truth
+
+    k <- as.list(direct_itd_counts(pred, truth, a$setthreshold, a$poslabel))
+    expect_equal(
+      unlist(d$cm[c("tp", "fn", "ug_pos", "fp", "tn", "ug_neg")]),
+      c(tp = k$tp, fn = k$fn, ug_pos = k$up, fp = k$fp, tn = k$tn, ug_neg = k$un),
+      info = info
+    )
+
+    overall <- d$measures[d$measures$variable == "Overall", ]
+    est <- estimates(overall)
+    n1 <- k$tp + k$fn + k$up
+    n0 <- k$fp + k$tn + k$un
+    n <- n1 + n0
+    sens <- k$tp / n1
+    spec <- k$tn / n0
+
+    expected <- c(
+      "Diagnostic Yield (Disease Positive)" = (k$tp + k$fn) / n1,
+      "Diagnostic Yield (Disease Negative)" = (k$fp + k$tn) / n0,
+      "Diagnostic Yield (Overall)" = mean(!is.na(pred)),
+      "Pre-Test Disease Risk" = n1 / n,
+      "Positive Predictive Value" = k$tp / (k$tp + k$fp),
+      "Negative Predictive Value" = k$tn / (k$tn + k$fn),
+      "Post-Test Disease Risk (Positive)" = k$tp / (k$tp + k$fp),
+      "Post-Test Disease Risk (Negative)" = k$fn / (k$tn + k$fn),
+      "Post-Test Disease Risk (Ungradable)" = k$up / (k$up + k$un),
+      "Worst-Case Sensitivity" = sens,
+      "Worst-Case Specificity" = spec,
+      "Worst-Case Youden's J" = sens + spec - 1
+    )
+    for (name in names(expected)) {
+      expect_equal(est[[name]], expected[[name]], info = paste(info, name))
+    }
+
+    rows <- list(
+      "Likelihood Ratio (Positive)" = c(k$tp, k$fp),
+      "Likelihood Ratio (Negative)" = c(k$fn, k$tn),
+      "Likelihood Ratio (Ungradable)" = c(k$up, k$un)
+    )
+    for (name in names(rows)) {
+      lr <- direct_row_lr(rows[[name]][1], rows[[name]][2], n1, n0)
+      row <- overall[overall$measure == name, ]
+      expect_equal(c(row$estimate, row$conf_low, row$conf_high), lr, info = paste(info, name))
+    }
+
+    # Estimates lie inside their confidence intervals, and proportions and
+    # their intervals in [0, 1]
+    tol <- 1e-8
+    has_ci <- is.finite(overall$estimate) & is.finite(overall$conf_low) &
+      is.finite(overall$conf_high)
+    expect_true(all(overall$conf_low[has_ci] <= overall$estimate[has_ci] + tol &
+      overall$estimate[has_ci] <= overall$conf_high[has_ci] + tol), info = info)
+    binomial <- grepl("^Binomial", overall$conf_type)
+    vals <- c(overall$estimate[binomial], overall$conf_low[binomial], overall$conf_high[binomial])
+    vals <- vals[!is.na(vals)]
+    expect_true(all(vals >= -tol & vals <= 1 + tol), info = info)
+    expect_true(all(overall$n == length(truth)), info = info)
+  }
+})
+
+test_that("dx_itd() agrees with dx() on the gradable cases", {
+  skip_on_cran()
+  for (seed in fuzz_seeds()) {
+    case <- itd_fuzz_case(seed)
+    a <- case$args
+    gradable <- !is.na(case$data$pred)
+    # dx() needs both classes and two distinct predictions
+    if (length(unique(case$truth[gradable])) < 2 ||
+      length(unique(case$data$pred[gradable])) < 2) next
+    info <- paste("seed", seed)
+
+    d <- suppressWarnings(do.call(dx_itd, a))
+    a$data <- case$data[gradable, ]
+    full <- suppressWarnings(do.call(dx, a))
+    expect_equal(unlist(d$cm[c("tp", "fn", "fp", "tn")]),
+                 unlist(full$cm[c("tp", "fn", "fp", "tn")]), info = info)
+
+    m <- full$measures[full$measures$variable == "Overall" &
+      abs(full$measures$threshold - a$setthreshold) < 1e-8, ]
+    for (name in c("Positive Predictive Value", "Negative Predictive Value")) {
+      itd_row <- d$measures[d$measures$variable == "Overall" & d$measures$measure == name, ]
+      expect_equal(itd_row[c("estimate", "conf_low", "conf_high")],
+                   m[m$measure == name, c("estimate", "conf_low", "conf_high")],
+                   info = paste(info, name))
+    }
+  }
+})
+
+test_that("dx_itd() subgroup measures match dx_itd() run on each subgroup alone", {
+  skip_on_cran()
+  for (seed in fuzz_seeds()) {
+    case <- itd_fuzz_case(seed)
+    a <- case$args
+    if (identical(a$grouping_variables, NA)) next
+    info <- paste("seed", seed)
+    d <- suppressWarnings(do.call(dx_itd, a))
+    groups <- d$measures[d$measures$variable == "group", ]
+
+    has_group <- !is.na(case$data$group)
+    for (g in unique(groups$label)) {
+      rows <- has_group & case$data$group == g
+      sub_truth <- case$truth[rows]
+      # dx_itd() needs both classes and at least one prediction
+      if (length(unique(sub_truth)) < 2 || all(is.na(case$data$pred[rows]))) next
+
+      sub_args <- a
+      sub_args$data <- case$data[rows, ]
+      sub_args$grouping_variables <- NA
+      alone <- do.call(dx_itd, sub_args)$measures
+
+      in_group <- groups[groups$label == g, ]
+      expect_equal(in_group$measure, alone$measure, info = paste(info, g))
+      expect_equal(in_group$estimate, alone$estimate, info = paste(info, g))
+      expect_equal(in_group$conf_low, alone$conf_low, info = paste(info, g))
+      expect_equal(in_group$conf_high, alone$conf_high, info = paste(info, g))
+    }
+  }
+})
