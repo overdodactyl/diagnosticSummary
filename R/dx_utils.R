@@ -61,6 +61,13 @@ as.data.frame.dx <- function(x, row.names = NULL, optional = TRUE, thresh = NA,
     keep <- vapply(tmp$threshold, function(t) any(abs(t - thresh) < 1e-8), logical(1))
     tmp <- tmp[keep, ]
   }
+
+  filter_measures(tmp, variable = variable, label = label, measure = measure)
+}
+
+# Keep the rows of a measures data frame for the given variables, labels, and
+# measures. NA keeps all values.
+filter_measures <- function(tmp, variable = NA, label = NA, measure = NA) {
   if (!identical(variable, NA)) {
     tmp <- tmp[tmp$variable %in% variable, ]
   }
