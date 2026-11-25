@@ -14,7 +14,7 @@
 #' @param true_varname Column name containing AI reference standard (string).
 #'     Values should be 0 or 1 (numeric, logical, factor, or character), with
 #'     no missing values, and both classes must be present.
-#' @param setthreshold A numeric value representing the threshold used
+#' @param setthreshold A number between 0 and 1 representing the threshold used
 #'     to identify AI prediction. Predictions at or above the threshold
 #'     predict outcome 1.
 #' @param poslabel The outcome class that is the event: 1 (default) or 0.
@@ -68,6 +68,11 @@
 #' result no case has, such as ungradable results when no predictions are
 #' missing.
 #'
+#' At least one prediction is needed, but a subgroup in `grouping_variables`
+#' can have every prediction missing, for example a site where every case
+#' failed quality control. It is kept with a warning, with a diagnostic yield
+#' of 0%.
+#'
 #' @return An object of class `dx_itd`, a list with `data`, `options`,
 #'     `measures` (a data frame with one row per measure), and `cm` (the 3x2
 #'     cell counts at `setthreshold`).
@@ -87,7 +92,7 @@
 #' @export
 dx_itd <- function(data, pred_varname, true_varname, setthreshold = .5,
                    poslabel = 1, grouping_variables = NA, citype = "exact") {
-  check_dx_options(poslabel, direction = "<")
+  check_dx_options(poslabel, direction = "<", setthreshold)
   data <- prepare_dx_data(
     data, pred_varname, true_varname, grouping_variables,
     allow_missing_pred = TRUE
@@ -214,7 +219,21 @@ dx_group_measure_itd <- function(data, options, group_varname) {
     warning(paste0(
       "Subgroup(s) of ", group_varname, " with only one outcome class: ",
       paste(group_labels[one_class], collapse = ", "), ". ",
-      "Likelihood ratios are NA for these subgroups."
+      "Measures that need both outcome classes are undefined for these subgroups."
+    ), call. = FALSE)
+  }
+
+  # Subgroups with no gradable results are kept, e.g. a site where every case
+  # failed quality control, though dx_itd() on that subgroup alone gives an error
+  pred <- data[[options$pred_varname]]
+  all_missing <- vapply(group_labels, function(g) {
+    all(is.na(pred[data[[group_varname]] %in% g]))
+  }, logical(1))
+  if (any(all_missing)) {
+    warning(paste0(
+      "Subgroup(s) of ", group_varname, " with all predictions missing: ",
+      paste(group_labels[all_missing], collapse = ", "), ". ",
+      "Their diagnostic yield is 0% and measures of gradable results are undefined."
     ), call. = FALSE)
   }
 

@@ -8,7 +8,7 @@
 #' @param pred_varname Column name containing AI prediction (string). Values
 #'     should be predicted probabilities that the outcome is 1, between 0 and 1,
 #'     with no missing values.
-#' @param setthreshold A numeric value representing the threshold used
+#' @param setthreshold A number between 0 and 1 representing the threshold used
 #'     to identify AI prediction
 #' @param threshold_range Optional. A numeric vector of thresholds to loop over.
 #' @param true_varname Column name containing AI reference standard (string).
@@ -48,7 +48,7 @@ dx <- function(data,
                setthreshold = .5, poslabel = 1, grouping_variables = NA, prevalence = NA,
                citype = "exact", bootreps = 2000, bootseed = 20191015,
                doboot = FALSE, direction = "<", ...) {
-  check_dx_options(poslabel, direction)
+  check_dx_options(poslabel, direction, setthreshold)
   if (!missing(classlabels)) warn_deprecated_unused("classlabels")
   if (!missing(outcome_label)) warn_deprecated_unused("outcome_label")
   data <- prepare_dx_data(data, pred_varname, true_varname, grouping_variables)
@@ -124,10 +124,15 @@ dx <- function(data,
 }
 
 # Check options that don't depend on the data
-check_dx_options <- function(poslabel, direction) {
+check_dx_options <- function(poslabel, direction, setthreshold) {
   # Check that poslabel is 0 or 1
   if (length(poslabel) != 1 || !poslabel %in% c(0, 1)) {
     stop("poslabel should be 0 or 1", call. = FALSE)
+  }
+
+  if (!is.numeric(setthreshold) || length(setthreshold) != 1 || is.na(setthreshold) ||
+    setthreshold < 0 || setthreshold > 1) {
+    stop("setthreshold should be a single number between 0 and 1", call. = FALSE)
   }
 
   # direction is deprecated and only used for the AUC and ROC curve

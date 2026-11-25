@@ -25,7 +25,7 @@ Missing values (\code{NA}) are ungradable results.}
 Values should be 0 or 1 (numeric, logical, factor, or character), with
 no missing values, and both classes must be present.}
 
-\item{setthreshold}{A numeric value representing the threshold used
+\item{setthreshold}{A number between 0 and 1 representing the threshold used
 to identify AI prediction. Predictions at or above the threshold
 predict outcome 1.}
 
@@ -94,6 +94,11 @@ worst-case sensitivity or specificity is 0\% or 100\%, and has no width when
 both are, which is noted in the results. Likelihood ratios are \code{NA} for a
 result no case has, such as ungradable results when no predictions are
 missing.
+
+At least one prediction is needed, but a subgroup in \code{grouping_variables}
+can have every prediction missing, for example a site where every case
+failed quality control. It is kept with a warning, with a diagnostic yield
+of 0\%.
 }
 \examples{
 data <- dx_heart_failure

@@ -179,18 +179,32 @@ test_that("dx_itd summarizes subgroups", {
                 grouping_variables = "site")
 
   expect_equal(unique(fit$measures$label), c("a", "b", "Overall"))
-  a <- data[data$site == "a", ]
-  sub <- fit$measures[fit$measures$label == "a", ]
-  expect_equal(sub$estimate[sub$measure == "Diagnostic Yield (Overall)"],
-               mean(!is.na(a$predicted)))
-  expect_equal(sub$n[1], nrow(a))
+  expect_equal(unique(fit$measures$variable), c("site", "Overall"))
+
+  # Each subgroup matches dx_itd() run on that subgroup alone
+  for (g in c("a", "b")) {
+    sub <- fit$measures[fit$measures$label == g, ]
+    alone <- dx_itd(data[data$site == g, ], pred_varname = "predicted",
+                    true_varname = "truth")$measures
+    cols <- c("measure", "summary", "estimate", "conf_low", "conf_high", "fraction", "notes", "n")
+    expect_equal(sub[cols], alone[cols], info = g)
+    expect_equal(sub$n[1], sum(data$site == g))
+  }
+
+  # Rows with a missing group are left out of the subgroups but not Overall
+  data$site[1:3] <- NA
+  fit <- dx_itd(data, pred_varname = "predicted", true_varname = "truth",
+                grouping_variables = "site")
+  n <- unique(fit$measures[c("label", "n")])
+  expect_equal(n$n[n$label != "Overall"], c(sum(data$site %in% "a"), sum(data$site %in% "b")))
+  expect_equal(n$n[n$label == "Overall"], nrow(data))
 
   # Subgroups with one outcome class give a warning and NA likelihood ratios
   data$site <- ifelse(data$truth == 1 & seq_len(nrow(data)) <= 5, "c", "d")
   expect_warning(
     fit <- dx_itd(data, pred_varname = "predicted", true_varname = "truth",
                   grouping_variables = "site"),
-    "only one outcome class: c"
+    "only one outcome class: c\\. Measures that need both outcome classes are undefined"
   )
   sub <- fit$measures[fit$measures$label == "c", ]
   expect_true(is.na(sub$estimate[sub$measure == "Likelihood Ratio (Positive)"]))
@@ -216,6 +230,15 @@ test_that("dx_itd validates its inputs", {
   expect_error(dx_itd(one_class, "predicted", "truth"), "should contain both 0's and 1's")
 
   expect_error(dx_itd(data, "predicted", "truth", poslabel = 2), "poslabel should be 0 or 1")
+
+  for (bad in list(NA, c(.5, .6), "0.5", -0.1, 1.1)) {
+    expect_error(dx_itd(data, "predicted", "truth", setthreshold = bad),
+                 "setthreshold should be a single number between 0 and 1")
+    expect_error(dx(dx_heart_failure, pred_varname = "predicted", true_varname = "truth",
+                    setthreshold = bad),
+                 "setthreshold should be a single number between 0 and 1")
+  }
+  expect_s3_class(dx_itd(data, "predicted", "truth", setthreshold = 1), "dx_itd")
 })
 
 test_that("dx() points to dx_itd() for missing predictions", {
@@ -296,8 +319,14 @@ test_that("dx_itd likelihood ratios are NA for results no case has", {
   # A subgroup where every prediction is missing
   data <- make_itd_data(tp = 40, fn = 10, up = 5, fp = 15, tn = 60, un = 10)
   data$site <- ifelse(is.na(data$predicted), "missing", "gradable")
-  fit <- dx_itd(data, pred_varname = "predicted", true_varname = "truth",
-                grouping_variables = "site")
+  expect_warning(
+    fit <- dx_itd(data, pred_varname = "predicted", true_varname = "truth",
+                  grouping_variables = "site"),
+    "with all predictions missing: missing\\."
+  )
+  # dx_itd() on that subgroup alone is an error
+  expect_error(dx_itd(data[data$site == "missing", ], "predicted", "truth"),
+               "All values of predicted are missing")
   sub <- fit$measures[fit$measures$label == "missing", ]
   lr <- sub[sub$measure %in% c("Likelihood Ratio (Positive)", "Likelihood Ratio (Negative)"), ]
   expect_true(all(is.na(lr$estimate)))
