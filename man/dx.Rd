@@ -40,7 +40,7 @@ with no missing values.}
 Values should be 0 or 1 (numeric, logical, factor, or character), with
 no missing values, and both classes must be present.}
 
-\item{setthreshold}{A numeric value representing the threshold used
+\item{setthreshold}{A number between 0 and 1 representing the threshold used
 to identify AI prediction}
 
 \item{poslabel}{The outcome class that is the event: 1 (default) or 0.

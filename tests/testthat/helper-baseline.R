@@ -28,6 +28,16 @@ baseline_outputs <- function() {
   rf <- dx(data = hf, true_varname = "truth", pred_varname = "predicted_rf", setthreshold = .3)
   models <- list(glm = overall, rf = rf)
 
+  # dx_itd() with some predictions missing
+  hf_missing <- hf
+  hf_missing$predicted[seq(5, nrow(hf), by = 20)] <- NA
+  fit_itd <- function(...) {
+    dx_itd(data = hf_missing, true_varname = "truth", pred_varname = "predicted",
+           setthreshold = .3, ...)
+  }
+  itd <- fit_itd(grouping_variables = c("AgeGroup", "Sex"))
+  itd_options <- fit_itd(citype = "wilson", poslabel = 0)
+
   list(
     overall_measures = as_df(overall$measures),
     overall_thresholds = as_df(overall$thresholds),
@@ -45,6 +55,10 @@ baseline_outputs <- function() {
       fraction = TRUE,
       fraction_multiline = FALSE,
       measures = c("AUC ROC", "Sensitivity", "Specificity", "Odds Ratio", "Breslow-Day")
-    ))
+    )),
+    itd_measures = as_df(itd$measures),
+    itd_cm = as_df(itd$cm),
+    itd_table = dx_itd_table(itd),
+    itd_options_measures = as_df(itd_options$measures)
   )
 }

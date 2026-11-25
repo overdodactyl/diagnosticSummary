@@ -89,3 +89,47 @@ summary(dx_obj, variable = "Overall", show_var = F, show_label = F)
 | G-Test                                    | p\<0.01              |
 
 Threshold= 0.3
+
+## Missing predictions
+
+If some predictions are missing, for example because a case failed
+quality control, `dx_itd()` keeps those cases as ungradable results in a
+3x2 intention-to-diagnose analysis. It reports the diagnostic yield,
+post-test disease risks and likelihood ratios for each result, and
+worst-case performance, which counts every ungradable result as
+incorrect.
+
+``` r
+data_missing <- dx_heart_failure
+data_missing$predicted[seq(5, 261, by = 20)] <- NA
+
+itd_obj <- dx_itd(
+  data = data_missing,
+  true_varname = "truth",
+  pred_varname = "predicted",
+  setthreshold = .3
+)
+
+dx_itd_table(itd_obj)
+#>                      row     disease_positive     disease_negative
+#> 1               Positive                   79                   36
+#> 2               Negative                   14                  119
+#> 3             Ungradable                    5                    8
+#> 4                  Total                   98                  163
+#> 5       Diagnostic yield 94.9% (88.5%, 98.3%) 95.1% (90.6%, 97.9%)
+#> 6 Worst-case performance 80.6% (71.4%, 87.9%) 73.0% (65.5%, 79.7%)
+#>                            total                             predictive_value
+#> 1                            115                         68.7% (59.4%, 77.0%)
+#> 2                            133                         89.5% (83.0%, 94.1%)
+#> 3                             13                                             
+#> 4                            261 Pre-test disease risk = 37.5% (31.7%, 43.7%)
+#> 5           95.0% (91.6%, 97.3%)                                             
+#> 6 Youden's J = 0.54 (0.43, 0.64)                                             
+#>         post_test_risk  likelihood_ratio
+#> 1 68.7% (59.4%, 77.0%) 3.65 (2.69, 4.95)
+#> 2  10.5% (5.9%, 17.0%) 0.20 (0.12, 0.32)
+#> 3 38.5% (13.9%, 68.4%) 1.04 (0.35, 3.09)
+#> 4                                       
+#> 5                                       
+#> 6
+```

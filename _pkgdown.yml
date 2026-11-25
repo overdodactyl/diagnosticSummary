@@ -10,6 +10,8 @@ reference:
   - dx
   - dx_cm
   - dx_compare
+  - dx_itd
+  - dx_itd_table
 - title: Metrics
   desc: Measures of binary classification tasks
   contents:
@@ -29,6 +31,8 @@ reference:
   contents:
   - as.data.frame.dx
   - summary.dx
+  - as.data.frame.dx_itd
+  - summary.dx_itd
 - title: Data
   desc: Test data sets
   contents:
