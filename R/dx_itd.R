@@ -62,7 +62,11 @@
 #' use a large sample interval on the log scale. If the 2x2 table of one row
 #' against the others has a zero cell, 0.5 is added to each of its cells.
 #' Youden's J uses a Wald interval that treats the two outcome classes as
-#' independent, truncated to -1 to 1.
+#' independent, truncated to -1 to 1. The interval is too narrow when the
+#' worst-case sensitivity or specificity is 0% or 100%, and has no width when
+#' both are, which is noted in the results. Likelihood ratios are `NA` for a
+#' result no case has, such as ungradable results when no predictions are
+#' missing.
 #'
 #' @return An object of class `dx_itd`, a list with `data`, `options`,
 #'     `measures` (a data frame with one row per measure), and `cm` (the 3x2
@@ -239,6 +243,16 @@ metric_row_lr <- function(x, y, cm, name) {
     ))
   }
 
+  # Undefined when no cases have this result, e.g. no ungradable results
+  if (x + y == 0) {
+    return(measure_df(
+      measure = name,
+      estimate = conf_int(NA, NA, NA),
+      notes = "No cases with this result",
+      estimate_raw = NA_real_
+    ))
+  }
+
   cells <- c(x, cm$dispos - x, y, cm$disneg - y)
   continuity_correction <- if (any(cells == 0)) 0.5 else 0
   x <- x + continuity_correction
@@ -273,7 +287,12 @@ metric_youden_wald <- function(cm, name) {
     estimate_raw = j,
     lci_raw = lower,
     uci_raw = upper,
-    ci_type = "Wald"
+    ci_type = "Wald",
+    notes = if (any(c(sens, spec) %in% c(0, 1))) {
+      "Wald interval is too narrow when sensitivity or specificity is 0% or 100%"
+    } else {
+      ""
+    }
   )
 }
 

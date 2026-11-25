@@ -102,6 +102,7 @@ test_that("dx_itd agrees with dx() when no predictions are missing", {
   expect_equal(itd_estimate(fit, "Likelihood Ratio (Positive)"), dx_estimate("LRT+"))
   expect_equal(itd_estimate(fit, "Likelihood Ratio (Negative)"), dx_estimate("LRT-"))
   expect_true(is.nan(itd_estimate(fit, "Post-Test Disease Risk (Ungradable)")))
+  expect_true(is.na(itd_estimate(fit, "Likelihood Ratio (Ungradable)")))
 })
 
 test_that("dx_itd identities hold with missing predictions", {
@@ -275,4 +276,52 @@ test_that("summary and as.data.frame methods filter dx_itd results", {
 
   s <- summary(fit, measure = "Diagnostic Yield (Overall)", show_var = FALSE)
   expect_true(any(grepl("Diagnostic Yield \\(Overall\\)", s)))
+})
+
+test_that("dx_itd likelihood ratios are NA for results no case has", {
+  # No ungradable results
+  fit <- dx_itd(make_itd_data(tp = 40, fn = 10, up = 0, fp = 15, tn = 60, un = 0),
+                pred_varname = "predicted", true_varname = "truth")
+  row <- itd_row(fit, "Likelihood Ratio (Ungradable)")
+  expect_true(is.na(row$estimate))
+  expect_equal(row$notes, "No cases with this result")
+  expect_true(is.finite(itd_estimate(fit, "Likelihood Ratio (Positive)")))
+
+  # No negative results
+  fit <- dx_itd(make_itd_data(tp = 5, fn = 0, up = 2, fp = 5, tn = 0, un = 2),
+                pred_varname = "predicted", true_varname = "truth")
+  expect_true(is.na(itd_estimate(fit, "Likelihood Ratio (Negative)")))
+  expect_equal(itd_estimate(fit, "Likelihood Ratio (Positive)"), 1)
+
+  # A subgroup where every prediction is missing
+  data <- make_itd_data(tp = 40, fn = 10, up = 5, fp = 15, tn = 60, un = 10)
+  data$site <- ifelse(is.na(data$predicted), "missing", "gradable")
+  fit <- dx_itd(data, pred_varname = "predicted", true_varname = "truth",
+                grouping_variables = "site")
+  sub <- fit$measures[fit$measures$label == "missing", ]
+  lr <- sub[sub$measure %in% c("Likelihood Ratio (Positive)", "Likelihood Ratio (Negative)"), ]
+  expect_true(all(is.na(lr$estimate)))
+  expect_equal(sub$estimate[sub$measure == "Diagnostic Yield (Overall)"], 0)
+  expect_equal(sub$estimate[sub$measure == "Worst-Case Youden's J"], -1)
+})
+
+test_that("dx_itd notes when the Youden's J interval is too narrow", {
+  # Perfect worst-case sensitivity and specificity: no width
+  fit <- dx_itd(make_itd_data(tp = 50, fn = 0, up = 0, fp = 0, tn = 80, un = 0),
+                pred_varname = "predicted", true_varname = "truth")
+  row <- itd_row(fit, "Worst-Case Youden's J")
+  expect_equal(c(row$estimate, row$conf_low, row$conf_high), c(1, 1, 1))
+  expect_match(row$notes, "too narrow")
+
+  # Only sensitivity at 100%
+  fit <- dx_itd(make_itd_data(tp = 50, fn = 0, up = 0, fp = 10, tn = 70, un = 0),
+                pred_varname = "predicted", true_varname = "truth")
+  row <- itd_row(fit, "Worst-Case Youden's J")
+  expect_true(row$conf_low < row$conf_high)
+  expect_match(row$notes, "too narrow")
+
+  # No note otherwise
+  fit <- dx_itd(make_itd_data(tp = 40, fn = 10, up = 5, fp = 15, tn = 60, un = 10),
+                pred_varname = "predicted", true_varname = "truth")
+  expect_equal(itd_row(fit, "Worst-Case Youden's J")$notes, "")
 })

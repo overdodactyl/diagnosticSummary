@@ -89,7 +89,11 @@ Proportions use binomial confidence intervals (\code{citype}). Likelihood ratios
 use a large sample interval on the log scale. If the 2x2 table of one row
 against the others has a zero cell, 0.5 is added to each of its cells.
 Youden's J uses a Wald interval that treats the two outcome classes as
-independent, truncated to -1 to 1.
+independent, truncated to -1 to 1. The interval is too narrow when the
+worst-case sensitivity or specificity is 0\% or 100\%, and has no width when
+both are, which is noted in the results. Likelihood ratios are \code{NA} for a
+result no case has, such as ungradable results when no predictions are
+missing.
 }
 \examples{
 data <- dx_heart_failure
