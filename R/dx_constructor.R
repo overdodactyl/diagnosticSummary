@@ -151,7 +151,8 @@ warn_deprecated_unused <- function(arg) {
 
 # Validate the prediction and truth columns, convert truth to numeric 0/1,
 # and convert grouping variables to factors without unused levels
-prepare_dx_data <- function(data, pred_varname, true_varname, grouping_variables) {
+prepare_dx_data <- function(data, pred_varname, true_varname, grouping_variables,
+                            allow_missing_pred = FALSE) {
   for (v in c(pred_varname, true_varname)) {
     if (!v %in% names(data)) {
       stop(paste(v, "was not found in `data`"), call. = FALSE)
@@ -169,14 +170,34 @@ prepare_dx_data <- function(data, pred_varname, true_varname, grouping_variables
     stop(paste(pred_varname, "should be numeric"), call. = FALSE)
   }
 
-  for (v in c(pred_varname, true_varname)) {
+  # Missing predictions are ungradable results in dx_itd(), but truth must
+  # always be known
+  check_missing <- if (allow_missing_pred) true_varname else c(pred_varname, true_varname)
+  for (v in check_missing) {
     n_missing <- sum(is.na(data[[v]]))
     if (n_missing > 0) {
-      stop(paste0(
+      msg <- paste0(
         v, " contains ", n_missing, " missing value(s). ",
-        "Remove or impute missing values before calling dx()."
+        "Remove or impute missing values before calling ",
+        if (allow_missing_pred) "dx_itd()." else "dx()."
+      )
+      if (v == pred_varname) {
+        msg <- paste(
+          msg, "To analyze missing predictions as ungradable results, use dx_itd()."
+        )
+      }
+      stop(msg, call. = FALSE)
+    }
+  }
+
+  if (allow_missing_pred) {
+    if (all(is.na(pred))) {
+      stop(paste0(
+        "All values of ", pred_varname, " are missing. ",
+        "At least one prediction is needed."
       ), call. = FALSE)
     }
+    pred <- pred[!is.na(pred)]
   }
 
   pred_range <- range(pred)
@@ -188,7 +209,7 @@ prepare_dx_data <- function(data, pred_varname, true_varname, grouping_variables
     ), call. = FALSE)
   }
 
-  if (length(unique(pred)) < 2) {
+  if (!allow_missing_pred && length(unique(pred)) < 2) {
     stop(paste0(
       "All values of ", pred_varname, " are identical (",
       unique(pred), "). At least two distinct values are needed."
