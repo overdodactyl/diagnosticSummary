@@ -58,8 +58,8 @@ dx(
 
 - setthreshold:
 
-  A numeric value representing the threshold used to identify AI
-  prediction
+  A number between 0 and 1 representing the threshold used to identify
+  AI prediction
 
 - poslabel:
 

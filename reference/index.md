@@ -10,6 +10,10 @@ Generate a dx object
   : Create a Confusion Matrix from Predictions and Truth
 - [`dx_compare()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_compare.md)
   : Compare Multiple Classification Models
+- [`dx_itd()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_itd.md)
+  : Intention-to-diagnose (3x2) analysis
+- [`dx_itd_table()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_itd_table.md)
+  : 3x2 table for an intention-to-diagnose analysis
 
 ## Metrics
 
@@ -146,6 +150,10 @@ Helper functions and S3 methods
 - [`as.data.frame(`*`<dx>`*`)`](https://overdodactyl.github.io/diagnosticSummary/reference/as.data.frame.dx.md)
   : Convert to a data frame
 - [`summary(`*`<dx>`*`)`](https://overdodactyl.github.io/diagnosticSummary/reference/summary.dx.md)
+  : Summary
+- [`as.data.frame(`*`<dx_itd>`*`)`](https://overdodactyl.github.io/diagnosticSummary/reference/as.data.frame.dx_itd.md)
+  : Convert to a data frame
+- [`summary(`*`<dx_itd>`*`)`](https://overdodactyl.github.io/diagnosticSummary/reference/summary.dx_itd.md)
   : Summary
 
 ## Data
