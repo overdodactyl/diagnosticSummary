@@ -128,11 +128,19 @@ test_that("Decision curve compares the model with treat all and treat none", {
 
   expect_true(all(model$x >= .1 & model$x <= .6))
 
-  thr <- dx_obj$thresholds
-  thr <- thr[match(model$x, thr$threshold), ]
+  # Net benefit at each plotted threshold, calculated from the data
+  hf <- dx_heart_failure
   weight <- model$x / (1 - model$x)
-  expect_equal(model$y, thr$tp / n - thr$fp / n * weight)
+  tp <- vapply(model$x, function(t) sum(hf$predicted >= t & hf$truth == 1), numeric(1))
+  fp <- vapply(model$x, function(t) sum(hf$predicted >= t & hf$truth == 0), numeric(1))
+  expect_equal(model$y, tp / n - fp / n * weight)
   expect_equal(treat_all$y, prev - (1 - prev) * weight)
+
+  # The curve covers the whole range and includes each prediction in it
+  expect_equal(range(model$x), c(.1, .6))
+  in_range <- unique(hf$predicted[hf$predicted >= .1 & hf$predicted <= .6])
+  expect_true(all(in_range %in% model$x))
+  expect_false(is.unsorted(model$x))
   expect_true(all(treat_none$y == 0))
 })
 
@@ -314,9 +322,16 @@ test_that("Rank-based plots and the decision curve use poslabel = 0", {
   treat_all <- b$data[[2]]
   prev0 <- mean(hf$truth == 0)
   expect_equal(treat_all$y, prev0 - (1 - prev0) * treat_all$x / (1 - treat_all$x))
+  # At a prediction the curve matches the thresholds table. Between
+  # predictions, cases below the threshold on the predictions are positive.
   thr <- d0$thresholds
-  expected <- thr$net_benefit[match(round(1 - model$x, 10), round(thr$threshold, 10))]
-  expect_equal(model$y, expected)
+  at_prediction <- match(round(1 - model$x, 10), round(thr$threshold, 10))
+  expect_true(any(is.na(at_prediction)) && any(!is.na(at_prediction)))
+  between <- vapply(model$x, function(e) {
+    positive <- hf$predicted < 1 - e
+    (sum(positive & hf$truth == 0) - e / (1 - e) * sum(positive & hf$truth == 1)) / nrow(hf)
+  }, numeric(1))
+  expect_equal(model$y, ifelse(is.na(at_prediction), between, thr$net_benefit[at_prediction]))
 })
 
 test_that("KS axis label matches the axis direction", {
