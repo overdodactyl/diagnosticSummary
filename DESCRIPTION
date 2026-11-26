@@ -36,7 +36,7 @@ Suggests:
     gridExtra,
     rmarkdown,
     knitr,
-    ggplot2,
+    ggplot2 (>= 3.4.0),
     testthat (>= 2.1.0),
     tibble
 RoxygenNote: 7.3.1
