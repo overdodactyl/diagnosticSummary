@@ -1,3 +1,7 @@
+# diagnosticSummary 0.1.0
+
+* Initial CRAN submission
+
 # diagnosticSummary 0.0.2.20
 
 **Changes that affect results**
