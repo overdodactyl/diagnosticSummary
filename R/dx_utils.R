@@ -233,14 +233,24 @@ backtick <- function(x) {
   paste0("`", x, "`")
 }
 
+# The name of a function for a message, from the first element of its call.
+# This is a name or a call such as pkg::fun when the function is called
+# directly. With do.call() it is the function itself, and with lapply() it is
+# `FUN`, so NA is returned and the message says "this function".
+function_label <- function(fn) {
+  namespaced <- is.call(fn) && length(fn) == 3 &&
+    as.character(fn[[1]]) %in% c("::", ":::")
+  if (!is.symbol(fn) && !namespaced) {
+    return(NA_character_)
+  }
+  label <- paste(deparse(fn), collapse = "")
+  if (label == "FUN") NA_character_ else label
+}
+
 # Stop if any of `pkgs` is not installed, naming the function that needs them
 check_package <- function(pkgs, calling_func = NULL) {
-  # The calling function can be a name or a call such as pkg::fun
   if (is.null(calling_func)) {
-    calling_func <- tryCatch(
-      paste(deparse(sys.call(-1)[[1]]), collapse = ""),
-      error = function(e) NA_character_
-    )
+    calling_func <- function_label(tryCatch(sys.call(-1)[[1]], error = function(e) NULL))
   }
 
   for (pkg in pkgs) {
