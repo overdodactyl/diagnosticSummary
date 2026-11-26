@@ -187,7 +187,7 @@ test_that("dx_itd summarizes subgroups", {
     alone <- dx_itd(data[data$site == g, ], pred_varname = "predicted",
                     true_varname = "truth")$measures
     cols <- c("measure", "summary", "estimate", "conf_low", "conf_high", "fraction", "notes", "n")
-    expect_equal(sub[cols], alone[cols], info = g)
+    expect_equal(plain_df(sub[cols]), plain_df(alone[cols]), info = g)
     expect_equal(sub$n[1], sum(data$site == g))
   }
 

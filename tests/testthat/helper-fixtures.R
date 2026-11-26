@@ -22,3 +22,11 @@ cm_grid <- list(
 grid_cm <- function(x) {
   make_cm(x[["tp"]], x[["fn"]], x[["fp"]], x[["tn"]])
 }
+
+# Results are tibbles when tibble is installed and data frames with row names
+# when it is not, so compare them as data frames without row names
+plain_df <- function(x) {
+  x <- as.data.frame(x)
+  rownames(x) <- NULL
+  x
+}

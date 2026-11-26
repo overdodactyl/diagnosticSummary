@@ -564,8 +564,8 @@ test_that("dx_itd() agrees with dx() on the gradable cases", {
       abs(full$measures$threshold - a$setthreshold) < 1e-8, ]
     for (name in c("Positive Predictive Value", "Negative Predictive Value")) {
       itd_row <- d$measures[d$measures$variable == "Overall" & d$measures$measure == name, ]
-      expect_equal(itd_row[c("estimate", "conf_low", "conf_high")],
-                   m[m$measure == name, c("estimate", "conf_low", "conf_high")],
+      expect_equal(plain_df(itd_row[c("estimate", "conf_low", "conf_high")]),
+                   plain_df(m[m$measure == name, c("estimate", "conf_low", "conf_high")]),
                    info = paste(info, name))
     }
   }
