@@ -17,3 +17,4 @@
 ^test_cases\.R$
 ^\.github$
 ^cran-comments\.md$
+^CRAN-SUBMISSION$
