@@ -117,3 +117,36 @@ test_that("dx_compare names unnamed models and checks its inputs", {
   dx_sub <- dx(data = dx_heart_failure[1:200, ], true_varname = "truth", pred_varname = "predicted", setthreshold = .3)
   expect_error(dx_compare(list(a = dx_glm, b = dx_sub), paired = TRUE), "paired")
 })
+
+test_that("Ratios are NA when every prediction is on one side of the threshold", {
+  all_negative <- make_cm(tp = 0, fn = 20, fp = 0, tn = 30)
+  all_positive <- make_cm(tp = 20, fn = 0, fp = 30, tn = 0)
+
+  for (cm in list(all_negative, all_positive)) {
+    for (ratio in list(dx_odds_ratio, dx_lrt_pos, dx_lrt_neg)) {
+      expect_true(is.na(ratio(cm, detail = "simple")))
+      res <- ratio(cm)
+      expect_true(is.na(res$estimate))
+      expect_equal(res$summary, "- (-, -)")
+      expect_equal(res$notes, "Requires both positive and negative predictions")
+    }
+  }
+
+  # A zero cell with predictions on both sides still uses the correction
+  res <- dx_lrt_pos(make_cm(tp = 5, fn = 0, fp = 3, tn = 7))
+  expect_equal(res$estimate, (5.5 / 6) / (3.5 / 11))
+  expect_equal(res$conf_type, "Adjusted for zero cells")
+})
+
+test_that("dx() reports NA ratios at thresholds with no positive or no negative predictions", {
+  fit <- dx(
+    data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted",
+    setthreshold = .5, threshold_range = c(0, 1)
+  )
+  expect_equal(dx(dx_heart_failure, true_varname = "truth", pred_varname = "predicted",
+                  setthreshold = 1)$cm$testpos, 0)
+
+  ratios <- fit$measures[fit$measures$measure %in% c("Odds Ratio", "LRT+", "LRT-"), ]
+  expect_true(all(is.na(ratios$estimate[ratios$threshold %in% c(0, 1)])))
+  expect_false(anyNA(ratios$estimate[ratios$threshold == .5]))
+})

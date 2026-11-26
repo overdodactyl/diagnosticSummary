@@ -846,6 +846,11 @@ ci_binomial <- function(x, n, citype = "exact", ...) {
 #' Note that a value of 1 indicates no association, greater than 1 indicates increased
 #' odds of the outcome with exposure, and less than 1 indicates decreased odds.
 #'
+#' The result is `NA` unless both outcome classes are present and there are both
+#' positive and negative predictions. If any cell of the confusion matrix is zero,
+#' 0.5 is added to every cell before the estimate and confidence interval are
+#' calculated.
+#'
 #' @examples
 #' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
 #'   threshold =
@@ -875,6 +880,11 @@ dx_odds_ratio <- function(cm, detail = "full", ...) {
 #' The negative likelihood ratio is calculated as (FN / (TP + FN)) / (TN / (FP + TN)).
 #' It is used to assess the diagnostic usefulness of a test. A LR- closer to 0 indicates
 #' a good diagnostic test that can confidently rule out the disease when the test is negative.
+#'
+#' The result is `NA` unless both outcome classes are present and there are both
+#' positive and negative predictions. If any cell of the confusion matrix is zero,
+#' 0.5 is added to every cell before the estimate and confidence interval are
+#' calculated.
 #'
 #' @examples
 #' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
@@ -906,6 +916,11 @@ dx_lrt_neg <- function(cm, detail = "full", ...) {
 #' It is used to assess the diagnostic usefulness of a test. A LR+ much greater than 1
 #' indicates a good diagnostic test that can confidently confirm the disease when the
 #' test is positive.
+#'
+#' The result is `NA` unless both outcome classes are present and there are both
+#' positive and negative predictions. If any cell of the confusion matrix is zero,
+#' 0.5 is added to every cell before the estimate and confidence interval are
+#' calculated.
 #'
 #' @examples
 #' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
@@ -943,15 +958,23 @@ dx_lrt_pos <- function(cm, detail = "full", ...) {
 metric_ratio <- function(cm, dx_ratio_func, dx_sd_func, detail = "full", ...) {
   validate_detail(detail)
 
-  # Ratios are undefined unless both outcome classes are present
-  if (cm$dispos == 0 | cm$disneg == 0) {
+  # Ratios are undefined unless both outcome classes are present. They are also
+  # not reported when every prediction is on one side of the threshold: the
+  # test then says nothing about the outcome, and the continuity correction
+  # would return the ratio of the class sizes.
+  undefined <- if (cm$dispos == 0 | cm$disneg == 0) {
+    "Requires both outcome classes"
+  } else if (cm$testpos == 0 | cm$testneg == 0) {
+    "Requires both positive and negative predictions"
+  }
+  if (!is.null(undefined)) {
     if (detail == "simple") {
       return(NA_real_)
     }
     return(measure_df(
       measure = list(...)$name,
       estimate = conf_int(NA, NA, NA),
-      notes = "Requires both outcome classes",
+      notes = undefined,
       estimate_raw = NA_real_
     ))
   }
