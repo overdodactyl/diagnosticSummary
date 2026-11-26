@@ -80,6 +80,10 @@ dx <- function(data,
                setthreshold = .5, poslabel = 1, grouping_variables = NA, prevalence = NA,
                citype = "exact", bootreps = 2000, bootseed = 20191015,
                doboot = FALSE, direction = "<", ...) {
+  # NULL or a missing value of any type means the option isn't used
+  if (not_supplied(threshold_range)) threshold_range <- NA
+  if (not_supplied(prevalence)) prevalence <- NA
+  if (not_supplied(grouping_variables)) grouping_variables <- NA
   check_dx_options(
     poslabel, direction, setthreshold,
     citype = citype, threshold_range = threshold_range, prevalence = prevalence,
@@ -159,6 +163,12 @@ dx <- function(data,
   ), class = "dx")
 }
 
+# Optional arguments default to NA. NULL, an empty vector, or a single missing
+# value of another type (such as NA_real_) are treated the same way.
+not_supplied <- function(x) {
+  length(x) == 0 || (length(x) == 1 && is.atomic(x) && is.na(x))
+}
+
 # Check options that don't depend on the data
 check_dx_options <- function(poslabel, direction, setthreshold, citype = "exact",
                              threshold_range = NA, prevalence = NA,
@@ -185,8 +195,8 @@ check_dx_options <- function(poslabel, direction, setthreshold, citype = "exact"
     ), call. = FALSE)
   }
 
-  # NA (the default) and NULL mean no extra thresholds
-  if (!is.null(threshold_range) && !identical(threshold_range, NA)) {
+  # NA (the default) means no extra thresholds
+  if (!not_supplied(threshold_range)) {
     if (!is.numeric(threshold_range) || anyNA(threshold_range) ||
       any(threshold_range < 0 | threshold_range > 1)) {
       stop("threshold_range should be a numeric vector of values between 0 and 1", call. = FALSE)
@@ -194,7 +204,7 @@ check_dx_options <- function(poslabel, direction, setthreshold, citype = "exact"
   }
 
   # A prevalence of 0 or 1 leaves nothing to estimate
-  if (!identical(prevalence, NA)) {
+  if (!not_supplied(prevalence)) {
     if (!is.numeric(prevalence) || length(prevalence) != 1 || is.na(prevalence) ||
       prevalence <= 0 || prevalence >= 1) {
       stop("prevalence should be a single number greater than 0 and less than 1", call. = FALSE)
@@ -244,7 +254,7 @@ prepare_dx_data <- function(data, pred_varname, true_varname, grouping_variables
     }
   }
 
-  if (!identical(grouping_variables, NA)) {
+  if (!not_supplied(grouping_variables)) {
     if (!is.character(grouping_variables) || anyNA(grouping_variables)) {
       stop("grouping_variables should be a character vector of column names", call. = FALSE)
     }
