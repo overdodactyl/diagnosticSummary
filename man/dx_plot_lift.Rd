@@ -7,9 +7,7 @@
 dx_plot_lift(dx_obj)
 }
 \arguments{
-\item{dx_obj}{A \code{dx} object containing diagnostic measurements, including a rank data frame
-with percentile and lift columns. The rank data frame should be the result of a diagnostic
-process that scores and ranks each instance based on the likelihood of being a true positive.}
+\item{dx_obj}{A \code{dx} object, created with \code{\link[=dx]{dx()}}.}
 }
 \value{
 A \code{ggplot} object representing the Lift chart, which can be further customized as needed.

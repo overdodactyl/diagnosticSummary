@@ -7,8 +7,7 @@
 dx_plot_predictive_value(dx_obj)
 }
 \arguments{
-\item{dx_obj}{A \code{dx} object containing the prevalence analysis data, including calculated
-PPV and NPV for various prevalence levels.}
+\item{dx_obj}{A \code{dx} object, created with \code{\link[=dx]{dx()}}.}
 }
 \value{
 A \code{ggplot} object representing the Predictive Value Plot.

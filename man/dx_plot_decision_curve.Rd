@@ -7,7 +7,7 @@
 dx_plot_decision_curve(dx_obj, plot_range = c(0.05, 0.95))
 }
 \arguments{
-\item{dx_obj}{A \code{dx} object.}
+\item{dx_obj}{A \code{dx} object, created with \code{\link[=dx]{dx()}}.}
 
 \item{plot_range}{A numeric vector of length 2 specifying the lower and upper bounds, between 0 and 1, for the range of threshold probabilities to be plotted. Defaults to c(0.05, .95).}
 }

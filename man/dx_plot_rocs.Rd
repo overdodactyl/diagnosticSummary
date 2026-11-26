@@ -12,8 +12,7 @@ dx_plot_rocs(
 )
 }
 \arguments{
-\item{dx_comp}{A \code{dx_compare} object containing the results of pairwise model
-comparisons and the list of \code{dx} objects with ROC data.}
+\item{dx_comp}{A \code{dx_compare} object, created with \code{\link[=dx_compare]{dx_compare()}}.}
 
 \item{add_text}{Logical, whether to add DeLong's test results as text annotations
 on the plot. Defaults to TRUE.}
@@ -39,10 +38,6 @@ the ROC Curve (AUC).
 This function is a visualization tool that plots ROC curves for multiple
 models to facilitate comparison. It uses DeLong's test to statistically
 compare AUC values and, if desired, annotates the plot with the results.
-The function expects a \code{dx_compare} object as input, which should contain
-the necessary ROC and test comparison data. Ensure that the ROC data and
-DeLong's test results are appropriately generated and stored in the
-\code{dx_compare} object before using this function.
 }
 \examples{
 \dontshow{if (requireNamespace("ggplot2", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}

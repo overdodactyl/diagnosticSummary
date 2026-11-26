@@ -2,7 +2,7 @@
 % Please edit documentation in R/dx_itd.R
 \name{summary.dx_itd}
 \alias{summary.dx_itd}
-\title{Summary}
+\title{Summarize an intention-to-diagnose analysis}
 \usage{
 \method{summary}{dx_itd}(
   object,
@@ -17,24 +17,28 @@
 \arguments{
 \item{object}{An object of class "dx_itd"}
 
-\item{variable}{Variable to include in returned values}
+\item{variable}{Variables to include: "Overall" for all cases, or names in
+\code{grouping_variables}. Defaults to all.}
 
-\item{label}{Labels to include in returned values}
+\item{label}{Subgroups to include: levels of the grouping variables, or
+"Overall". Defaults to all.}
 
-\item{show_var}{Include variable column in returned data?}
+\item{show_var}{Include the variable column?}
 
-\item{show_label}{Include label in returned data?}
+\item{show_label}{Include the label (subgroup) column?}
 
-\item{measure}{Measures to include}
+\item{measure}{Names of the measures to include, as in the \code{measure} column
+of \code{\link[=as.data.frame.dx_itd]{as.data.frame.dx_itd()}}. Defaults to all.}
 
-\item{...}{additional arguments to be passed to or from methods}
+\item{...}{Not used.}
 }
 \value{
 A table of the measures and their summaries, made with
 \code{\link[knitr:kable]{knitr::kable()}}. If knitr is not installed, a data frame.
 }
 \description{
-Summary
+Shows the formatted estimate and confidence interval of each measure in a
+\code{dx_itd} object.
 }
 \examples{
 data <- dx_heart_failure

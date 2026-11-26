@@ -15,7 +15,7 @@
 \arguments{
 \item{x}{An object of class "dx", "dx_itd", or "dx_compare"}
 
-\item{...}{additional arguments to be passed to or from methods}
+\item{...}{Not used.}
 }
 \value{
 \code{x}, invisibly.

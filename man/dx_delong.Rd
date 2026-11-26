@@ -56,6 +56,6 @@ print(detailed)
 \seealso{
 \code{\link[pROC:roc.test]{pROC::roc.test()}} for the underlying test implementation.
 
-\code{\link[=dx_cm]{dx_cm()}} to understand how to create a \code{dx} object.
+\code{\link[=dx]{dx()}} to create a \code{dx} object.
 }
 \concept{tests}

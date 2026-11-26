@@ -4,11 +4,12 @@
 #' @param detail Character specifying the level of detail in the output:
 #'    "simple" for raw estimate, "full" for detailed estimate
 #'     including 95% confidence intervals.
-#' @param ... Additional arguments to pass to metric_binomial function, such as
-#'    `citype` for type of confidence interval method.
+#' @param ... Additional arguments, such as `citype`, the confidence interval
+#'    method for proportions (see [dx()]).
 #' @param boot Logical specifying if confidence intervals should be generated
-#'    via a percentile bootstrap of the confusion matrix cell counts. Call
-#'    [set.seed()] first for reproducible intervals.
+#'    via a percentile bootstrap of the confusion matrix cell counts. With the
+#'    default, `FALSE`, no confidence interval is reported. Call [set.seed()]
+#'    first for reproducible intervals.
 #' @param bootreps The number of bootstrap replications for calculating confidence intervals.
 #' @param predprob Numeric vector of predicted probabilities associated with the positive class.
 #' @param truth Numeric vector of true binary outcomes, typically 0 or 1, with the same length as `predprob`.
@@ -61,7 +62,7 @@ dx_accuracy <- function(cm, detail = "full", ...) {
 #' Calculate Positive Predictive Value (PPV, Precision)
 #'
 #' Calculates the proportion of true positives out of the total predicted positives
-#' (true positives + false positives).  PPV is also known as precision.Note that
+#' (true positives + false positives).  PPV is also known as precision. Note that
 #' PPV can be influenced by the prevalence of the condition and should be used
 #' alongside other metrics.
 #'
@@ -185,7 +186,13 @@ metric_npv_ppv_prevalence <- function(est, logit, varlogit, ...) {
 #' Adjusting NPV for prevalence allows better estimation of the classifier’s performance
 #' in different population settings.
 #'
-#' Confidence intervales are calucated using a simple logit (Mercaldo et al, 2007)
+#' Confidence intervals are calculated on the logit scale (Mercaldo et al.,
+#' 2007).
+#'
+#' @references
+#' Mercaldo ND, Lau KF, Zhou XH. Confidence intervals for predictive values
+#' with an emphasis to case-control studies. Statistics in Medicine.
+#' 2007;26(10):2170-2183.
 #'
 #' @examples
 #' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
@@ -230,7 +237,13 @@ dx_npv_prevalence <- function(cm, prevalence, detail = "full", ...) {
 #' Adjusting PPV for prevalence allows a more accurate assessment of the classifier’s performance
 #' in different population settings.
 #'
-#' Confidence intervales are calucated using a simple logit (Mercaldo et al, 2007)
+#' Confidence intervals are calculated on the logit scale (Mercaldo et al.,
+#' 2007).
+#'
+#' @references
+#' Mercaldo ND, Lau KF, Zhou XH. Confidence intervals for predictive values
+#' with an emphasis to case-control studies. Statistics in Medicine.
+#' 2007;26(10):2170-2183.
 #'
 #' @examples
 #' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
@@ -404,7 +417,7 @@ dx_fdr <- function(cm, detail = "full", ...) {
 #' @seealso [dx_cm()] to understand how to create and interact with a
 #'          'dx_cm' object.
 #' @name sensitivity
-#' @aliases dx_recall, dx_tpr
+#' @aliases dx_recall dx_tpr
 #' @export
 #' @concept metrics
 dx_sensitivity <- function(cm, detail = "full", ...) {
@@ -605,8 +618,8 @@ get_kappa_interpretation <- function(kappa) {
 #' @inherit metrics-params
 #'
 #' @return If `detail` is "simple", returns a single numeric value of Cohen's Kappa.
-#' If `detail` is "full", returns a list or data frame that includes Cohen's Kappa,
-#' its standard error, 95% confidence intervals, and interpretative notes.
+#' If `detail` is "full", returns a data frame that includes Cohen's Kappa,
+#' its 95% confidence interval, and a note with the interpretation.
 #'
 #' @details
 #' Cohen's Kappa is used to measure the agreement between two raters who each classify
@@ -620,7 +633,7 @@ get_kappa_interpretation <- function(kappa) {
 #' Interpretation of Cohen's Kappa varies, but generally, a higher value indicates
 #' better agreement. Typical benchmarks for interpreting Cohen's Kappa are:
 #' - <0: Less than chance agreement
-#' - 0.-0.2: Slight agreement
+#' - 0-0.2: Slight agreement
 #' - 0.2-0.4: Fair agreement
 #' - 0.4-0.6: Moderate agreement
 #' - 0.6-0.8: Substantial agreement
@@ -629,12 +642,15 @@ get_kappa_interpretation <- function(kappa) {
 #' The 95% confidence interval uses the large sample variance of Fleiss, Cohen,
 #' and Everitt (1969) with a normal approximation, and is limited to -1 to 1.
 #'
+#' Kappa is undefined when every case is in one cell of the confusion matrix,
+#' since chance agreement is then 100%. It is reported as 0 with no confidence
+#' interval, and the note says it is undefined.
+#'
 #' @references
 #' Fleiss JL, Cohen J, Everitt BS. Large sample standard errors of kappa and
 #' weighted kappa. Psychological Bulletin. 1969;72(5):323-327.
 #'
 #' @examples
-#' # Assuming you have a confusion matrix cm with appropriate structure
 #' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
 #'   threshold =
 #'     0.5, poslabel = 1
@@ -719,14 +735,14 @@ dx_cohens_kappa <- function(cm, detail = "full") {
 #' Calculates the Matthews Correlation Coefficient (MCC), a measure of the quality
 #' of binary classifications. It returns a value between -1 and +1 where +1 indicates
 #' perfect prediction, 0 no better than random prediction, and -1 indicates total
-#' disagreement between prediction and observation. The function can also return a
-#' confidence interval for the MCC value using bootstrapping if detail is set to "full".
+#' disagreement between prediction and observation. A bootstrapped confidence
+#' interval is included when `boot = TRUE`.
 #'
 #' @inherit metrics-params
 #'
 #' @return If `detail` is "simple", returns a single numeric value of MCC.
-#' If `detail` is "full", returns a data frame that includes MCC, its
-#' bootstrapped confidence interval, and other key details
+#' If `detail` is "full", returns a data frame that includes MCC and, when
+#' `boot = TRUE`, its bootstrapped confidence interval.
 #'
 #' @details
 #' The Matthews Correlation Coefficient is used in machine learning as a measure of the
@@ -738,8 +754,8 @@ dx_cohens_kappa <- function(cm, detail = "full") {
 #' where TP, TN, FP, and FN represent the counts of true positives, true negatives,
 #' false positives, and false negatives, respectively.
 #'
-#' For "full" details, bootstrap methods are used to estimate the confidence interval
-#' for the MCC value, providing a more robust understanding of its stability.
+#' MCC is reported as 0 when a row or column of the confusion matrix is empty,
+#' where the formula divides by zero.
 #'
 #' @examples
 #' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
@@ -1340,9 +1356,16 @@ calculate_fbeta <- function(cm, beta = 1) {
 #' and recall via the beta parameter.
 #'
 #' @inherit metrics-params
-#' @param beta The beta value determining the weight of precision in the F-score.
+#' @param beta A single number greater than 0. Recall is weighted `beta` times
+#'        as much as precision: values above 1 favor recall and values below 1
+#'        favor precision.
 #' @return Depending on the `detail` parameter, returns a single numeric value of
-#'         F-beta or a data frame with the F-beta and its confidence intervals.
+#'         F-beta or a data frame with the F-beta and, when `boot = TRUE`, its
+#'         confidence interval.
+#' @details
+#' \deqn{F_\beta = (1 + \beta^2) \frac{Precision \times Recall}{\beta^2 \times Precision + Recall}}{F-beta = (1 + beta^2) * Precision * Recall / (beta^2 * Precision + Recall)}
+#'
+#' The score is 0 when precision and recall are both 0 or undefined.
 #' @seealso [dx_f1()], [dx_f2()] for specific F-beta scores.
 #' @export
 #' @examples
@@ -1371,7 +1394,8 @@ dx_fbeta <- function(cm, beta = 1, detail = "full", boot = FALSE, bootreps = 200
 #'
 #' @inheritParams dx_fbeta
 #' @return Depending on the `detail` parameter, returns a single numeric value of
-#'         F1 or a data frame with the F1 and its confidence intervals.
+#'         F1 or a data frame with the F1 and, when `boot = TRUE`, its
+#'         confidence interval.
 #' @seealso [dx_fbeta()], [dx_f2()] for other F-beta scores.
 #' @export
 #' @concept metrics
@@ -1397,7 +1421,8 @@ dx_f1 <- function(cm, detail = "full", boot = FALSE, bootreps = 2000) {
 #'
 #' @inheritParams dx_fbeta
 #' @return Depending on the `detail` parameter, returns a single numeric value of
-#'         F2 or a data frame with the F2 and its confidence intervals.
+#'         F2 or a data frame with the F2 and, when `boot = TRUE`, its
+#'         confidence interval.
 #' @seealso [dx_fbeta()], [dx_f1()] for other F-beta scores.
 #' @export
 #' @concept metrics
@@ -1601,7 +1626,7 @@ calculate_fowlkes_mallows <- function(cm) {
 #' @param threshold A single number between 0 and 1. Predictions at or above it
 #'   are classified as outcome 1.
 #' @param poslabel The outcome class that is the event: 1 (default) or 0.
-#' @return A dataframe object of class "dx_cm" containing the components of the confusion matrix and additional metrics:
+#' @return A data frame of class "dx_cm" with one row, containing the components of the confusion matrix and additional metrics:
 #' \itemize{
 #'   \item `tp`: True Positives
 #'   \item `fn`: False Negatives
@@ -1617,6 +1642,8 @@ calculate_fowlkes_mallows <- function(cm) {
 #' @details The function takes predicted probabilities and a threshold to create binary
 #' predictions which are then compared to the true labels to create a confusion matrix.
 #' It is useful for evaluating the performance of a binary classification model.
+#' With `poslabel = 0`, outcome 0 is the event, so a prediction below the
+#' threshold is a positive test.
 #' @examples
 #' # Example usage:
 #' true_labels <- c(1, 0, 1, 1, 0)
@@ -1702,9 +1729,9 @@ get_roc <- function(true_varname, pred_varname, data, direction) {
 #' \deqn{BS = \frac{1}{N} \sum_{i=1}^{N} (f_i - o_i)^2}{BS = (1/N) * sum((f_i - o_i)^2)}
 #'
 #' where:
-#' - \(N\) is the number of predictions,
-#' - \(f_i\) is the predicted probability of the occurrence of the positive class for the ith prediction,
-#' - \(o_i\) is the actual outcome for the ith prediction, 0 or 1.
+#' - \eqn{N} is the number of predictions,
+#' - \eqn{f_i} is the predicted probability that the outcome is 1 for the ith prediction,
+#' - \eqn{o_i} is the actual outcome for the ith prediction, 0 or 1.
 #'
 #' The Brier score ranges from 0 to 1, where 0 represents a perfect model and 1 represents the worst model.
 #' It is equivalent to the mean squared error used in regression and can be decomposed into calibration loss,

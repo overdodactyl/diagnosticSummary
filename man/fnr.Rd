@@ -17,8 +17,8 @@ dx_miss_rate(cm, detail = "full", ...)
 "simple" for raw estimate, "full" for detailed estimate
 including 95\% confidence intervals.}
 
-\item{...}{Additional arguments to pass to metric_binomial function, such as
-\code{citype} for type of confidence interval method.}
+\item{...}{Additional arguments, such as \code{citype}, the confidence interval
+method for proportions (see \code{\link[=dx]{dx()}}).}
 }
 \value{
 Depending on the \code{detail} parameter, returns a numeric value

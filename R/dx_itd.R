@@ -7,7 +7,7 @@
 #' with positive, negative, and ungradable test results in the rows and the
 #' reference standard in the columns (Schuetz et al., 2012).
 #'
-#' @param data A tbl.
+#' @param data A data frame.
 #' @param pred_varname Column name containing the predictions (string). Values
 #'     should be predicted probabilities that the outcome is 1, between 0 and 1.
 #'     Missing values (`NA`) are ungradable results.
@@ -20,10 +20,11 @@
 #' @param poslabel The outcome class that is the event: 1 (default) or 0.
 #'     Predictions are still probabilities that the outcome is 1, so with
 #'     `poslabel = 0` a prediction below the threshold is a positive test.
-#' @param grouping_variables Character vector of variable names to
-#'     be summarized by.  Variables are converted to factors if not already one.
+#' @param grouping_variables Optional. Character vector of variable names to
+#'     be summarized by. Each variable is summarized separately, in addition to
+#'     all cases. Variables are converted to factors if not already one.
 #'     A column can't be named "Overall", which is used for the results of all
-#'     cases.
+#'     cases. `NA` (default) or `NULL` for no subgroups.
 #' @param citype Confidence interval type for proportions: one of the methods
 #'     of [binom::binom.confint()], such as "exact" (default), "wilson", or "ac".
 #'     The estimate is always the observed proportion.
@@ -429,14 +430,21 @@ print.dx_itd <- function(x, ...) {
   invisible(x)
 }
 
-#' Summary
+#' Summarize an intention-to-diagnose analysis
+#'
+#' Shows the formatted estimate and confidence interval of each measure in a
+#' `dx_itd` object.
+#'
 #' @param object An object of class "dx_itd"
-#' @param variable Variable to include in returned values
-#' @param label Labels to include in returned values
-#' @param show_var Include variable column in returned data?
-#' @param show_label Include label in returned data?
-#' @param measure Measures to include
-#' @param ... additional arguments to be passed to or from methods
+#' @param variable Variables to include: "Overall" for all cases, or names in
+#'     `grouping_variables`. Defaults to all.
+#' @param label Subgroups to include: levels of the grouping variables, or
+#'     "Overall". Defaults to all.
+#' @param show_var Include the variable column?
+#' @param show_label Include the label (subgroup) column?
+#' @param measure Names of the measures to include, as in the `measure` column
+#'     of [as.data.frame.dx_itd()]. Defaults to all.
+#' @param ... Not used.
 #' @return A table of the measures and their summaries, made with
 #'     [knitr::kable()]. If knitr is not installed, a data frame.
 #' @examples
@@ -463,16 +471,20 @@ summary.dx_itd <- function(object, variable = NA, label = NA, show_var = TRUE,
   }
 }
 
-#' Convert to a data frame
+#' Convert an intention-to-diagnose analysis to a data frame
+#'
+#' Returns the measures in a `dx_itd` object, with unformatted estimates and
+#' confidence limits.
+#'
 #' @param x An object of class "dx_itd"
-#' @param row.names NULL or a character vector giving the row names for the
-#'     data frame. Missing values are not allowed.
-#' @param optional logical. If TRUE, setting row names and converting column
-#'     names (to syntactic names: see make.names) is optional.
-#' @param variable Variable to include in returned values
-#' @param label Labels to include in returned values
-#' @param measure Measures to include
-#' @param ... additional arguments to be passed to or from methods
+#' @param row.names,optional Not used. Included for compatibility with
+#'     [as.data.frame()].
+#' @param variable Variables to include: "Overall" for all cases, or names in
+#'     `grouping_variables`. Defaults to all.
+#' @param label Subgroups to include: levels of the grouping variables, or
+#'     "Overall". Defaults to all.
+#' @param measure Names of the measures to include. Defaults to all.
+#' @param ... Not used.
 #' @return A data frame with one row per measure, variable, and label, with the
 #'     estimate, confidence interval, and formatted summary.
 #' @examples

@@ -15,8 +15,8 @@ including 95\% confidence intervals.}
 }
 \value{
 If \code{detail} is "simple", returns a single numeric value of Cohen's Kappa.
-If \code{detail} is "full", returns a list or data frame that includes Cohen's Kappa,
-its standard error, 95\% confidence intervals, and interpretative notes.
+If \code{detail} is "full", returns a data frame that includes Cohen's Kappa,
+its 95\% confidence interval, and a note with the interpretation.
 }
 \description{
 Calculates Cohen's Kappa, a statistical measure of inter-rater reliability
@@ -37,7 +37,7 @@ Interpretation of Cohen's Kappa varies, but generally, a higher value indicates
 better agreement. Typical benchmarks for interpreting Cohen's Kappa are:
 \itemize{
 \item <0: Less than chance agreement
-\item 0.-0.2: Slight agreement
+\item 0-0.2: Slight agreement
 \item 0.2-0.4: Fair agreement
 \item 0.4-0.6: Moderate agreement
 \item 0.6-0.8: Substantial agreement
@@ -46,9 +46,12 @@ better agreement. Typical benchmarks for interpreting Cohen's Kappa are:
 
 The 95\% confidence interval uses the large sample variance of Fleiss, Cohen,
 and Everitt (1969) with a normal approximation, and is limited to -1 to 1.
+
+Kappa is undefined when every case is in one cell of the confusion matrix,
+since chance agreement is then 100\%. It is reported as 0 with no confidence
+interval, and the note says it is undefined.
 }
 \examples{
-# Assuming you have a confusion matrix cm with appropriate structure
 cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
   threshold =
     0.5, poslabel = 1

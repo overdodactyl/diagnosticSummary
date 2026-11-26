@@ -7,7 +7,7 @@
 dx_plot_cm(dx_obj, palette = c("#e5eef7", "#0057B8"), levels = c("-", "+"))
 }
 \arguments{
-\item{dx_obj}{An object of class "dx" containing the diagnostic measurements.}
+\item{dx_obj}{A \code{dx} object, created with \code{\link[=dx]{dx()}}.}
 
 \item{palette}{A character vector of length 2 specifying the colors for the
 low and high ends of the fill gradient used in the plot. Defaults to

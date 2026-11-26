@@ -34,9 +34,9 @@ The formula for the Brier score in a binary classification is:
 
 where:
 \itemize{
-\item \(N\) is the number of predictions,
-\item \(f_i\) is the predicted probability of the occurrence of the positive class for the ith prediction,
-\item \(o_i\) is the actual outcome for the ith prediction, 0 or 1.
+\item \eqn{N} is the number of predictions,
+\item \eqn{f_i} is the predicted probability that the outcome is 1 for the ith prediction,
+\item \eqn{o_i} is the actual outcome for the ith prediction, 0 or 1.
 }
 
 The Brier score ranges from 0 to 1, where 0 represents a perfect model and 1 represents the worst model.

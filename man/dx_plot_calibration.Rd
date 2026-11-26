@@ -7,9 +7,9 @@
 dx_plot_calibration(dx_obj, bins = 10)
 }
 \arguments{
-\item{dx_obj}{A list or object containing the model's predicted probabilities (\code{predicted_probs}) and the actual binary outcomes (\code{true_labels}).}
+\item{dx_obj}{A \code{dx} object, created with \code{\link[=dx]{dx()}}.}
 
-\item{bins}{An integer specifying the number of bins to divide the predicted probabilities into. Default is 10 (deciles).}
+\item{bins}{A whole number of at least 1: the number of bins to divide the predicted probabilities into. Default is 10 (deciles).}
 }
 \value{
 A \code{ggplot} object representing the calibration curve, which can be further customized as needed.

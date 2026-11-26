@@ -4,9 +4,15 @@
 \name{diagnosticSummary-package}
 \alias{diagnosticSummary}
 \alias{diagnosticSummary-package}
-\title{\code{diagnosticSummary} package}
+\title{diagnosticSummary: Diagnostic Accuracy Summaries for Binary Classifiers}
 \description{
-Diagnostic Summaries
+Summarizes how well predicted probabilities agree with a binary reference
+standard. \code{\link[=dx]{dx()}} calculates the measures, with confidence intervals,
+overall, across thresholds, and by subgroup. \code{\link[=dx_itd]{dx_itd()}} does the same when
+some predictions are missing, \code{\link[=dx_compare]{dx_compare()}} compares models, and the
+\verb{dx_plot_*()} functions draw the results. Each measure is also available
+as its own function, such as \code{\link[=dx_sensitivity]{dx_sensitivity()}}, from a confusion matrix
+made with \code{\link[=dx_cm]{dx_cm()}}.
 }
 \seealso{
 Useful links:

@@ -3,9 +3,7 @@
 #' Constructs a Gain chart from a `dx` object. Gain charts are an evaluative tool for binary
 #' classification models, displaying the effectiveness of the model in identifying positive instances.
 #'
-#' @param dx_obj A `dx` object containing diagnostic measurements, including a rank data frame
-#' with percentile and gain columns. This object is typically the output of a diagnostic
-#' function that computes various metrics for evaluating model performance.
+#' @param dx_obj A `dx` object, created with [dx()].
 #' @return A `ggplot` object representing the Gain chart, allowing for further customization if desired.
 #' @export
 #' @details
@@ -49,9 +47,7 @@ dx_plot_gain <- function(dx_obj) {
 #' selection. The Lift chart plots the ratio of the results obtained with the model to those
 #' obtained by a random model, across different percentiles of the population.
 #'
-#' @param dx_obj A `dx` object containing diagnostic measurements, including a rank data frame
-#' with percentile and lift columns. The rank data frame should be the result of a diagnostic
-#' process that scores and ranks each instance based on the likelihood of being a true positive.
+#' @param dx_obj A `dx` object, created with [dx()].
 #' @return A `ggplot` object representing the Lift chart, which can be further customized as needed.
 #' @export
 #' @details
@@ -94,9 +90,7 @@ dx_plot_lift <- function(dx_obj) {
 #' the difference between the cumulative distribution functions of the true positive rate (TPR)
 #' and false positive rate (FPR) across different thresholds.
 #'
-#' @param dx_obj A `dx` object containing diagnostic measurements, including a rank data frame
-#' with columns for cumulative true positive rate (TPR) and false positive rate (FPR), as well
-#' as the predicted probabilities associated with each instance.
+#' @param dx_obj A `dx` object, created with [dx()].
 #' @return A `ggplot` object representing the KS plot, which can be further customized as needed.
 #' @export
 #' @details
@@ -155,8 +149,7 @@ dx_plot_ks <- function(dx_obj) {
 #' classes are imbalanced. It shows the trade-off between precision and recall for different
 #' thresholds.
 #'
-#' @param dx_obj A `dx` object containing diagnostic measurements, including a data frame
-#' with sensitivity (recall) and precision values at various thresholds.
+#' @param dx_obj A `dx` object, created with [dx()].
 #' @return A `ggplot` object representing the PR curve, which can be further customized as needed.
 #' @export
 #' @details
@@ -199,8 +192,7 @@ dx_plot_pr <- function(dx_obj) {
 #' across a range of disease prevalences. This plot helps in understanding how the PPV and NPV
 #' of a diagnostic test vary with the prevalence of the condition.
 #'
-#' @param dx_obj A `dx` object containing the prevalence analysis data, including calculated
-#' PPV and NPV for various prevalence levels.
+#' @param dx_obj A `dx` object, created with [dx()].
 #' @return A `ggplot` object representing the Predictive Value Plot.
 #' @export
 #' @details
@@ -263,8 +255,8 @@ dx_plot_predictive_value <- function(dx_obj) {
 #' The function plots the mean predicted probability against the observed proportion of positive outcomes
 #' for different bins of predicted probabilities.
 #'
-#' @param dx_obj A list or object containing the model's predicted probabilities (`predicted_probs`) and the actual binary outcomes (`true_labels`).
-#' @param bins An integer specifying the number of bins to divide the predicted probabilities into. Default is 10 (deciles).
+#' @param dx_obj A `dx` object, created with [dx()].
+#' @param bins A whole number of at least 1: the number of bins to divide the predicted probabilities into. Default is 10 (deciles).
 #'
 #' @return A `ggplot` object representing the calibration curve, which can be further customized as needed.
 #'
@@ -320,7 +312,7 @@ dx_plot_calibration <- function(dx_obj, bins = 10) {
 #' The decision curve shows the net benefit of using the model at different
 #' threshold probabilities compared to the strategy of treating all or none.
 #'
-#' @param dx_obj A `dx` object.
+#' @param dx_obj A `dx` object, created with [dx()].
 #' @param plot_range A numeric vector of length 2 specifying the lower and upper bounds, between 0 and 1, for the range of threshold probabilities to be plotted. Defaults to c(0.05, .95).
 #'
 #' @return A `ggplot` object representing the decision curve, which can be further customized as needed.
@@ -424,8 +416,7 @@ dx_plot_decision_curve <- function(dx_obj, plot_range = c(0.05, .95)) {
 #' probabilities for a binary classification model. The curve shows how the trade-off
 #' between sensitivity and specificity varies with the threshold.
 #'
-#' @param dx_obj A `dx` object containing a 'thresholds' data frame with columns for
-#' 'threshold' and 'informedness'.
+#' @param dx_obj A `dx` object, created with [dx()].
 #'
 #' @return A `ggplot` object representing the Youden's J Index curve, which can be
 #' further customized as needed.
@@ -435,7 +426,7 @@ dx_plot_decision_curve <- function(dx_obj, plot_range = c(0.05, .95)) {
 #' @details
 #' Youden's J Index is a summary measure of the diagnostic effectiveness of a biomarker
 #' or test, defined as the maximum vertical distance between the ROC curve and the
-#' diagonal line. It is calculated as \(J = Sensitivity + Specificity - 1\), where a
+#' diagonal line. It is calculated as \eqn{J = Sensitivity + Specificity - 1}, where a
 #' higher Youden's J Index indicates a better test performance with a better trade-off
 #' between sensitivity and specificity. The index varies between -1 and 1, where 0
 #' indicates no better performance than random guessing and 1 indicates perfect performance.
@@ -478,8 +469,7 @@ dx_plot_youden_j <- function(dx_obj) {
 #' performance of a binary classification model by comparing its cumulative accuracy
 #' against that of perfect and random models.
 #'
-#' @param dx_obj A `dx` object containing rank-based statistics, including cumulative
-#' true positives and percentiles. It's expected to have a 'rank' element with the necessary data.
+#' @param dx_obj A `dx` object, created with [dx()].
 #'
 #' @return A `ggplot` object representing the CAP Curve with actual, perfect, and random
 #' model lines, allowing for further customization if desired.
@@ -549,8 +539,7 @@ dx_plot_cap <- function(dx_obj) {
 #' thresholds based on specified costs for false positives, false negatives, true positives,
 #' and true negatives.
 #'
-#' @param dx_obj A `dx` object containing threshold-based statistics including false
-#' positives (fp) and false negatives (fn) for each threshold.
+#' @param dx_obj A `dx` object, created with [dx()].
 #' @param cfp Cost of a false positive.
 #' @param cfn Cost of a false negative.
 #' @param ctp Benefit (negative cost) of a true positive. Default is 0.
@@ -603,7 +592,7 @@ dx_plot_cost <- function(dx_obj, cfp, cfn, ctp = 0, ctn = 0) {
 #' metrics such as Sensitivity, Specificity, PPV, and NPV, along with their
 #' confidence intervals where applicable.
 #'
-#' @param dx_obj An object of class "dx" containing the diagnostic measurements.
+#' @param dx_obj A `dx` object, created with [dx()].
 #' @param levels A character vector of length 2 specifying the labels for negative
 #' and positive classes, respectively. Defaults to c("-", "+").
 #' @param palette A character vector of length 2 specifying the colors for the
@@ -677,7 +666,7 @@ dx_plot_cm <- function(dx_obj, palette = c("#e5eef7", "#0057B8"), levels = c("-"
 #' represented by the given dx object. The ROC curve is a graphical representation of the trade-off between
 #' the true positive rate (sensitivity) and the false positive rate (1 - specificity) at various threshold settings.
 #'
-#' @param dx_obj An object of class `dx` containing the necessary data and statistics for generating the ROC curve.
+#' @param dx_obj A `dx` object, created with [dx()].
 #' @param curve_color Color of the ROC curve. Default is "#0057B8".
 #' @param fill_color Color filled under the ROC curve. Use "transparent" for no fill. Default is "#cfcdcb".
 #' @param text_color Color of the text included on the ROC curve. Default is "black".
@@ -701,7 +690,7 @@ dx_plot_cm <- function(dx_obj, palette = c("#e5eef7", "#0057B8"), levels = c("-"
 #' With `poslabel = 0`, sensitivity and specificity are for outcome 0 as the event, so the curve
 #' is drawn for that event and the reference circle marks the threshold on it.
 #'
-#' The `dx_roc` function allows for extensive customization of the ROC curve, including color schemes, reference lines, text annotations,
+#' `dx_plot_roc()` allows for extensive customization of the ROC curve, including color schemes, reference lines, text annotations,
 #' and more, to accommodate a variety of visualization needs and preferences.
 #'
 #' The area under the ROC curve (AUC) provides a single scalar value summarizing the performance of the test. The AUC can be interpreted as
@@ -882,9 +871,9 @@ dx_roc_ggtheme <- function() {
 #' Generates a plot showing the distribution of predicted probabilities.
 #' Offers options to show as a histogram or density plot.
 #'
-#' @param dx_obj A `dx` object
+#' @param dx_obj A `dx` object, created with [dx()].
 #' @param plot_type Character string specifying the type of plot: "histogram" or "density".
-#' @param bins Optional; number of bins for the histogram (relevant if plot_type = "histogram").
+#' @param bins Optional; number of bins for the histogram (relevant if plot_type = "histogram"). If `NULL` (default), ggplot2 chooses.
 #' @param fill_color Color to fill the bars or density plot.
 #' @return A ggplot object representing the distribution of predicted probabilities.
 #' @export
@@ -931,8 +920,7 @@ dx_plot_probabilities <- function(dx_obj, plot_type = "histogram", bins = NULL, 
 #' threshold values for a binary classification model. This visualization can help in
 #' selecting an optimal threshold based on the trade-offs between different measures.
 #'
-#' @param dx_obj A `dx` object containing threshold-based statistics, including values
-#'               for various diagnostic measures at different thresholds.
+#' @param dx_obj A `dx` object, created with [dx()].
 #'
 #' @return A `ggplot` object representing the diagnostic measures across thresholds
 #'         with the ability to further customize if desired.
@@ -1000,8 +988,7 @@ dx_plot_thresholds <- function(dx_obj) {
 #' test results to indicate statistical differences between the models' Area Under
 #' the ROC Curve (AUC).
 #'
-#' @param dx_comp A `dx_compare` object containing the results of pairwise model
-#'                comparisons and the list of `dx` objects with ROC data.
+#' @param dx_comp A `dx_compare` object, created with [dx_compare()].
 #' @param add_text Logical, whether to add DeLong's test results as text annotations
 #'                on the plot. Defaults to TRUE.
 #' @param axis_color Color of the axes lines, specified as a color name or hex code.
@@ -1016,10 +1003,6 @@ dx_plot_thresholds <- function(dx_obj) {
 #' @details This function is a visualization tool that plots ROC curves for multiple
 #'          models to facilitate comparison. It uses DeLong's test to statistically
 #'          compare AUC values and, if desired, annotates the plot with the results.
-#'          The function expects a `dx_compare` object as input, which should contain
-#'          the necessary ROC and test comparison data. Ensure that the ROC data and
-#'          DeLong's test results are appropriately generated and stored in the
-#'          `dx_compare` object before using this function.
 #'
 #' @examplesIf requireNamespace("ggplot2", quietly = TRUE)
 #' dx_glm <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted")

@@ -21,7 +21,7 @@ dx_plot_roc(
 )
 }
 \arguments{
-\item{dx_obj}{An object of class \code{dx} containing the necessary data and statistics for generating the ROC curve.}
+\item{dx_obj}{A \code{dx} object, created with \code{\link[=dx]{dx()}}.}
 
 \item{curve_color}{Color of the ROC curve. Default is "#0057B8".}
 
@@ -63,7 +63,7 @@ Therefore the closer the ROC curve is to the upper left corner, the higher the o
 With \code{poslabel = 0}, sensitivity and specificity are for outcome 0 as the event, so the curve
 is drawn for that event and the reference circle marks the threshold on it.
 
-The \code{dx_roc} function allows for extensive customization of the ROC curve, including color schemes, reference lines, text annotations,
+\code{dx_plot_roc()} allows for extensive customization of the ROC curve, including color schemes, reference lines, text annotations,
 and more, to accommodate a variety of visualization needs and preferences.
 
 The area under the ROC curve (AUC) provides a single scalar value summarizing the performance of the test. The AUC can be interpreted as

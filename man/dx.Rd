@@ -24,12 +24,13 @@ dx(
 )
 }
 \arguments{
-\item{data}{A tbl.}
+\item{data}{A data frame.}
 
 \item{classlabels}{Deprecated; has no effect.}
 
 \item{threshold_range}{Optional. A numeric vector of thresholds between 0
-and 1 to loop over.}
+and 1 to calculate the measures at, in addition to \code{setthreshold}.
+\code{NA} (default) or \code{NULL} for none.}
 
 \item{outcome_label}{Deprecated; has no effect.}
 
@@ -48,13 +49,15 @@ to classify the predictions}
 Predictions are still probabilities that the outcome is 1, so with
 \code{poslabel = 0} a prediction below the threshold is a positive test.}
 
-\item{grouping_variables}{Character vector of variable names to
-be summarized by.  Variables are converted to factors if not already one.
+\item{grouping_variables}{Optional. Character vector of variable names to
+be summarized by. Each variable is summarized separately, in addition to
+all cases. Variables are converted to factors if not already one.
 A column can't be named "Overall", which is used for the results of all
-cases.}
+cases. \code{NA} (default) or \code{NULL} for no subgroups.}
 
-\item{prevalence}{A single number greater than 0 and less than 1,
-representing a target prevalence for additional NPV and PPV calculations.}
+\item{prevalence}{Optional. A single number greater than 0 and less than 1,
+representing a target prevalence for additional NPV and PPV calculations.
+\code{NA} (default) or \code{NULL} for none.}
 
 \item{citype}{Confidence interval type for proportions: one of the methods
 of \code{\link[binom:binom.confint]{binom::binom.confint()}}, such as "exact" (default), "wilson", or "ac".
@@ -87,7 +90,8 @@ the measures at each threshold and subgroup (\code{measures}), measures across
 all thresholds (\code{thresholds}), a prevalence analysis (\code{prevalence}), the
 ranked predictions used by the gain, lift, KS, and CAP plots (\code{rank}), the
 confusion matrix at \code{setthreshold} (\code{cm}), and the \code{\link[pROC:roc]{pROC::roc()}} object
-(\code{roc}). Use \code{\link[=summary.dx]{summary.dx()}} or \code{\link[=as.data.frame.dx]{as.data.frame.dx()}} to view the measures.
+(\code{roc}). Printing the object shows a short overview. Use \code{\link[=summary.dx]{summary.dx()}}
+or \code{\link[=as.data.frame.dx]{as.data.frame.dx()}} to view the measures.
 }
 \description{
 Calculates diagnostic accuracy measures, with confidence intervals, for
@@ -115,4 +119,8 @@ dx_boot <- dx(
   bootreps = 500
 )
 summary(dx_boot, measure = c("F1 Score", "Matthews Correlation Coefficient"))
+}
+\seealso{
+\code{\link[=dx_itd]{dx_itd()}} when some predictions are missing, \code{\link[=dx_compare]{dx_compare()}} to
+compare models, and the \verb{dx_plot_*()} functions, such as \code{\link[=dx_plot_roc]{dx_plot_roc()}}.
 }

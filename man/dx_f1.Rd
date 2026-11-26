@@ -14,14 +14,16 @@ dx_f1(cm, detail = "full", boot = FALSE, bootreps = 2000)
 including 95\% confidence intervals.}
 
 \item{boot}{Logical specifying if confidence intervals should be generated
-via a percentile bootstrap of the confusion matrix cell counts. Call
-\code{\link[=set.seed]{set.seed()}} first for reproducible intervals.}
+via a percentile bootstrap of the confusion matrix cell counts. With the
+default, \code{FALSE}, no confidence interval is reported. Call \code{\link[=set.seed]{set.seed()}}
+first for reproducible intervals.}
 
 \item{bootreps}{The number of bootstrap replications for calculating confidence intervals.}
 }
 \value{
 Depending on the \code{detail} parameter, returns a single numeric value of
-F1 or a data frame with the F1 and its confidence intervals.
+F1 or a data frame with the F1 and, when \code{boot = TRUE}, its
+confidence interval.
 }
 \description{
 Calculates the F1 score from a confusion matrix object with an option to
