@@ -62,7 +62,8 @@ dx_itd(
 
   Confidence interval type for proportions: one of the methods of
   [`binom::binom.confint()`](https://rdrr.io/pkg/binom/man/binom.confint.html),
-  such as "exact" (default), "wilson", or "ac".
+  such as "exact" (default), "wilson", or "ac". The estimate is always
+  the observed proportion.
 
 ## Value
 
