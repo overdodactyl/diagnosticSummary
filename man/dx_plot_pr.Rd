@@ -7,8 +7,7 @@
 dx_plot_pr(dx_obj)
 }
 \arguments{
-\item{dx_obj}{A \code{dx} object containing diagnostic measurements, including a data frame
-with sensitivity (recall) and precision values at various thresholds.}
+\item{dx_obj}{A \code{dx} object, created with \code{\link[=dx]{dx()}}.}
 }
 \value{
 A \code{ggplot} object representing the PR curve, which can be further customized as needed.

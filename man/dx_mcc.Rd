@@ -14,22 +14,23 @@ dx_mcc(cm, detail = "full", boot = FALSE, bootreps = 2000)
 including 95\% confidence intervals.}
 
 \item{boot}{Logical specifying if confidence intervals should be generated
-via a percentile bootstrap of the confusion matrix cell counts. Call
-\code{\link[=set.seed]{set.seed()}} first for reproducible intervals.}
+via a percentile bootstrap of the confusion matrix cell counts. With the
+default, \code{FALSE}, no confidence interval is reported. Call \code{\link[=set.seed]{set.seed()}}
+first for reproducible intervals.}
 
 \item{bootreps}{The number of bootstrap replications for calculating confidence intervals.}
 }
 \value{
 If \code{detail} is "simple", returns a single numeric value of MCC.
-If \code{detail} is "full", returns a data frame that includes MCC, its
-bootstrapped confidence interval, and other key details
+If \code{detail} is "full", returns a data frame that includes MCC and, when
+\code{boot = TRUE}, its bootstrapped confidence interval.
 }
 \description{
 Calculates the Matthews Correlation Coefficient (MCC), a measure of the quality
 of binary classifications. It returns a value between -1 and +1 where +1 indicates
 perfect prediction, 0 no better than random prediction, and -1 indicates total
-disagreement between prediction and observation. The function can also return a
-confidence interval for the MCC value using bootstrapping if detail is set to "full".
+disagreement between prediction and observation. A bootstrapped confidence
+interval is included when \code{boot = TRUE}.
 }
 \details{
 The Matthews Correlation Coefficient is used in machine learning as a measure of the
@@ -41,8 +42,8 @@ The formula for MCC is:
 where TP, TN, FP, and FN represent the counts of true positives, true negatives,
 false positives, and false negatives, respectively.
 
-For "full" details, bootstrap methods are used to estimate the confidence interval
-for the MCC value, providing a more robust understanding of its stability.
+MCC is reported as 0 when a row or column of the confusion matrix is empty,
+where the formula divides by zero.
 }
 \examples{
 cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,

@@ -7,9 +7,7 @@
 dx_plot_ks(dx_obj)
 }
 \arguments{
-\item{dx_obj}{A \code{dx} object containing diagnostic measurements, including a rank data frame
-with columns for cumulative true positive rate (TPR) and false positive rate (FPR), as well
-as the predicted probabilities associated with each instance.}
+\item{dx_obj}{A \code{dx} object, created with \code{\link[=dx]{dx()}}.}
 }
 \value{
 A \code{ggplot} object representing the KS plot, which can be further customized as needed.

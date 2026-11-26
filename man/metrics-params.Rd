@@ -10,12 +10,13 @@
 "simple" for raw estimate, "full" for detailed estimate
 including 95\% confidence intervals.}
 
-\item{...}{Additional arguments to pass to metric_binomial function, such as
-\code{citype} for type of confidence interval method.}
+\item{...}{Additional arguments, such as \code{citype}, the confidence interval
+method for proportions (see \code{\link[=dx]{dx()}}).}
 
 \item{boot}{Logical specifying if confidence intervals should be generated
-via a percentile bootstrap of the confusion matrix cell counts. Call
-\code{\link[=set.seed]{set.seed()}} first for reproducible intervals.}
+via a percentile bootstrap of the confusion matrix cell counts. With the
+default, \code{FALSE}, no confidence interval is reported. Call \code{\link[=set.seed]{set.seed()}}
+first for reproducible intervals.}
 
 \item{bootreps}{The number of bootstrap replications for calculating confidence intervals.}
 

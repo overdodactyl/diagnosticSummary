@@ -2,12 +2,12 @@
 % Please edit documentation in R/dx_forest.R
 \name{dx_edit_cell}
 \alias{dx_edit_cell}
-\title{Edit a cell within an object returned from dx_forest}
+\title{Edit cells of a forest plot table}
 \usage{
 dx_edit_cell(table, row, col, name = "core-fg", ...)
 }
 \arguments{
-\item{table}{a table returned from dx_forest}
+\item{table}{A gtable returned by \code{dx_plot_forest(return = "grid")}}
 
 \item{row}{Numeric vector of rows to edit}
 
@@ -21,10 +21,11 @@ dx_edit_cell(table, row, col, name = "core-fg", ...)
 The table, with the matching cells edited.
 }
 \description{
-A convenient wrapper used to edit cells of a gtable.
+A convenient wrapper used to edit cells of the gtable returned by
+\code{\link[=dx_plot_forest]{dx_plot_forest()}} with \code{return = "grid"}.
 }
 \examples{
-\dontshow{if (requireNamespace("gridExtra", quietly = TRUE) & requireNamespace("gtable", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (requireNamespace("gridExtra", quietly = TRUE) && requireNamespace("gtable", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 dx_obj <- dx(
   data = dx_heart_failure,
   true_varname = "truth",

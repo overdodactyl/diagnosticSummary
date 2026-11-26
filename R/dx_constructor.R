@@ -5,7 +5,7 @@
 #' at each threshold in `threshold_range`, and for each subgroup in
 #' `grouping_variables`.
 #'
-#' @param data A tbl.
+#' @param data A data frame.
 #' @param classlabels Deprecated; has no effect.
 #' @param pred_varname Column name containing the predictions (string). Values
 #'     should be predicted probabilities that the outcome is 1, between 0 and 1,
@@ -13,7 +13,8 @@
 #' @param setthreshold A number between 0 and 1 representing the threshold used
 #'     to classify the predictions
 #' @param threshold_range Optional. A numeric vector of thresholds between 0
-#'     and 1 to loop over.
+#'     and 1 to calculate the measures at, in addition to `setthreshold`.
+#'     `NA` (default) or `NULL` for none.
 #' @param true_varname Column name containing the reference standard (string).
 #'     Values should be 0 or 1 (numeric, logical, factor, or character), with
 #'     no missing values, and both classes must be present.
@@ -21,12 +22,14 @@
 #'     Predictions are still probabilities that the outcome is 1, so with
 #'     `poslabel = 0` a prediction below the threshold is a positive test.
 #' @param outcome_label Deprecated; has no effect.
-#' @param grouping_variables Character vector of variable names to
-#'     be summarized by.  Variables are converted to factors if not already one.
+#' @param grouping_variables Optional. Character vector of variable names to
+#'     be summarized by. Each variable is summarized separately, in addition to
+#'     all cases. Variables are converted to factors if not already one.
 #'     A column can't be named "Overall", which is used for the results of all
-#'     cases.
-#' @param prevalence A single number greater than 0 and less than 1,
+#'     cases. `NA` (default) or `NULL` for no subgroups.
+#' @param prevalence Optional. A single number greater than 0 and less than 1,
 #'     representing a target prevalence for additional NPV and PPV calculations.
+#'     `NA` (default) or `NULL` for none.
 #' @param citype Confidence interval type for proportions: one of the methods
 #'     of [binom::binom.confint()], such as "exact" (default), "wilson", or "ac".
 #'     The estimate is always the observed proportion.
@@ -52,7 +55,10 @@
 #'     all thresholds (`thresholds`), a prevalence analysis (`prevalence`), the
 #'     ranked predictions used by the gain, lift, KS, and CAP plots (`rank`), the
 #'     confusion matrix at `setthreshold` (`cm`), and the [pROC::roc()] object
-#'     (`roc`). Use [summary.dx()] or [as.data.frame.dx()] to view the measures.
+#'     (`roc`). Printing the object shows a short overview. Use [summary.dx()]
+#'     or [as.data.frame.dx()] to view the measures.
+#' @seealso [dx_itd()] when some predictions are missing, [dx_compare()] to
+#'     compare models, and the `dx_plot_*()` functions, such as [dx_plot_roc()].
 #' @examples
 #' dx_obj <- dx(
 #'   data = dx_heart_failure,

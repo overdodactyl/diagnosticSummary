@@ -7,9 +7,7 @@
 dx_plot_gain(dx_obj)
 }
 \arguments{
-\item{dx_obj}{A \code{dx} object containing diagnostic measurements, including a rank data frame
-with percentile and gain columns. This object is typically the output of a diagnostic
-function that computes various metrics for evaluating model performance.}
+\item{dx_obj}{A \code{dx} object, created with \code{\link[=dx]{dx()}}.}
 }
 \value{
 A \code{ggplot} object representing the Gain chart, allowing for further customization if desired.

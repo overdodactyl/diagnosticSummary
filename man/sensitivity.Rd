@@ -3,9 +3,8 @@
 \name{sensitivity}
 \alias{sensitivity}
 \alias{dx_sensitivity}
-\alias{dx_recall,}
-\alias{dx_tpr}
 \alias{dx_recall}
+\alias{dx_tpr}
 \title{Calculate Sensitivity (True Positive Rate, Recall)}
 \usage{
 dx_sensitivity(cm, detail = "full", ...)
@@ -21,8 +20,8 @@ dx_tpr(cm, detail = "full", ...)
 "simple" for raw estimate, "full" for detailed estimate
 including 95\% confidence intervals.}
 
-\item{...}{Additional arguments to pass to metric_binomial function, such as
-\code{citype} for type of confidence interval method.}
+\item{...}{Additional arguments, such as \code{citype}, the confidence interval
+method for proportions (see \code{\link[=dx]{dx()}}).}
 }
 \value{
 Depending on the \code{detail} parameter, returns a numeric value

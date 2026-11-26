@@ -7,8 +7,7 @@
 dx_plot_youden_j(dx_obj)
 }
 \arguments{
-\item{dx_obj}{A \code{dx} object containing a 'thresholds' data frame with columns for
-'threshold' and 'informedness'.}
+\item{dx_obj}{A \code{dx} object, created with \code{\link[=dx]{dx()}}.}
 }
 \value{
 A \code{ggplot} object representing the Youden's J Index curve, which can be
@@ -22,7 +21,7 @@ between sensitivity and specificity varies with the threshold.
 \details{
 Youden's J Index is a summary measure of the diagnostic effectiveness of a biomarker
 or test, defined as the maximum vertical distance between the ROC curve and the
-diagonal line. It is calculated as \(J = Sensitivity + Specificity - 1\), where a
+diagonal line. It is calculated as \eqn{J = Sensitivity + Specificity - 1}, where a
 higher Youden's J Index indicates a better test performance with a better trade-off
 between sensitivity and specificity. The index varies between -1 and 1, where 0
 indicates no better performance than random guessing and 1 indicates perfect performance.

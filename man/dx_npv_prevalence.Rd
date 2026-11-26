@@ -16,8 +16,8 @@ for adjusting the NPV calculation.}
 "simple" for raw estimate, "full" for detailed estimate
 including 95\% confidence intervals.}
 
-\item{...}{Additional arguments to pass to metric_binomial function, such as
-\code{citype} for type of confidence interval method.}
+\item{...}{Additional arguments, such as \code{citype}, the confidence interval
+method for proportions (see \code{\link[=dx]{dx()}}).}
 }
 \value{
 Depending on the \code{detail} parameter, returns a numeric value
@@ -37,7 +37,8 @@ where \code{Specificity} is the true negative rate and \code{Sensitivity} is the
 Adjusting NPV for prevalence allows better estimation of the classifier’s performance
 in different population settings.
 
-Confidence intervales are calucated using a simple logit (Mercaldo et al, 2007)
+Confidence intervals are calculated on the logit scale (Mercaldo et al.,
+2007).
 }
 \examples{
 cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
@@ -46,6 +47,11 @@ cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
 # Calculate NPV at a prevalence of 0.1
 dx_npv_prevalence(cm, prevalence = 0.1)
 
+}
+\references{
+Mercaldo ND, Lau KF, Zhou XH. Confidence intervals for predictive values
+with an emphasis to case-control studies. Statistics in Medicine.
+2007;26(10):2170-2183.
 }
 \seealso{
 \code{\link[=dx_cm]{dx_cm()}}, \code{\link[=dx_npv]{dx_npv()}} for the non-prevalence adjusted NPV.

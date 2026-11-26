@@ -256,8 +256,10 @@ dx_group_measure <- function(data, options, group_varname) {
 #' to assess differences in performance metrics. It supports both paired and unpaired
 #' comparisons.
 #'
-#' @param dx_list A list of `dx` objects representing the models to be compared.
-#'                Each `dx` object should be the result of a call to `dx()`.
+#' @param dx_list A list of two or more `dx` objects, created with [dx()],
+#'                representing the models to be compared. Name the list to label
+#'                the models; names must be unique. Unnamed models are called
+#'                "Model 1", "Model 2", and so on.
 #' @param paired Logical, indicating whether the comparisons should be treated as paired.
 #'               Paired comparisons are appropriate when models are evaluated on the
 #'               same set of instances (e.g., cross-validation or repeated measures).
@@ -265,10 +267,13 @@ dx_group_measure <- function(data, options, group_varname) {
 #' @return A `dx_compare` object containing a list of `dx` objects and a data frame of
 #'         pairwise comparison results for each test conducted.
 #'
-#' @details This function is a utility to perform a comprehensive comparison between
-#'          multiple classification models. Based on the value of `paired`, it will
-#'          perform appropriate tests.  The resulting object can be used it further
-#'          functions like `dx_plot_rocs.`
+#' @details Every pair of models is compared. With `paired = TRUE`, the tests
+#'          are DeLong's test for paired ROC curves ([dx_delong()]) and McNemar's
+#'          test ([dx_mcnemars()]). With `paired = FALSE`, they are DeLong's test
+#'          for unpaired ROC curves and a test of two proportions
+#'          ([dx_z_test()]) for accuracy, PPV, NPV, FNR, FPR, FDR, sensitivity,
+#'          and specificity. P-values are not adjusted for multiple comparisons.
+#'          The resulting object can be passed to [dx_plot_rocs()].
 #'
 #' @examples
 #' dx_glm <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted")

@@ -12,11 +12,11 @@ dx_plot_probabilities(
 )
 }
 \arguments{
-\item{dx_obj}{A \code{dx} object}
+\item{dx_obj}{A \code{dx} object, created with \code{\link[=dx]{dx()}}.}
 
 \item{plot_type}{Character string specifying the type of plot: "histogram" or "density".}
 
-\item{bins}{Optional; number of bins for the histogram (relevant if plot_type = "histogram").}
+\item{bins}{Optional; number of bins for the histogram (relevant if plot_type = "histogram"). If \code{NULL} (default), ggplot2 chooses.}
 
 \item{fill_color}{Color to fill the bars or density plot.}
 }

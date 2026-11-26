@@ -7,8 +7,10 @@
 dx_compare(dx_list, paired = TRUE)
 }
 \arguments{
-\item{dx_list}{A list of \code{dx} objects representing the models to be compared.
-Each \code{dx} object should be the result of a call to \code{dx()}.}
+\item{dx_list}{A list of two or more \code{dx} objects, created with \code{\link[=dx]{dx()}},
+representing the models to be compared. Name the list to label
+the models; names must be unique. Unnamed models are called
+"Model 1", "Model 2", and so on.}
 
 \item{paired}{Logical, indicating whether the comparisons should be treated as paired.
 Paired comparisons are appropriate when models are evaluated on the
@@ -24,10 +26,13 @@ to assess differences in performance metrics. It supports both paired and unpair
 comparisons.
 }
 \details{
-This function is a utility to perform a comprehensive comparison between
-multiple classification models. Based on the value of \code{paired}, it will
-perform appropriate tests.  The resulting object can be used it further
-functions like \code{dx_plot_rocs.}
+Every pair of models is compared. With \code{paired = TRUE}, the tests
+are DeLong's test for paired ROC curves (\code{\link[=dx_delong]{dx_delong()}}) and McNemar's
+test (\code{\link[=dx_mcnemars]{dx_mcnemars()}}). With \code{paired = FALSE}, they are DeLong's test
+for unpaired ROC curves and a test of two proportions
+(\code{\link[=dx_z_test]{dx_z_test()}}) for accuracy, PPV, NPV, FNR, FPR, FDR, sensitivity,
+and specificity. P-values are not adjusted for multiple comparisons.
+The resulting object can be passed to \code{\link[=dx_plot_rocs]{dx_plot_rocs()}}.
 }
 \examples{
 dx_glm <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted")

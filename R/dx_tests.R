@@ -110,7 +110,7 @@ breslow_day_test <- function(contingency_table, odds_ratio = NA, correct = FALSE
 #'
 #' @param stratum_data A 2x2 matrix representing a single stratum of the contingency table.
 #' @return A list with 'row' and 'col' elements containing the sums of rows and columns, respectively.
-#' @keywords internal
+#' @noRd
 margin_sums <- function(stratum_data) {
   row_sums <- apply(stratum_data, 1, sum)
   col_sums <- apply(stratum_data, 2, sum)
@@ -127,7 +127,7 @@ margin_sums <- function(stratum_data) {
 #' @param marginals A list containing the 'row' and 'col' marginal sums for the stratum.
 #' @param odds_ratio The overall odds ratio to use in the calculation.
 #' @return The expected count for cell 'a'.
-#' @keywords internal
+#' @noRd
 expected_cell_count <- function(a_value, marginals, odds_ratio) {
   mj <- marginals$row
   nj <- marginals$col
@@ -144,7 +144,7 @@ expected_cell_count <- function(a_value, marginals, odds_ratio) {
 #' @param tilde_a_value The expected count for cell 'a' in a single stratum.
 #' @param marginals A list containing the 'row' and 'col' marginal sums for the stratum.
 #' @return The variance of the count for cell 'a'.
-#' @keywords internal
+#' @noRd
 variance_a <- function(tilde_a_value, marginals) {
   mj <- marginals$row
   nj <- marginals$col
@@ -250,6 +250,8 @@ dx_fishers_exact <- function(cm, detail = "full") {
 #' make the chi-squared test less accurate. A low p-value indicates a significant
 #' association between the variables or a significant difference from the expected
 #' distribution. Caution is needed with zero counts or very small samples.
+#' The p-value is `NA` when a row or column of the table is empty, since the
+#' test is undefined. An empty cell otherwise contributes 0 to the statistic.
 #' @return Depending on the `detail` parameter:
 #'         - if "simple": a single numeric value representing the p-value of
 #'           the G-test.
@@ -339,7 +341,7 @@ dx_g_test <- function(cm, detail = "full") {
 #' print(simple)
 #' print(detailed)
 #' @seealso [pROC::roc.test()] for the underlying test implementation.
-#' @seealso [dx_cm()] to understand how to create a `dx` object.
+#' @seealso [dx()] to create a `dx` object.
 #' @concept tests
 #' @export
 dx_delong <- function(dx1, dx2, detail = "full", paired = TRUE) {
@@ -423,20 +425,23 @@ delong_statistic_note <- function(test) {
 #'        "simple" for raw estimate (p-value only), "full" for detailed estimate including
 #'        confidence intervals and test statistic.
 #' @return Depending on the `detail` parameter, returns the p-value of the test or a
-#'         more detailed list including the test statistic, confidence interval, and p-value.
+#'         data frame with the difference in proportions, its confidence interval,
+#'         the test statistic, and the p-value.
 #' @details The function uses the prop.test function to perform the hypothesis test,
 #' assuming the null hypothesis that the two proportions based on the specified metric are the same.
 #' A low p-value indicates a significant difference in the proportions, suggesting that the success rates
 #' of the two groups are statistically significantly different. The function automatically adjusts
 #' for continuity and provides confidence intervals for the difference in proportions.
 #' The difference is calculated as the metric of `dx1` minus the metric of `dx2`, so a
-#' negative estimate indicates that `dx2` has the higher value.
+#' negative estimate indicates that `dx2` has the higher value. When both
+#' proportions are 0 or both are 1, the test is undefined: the estimate is 0
+#' and the p-value is `NA`, with a note.
 #'
 #' The Z-test for two proportions is appropriate when comparing the success rates (proportions) of two independent samples.
 #' Here are some considerations for using this test:
 #' \itemize{
 #'   \item Independence: The samples should be independent. This test is not appropriate for paired or matched data.
-#'   \item Sample Size**: Both groups should have a sufficiently large number of trials. As a rule of thumb, the test
+#'   \item Sample Size: Both groups should have a sufficiently large number of trials. As a rule of thumb, the test
 #'    assumes that the number of successes and failures in each group should be at least 5. However, for more accurate
 #'    results, especially in cases with extreme proportions (close to 0 or 1), larger sample sizes may be necessary.
 #'   \item Binary Outcome: This test is specific to binary outcomes (success/failure, presence/absence, etc.) represented
@@ -538,7 +543,7 @@ dx_z_test <- function(dx1, dx2, metric = c("accuracy", "ppv", "npv", "fnr", "fpr
 #' @param detail A string indicating the level of detail for the output: "simple" for
 #'        just the p-value, "full" for a comprehensive result including test statistics.
 #' @return Depending on the `detail` parameter, returns either the p-value (simple)
-#'         or a more comprehensive list including the test statistic and p-value (full).
+#'         or a data frame with the test statistic and p-value (full).
 #' @details
 #' McNemar's test is appropriate when comparing the classification results of two
 #' algorithms on the same data set (paired design). It specifically tests the null
@@ -557,7 +562,8 @@ dx_z_test <- function(dx1, dx2, metric = c("accuracy", "ppv", "npv", "fnr", "fpr
 #' dx_glm <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted")
 #' dx_rf <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted_rf")
 #' dx_mcnemars(dx_glm, dx_rf)
-#' @seealso [dx_cm()], [mcnemar.test()]
+#' @seealso [dx()] to create a `dx` object, [stats::mcnemar.test()] for the
+#'   underlying test.
 #' @concept tests
 #' @export
 dx_mcnemars <- function(dx1, dx2, detail = "full") {

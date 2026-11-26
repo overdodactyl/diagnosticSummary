@@ -25,7 +25,8 @@ confidence intervals and test statistic.}
 }
 \value{
 Depending on the \code{detail} parameter, returns the p-value of the test or a
-more detailed list including the test statistic, confidence interval, and p-value.
+data frame with the difference in proportions, its confidence interval,
+the test statistic, and the p-value.
 }
 \description{
 Conducts a two-sided Z-test (using prop.test for two proportions) to assess whether the success rates (proportions)
@@ -40,13 +41,15 @@ A low p-value indicates a significant difference in the proportions, suggesting 
 of the two groups are statistically significantly different. The function automatically adjusts
 for continuity and provides confidence intervals for the difference in proportions.
 The difference is calculated as the metric of \code{dx1} minus the metric of \code{dx2}, so a
-negative estimate indicates that \code{dx2} has the higher value.
+negative estimate indicates that \code{dx2} has the higher value. When both
+proportions are 0 or both are 1, the test is undefined: the estimate is 0
+and the p-value is \code{NA}, with a note.
 
 The Z-test for two proportions is appropriate when comparing the success rates (proportions) of two independent samples.
 Here are some considerations for using this test:
 \itemize{
 \item Independence: The samples should be independent. This test is not appropriate for paired or matched data.
-\item Sample Size**: Both groups should have a sufficiently large number of trials. As a rule of thumb, the test
+\item Sample Size: Both groups should have a sufficiently large number of trials. As a rule of thumb, the test
 assumes that the number of successes and failures in each group should be at least 5. However, for more accurate
 results, especially in cases with extreme proportions (close to 0 or 1), larger sample sizes may be necessary.
 \item Binary Outcome: This test is specific to binary outcomes (success/failure, presence/absence, etc.) represented

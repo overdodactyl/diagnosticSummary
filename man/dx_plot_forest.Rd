@@ -2,7 +2,7 @@
 % Please edit documentation in R/dx_forest.R
 \name{dx_plot_forest}
 \alias{dx_plot_forest}
-\title{Create table with odds ratios displayed graphically}
+\title{Forest plot of odds ratios by subgroup}
 \usage{
 dx_plot_forest(
   dx_obj,
@@ -29,7 +29,7 @@ dx_plot_forest(
 )
 }
 \arguments{
-\item{dx_obj}{An object of class dx}
+\item{dx_obj}{An object of class dx, created with \code{grouping_variables}.}
 
 \item{fraction}{Logical.  Should the fraction for sensitivity
 and specificity be shown?}
@@ -46,9 +46,13 @@ If left empty, breaks are chosen within the axis limits.}
 \item{trans}{Method to transform the odds ratio by: \code{NA} (default) for none,
 or "log10".}
 
-\item{measures}{Measures to be included in the plot}
+\item{measures}{Names of the measures to show as columns. "Odds Ratio" is
+required. Add "Breslow-Day" to show the p-value of the Breslow-Day test
+of homogeneous odds ratios in the odds ratio column of each variable's
+header row.}
 
-\item{return}{Should a grid or ggplot object be returned?}
+\item{return}{Type of object to return: "ggplot" (default) or "grid" (a
+gtable, which can be edited with \code{\link[=dx_edit_cell]{dx_edit_cell()}}).}
 
 \item{filename}{File name to create on disk using \code{ggplot2::ggsave}.
 If left NA, no file will be created.}
@@ -60,7 +64,7 @@ If left NA, no file will be created.}
 \item{body_bg}{Background color of table rows.  If values are less than total
 number of rows, values are repeated.}
 
-\item{footer_bg}{Background color if the footer row.}
+\item{footer_bg}{Background color of the footer row.}
 
 \item{footer_col}{Color of the footer row.}
 
@@ -82,10 +86,18 @@ number of rows, values are repeated.}
 A ggplot object, or a gtable if \code{return = "grid"}.
 }
 \description{
-Generate a table of diagnostic measures
+Draws a table of diagnostic measures for each subgroup and for all cases,
+with the odds ratios and their 95\% confidence intervals plotted beside it.
+The \code{dx} object must be created with \code{grouping_variables}.
+}
+\details{
+Odds ratios are \code{NA} for a subgroup where every prediction is on one side
+of the threshold or only one outcome class is present. Those subgroups are
+listed without a point. If no odds ratio can be calculated at all, the
+function gives an error.
 }
 \examples{
-\dontshow{if (requireNamespace("gridExtra", quietly = TRUE) & requireNamespace("gtable", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (requireNamespace("ggplot2", quietly = TRUE) && requireNamespace("gridExtra", quietly = TRUE) && requireNamespace("gtable", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 
 dx_obj <- dx(
   data = dx_heart_failure,
@@ -98,4 +110,7 @@ dx_obj <- dx(
 dx_plot_forest(dx_obj)
 dx_plot_forest(dx_obj, trans = "log10")
 \dontshow{\}) # examplesIf}
+}
+\seealso{
+\code{\link[=breslow_day_test]{breslow_day_test()}}, \code{\link[=dx_odds_ratio]{dx_odds_ratio()}}
 }

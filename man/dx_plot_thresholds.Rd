@@ -7,8 +7,7 @@
 dx_plot_thresholds(dx_obj)
 }
 \arguments{
-\item{dx_obj}{A \code{dx} object containing threshold-based statistics, including values
-for various diagnostic measures at different thresholds.}
+\item{dx_obj}{A \code{dx} object, created with \code{\link[=dx]{dx()}}.}
 }
 \value{
 A \code{ggplot} object representing the diagnostic measures across thresholds

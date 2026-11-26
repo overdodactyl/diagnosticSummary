@@ -1,12 +1,20 @@
-#' Summary
+#' Summarize a diagnostic test
+#'
+#' Shows the formatted estimate and confidence interval of each measure in a
+#' `dx` object at one threshold.
+#'
 #' @param object An object of class "dx"
-#' @param thresh The threshold to return values from
-#' @param variable Variable to include in returned values
-#' @param label Labels to include in returned values
-#' @param show_var Include variable column in returned data?
-#' @param show_label Include label in returned data?
-#' @param measure Measures to include
-#' @param ... additional arguments to be passed to or from methods
+#' @param thresh The threshold to show: `setthreshold` (default) or a value in
+#'     `threshold_range`.
+#' @param variable Variables to include: "Overall" for all cases, or names in
+#'     `grouping_variables`. Defaults to all.
+#' @param label Subgroups to include: levels of the grouping variables, or
+#'     "Overall". Defaults to all.
+#' @param show_var Include the variable column?
+#' @param show_label Include the label (subgroup) column?
+#' @param measure Names of the measures to include, as in the `measure` column
+#'     of [as.data.frame.dx()], such as "Sensitivity". Defaults to all.
+#' @param ... Not used.
 #' @return A table of the measures and their summaries at `thresh`, made with
 #'     [knitr::kable()]. If knitr is not installed, a data frame.
 #' @examples
@@ -58,7 +66,7 @@ summary.dx <- function(object, thresh = object$options$setthreshold,
 #' of the measures.
 #'
 #' @param x An object of class "dx", "dx_itd", or "dx_compare"
-#' @param ... additional arguments to be passed to or from methods
+#' @param ... Not used.
 #' @return `x`, invisibly.
 #' @examples
 #' dx_obj <- dx(
@@ -131,17 +139,23 @@ print_measures <- function(measures, names) {
   print(measures, row.names = FALSE, right = FALSE)
 }
 
-#' Convert to a data frame
+#' Convert a diagnostic summary to a data frame
+#'
+#' Returns the measures in a `dx` object, with unformatted estimates and
+#' confidence limits.
+#'
 #' @param x An object of class "dx"
-#' @param thresh The threshold to return values from
-#' @param row.names NULL or a character vector giving the row names for the
-#'     data frame. Missing values are not allowed.
-#' @param optional logical. If TRUE, setting row names and converting column
-#'     names (to syntactic names: see make.names) is optional.
-#' @param variable Variable to include in returned values
-#' @param label Labels to include in returned values
-#' @param measure Measures to include
-#' @param ... additional arguments to be passed to or from methods
+#' @param thresh Thresholds to include: `setthreshold` or values in
+#'     `threshold_range`. Defaults to all.
+#' @param row.names,optional Not used. Included for compatibility with
+#'     [as.data.frame()].
+#' @param variable Variables to include: "Overall" for all cases, or names in
+#'     `grouping_variables`. Defaults to all.
+#' @param label Subgroups to include: levels of the grouping variables, or
+#'     "Overall". Defaults to all.
+#' @param measure Names of the measures to include, such as "Sensitivity".
+#'     Defaults to all.
+#' @param ... Not used.
 #' @return A data frame with one row per measure, variable, label, and threshold,
 #'     with the estimate, confidence interval, and formatted summary.
 #' @examples

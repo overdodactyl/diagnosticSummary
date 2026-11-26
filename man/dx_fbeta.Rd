@@ -9,27 +9,36 @@ dx_fbeta(cm, beta = 1, detail = "full", boot = FALSE, bootreps = 2000)
 \arguments{
 \item{cm}{A dx_cm object created by \code{\link[=dx_cm]{dx_cm()}}.}
 
-\item{beta}{The beta value determining the weight of precision in the F-score.}
+\item{beta}{A single number greater than 0. Recall is weighted \code{beta} times
+as much as precision: values above 1 favor recall and values below 1
+favor precision.}
 
 \item{detail}{Character specifying the level of detail in the output:
 "simple" for raw estimate, "full" for detailed estimate
 including 95\% confidence intervals.}
 
 \item{boot}{Logical specifying if confidence intervals should be generated
-via a percentile bootstrap of the confusion matrix cell counts. Call
-\code{\link[=set.seed]{set.seed()}} first for reproducible intervals.}
+via a percentile bootstrap of the confusion matrix cell counts. With the
+default, \code{FALSE}, no confidence interval is reported. Call \code{\link[=set.seed]{set.seed()}}
+first for reproducible intervals.}
 
 \item{bootreps}{The number of bootstrap replications for calculating confidence intervals.}
 }
 \value{
 Depending on the \code{detail} parameter, returns a single numeric value of
-F-beta or a data frame with the F-beta and its confidence intervals.
+F-beta or a data frame with the F-beta and, when \code{boot = TRUE}, its
+confidence interval.
 }
 \description{
 Calculates the F-beta score from a confusion matrix object with an option
 to include bootstrapped confidence intervals. The F-beta score is a
 generalization of the F1 score, allowing different importance to precision
 and recall via the beta parameter.
+}
+\details{
+\deqn{F_\beta = (1 + \beta^2) \frac{Precision \times Recall}{\beta^2 \times Precision + Recall}}{F-beta = (1 + beta^2) * Precision * Recall / (beta^2 * Precision + Recall)}
+
+The score is 0 when precision and recall are both 0 or undefined.
 }
 \examples{
 cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,

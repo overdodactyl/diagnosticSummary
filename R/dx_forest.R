@@ -25,11 +25,19 @@ rescale <- function(x, to = c(0, 1), from = range(x, na.rm = TRUE, finite = TRUE
   (x - from[1]) / diff(from) * diff(to) + to[1]
 }
 
-#' Create table with odds ratios displayed graphically
+#' Forest plot of odds ratios by subgroup
 #'
-#' Generate a table of diagnostic measures
+#' Draws a table of diagnostic measures for each subgroup and for all cases,
+#' with the odds ratios and their 95% confidence intervals plotted beside it.
+#' The `dx` object must be created with `grouping_variables`.
 #'
-#' @param dx_obj An object of class dx
+#' @details
+#' Odds ratios are `NA` for a subgroup where every prediction is on one side
+#' of the threshold or only one outcome class is present. Those subgroups are
+#' listed without a point. If no odds ratio can be calculated at all, the
+#' function gives an error.
+#'
+#' @param dx_obj An object of class dx, created with `grouping_variables`.
 #' @param fraction Logical.  Should the fraction for sensitivity
 #'     and specificity be shown?
 #' @param breaks A numeric vector of odds ratios to show as axis ticks, also
@@ -38,10 +46,14 @@ rescale <- function(x, to = c(0, 1), from = range(x, na.rm = TRUE, finite = TRUE
 #' @param limits Limits of the odds ratio axis. If left empty, the range of
 #'     `breaks` is used, or limits are chosen from the 95% CIs.
 #' @param tick_label_size Font size for axis labels.
-#' @param return Should a grid or ggplot object be returned?
+#' @param return Type of object to return: "ggplot" (default) or "grid" (a
+#'     gtable, which can be edited with [dx_edit_cell()]).
 #' @param trans Method to transform the odds ratio by: `NA` (default) for none,
 #'     or "log10".
-#' @param measures Measures to be included in the plot
+#' @param measures Names of the measures to show as columns. "Odds Ratio" is
+#'     required. Add "Breslow-Day" to show the p-value of the Breslow-Day test
+#'     of homogeneous odds ratios in the odds ratio column of each variable's
+#'     header row.
 #' @param filename File name to create on disk using `ggplot2::ggsave`.
 #'     If left NA, no file will be created.
 #' @param header_bg Background color of the header
@@ -50,7 +62,7 @@ rescale <- function(x, to = c(0, 1), from = range(x, na.rm = TRUE, finite = TRUE
 #' @param body_bg Background color of table rows.  If values are less than total
 #'     number of rows, values are repeated.
 #' @param body_fontsize Font size of body text
-#' @param footer_bg Background color if the footer row.
+#' @param footer_bg Background color of the footer row.
 #' @param footer_col Color of the footer row.
 #' @param body_or_col Color of odds ratios in the table body
 #' @param footer_or_col Color of odds ratios in the table footer
@@ -58,8 +70,9 @@ rescale <- function(x, to = c(0, 1), from = range(x, na.rm = TRUE, finite = TRUE
 #' @param or_lwd Line width for OR
 #' @param or_size Size of OR point
 #' @return A ggplot object, or a gtable if `return = "grid"`.
+#' @seealso [breslow_day_test()], [dx_odds_ratio()]
 #' @export
-#' @examplesIf requireNamespace("gridExtra", quietly = TRUE) & requireNamespace("gtable", quietly = TRUE)
+#' @examplesIf requireNamespace("ggplot2", quietly = TRUE) && requireNamespace("gridExtra", quietly = TRUE) && requireNamespace("gtable", quietly = TRUE)
 #'
 #' dx_obj <- dx(
 #'   data = dx_heart_failure,
@@ -345,17 +358,18 @@ dx_vline <- function(table, x, y0, y1, t, ...) {
   dx_segment(table, x0 = x, y0 = y0, x1 = x, y1 = y1, t = t, ...)
 }
 
-#' Edit a cell within an object returned from dx_forest
+#' Edit cells of a forest plot table
 #'
-#' A convenient wrapper used to edit cells of a gtable.
+#' A convenient wrapper used to edit cells of the gtable returned by
+#' [dx_plot_forest()] with `return = "grid"`.
 #'
-#' @param table a table returned from dx_forest
+#' @param table A gtable returned by `dx_plot_forest(return = "grid")`
 #' @param row Numeric vector of rows to edit
 #' @param col Numeric vector of columns to edit
 #' @param name Name of table layer to edit
 #' @param ... Parameters passed to grid::editGrob such as grid::gpar or hjust.
 #' @return The table, with the matching cells edited.
-#' @examplesIf requireNamespace("gridExtra", quietly = TRUE) & requireNamespace("gtable", quietly = TRUE)
+#' @examplesIf requireNamespace("gridExtra", quietly = TRUE) && requireNamespace("gtable", quietly = TRUE)
 #' dx_obj <- dx(
 #'   data = dx_heart_failure,
 #'   true_varname = "truth",

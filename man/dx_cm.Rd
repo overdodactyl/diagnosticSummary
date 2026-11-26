@@ -19,7 +19,7 @@ are classified as outcome 1.}
 \item{poslabel}{The outcome class that is the event: 1 (default) or 0.}
 }
 \value{
-A dataframe object of class "dx_cm" containing the components of the confusion matrix and additional metrics:
+A data frame of class "dx_cm" with one row, containing the components of the confusion matrix and additional metrics:
 \itemize{
 \item \code{tp}: True Positives
 \item \code{fn}: False Negatives
@@ -43,6 +43,8 @@ and several other useful metrics.
 The function takes predicted probabilities and a threshold to create binary
 predictions which are then compared to the true labels to create a confusion matrix.
 It is useful for evaluating the performance of a binary classification model.
+With \code{poslabel = 0}, outcome 0 is the event, so a prediction below the
+threshold is a positive test.
 }
 \examples{
 # Example usage:

@@ -7,8 +7,7 @@
 dx_plot_cap(dx_obj)
 }
 \arguments{
-\item{dx_obj}{A \code{dx} object containing rank-based statistics, including cumulative
-true positives and percentiles. It's expected to have a 'rank' element with the necessary data.}
+\item{dx_obj}{A \code{dx} object, created with \code{\link[=dx]{dx()}}.}
 }
 \value{
 A \code{ggplot} object representing the CAP Curve with actual, perfect, and random

@@ -16,7 +16,7 @@ just the p-value, "full" for a comprehensive result including test statistics.}
 }
 \value{
 Depending on the \code{detail} parameter, returns either the p-value (simple)
-or a more comprehensive list including the test statistic and p-value (full).
+or a data frame with the test statistic and p-value (full).
 }
 \description{
 Performs McNemar's test to evaluate the difference between two paired proportions.
@@ -44,6 +44,7 @@ dx_rf <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "pre
 dx_mcnemars(dx_glm, dx_rf)
 }
 \seealso{
-\code{\link[=dx_cm]{dx_cm()}}, \code{\link[=mcnemar.test]{mcnemar.test()}}
+\code{\link[=dx]{dx()}} to create a \code{dx} object, \code{\link[stats:mcnemar.test]{stats::mcnemar.test()}} for the
+underlying test.
 }
 \concept{tests}

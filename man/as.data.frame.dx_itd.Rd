@@ -2,7 +2,7 @@
 % Please edit documentation in R/dx_itd.R
 \name{as.data.frame.dx_itd}
 \alias{as.data.frame.dx_itd}
-\title{Convert to a data frame}
+\title{Convert an intention-to-diagnose analysis to a data frame}
 \usage{
 \method{as.data.frame}{dx_itd}(
   x,
@@ -17,26 +17,26 @@
 \arguments{
 \item{x}{An object of class "dx_itd"}
 
-\item{row.names}{NULL or a character vector giving the row names for the
-data frame. Missing values are not allowed.}
+\item{row.names, optional}{Not used. Included for compatibility with
+\code{\link[=as.data.frame]{as.data.frame()}}.}
 
-\item{optional}{logical. If TRUE, setting row names and converting column
-names (to syntactic names: see make.names) is optional.}
+\item{variable}{Variables to include: "Overall" for all cases, or names in
+\code{grouping_variables}. Defaults to all.}
 
-\item{variable}{Variable to include in returned values}
+\item{label}{Subgroups to include: levels of the grouping variables, or
+"Overall". Defaults to all.}
 
-\item{label}{Labels to include in returned values}
+\item{measure}{Names of the measures to include. Defaults to all.}
 
-\item{measure}{Measures to include}
-
-\item{...}{additional arguments to be passed to or from methods}
+\item{...}{Not used.}
 }
 \value{
 A data frame with one row per measure, variable, and label, with the
 estimate, confidence interval, and formatted summary.
 }
 \description{
-Convert to a data frame
+Returns the measures in a \code{dx_itd} object, with unformatted estimates and
+confidence limits.
 }
 \examples{
 data <- dx_heart_failure
