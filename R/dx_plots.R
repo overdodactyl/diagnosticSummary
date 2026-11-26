@@ -1131,10 +1131,7 @@ reachable_rank <- function(dx_obj, origin = FALSE) {
 
 # Check the object passed to a plot function, and that ggplot2 is installed
 check_plot_input <- function(x, class = "dx") {
-  calling_func <- tryCatch(
-    paste(deparse(sys.call(-1)[[1]]), collapse = ""),
-    error = function(e) NA_character_
-  )
+  calling_func <- function_label(tryCatch(sys.call(-1)[[1]], error = function(e) NULL))
   if (!inherits(x, class)) {
     stop(paste0(
       if (is.na(calling_func)) "This function" else backtick(calling_func),
