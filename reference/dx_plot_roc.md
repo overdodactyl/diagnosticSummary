@@ -81,7 +81,8 @@ dx_plot_roc(
 - summary_stats:
 
   A vector of integers indicating which statistics to include on the ROC
-  curve. Default is c(1, 2, 3, 4, 5, 6, 7, 8).
+  curve: row numbers of the overall measures in `as.data.frame(dx_obj)`.
+  Default is c(1, 2, 3, 4, 5, 6, 7, 8).
 
 - filename:
 

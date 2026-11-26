@@ -147,6 +147,10 @@ Figures summarizing diagnostic statistics
 
 Helper functions and S3 methods
 
+- [`print(`*`<dx_itd>`*`)`](https://overdodactyl.github.io/diagnosticSummary/reference/print.dx.md)
+  [`print(`*`<dx>`*`)`](https://overdodactyl.github.io/diagnosticSummary/reference/print.dx.md)
+  [`print(`*`<dx_compare>`*`)`](https://overdodactyl.github.io/diagnosticSummary/reference/print.dx.md)
+  : Print a diagnostic summary
 - [`as.data.frame(`*`<dx>`*`)`](https://overdodactyl.github.io/diagnosticSummary/reference/as.data.frame.dx.md)
   : Convert to a data frame
 - [`summary(`*`<dx>`*`)`](https://overdodactyl.github.io/diagnosticSummary/reference/summary.dx.md)

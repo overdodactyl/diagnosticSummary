@@ -4,7 +4,9 @@ Conducts a two-sided Z-test (using prop.test for two proportions) to
 assess whether the success rates (proportions) of two groups are
 different from each other based on a specified metric. It can compare
 accuracy, PPV, NPV, FNR, FPR, FDR, sensitivity, or specificity between
-two dx objects.
+two dx objects. The reported statistic is the chi-squared statistic from
+[`stats::prop.test()`](https://rdrr.io/r/stats/prop.test.html) with
+continuity correction, which is the square of the Z statistic.
 
 ## Usage
 
