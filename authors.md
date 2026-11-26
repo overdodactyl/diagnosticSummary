@@ -13,13 +13,13 @@ Source:
 [`DESCRIPTION`](https://github.com/overdodactyl/diagnosticSummary/blob/master/DESCRIPTION)
 
 Johnson P, Carter R (2026). *diagnosticSummary: Diagnostic Accuracy
-Summaries for Binary Classifiers*. R package version 0.0.2.17,
+Summaries for Binary Classifiers*. R package version 0.0.2.18,
 <https://overdodactyl.github.io/diagnosticSummary/>.
 
     @Manual{,
       title = {diagnosticSummary: Diagnostic Accuracy Summaries for Binary Classifiers},
       author = {Pat Johnson and Rickey Carter},
       year = {2026},
-      note = {R package version 0.0.2.17},
+      note = {R package version 0.0.2.18},
       url = {https://overdodactyl.github.io/diagnosticSummary/},
     }
