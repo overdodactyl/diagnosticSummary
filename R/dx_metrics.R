@@ -43,7 +43,7 @@ NULL
 #' @examples
 #' cm <- dx_cm(
 #'   dx_heart_failure$predicted,
-#'   dx_heart_failure$predicted,
+#'   dx_heart_failure$truth,
 #'   threshold = 0.3, poslabel = 1
 #' )
 #' simple_accuracy <- dx_accuracy(cm, detail = "simple")
@@ -1090,7 +1090,12 @@ ci_ratio <- function(tp, tn, fp, fn, ratio, ratio_sd, name, continuity_correctio
 #' @concept metrics
 dx_auc_pr <- function(truth, predprob, detail = "full", poslabel = 1) {
   validate_detail(detail)
-  check_truth_predprob(truth, predprob)
+  # The signature changed from (precision, recall), so old calls should fail
+  # here rather than return a wrong result
+  check_truth_predprob(
+    truth, predprob,
+    hint = "dx_auc_pr() takes truth and predprob, not precision and recall."
+  )
   if (length(poslabel) != 1 || !poslabel %in% c(0, 1)) {
     stop("poslabel should be 0 or 1", call. = FALSE)
   }
@@ -1166,21 +1171,23 @@ pr_area <- function(tp, fp) {
 # Points to draw the PR curve with the same interpolation as pr_area(). Steps
 # that add both true and false positives (e.g. tied predictions) are drawn
 # with intermediate points.
-# Check outcome and prediction vectors passed directly to a metric. The
-# signature of dx_auc_pr() changed from (precision, recall), so old calls
-# should fail here rather than return a wrong result.
-check_truth_predprob <- function(truth, predprob) {
+# Check outcome and prediction vectors passed directly to a metric. `hint` is
+# added to the message about truth. Scores that only rank cases (e.g. for the
+# AUC) don't need to be probabilities.
+check_truth_predprob <- function(truth, predprob, hint = NULL, probabilities = TRUE) {
   if (length(truth) != length(predprob)) {
     stop("truth and predprob should be the same length", call. = FALSE)
   }
   if (anyNA(truth) || !all(truth %in% c(0, 1))) {
-    stop(paste(
-      "truth should contain only 0's and 1's, with no missing values.",
-      "dx_auc_pr() takes truth and predprob, not precision and recall."
-    ), call. = FALSE)
+    stop(paste(c(
+      "truth should contain only 0's and 1's, with no missing values.", hint
+    ), collapse = " "), call. = FALSE)
   }
-  if (!is.numeric(predprob) || anyNA(predprob) || any(predprob < 0 | predprob > 1)) {
-    stop("predprob should contain probabilities between 0 and 1, with no missing values", call. = FALSE)
+  if (!is.numeric(predprob) || anyNA(predprob)) {
+    stop("predprob should be numeric, with no missing values", call. = FALSE)
+  }
+  if (probabilities && any(predprob < 0 | predprob > 1)) {
+    stop("predprob should contain probabilities between 0 and 1", call. = FALSE)
   }
 }
 
@@ -1222,8 +1229,9 @@ pr_curve_points <- function(tp, fp, n_between = 20) {
 #' prediction probabilities and true binary outcomes. AUC is a measure of the ability
 #' of a classifier to distinguish between classes and is used as a summary of the ROC curve.
 #'
-#' @param truth Vector of true binary class outcomes (0 and 1).
-#' @param predprob Vector of prediction probabilities corresponding to the true outcomes.
+#' @param truth Vector of true binary class outcomes (0 and 1), with no missing values.
+#' @param predprob Numeric vector of predictions corresponding to the true outcomes,
+#'   with no missing values.
 #' @param detail Character string specifying the level of detail in the output: "simple"
 #'        for just the AUC value, "full" for the AUC value along with confidence intervals.
 #' @param direction Direction of the comparison, passed to [pROC::roc()]. The default,
@@ -1242,6 +1250,8 @@ pr_curve_points <- function(tp, fp, n_between = 20) {
 #' @concept metrics
 dx_auc <- function(truth, predprob, detail = "full", direction = "<") {
   validate_detail(detail)
+  # The AUC only uses the order of the predictions, so any numeric score works
+  check_truth_predprob(truth, predprob, probabilities = FALSE)
 
   # AUC is undefined unless both outcome classes are present
   if (length(unique(truth)) < 2) {
@@ -1567,10 +1577,13 @@ calculate_fowlkes_mallows <- function(cm) {
 #' It calculates true positives, false negatives, true negatives, false positives,
 #' and several other useful metrics.
 #'
-#' @param predprob Numeric vector of prediction probabilities.
-#' @param truth Numeric vector of true binary class outcomes.
-#' @param threshold Numeric value to determine the cutoff for classifying predictions as positive.
-#' @param poslabel The label of the positive class in the truth data.
+#' @param predprob Numeric vector of predicted probabilities that the outcome
+#'   is 1, between 0 and 1, with no missing values.
+#' @param truth Vector of true binary class outcomes (0 and 1), the same length
+#'   as `predprob`, with no missing values.
+#' @param threshold A single number between 0 and 1. Predictions at or above it
+#'   are classified as outcome 1.
+#' @param poslabel The outcome class that is the event: 1 (default) or 0.
 #' @return A dataframe object of class "dx_cm" containing the components of the confusion matrix and additional metrics:
 #' \itemize{
 #'   \item `tp`: True Positives
@@ -1594,7 +1607,16 @@ calculate_fowlkes_mallows <- function(cm) {
 #' cm <- dx_cm(predicted_probs, true_labels, threshold = 0.5, poslabel = 1)
 #' print(cm)
 #' @export
-dx_cm <- function(predprob, truth, threshold, poslabel) {
+dx_cm <- function(predprob, truth, threshold, poslabel = 1) {
+  check_truth_predprob(truth, predprob)
+  if (!is.numeric(threshold) || length(threshold) != 1 || is.na(threshold) ||
+    threshold < 0 || threshold > 1) {
+    stop("threshold should be a single number between 0 and 1", call. = FALSE)
+  }
+  if (length(poslabel) != 1 || !poslabel %in% c(0, 1)) {
+    stop("poslabel should be 0 or 1", call. = FALSE)
+  }
+
   # Calculate predictions based on threshold
   pred <- as.numeric(predprob >= threshold)
 
@@ -1683,9 +1705,10 @@ get_roc <- function(true_varname, pred_varname, data, direction) {
 #' @export
 dx_brier <- function(predprob, truth, detail = "full") {
   validate_detail(detail)
-  # Ensuring that the length of predicted probabilities and actual outcomes are the same
-  if (length(predprob) != length(truth)) {
-    stop("The length of predicted probabilities and actual outcomes must be the same.")
+  check_truth_predprob(truth, predprob)
+  # Factor or character outcomes coded as 0/1 can't be subtracted
+  if (is.factor(truth) || is.character(truth)) {
+    truth <- as.numeric(as.character(truth))
   }
 
   brier <- calculate_brier(truth, predprob)
