@@ -381,9 +381,14 @@ dx_plot_decision_curve <- function(dx_obj, plot_range = c(0.05, .95)) {
   # weight on false positives changes, so use an even grid over the plot range.
   # Each prediction is added because the curve jumps there. This also covers
   # models with few distinct predictions, such as 0/1 classes.
-  grid <- to_event(seq(plot_range[1], plot_range[2], length.out = 101))
-  thresholds <- unique(c(grid, dx_obj$thresholds$threshold))
-  event_threshold <- to_event(thresholds)
+  # The grid is built on the event scale and converted once, so its ends are
+  # exactly the ends of the plot range.
+  grid <- seq(plot_range[1], plot_range[2], length.out = 101)
+  event_threshold <- c(grid, to_event(dx_obj$thresholds$threshold))
+  thresholds <- c(to_event(grid), dx_obj$thresholds$threshold)
+  duplicate <- duplicated(thresholds)
+  thresholds <- thresholds[!duplicate]
+  event_threshold <- event_threshold[!duplicate]
   # The weight is infinite at an event threshold of 1
   keep <- event_threshold >= plot_range[1] & event_threshold <= plot_range[2] &
     event_threshold < 1
