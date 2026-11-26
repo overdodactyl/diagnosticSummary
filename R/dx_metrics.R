@@ -1351,6 +1351,9 @@ calculate_fbeta <- function(cm, beta = 1) {
 #' print(detailed_f)
 #' @concept metrics
 dx_fbeta <- function(cm, beta = 1, detail = "full", boot = FALSE, bootreps = 2000) {
+  if (!is.numeric(beta) || length(beta) != 1 || is.na(beta) || beta <= 0) {
+    stop("beta should be a single number greater than 0", call. = FALSE)
+  }
   evaluate_metric(cm, calculate_fbeta, paste0("F", beta, " Score"), detail, boot, bootreps, beta = beta)
 }
 
