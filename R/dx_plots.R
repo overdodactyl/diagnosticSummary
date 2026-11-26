@@ -1142,4 +1142,12 @@ check_plot_input <- function(x, class = "dx") {
     ), call. = FALSE)
   }
   check_package("ggplot2", calling_func = calling_func)
+  # Suggested package versions aren't enforced when a package is installed
+  if (utils::packageVersion("ggplot2") < "3.4.0") {
+    stop(paste0(
+      if (is.na(calling_func)) "This function" else backtick(calling_func),
+      " needs ggplot2 3.4.0 or later (version ", utils::packageVersion("ggplot2"),
+      " is installed)."
+    ), call. = FALSE)
+  }
 }
