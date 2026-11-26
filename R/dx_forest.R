@@ -114,6 +114,14 @@ dx_plot_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
   bold_rows <- which(data$header)
   indent_rows <- setdiff(seq_len(nrow(data)), c(bold_rows, nrow(data)))
 
+  # Odds ratios are NA when every prediction is on one side of the threshold
+  if (!any(is.finite(data$conf_low) & is.finite(data$conf_high))) {
+    stop(paste(
+      "No odds ratio could be calculated, so there is nothing to plot.",
+      "Odds ratios need both positive and negative predictions and both outcome classes."
+    ), call. = FALSE)
+  }
+
   # Plot range and breaks, on the odds ratio scale
   range <- plot_range(
     limits = limits, breaks = breaks, trans = trans,
