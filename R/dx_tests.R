@@ -5,7 +5,8 @@
 #' investigating whether the effect of an explanatory variable on the outcome is consistent
 #' across different strata.
 #'
-#' @param contingency_table A 2x2xK contingency table where K is the number of strata.
+#' @param contingency_table A 2x2xK contingency table of counts, where K is the
+#' number of strata (at least 2). Every stratum needs non-zero row and column totals.
 #' @param odds_ratio Optionally, the overall odds ratio to use in the test.
 #' If not provided, the Mantel-Haenszel odds ratio is calculated.
 #' @param correct Logical indicating whether to apply Tarone's correction.
@@ -26,20 +27,37 @@
 #' breslow_day_test(tab)
 #' breslow_day_test(tab, correct = TRUE)
 breslow_day_test <- function(contingency_table, odds_ratio = NA, correct = FALSE) {
-  if (!is.array(contingency_table) || length(dim(contingency_table)) != 3) {
-    stop("The input 'contingency_table' must be a 2x2xK array.")
+  # Get the name of the table before it is modified
+  data_name <- paste(deparse(substitute(contingency_table)), collapse = "")
+  dims <- dim(contingency_table)
+  if (!is.array(contingency_table) || length(dims) != 3 || !all(dims[1:2] == 2) || dims[3] < 2) {
+    stop("The input 'contingency_table' must be a 2x2xK array with at least 2 strata.", call. = FALSE)
+  }
+  if (!is.numeric(contingency_table) || anyNA(contingency_table) || any(contingency_table < 0)) {
+    stop("The input 'contingency_table' must contain non-negative counts, with no missing values.", call. = FALSE)
+  }
+  # A stratum with an empty row or column has no odds ratio to compare
+  empty_margin <- apply(contingency_table, 3, function(stratum) {
+    any(rowSums(stratum) == 0) || any(colSums(stratum) == 0)
+  })
+  if (any(empty_margin)) {
+    stop(paste0(
+      "Every stratum needs non-zero row and column totals. Remove stratum ",
+      paste(which(empty_margin), collapse = ", "), "."
+    ), call. = FALSE)
   }
 
   # Use doubles, since mantelhaen.test() overflows on large integer counts
   storage.mode(contingency_table) <- "double"
+  # Drop dimnames so the results aren't named after a level of the table
+  dimnames(contingency_table) <- NULL
 
   if (is.na(odds_ratio)) {
     # Calculate the common OR based on Mantel-Haenszel
-    odds_ratio <- stats::mantelhaen.test(contingency_table)$estimate
+    odds_ratio <- unname(stats::mantelhaen.test(contingency_table)$estimate)
   }
 
   method <- if (correct) "Tarone's corrected Breslow-Day" else "Breslow-Day"
-  data_name <- deparse(substitute(contingency_table))
 
   # The test is undefined when the common odds ratio is 0 or infinite
   if (!is.finite(odds_ratio) || odds_ratio <= 0) {
@@ -75,7 +93,8 @@ breslow_day_test <- function(contingency_table, odds_ratio = NA, correct = FALSE
     breslow_day_statistic <- breslow_day_statistic - correction_term
   }
 
-  p_value <- 1 - stats::pchisq(breslow_day_statistic, num_strata - 1)
+  # The upper tail keeps precision for very small p-values
+  p_value <- stats::pchisq(breslow_day_statistic, num_strata - 1, lower.tail = FALSE)
 
   list(
     statistic = breslow_day_statistic,
@@ -319,6 +338,7 @@ dx_g_test <- function(cm, detail = "full") {
 #' @concept tests
 #' @export
 dx_delong <- function(dx1, dx2, detail = "full", paired = TRUE) {
+  validate_detail(detail)
   # DeLong's variance needs at least two cases and two controls per curve
   too_small <- vapply(list(dx1$roc, dx2$roc), function(r) {
     min(length(r$cases), length(r$controls)) < 2
@@ -429,6 +449,7 @@ delong_statistic_note <- function(test) {
 #' @export
 dx_z_test <- function(dx1, dx2, metric = c("accuracy", "ppv", "npv", "fnr", "fpr", "fdr", "sensitivity", "specificity"), detail = "full") {
   metric <- match.arg(metric)
+  validate_detail(detail)
 
   metric_mapping <- list(
     accuracy = c("correct", "n"),
@@ -456,6 +477,20 @@ dx_z_test <- function(dx1, dx2, metric = c("accuracy", "ppv", "npv", "fnr", "fpr
       test = paste0("Z-test: ", metric),
       summary = "-",
       notes = "Undefined: a denominator is 0"
+    ))
+  }
+
+  # With no successes or no failures in either model, both proportions are 0
+  # or both are 1, and the test statistic is 0/0
+  if (sum(p) == 0 || sum(p) == sum(n)) {
+    if (detail == "simple") {
+      return(NA_real_)
+    }
+    return(compare_df(
+      test = paste0("Z-test: ", metric),
+      summary = formatC(0, format = "f", digits = 2),
+      estimate = 0,
+      notes = "Undefined: both proportions are 0 or both are 1"
     ))
   }
 
@@ -520,6 +555,7 @@ dx_z_test <- function(dx1, dx2, metric = c("accuracy", "ppv", "npv", "fnr", "fpr
 #' @concept tests
 #' @export
 dx_mcnemars <- function(dx1, dx2, detail = "full") {
+  validate_detail(detail)
   if (!identical(pluck_truths(dx1), pluck_truths(dx2))) {
     stop("McNemar's test needs paired data: dx1 and dx2 must have the same truth values in the same order.")
   }

@@ -7,7 +7,8 @@
 breslow_day_test(contingency_table, odds_ratio = NA, correct = FALSE)
 }
 \arguments{
-\item{contingency_table}{A 2x2xK contingency table where K is the number of strata.}
+\item{contingency_table}{A 2x2xK contingency table of counts, where K is the
+number of strata (at least 2). Every stratum needs non-zero row and column totals.}
 
 \item{odds_ratio}{Optionally, the overall odds ratio to use in the test.
 If not provided, the Mantel-Haenszel odds ratio is calculated.}
