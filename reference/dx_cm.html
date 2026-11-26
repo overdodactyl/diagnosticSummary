@@ -47,7 +47,7 @@ and several other useful metrics.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">dx_cm</span><span class="op">(</span><span class="va">predprob</span>, <span class="va">truth</span>, <span class="va">threshold</span>, <span class="va">poslabel</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">dx_cm</span><span class="op">(</span><span class="va">predprob</span>, <span class="va">truth</span>, <span class="va">threshold</span>, poslabel <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -55,19 +55,22 @@ and several other useful metrics.</p>
 
 
 <dl><dt id="arg-predprob">predprob<a class="anchor" aria-label="anchor" href="#arg-predprob"></a></dt>
-<dd><p>Numeric vector of prediction probabilities.</p></dd>
+<dd><p>Numeric vector of predicted probabilities that the outcome
+is 1, between 0 and 1, with no missing values.</p></dd>
 
 
 <dt id="arg-truth">truth<a class="anchor" aria-label="anchor" href="#arg-truth"></a></dt>
-<dd><p>Numeric vector of true binary class outcomes.</p></dd>
+<dd><p>Vector of true binary class outcomes (0 and 1), the same length
+as <code>predprob</code>, with no missing values.</p></dd>
 
 
 <dt id="arg-threshold">threshold<a class="anchor" aria-label="anchor" href="#arg-threshold"></a></dt>
-<dd><p>Numeric value to determine the cutoff for classifying predictions as positive.</p></dd>
+<dd><p>A single number between 0 and 1. Predictions at or above it
+are classified as outcome 1.</p></dd>
 
 
 <dt id="arg-poslabel">poslabel<a class="anchor" aria-label="anchor" href="#arg-poslabel"></a></dt>
-<dd><p>The label of the positive class in the truth data.</p></dd>
+<dd><p>The outcome class that is the event: 1 (default) or 0.</p></dd>
 
 </dl></div>
     <div class="section level2">

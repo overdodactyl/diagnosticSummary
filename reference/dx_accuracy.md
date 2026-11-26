@@ -57,16 +57,16 @@ to understand how to create and interact with a 'dx_cm' object.
 ``` r
 cm <- dx_cm(
   dx_heart_failure$predicted,
-  dx_heart_failure$predicted,
+  dx_heart_failure$truth,
   threshold = 0.3, poslabel = 1
 )
 simple_accuracy <- dx_accuracy(cm, detail = "simple")
 detailed_accuracy <- dx_accuracy(cm)
 print(simple_accuracy)
-#> [1] 0.532567
+#> [1] 0.7931034
 print(detailed_accuracy)
 #> # A tibble: 1 × 8
 #>   measure  summary          estimate conf_low conf_high fraction conf_type notes
 #>   <chr>    <chr>               <dbl>    <dbl>     <dbl> <chr>    <chr>     <chr>
-#> 1 Accuracy 53.3% (47.0%, 5…    0.533    0.470     0.594 139/261  Binomial… ""   
+#> 1 Accuracy 79.3% (73.9%, 8…    0.793    0.739     0.841 207/261  Binomial… ""   
 ```

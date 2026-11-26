@@ -9,27 +9,29 @@ metrics.
 ## Usage
 
 ``` r
-dx_cm(predprob, truth, threshold, poslabel)
+dx_cm(predprob, truth, threshold, poslabel = 1)
 ```
 
 ## Arguments
 
 - predprob:
 
-  Numeric vector of prediction probabilities.
+  Numeric vector of predicted probabilities that the outcome is 1,
+  between 0 and 1, with no missing values.
 
 - truth:
 
-  Numeric vector of true binary class outcomes.
+  Vector of true binary class outcomes (0 and 1), the same length as
+  `predprob`, with no missing values.
 
 - threshold:
 
-  Numeric value to determine the cutoff for classifying predictions as
-  positive.
+  A single number between 0 and 1. Predictions at or above it are
+  classified as outcome 1.
 
 - poslabel:
 
-  The label of the positive class in the truth data.
+  The outcome class that is the event: 1 (default) or 0.
 
 ## Value
 

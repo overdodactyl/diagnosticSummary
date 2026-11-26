@@ -16,14 +16,13 @@ dx_plot_decision_curve(dx_obj, plot_range = c(0.05, 0.95))
 
 - dx_obj:
 
-  A `dx` object containing a 'thresholds' data frame with columns for
-  'threshold' and 'net_benefit'.
+  A `dx` object.
 
 - plot_range:
 
-  A numeric vector of length 2 specifying the lower and upper bounds for
-  the range of threshold probabilities to be plotted. Defaults to
-  c(0.05, .95).
+  A numeric vector of length 2 specifying the lower and upper bounds,
+  between 0 and 1, for the range of threshold probabilities to be
+  plotted. Defaults to c(0.05, .95).
 
 ## Value
 
@@ -44,7 +43,10 @@ probability (Vickers & Elkin, 2006): \$\$Net Benefit = \frac{TP}{N} -
 Weight \times \frac{FP}{N}\$\$ where Weight = Threshold / (1 -
 Threshold) and N is the total number of observations. The threshold is
 the probability of the event, so with `poslabel = 0` it is 1 minus the
-threshold on the predictions.
+threshold on the predictions. Net benefit is calculated on an even grid
+of thresholds across `plot_range` and at each distinct prediction, so
+the curve is also drawn for models with few distinct predictions, such
+as 0/1 classes.
 
 The decision curve will typically be compared against two default
 strategies: treating all patients or treating none. The net benefit is

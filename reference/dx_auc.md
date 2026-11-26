@@ -15,11 +15,13 @@ dx_auc(truth, predprob, detail = "full", direction = "<")
 
 - truth:
 
-  Vector of true binary class outcomes (0 and 1).
+  Vector of true binary class outcomes (0 and 1), with no missing
+  values.
 
 - predprob:
 
-  Vector of prediction probabilities corresponding to the true outcomes.
+  Numeric vector of predictions corresponding to the true outcomes, with
+  no missing values.
 
 - detail:
 

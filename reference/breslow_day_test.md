@@ -15,7 +15,8 @@ breslow_day_test(contingency_table, odds_ratio = NA, correct = FALSE)
 
 - contingency_table:
 
-  A 2x2xK contingency table where K is the number of strata.
+  A 2x2xK contingency table of counts, where K is the number of strata
+  (at least 2). Every stratum needs non-zero row and column totals.
 
 - odds_ratio:
 
@@ -49,36 +50,28 @@ tab <- table(
 )
 breslow_day_test(tab)
 #> $statistic
-#>    FALSE 
-#> 2.369975 
+#> [1] 2.369975
 #> 
 #> $p_value
-#>     FALSE 
-#> 0.1236891 
+#> [1] 0.1236891
 #> 
 #> $method
 #> [1] "Breslow-Day"
 #> 
 #> $data_name
-#> [1] "structure(c(49, 8, 6, 6, 75, 31, 9, 77), dim = c(2L, 2L, 2L), dimnames = list("  
-#> [2] "    test = c(\"FALSE\", \"TRUE\"), truth = c(\"0\", \"1\"), sex = c(\"Female\", "
-#> [3] "    \"Male\")), class = \"table\")"                                              
+#> [1] "tab"
 #> 
 breslow_day_test(tab, correct = TRUE)
 #> $statistic
-#>   FALSE 
-#> 2.36099 
+#> [1] 2.36099
 #> 
 #> $p_value
-#>     FALSE 
-#> 0.1244032 
+#> [1] 0.1244032
 #> 
 #> $method
 #> [1] "Tarone's corrected Breslow-Day"
 #> 
 #> $data_name
-#> [1] "structure(c(49, 8, 6, 6, 75, 31, 9, 77), dim = c(2L, 2L, 2L), dimnames = list("  
-#> [2] "    test = c(\"FALSE\", \"TRUE\"), truth = c(\"0\", \"1\"), sex = c(\"Female\", "
-#> [3] "    \"Male\")), class = \"table\")"                                              
+#> [1] "tab"
 #> 
 ```

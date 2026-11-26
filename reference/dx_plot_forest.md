@@ -57,8 +57,8 @@ dx_plot_forest(
 
 - trans:
 
-  Method to transform the odds ratio by. Currently, only log10 is
-  supported.
+  Method to transform the odds ratio by: `NA` (default) for none, or
+  "log10".
 
 - measures:
 
