@@ -3,6 +3,9 @@
 # change.
 
 test_that("Outputs match the saved baseline", {
+  # Exact outputs can change with new versions of pROC or binom, or on other
+  # platforms. The other tests check that results are correct.
+  skip_on_cran()
   expected <- readRDS(test_path("fixtures", "baseline.rds"))
   current <- baseline_outputs()
 
