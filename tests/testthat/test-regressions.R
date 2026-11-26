@@ -140,6 +140,7 @@ test_that("Forest table keeps group order with one row per group (ed5db54, 915a7
 })
 
 test_that("Forest plot does not warn (de7664b)", {
+  skip_if_not_installed("ggplot2")
   skip_if_not_installed("gridExtra")
   skip_if_not_installed("gtable")
 
@@ -401,6 +402,7 @@ test_that("Net benefit uses the Vickers & Elkin (2006) formula", {
 })
 
 test_that("Forest plot indents subgroups with a missing odds ratio", {
+  skip_if_not_installed("ggplot2")
   skip_if_not_installed("gridExtra")
   skip_if_not_installed("gtable")
 
@@ -424,6 +426,7 @@ test_that("Forest plot indents subgroups with a missing odds ratio", {
 })
 
 test_that("Forest plot does not change the user's random number state", {
+  skip_if_not_installed("ggplot2")
   skip_if_not_installed("gridExtra")
   skip_if_not_installed("gtable")
 
@@ -436,6 +439,7 @@ test_that("Forest plot does not change the user's random number state", {
 })
 
 test_that("KS statistic is not inflated by tied predictions", {
+  skip_if_not_installed("ggplot2")
   # Four tied predictions with positives listed first. No threshold separates
   # the classes, so KS = 0, but stepping through the tie row by row gives 0.67.
   df <- data.frame(truth = c(1, 1, 0, 0, 1, 0), p = c(.5, .5, .5, .5, .2, .2))
@@ -555,6 +559,7 @@ test_that("dx_compare requires unique model names", {
 })
 
 test_that("Forest plot ticks are placed on the odds ratio scale", {
+  skip_if_not_installed("ggplot2")
   skip_if_not_installed("gridExtra")
   skip_if_not_installed("gtable")
 
@@ -586,6 +591,7 @@ test_that("Forest plot ticks are placed on the odds ratio scale", {
 })
 
 test_that("Forest plot clips the overall odds ratio line to its column", {
+  skip_if_not_installed("ggplot2")
   skip_if_not_installed("gridExtra")
   skip_if_not_installed("gtable")
 
@@ -594,6 +600,7 @@ test_that("Forest plot clips the overall odds ratio line to its column", {
 })
 
 test_that("Forest plot needs grouping variables", {
+  skip_if_not_installed("ggplot2")
   skip_if_not_installed("gridExtra")
   skip_if_not_installed("gtable")
 
