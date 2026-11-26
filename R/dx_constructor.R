@@ -12,7 +12,8 @@
 #'     with no missing values.
 #' @param setthreshold A number between 0 and 1 representing the threshold used
 #'     to classify the predictions
-#' @param threshold_range Optional. A numeric vector of thresholds to loop over.
+#' @param threshold_range Optional. A numeric vector of thresholds between 0
+#'     and 1 to loop over.
 #' @param true_varname Column name containing the reference standard (string).
 #'     Values should be 0 or 1 (numeric, logical, factor, or character), with
 #'     no missing values, and both classes must be present.
@@ -22,9 +23,12 @@
 #' @param outcome_label Deprecated; has no effect.
 #' @param grouping_variables Character vector of variable names to
 #'     be summarized by.  Variables are converted to factors if not already one.
-#' @param prevalence Numeric value between 0 and 1, representing a target
-#'     prevalence for additional NPV and PPV calculations.
-#' @param citype Confidence interval type.
+#'     A column can't be named "Overall", which is used for the results of all
+#'     cases.
+#' @param prevalence A single number greater than 0 and less than 1,
+#'     representing a target prevalence for additional NPV and PPV calculations.
+#' @param citype Confidence interval type for proportions: one of the methods
+#'     of [binom::binom.confint()], such as "exact" (default), "wilson", or "ac".
 #' @param bootreps Number of bootstrap samples used for the bootstrapped CIs.
 #' @param bootseed Seed used for the bootstrapped CIs, so results are reproducible
 #'     on the same R version and platform. Bootstrap draws can differ across
@@ -76,7 +80,11 @@ dx <- function(data,
                setthreshold = .5, poslabel = 1, grouping_variables = NA, prevalence = NA,
                citype = "exact", bootreps = 2000, bootseed = 20191015,
                doboot = FALSE, direction = "<", ...) {
-  check_dx_options(poslabel, direction, setthreshold)
+  check_dx_options(
+    poslabel, direction, setthreshold,
+    citype = citype, threshold_range = threshold_range, prevalence = prevalence,
+    doboot = doboot, bootreps = bootreps
+  )
   if (!missing(classlabels)) warn_deprecated_unused("classlabels")
   if (!missing(outcome_label)) warn_deprecated_unused("outcome_label")
   data <- prepare_dx_data(data, pred_varname, true_varname, grouping_variables)
@@ -152,7 +160,9 @@ dx <- function(data,
 }
 
 # Check options that don't depend on the data
-check_dx_options <- function(poslabel, direction, setthreshold) {
+check_dx_options <- function(poslabel, direction, setthreshold, citype = "exact",
+                             threshold_range = NA, prevalence = NA,
+                             doboot = FALSE, bootreps = 2000) {
   # Check that poslabel is 0 or 1
   if (length(poslabel) != 1 || !poslabel %in% c(0, 1)) {
     stop("poslabel should be 0 or 1", call. = FALSE)
@@ -161,6 +171,48 @@ check_dx_options <- function(poslabel, direction, setthreshold) {
   if (!is.numeric(setthreshold) || length(setthreshold) != 1 || is.na(setthreshold) ||
     setthreshold < 0 || setthreshold > 1) {
     stop("setthreshold should be a single number between 0 and 1", call. = FALSE)
+  }
+
+  # binom::binom.confint() matches method names partially, and "all" would
+  # return one row per method
+  ci_methods <- c(
+    "exact", "ac", "agresti-coull", "asymptotic", "wilson", "prop.test",
+    "bayes", "logit", "cloglog", "probit", "profile", "lrt"
+  )
+  if (!is.character(citype) || length(citype) != 1 || is.na(pmatch(citype, ci_methods))) {
+    stop(paste0(
+      "citype should be one of: ", paste(setdiff(ci_methods, "agresti-coull"), collapse = ", ")
+    ), call. = FALSE)
+  }
+
+  # NA (the default) and NULL mean no extra thresholds
+  if (!is.null(threshold_range) && !identical(threshold_range, NA)) {
+    if (!is.numeric(threshold_range) || anyNA(threshold_range) ||
+      any(threshold_range < 0 | threshold_range > 1)) {
+      stop("threshold_range should be a numeric vector of values between 0 and 1", call. = FALSE)
+    }
+  }
+
+  # A prevalence of 0 or 1 leaves nothing to estimate
+  if (!identical(prevalence, NA)) {
+    if (!is.numeric(prevalence) || length(prevalence) != 1 || is.na(prevalence) ||
+      prevalence <= 0 || prevalence >= 1) {
+      stop("prevalence should be a single number greater than 0 and less than 1", call. = FALSE)
+    }
+  }
+
+  if (!is.logical(doboot) || length(doboot) != 1 || is.na(doboot)) {
+    stop("doboot should be TRUE or FALSE", call. = FALSE)
+  }
+  if (doboot) {
+    if (!is.numeric(bootreps) || length(bootreps) != 1 || is.na(bootreps) ||
+      bootreps < 1 || bootreps != round(bootreps)) {
+      stop("bootreps should be a single whole number of at least 1", call. = FALSE)
+    }
+  }
+
+  if (!is.character(direction) || length(direction) != 1 || !direction %in% c("<", ">", "auto")) {
+    stop("direction should be \"<\", \">\", or \"auto\"", call. = FALSE)
   }
 
   # direction is deprecated and only used for the AUC and ROC curve
@@ -193,6 +245,28 @@ prepare_dx_data <- function(data, pred_varname, true_varname, grouping_variables
   }
 
   if (!identical(grouping_variables, NA)) {
+    if (!is.character(grouping_variables) || anyNA(grouping_variables)) {
+      stop("grouping_variables should be a character vector of column names", call. = FALSE)
+    }
+    not_found <- setdiff(grouping_variables, names(data))
+    if (length(not_found) > 0) {
+      stop(paste0(
+        "grouping_variables not found in `data`: ", paste(not_found, collapse = ", ")
+      ), call. = FALSE)
+    }
+    if (anyDuplicated(grouping_variables)) {
+      stop(paste0(
+        "grouping_variables should not contain duplicates: ",
+        paste(unique(grouping_variables[duplicated(grouping_variables)]), collapse = ", ")
+      ), call. = FALSE)
+    }
+    # Results for all cases are stored under the variable "Overall"
+    if ("Overall" %in% grouping_variables) {
+      stop(paste(
+        "grouping_variables should not include a column named \"Overall\",",
+        "which is used for the results of all cases. Rename the column."
+      ), call. = FALSE)
+    }
     for (f in grouping_variables) {
       data[[f]] <- droplevels(as.factor(data[[f]]))
     }

@@ -132,3 +132,65 @@ test_that("Identical predictions are an error", {
   constant$predicted <- .5
   expect_error(fit_dx(constant), "All values of predicted are identical")
 })
+
+test_that("Options are checked before any results are calculated", {
+  fit <- function(...) {
+    dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted", ...)
+  }
+
+  # citype is one method of binom::binom.confint(), not "all" or several
+  for (bad in list("all", "bogus", c("exact", "wilson"), NA, 1)) {
+    expect_error(fit(citype = bad), "citype should be one of: exact, ac, asymptotic")
+  }
+  # Partial and alternative names that binom accepts still work
+  expect_equal(fit(citype = "wil")$measures$estimate, fit(citype = "wilson")$measures$estimate)
+  expect_equal(fit(citype = "agresti-coull")$measures$estimate, fit(citype = "ac")$measures$estimate)
+
+  for (bad in list(c(-1, .5), c(.5, 2), "a", c(.2, NA))) {
+    expect_error(fit(threshold_range = bad), "threshold_range should be a numeric vector of values between 0 and 1")
+  }
+  expect_equal(unique(fit(threshold_range = NULL)$measures$threshold), .5)
+  expect_equal(unique(fit(threshold_range = c(0, 1))$measures$threshold), c(.5, 0, 1))
+
+  for (bad in list(0, 1, 1.5, -.1, c(.1, .2), "a")) {
+    expect_error(fit(prevalence = bad), "prevalence should be a single number greater than 0 and less than 1")
+  }
+
+  for (bad in list(NA, "yes", c(TRUE, FALSE), 1)) {
+    expect_error(fit(doboot = bad), "doboot should be TRUE or FALSE")
+  }
+  for (bad in list(0, -5, 10.5, NA, c(10, 20), "100")) {
+    expect_error(fit(doboot = TRUE, bootreps = bad), "bootreps should be a single whole number of at least 1")
+  }
+  # bootreps is only used when bootstrapping
+  expect_s3_class(fit(bootreps = 0), "dx")
+  expect_s3_class(fit(doboot = TRUE, bootreps = 1), "dx")
+
+  for (bad in list(NA, "up", c("<", ">"), 1)) {
+    expect_error(fit(direction = bad), "direction should be")
+  }
+})
+
+test_that("Grouping variables are checked", {
+  fit <- function(data = dx_heart_failure, ...) {
+    dx(data = data, true_varname = "truth", pred_varname = "predicted", ...)
+  }
+
+  expect_error(
+    fit(grouping_variables = c("Sex", "nope", "nada")),
+    "grouping_variables not found in `data`: nope, nada"
+  )
+  expect_error(
+    fit(grouping_variables = c("Sex", "AgeGroup", "Sex")),
+    "grouping_variables should not contain duplicates: Sex"
+  )
+  expect_error(fit(grouping_variables = 1), "should be a character vector of column names")
+  expect_error(fit(grouping_variables = c("Sex", NA)), "should be a character vector of column names")
+
+  # "Overall" labels the results for all cases
+  overall <- dx_heart_failure
+  overall$Overall <- overall$Sex
+  expect_error(fit(overall, grouping_variables = "Overall"), "should not include a column named \"Overall\"")
+  # A column named Overall is fine if it isn't a grouping variable
+  expect_s3_class(fit(overall, grouping_variables = "Sex"), "dx")
+})

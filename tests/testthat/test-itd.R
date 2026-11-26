@@ -239,6 +239,14 @@ test_that("dx_itd validates its inputs", {
                  "setthreshold should be a single number between 0 and 1")
   }
   expect_s3_class(dx_itd(data, "predicted", "truth", setthreshold = 1), "dx_itd")
+
+  # Options shared with dx()
+  expect_error(dx_itd(data, "predicted", "truth", citype = "all"), "citype should be one of")
+  expect_error(dx_itd(data, "predicted", "truth", grouping_variables = "nope"),
+               "grouping_variables not found in `data`: nope")
+  data$Overall <- rep(c("a", "b"), length.out = nrow(data))
+  expect_error(dx_itd(data, "predicted", "truth", grouping_variables = "Overall"),
+               "should not include a column named \"Overall\"")
 })
 
 test_that("dx() points to dx_itd() for missing predictions", {

@@ -28,7 +28,8 @@ dx(
 
 \item{classlabels}{Deprecated; has no effect.}
 
-\item{threshold_range}{Optional. A numeric vector of thresholds to loop over.}
+\item{threshold_range}{Optional. A numeric vector of thresholds between 0
+and 1 to loop over.}
 
 \item{outcome_label}{Deprecated; has no effect.}
 
@@ -48,12 +49,15 @@ Predictions are still probabilities that the outcome is 1, so with
 \code{poslabel = 0} a prediction below the threshold is a positive test.}
 
 \item{grouping_variables}{Character vector of variable names to
-be summarized by.  Variables are converted to factors if not already one.}
+be summarized by.  Variables are converted to factors if not already one.
+A column can't be named "Overall", which is used for the results of all
+cases.}
 
-\item{prevalence}{Numeric value between 0 and 1, representing a target
-prevalence for additional NPV and PPV calculations.}
+\item{prevalence}{A single number greater than 0 and less than 1,
+representing a target prevalence for additional NPV and PPV calculations.}
 
-\item{citype}{Confidence interval type.}
+\item{citype}{Confidence interval type for proportions: one of the methods
+of \code{\link[binom:binom.confint]{binom::binom.confint()}}, such as "exact" (default), "wilson", or "ac".}
 
 \item{bootreps}{Number of bootstrap samples used for the bootstrapped CIs.}
 
