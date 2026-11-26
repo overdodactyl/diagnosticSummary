@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">diagnosticSummary</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2.18</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2.19</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,6 +31,35 @@
       <small>Source: <a href="https://github.com/overdodactyl/diagnosticSummary/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.0.2.19" id="diagnosticsummary-00219">diagnosticSummary 0.0.2.19<a class="anchor" aria-label="anchor" href="#diagnosticsummary-00219"></a></h2>
+<p><strong>Breaking changes</strong></p>
+<ul><li>
+<code><a href="../reference/dx.html">dx()</a></code> and <code><a href="../reference/dx_itd.html">dx_itd()</a></code> now give an error for invalid options, which previously failed later with an unclear error or were silently ignored. <code>citype</code> must be a method of <code><a href="https://rdrr.io/pkg/binom/man/binom.confint.html" class="external-link">binom::binom.confint()</a></code>, <code>threshold_range</code> must hold numbers between 0 and 1, <code>prevalence</code> must be a single number greater than 0 and less than 1, <code>doboot</code> must be <code>TRUE</code> or <code>FALSE</code>, <code>bootreps</code> must be a whole number of at least 1, and <code>grouping_variables</code> must be unique column names in <code>data</code> other than “Overall”.</li>
+<li>
+<code><a href="../reference/dx_cm.html">dx_cm()</a></code>, <code><a href="../reference/dx_auc.html">dx_auc()</a></code>, and <code><a href="../reference/dx_brier.html">dx_brier()</a></code> now give an error when <code>truth</code> and <code>predprob</code> differ in length, have missing values, or <code>truth</code> isn’t 0/1. <code><a href="../reference/dx_cm.html">dx_cm()</a></code> and <code><a href="../reference/dx_brier.html">dx_brier()</a></code> also require predictions between 0 and 1. <code><a href="../reference/dx_fbeta.html">dx_fbeta()</a></code> requires <code>beta</code> to be a single positive number, and <code><a href="../reference/dx_delong.html">dx_delong()</a></code>, <code><a href="../reference/dx_z_test.html">dx_z_test()</a></code>, and <code><a href="../reference/dx_mcnemars.html">dx_mcnemars()</a></code> require <code>detail</code> to be “simple” or “full”.</li>
+<li>
+<code><a href="../reference/breslow_day_test.html">breslow_day_test()</a></code> requires a 2x2xK array of counts with at least two strata, and gives an error when a stratum has an empty row or column</li>
+<li>The <code>dx_plot_*</code> functions give an error when they aren’t given a <code>dx</code> object (a <code>dx_compare</code> object for <code><a href="../reference/dx_plot_rocs.html">dx_plot_rocs()</a></code>), or when <code>plot_range</code>, <code>plot_type</code>, <code>summary_stats</code>, <code>bins</code>, <code>levels</code>, or log-scale <code>limits</code> are invalid</li>
+</ul><p><strong>Changes that affect results</strong></p>
+<ul><li>The odds ratio and likelihood ratios are <code>NA</code> when every prediction is on one side of the threshold. Previously the continuity correction gave values that only reflected the number of cases in each class. A single empty cell is still corrected by adding 0.5 to each cell.</li>
+<li>
+<code><a href="../reference/dx_plot_decision_curve.html">dx_plot_decision_curve()</a></code> calculates net benefit on an even grid of thresholds across <code>plot_range</code> and at each distinct prediction, instead of only at the predictions. The curve is now also drawn for models with few distinct predictions, such as 0/1 classes.</li>
+<li>The G-test is <code>NA</code> when every prediction is on one side of the threshold, matching the chi-squared test, and empty cells contribute exactly 0</li>
+<li>The kappa confidence interval uses the exact normal quantile instead of 1.96, and an undefined kappa is noted as undefined instead of “Slight Agreement”</li>
+<li>Proportions with a denominator of 0 have no confidence interval for any <code>citype</code>. Previously <code>"exact"</code> gave 0% to 100%.</li>
+<li>
+<code><a href="../reference/dx_z_test.html">dx_z_test()</a></code> returns an estimate of 0 and a p-value of <code>NA</code>, with a note, when both proportions are 0 or both are 1</li>
+<li>Numbers that round to zero are no longer shown with a minus sign</li>
+</ul><p><strong>Bug fixes</strong></p>
+<ul><li>
+<code><a href="../reference/dx_plot_forest.html">dx_plot_forest()</a></code> gave an error with <code>trans = NA</code>, its documented default, when passed explicitly, and replaced a subgroup’s odds ratio with the Breslow-Day p-value when the subgroup had the same name as its variable. <code><a href="../reference/breslow_day_test.html">breslow_day_test()</a></code> keeps precision for very small p-values and no longer names its results after a level of the table. The message for a missing suggested package no longer repeats “must be”.</li>
+</ul><p><strong>New features</strong></p>
+<ul><li>
+<code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> methods for <code>dx</code>, <code>dx_itd</code>, and <code>dx_compare</code> objects show the inputs and a few headline measures (or the table of tests) instead of the whole list</li>
+</ul><p><strong>Dependencies</strong></p>
+<ul><li>The plots need ggplot2 &gt;= 3.4.0</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.2.18" id="diagnosticsummary-00218">diagnosticSummary 0.0.2.18<a class="anchor" aria-label="anchor" href="#diagnosticsummary-00218"></a></h2>
 <p><strong>Dependencies</strong></p>

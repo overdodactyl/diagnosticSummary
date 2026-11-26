@@ -1,5 +1,92 @@
 # Changelog
 
+## diagnosticSummary 0.0.2.19
+
+**Breaking changes**
+
+- [`dx()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx.md)
+  and
+  [`dx_itd()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_itd.md)
+  now give an error for invalid options, which previously failed later
+  with an unclear error or were silently ignored. `citype` must be a
+  method of
+  [`binom::binom.confint()`](https://rdrr.io/pkg/binom/man/binom.confint.html),
+  `threshold_range` must hold numbers between 0 and 1, `prevalence` must
+  be a single number greater than 0 and less than 1, `doboot` must be
+  `TRUE` or `FALSE`, `bootreps` must be a whole number of at least 1,
+  and `grouping_variables` must be unique column names in `data` other
+  than “Overall”.
+- [`dx_cm()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_cm.md),
+  [`dx_auc()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_auc.md),
+  and
+  [`dx_brier()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_brier.md)
+  now give an error when `truth` and `predprob` differ in length, have
+  missing values, or `truth` isn’t 0/1.
+  [`dx_cm()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_cm.md)
+  and
+  [`dx_brier()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_brier.md)
+  also require predictions between 0 and 1.
+  [`dx_fbeta()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_fbeta.md)
+  requires `beta` to be a single positive number, and
+  [`dx_delong()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_delong.md),
+  [`dx_z_test()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_z_test.md),
+  and
+  [`dx_mcnemars()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_mcnemars.md)
+  require `detail` to be “simple” or “full”.
+- [`breslow_day_test()`](https://overdodactyl.github.io/diagnosticSummary/reference/breslow_day_test.md)
+  requires a 2x2xK array of counts with at least two strata, and gives
+  an error when a stratum has an empty row or column
+- The `dx_plot_*` functions give an error when they aren’t given a `dx`
+  object (a `dx_compare` object for
+  [`dx_plot_rocs()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_rocs.md)),
+  or when `plot_range`, `plot_type`, `summary_stats`, `bins`, `levels`,
+  or log-scale `limits` are invalid
+
+**Changes that affect results**
+
+- The odds ratio and likelihood ratios are `NA` when every prediction is
+  on one side of the threshold. Previously the continuity correction
+  gave values that only reflected the number of cases in each class. A
+  single empty cell is still corrected by adding 0.5 to each cell.
+- [`dx_plot_decision_curve()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_decision_curve.md)
+  calculates net benefit on an even grid of thresholds across
+  `plot_range` and at each distinct prediction, instead of only at the
+  predictions. The curve is now also drawn for models with few distinct
+  predictions, such as 0/1 classes.
+- The G-test is `NA` when every prediction is on one side of the
+  threshold, matching the chi-squared test, and empty cells contribute
+  exactly 0
+- The kappa confidence interval uses the exact normal quantile instead
+  of 1.96, and an undefined kappa is noted as undefined instead of
+  “Slight Agreement”
+- Proportions with a denominator of 0 have no confidence interval for
+  any `citype`. Previously `"exact"` gave 0% to 100%.
+- [`dx_z_test()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_z_test.md)
+  returns an estimate of 0 and a p-value of `NA`, with a note, when both
+  proportions are 0 or both are 1
+- Numbers that round to zero are no longer shown with a minus sign
+
+**Bug fixes**
+
+- [`dx_plot_forest()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_forest.md)
+  gave an error with `trans = NA`, its documented default, when passed
+  explicitly, and replaced a subgroup’s odds ratio with the Breslow-Day
+  p-value when the subgroup had the same name as its variable.
+  [`breslow_day_test()`](https://overdodactyl.github.io/diagnosticSummary/reference/breslow_day_test.md)
+  keeps precision for very small p-values and no longer names its
+  results after a level of the table. The message for a missing
+  suggested package no longer repeats “must be”.
+
+**New features**
+
+- [`print()`](https://rdrr.io/r/base/print.html) methods for `dx`,
+  `dx_itd`, and `dx_compare` objects show the inputs and a few headline
+  measures (or the table of tests) instead of the whole list
+
+**Dependencies**
+
+- The plots need ggplot2 \>= 3.4.0
+
 ## diagnosticSummary 0.0.2.18
 
 **Dependencies**
