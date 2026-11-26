@@ -357,6 +357,7 @@ test_that("AUC-PR uses Davis & Goadrich (2006) interpolation", {
 })
 
 test_that("PR plot draws the curve whose area is the AUC-PR", {
+  skip_if_not_installed("ggplot2")
   # Coarse scores, so most steps are tie groups drawn as curves
   hf <- dx_heart_failure
   hf$score <- round(hf$predicted, 1)

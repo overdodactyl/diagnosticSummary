@@ -23,6 +23,7 @@ expect_builds <- function(p) {
 # Every plot builds without errors or warnings ----------------------------
 
 test_that("All plots build without warnings", {
+  skip_if_not_installed("ggplot2")
   dx_rf <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted_rf", setthreshold = .3)
 
   expect_builds(dx_plot_gain(dx_obj))
@@ -44,6 +45,7 @@ test_that("All plots build without warnings", {
 })
 
 test_that("Forest plot builds without warnings", {
+  skip_if_not_installed("ggplot2")
   skip_if_not_installed("gridExtra")
   skip_if_not_installed("gtable")
 
@@ -67,6 +69,7 @@ test_that("Forest plot builds without warnings", {
 # Data behind the plots ---------------------------------------------------
 
 test_that("ROC plot shades the AUC and marks the chosen threshold", {
+  skip_if_not_installed("ggplot2")
   b <- expect_builds(dx_plot_roc(dx_obj))
   cm <- dx_obj$cm
 
@@ -81,6 +84,7 @@ test_that("ROC plot shades the AUC and marks the chosen threshold", {
 })
 
 test_that("Confusion matrix plot shows counts in the right cells", {
+  skip_if_not_installed("ggplot2")
   b <- expect_builds(dx_plot_cm(dx_obj))
   counts <- b$data[[2]]
   cm <- dx_obj$cm
@@ -94,6 +98,7 @@ test_that("Confusion matrix plot shows counts in the right cells", {
 })
 
 test_that("Calibration plot uses mean prediction and observed rate per bin", {
+  skip_if_not_installed("ggplot2")
   pred <- dx_heart_failure$predicted
   truth <- dx_heart_failure$truth
 
@@ -112,6 +117,7 @@ test_that("Calibration plot uses mean prediction and observed rate per bin", {
 })
 
 test_that("Decision curve compares the model with treat all and treat none", {
+  skip_if_not_installed("ggplot2")
   b <- expect_builds(dx_plot_decision_curve(dx_obj, plot_range = c(.1, .6)))
   prev <- mean(dx_heart_failure$truth)
   n <- nrow(dx_heart_failure)
@@ -131,6 +137,7 @@ test_that("Decision curve compares the model with treat all and treat none", {
 })
 
 test_that("Cost curve totals costs at the extremes", {
+  skip_if_not_installed("ggplot2")
   cm <- dx_obj$cm
   b <- expect_builds(dx_plot_cost(dx_obj, cfp = 2, cfn = 7, ctp = 1, ctn = 3))
   cost <- b$data[[1]]
@@ -142,6 +149,7 @@ test_that("Cost curve totals costs at the extremes", {
 })
 
 test_that("Predictive value plot matches Bayes' theorem", {
+  skip_if_not_installed("ggplot2")
   b <- expect_builds(dx_plot_predictive_value(dx_obj))
   lines <- b$data[[1]]
   cm <- dx_obj$cm
@@ -160,6 +168,7 @@ test_that("Predictive value plot matches Bayes' theorem", {
 })
 
 test_that("Gain, lift, and CAP curves reach their end points", {
+  skip_if_not_installed("ggplot2")
   prev <- mean(dx_heart_failure$truth)
 
   gain <- expect_builds(dx_plot_gain(dx_obj))$data[[1]]
@@ -181,6 +190,7 @@ test_that("Gain, lift, and CAP curves reach their end points", {
 })
 
 test_that("Multiple ROC plot draws each model and reports DeLong p-values", {
+  skip_if_not_installed("ggplot2")
   dx_rf <- dx(data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted_rf", setthreshold = .3)
   cmp <- dx_compare(list(glm = dx_obj, rf = dx_rf))
   b <- expect_builds(dx_plot_rocs(cmp))
@@ -193,6 +203,7 @@ test_that("Multiple ROC plot draws each model and reports DeLong p-values", {
 })
 
 test_that("Forest plot shows Breslow-Day and custom axes", {
+  skip_if_not_installed("ggplot2")
   skip_if_not_installed("gridExtra")
   skip_if_not_installed("gtable")
 
@@ -221,6 +232,7 @@ test_that("Forest plot shows Breslow-Day and custom axes", {
 })
 
 test_that("ROC and forest plots can be saved to a file", {
+  skip_if_not_installed("ggplot2")
   skip_if_not_installed("gridExtra")
   skip_if_not_installed("gtable")
 
@@ -244,6 +256,7 @@ test_that("ROC and forest plots can be saved to a file", {
 })
 
 test_that("ROC plot matches the AUC with tied predictions and any direction", {
+  skip_if_not_installed("ggplot2")
   ties <- data.frame(truth = c(1, 1, 0, 0, 1, 0, 1, 0), p = c(.5, .5, .5, .5, .2, .2, .9, .1))
   d <- dx(data = ties, true_varname = "truth", pred_varname = "p", setthreshold = .5)
   expect_equal(polygon_area(expect_builds(dx_plot_roc(d))$data[[1]]), as.numeric(d$roc$auc))
@@ -255,6 +268,7 @@ test_that("ROC plot matches the AUC with tied predictions and any direction", {
 })
 
 test_that("PR curve reaches full recall", {
+  skip_if_not_installed("ggplot2")
   d <- dx(
     data = data.frame(truth = c(1, 0, 1, 0, 0, 1), p = c(.9, .8, .7, .4, .3, .1)),
     true_varname = "truth", pred_varname = "p", setthreshold = .5
@@ -264,6 +278,7 @@ test_that("PR curve reaches full recall", {
 })
 
 test_that("ROC summary statistics follow the requested order", {
+  skip_if_not_installed("ggplot2")
   b <- expect_builds(dx_plot_roc(dx_obj, summary_stats = c(3, 1, 3)))
   text <- b$data[[length(b$data)]]$label
   expect_length(text, 2)
@@ -272,6 +287,7 @@ test_that("ROC summary statistics follow the requested order", {
 })
 
 test_that("Rank-based plots and the decision curve use poslabel = 0", {
+  skip_if_not_installed("ggplot2")
   hf <- dx_heart_failure
   d0 <- dx(data = hf, true_varname = "truth", pred_varname = "predicted", setthreshold = .3, poslabel = 0)
 
@@ -304,11 +320,13 @@ test_that("Rank-based plots and the decision curve use poslabel = 0", {
 })
 
 test_that("KS axis label matches the axis direction", {
+  skip_if_not_installed("ggplot2")
   p <- dx_plot_ks(dx_obj)
   expect_equal(p$labels$x, "Prediction Score")
 })
 
 test_that("ROC reference circle is on the curve for either poslabel", {
+  skip_if_not_installed("ggplot2")
   for (poslabel in c(0, 1)) {
     d <- dx(
       data = dx_heart_failure, true_varname = "truth", pred_varname = "predicted",
@@ -323,6 +341,7 @@ test_that("ROC reference circle is on the curve for either poslabel", {
 })
 
 test_that("poslabel = 0 matches poslabel = 1 with the outcome and predictions flipped", {
+  skip_if_not_installed("ggplot2")
   # setthreshold is not equal to any prediction, so ties at the threshold
   # (where pred < t and 1 - pred >= 1 - t differ) don't matter
   hf <- dx_heart_failure
@@ -367,6 +386,7 @@ test_that("poslabel = 0 matches poslabel = 1 with the outcome and predictions fl
 })
 
 test_that("Gain, lift, and CAP only use points a threshold can reach", {
+  skip_if_not_installed("ggplot2")
   # Four predictions tie at .5, so only 1/6, 5/6, and all of the population
   # can be selected by a threshold
   df <- data.frame(p = c(.9, .5, .5, .5, .5, .1), y = c(1, 1, 0, 1, 0, 0))
