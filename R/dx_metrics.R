@@ -688,13 +688,17 @@ dx_cohens_kappa <- function(cm, detail = "full") {
     # Rounding can make a variance that is essentially 0 slightly negative
     se_kappa <- sqrt(max(var_kappa, 0))
 
-    # Confidence interval using normal approximation, typically Z = 1.96 for 95%
-    z <- 1.96
+    # 95% confidence interval using the normal approximation
+    z <- 1.95996398454005
     # Kappa is bounded by -1 and 1
     ci_lower <- if (undefined) NA_real_ else max(kappa - z * se_kappa, -1)
     ci_upper <- if (undefined) NA_real_ else min(kappa + z * se_kappa, 1)
 
-    note <- get_kappa_interpretation(kappa)
+    note <- if (undefined) {
+      "Undefined: every case is in one cell"
+    } else {
+      get_kappa_interpretation(kappa)
+    }
 
     res <- measure_df(
       measure = "Cohen's Kappa",

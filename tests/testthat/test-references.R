@@ -324,8 +324,9 @@ test_that("Kappa CI uses the Fleiss, Cohen, and Everitt (1969) variance", {
     se <- sqrt(drop(t(grad) %*% (diag(p) - p %o% p) %*% grad) / n)
 
     res <- dx_cohens_kappa(grid_cm(x))
-    expected_low <- max(res$estimate - 1.96 * se, -1)
-    expected_high <- min(res$estimate + 1.96 * se, 1)
+    z <- stats::qnorm(.975)
+    expected_low <- max(res$estimate - z * se, -1)
+    expected_high <- min(res$estimate + z * se, 1)
     expect_equal(res$conf_low, expected_low, tolerance = 1e-6, info = name)
     expect_equal(res$conf_high, expected_high, tolerance = 1e-6, info = name)
   }
