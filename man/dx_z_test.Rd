@@ -30,7 +30,8 @@ more detailed list including the test statistic, confidence interval, and p-valu
 \description{
 Conducts a two-sided Z-test (using prop.test for two proportions) to assess whether the success rates (proportions)
 of two groups are different from each other based on a specified metric. It can compare accuracy,
-PPV, NPV, FNR, FPR, FDR, sensitivity, or specificity between two dx objects.
+PPV, NPV, FNR, FPR, FDR, sensitivity, or specificity between two dx objects. The reported statistic is the
+chi-squared statistic from \code{\link[stats:prop.test]{stats::prop.test()}} with continuity correction, which is the square of the Z statistic.
 }
 \details{
 The function uses the prop.test function to perform the hypothesis test,

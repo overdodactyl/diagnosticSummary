@@ -412,7 +412,8 @@ delong_statistic_note <- function(test) {
 #'
 #' Conducts a two-sided Z-test (using prop.test for two proportions) to assess whether the success rates (proportions)
 #' of two groups are different from each other based on a specified metric. It can compare accuracy,
-#' PPV, NPV, FNR, FPR, FDR, sensitivity, or specificity between two dx objects.
+#' PPV, NPV, FNR, FPR, FDR, sensitivity, or specificity between two dx objects. The reported statistic is the
+#' chi-squared statistic from [stats::prop.test()] with continuity correction, which is the square of the Z statistic.
 #'
 #' @param dx1 A `dx` object for the first group.
 #' @param dx2 A `dx` object for the second group.
