@@ -57,7 +57,8 @@ cases.}
 representing a target prevalence for additional NPV and PPV calculations.}
 
 \item{citype}{Confidence interval type for proportions: one of the methods
-of \code{\link[binom:binom.confint]{binom::binom.confint()}}, such as "exact" (default), "wilson", or "ac".}
+of \code{\link[binom:binom.confint]{binom::binom.confint()}}, such as "exact" (default), "wilson", or "ac".
+The estimate is always the observed proportion.}
 
 \item{bootreps}{Number of bootstrap samples used for the bootstrapped CIs.}
 
