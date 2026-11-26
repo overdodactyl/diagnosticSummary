@@ -29,6 +29,7 @@ reference:
 - title: Utilities
   desc: Helper functions and S3 methods
   contents:
+  - print.dx
   - as.data.frame.dx
   - summary.dx
   - as.data.frame.dx_itd

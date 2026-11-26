@@ -2,6 +2,9 @@
 
 S3method(as.data.frame,dx)
 S3method(as.data.frame,dx_itd)
+S3method(print,dx)
+S3method(print,dx_compare)
+S3method(print,dx_itd)
 S3method(summary,dx)
 S3method(summary,dx_itd)
 export(breslow_day_test)

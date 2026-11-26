@@ -410,6 +410,23 @@ dx_itd_table <- function(x, variable = "Overall", label = "Overall", show_ci = T
   )
 }
 
+#' @rdname print.dx
+#' @export
+print.dx_itd <- function(x, ...) {
+  cat("Intention-to-diagnose summary (dx_itd)\n")
+  print_inputs(x)
+  cat("  Ungradable (missing) predictions: ", comma(x$cm$testug), "\n", sep = "")
+  print_measures(
+    as.data.frame(x, variable = "Overall"),
+    c(
+      "Diagnostic Yield (Overall)", "Worst-Case Sensitivity", "Worst-Case Specificity",
+      "Positive Predictive Value", "Negative Predictive Value"
+    )
+  )
+  cat("\nUse summary(), as.data.frame(), or dx_itd_table() for all measures.\n")
+  invisible(x)
+}
+
 #' Summary
 #' @param object An object of class "dx_itd"
 #' @param variable Variable to include in returned values
