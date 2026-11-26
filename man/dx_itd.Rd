@@ -39,7 +39,8 @@ A column can't be named "Overall", which is used for the results of all
 cases.}
 
 \item{citype}{Confidence interval type for proportions: one of the methods
-of \code{\link[binom:binom.confint]{binom::binom.confint()}}, such as "exact" (default), "wilson", or "ac".}
+of \code{\link[binom:binom.confint]{binom::binom.confint()}}, such as "exact" (default), "wilson", or "ac".
+The estimate is always the observed proportion.}
 }
 \value{
 An object of class \code{dx_itd}, a list with \code{data}, \code{options},

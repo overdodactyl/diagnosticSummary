@@ -29,6 +29,7 @@
 #'     representing a target prevalence for additional NPV and PPV calculations.
 #' @param citype Confidence interval type for proportions: one of the methods
 #'     of [binom::binom.confint()], such as "exact" (default), "wilson", or "ac".
+#'     The estimate is always the observed proportion.
 #' @param bootreps Number of bootstrap samples used for the bootstrapped CIs.
 #' @param bootseed Seed used for the bootstrapped CIs, so results are reproducible
 #'     on the same R version and platform. Bootstrap draws can differ across

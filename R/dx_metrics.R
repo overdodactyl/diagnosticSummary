@@ -810,16 +810,21 @@ metric_binomial <- function(x, n, name, detail = "full", citype = "exact", ...) 
 #' @return A data frame with the calculated binomial metric and confidence intervals.
 #' @noRd
 ci_binomial <- function(x, n, citype = "exact", ...) {
-  res <- binom::binom.confint(x, n, conf.level = 0.95, methods = citype)
+  # The estimate is the observed proportion for every method. binom.confint()
+  # returns the posterior mean for "bayes", which would disagree with the
+  # fraction shown beside it.
+  res <- data.frame(mean = x / n, lower = NA_real_, upper = NA_real_)
 
-  # Some methods (e.g. agresti-coull, asymptotic) can extend past 0 or 1
-  res$lower <- pmax(res$lower, 0)
-  res$upper <- pmin(res$upper, 1)
-
-  # With no cases in the denominator the proportion is undefined. Methods
-  # differ in what they return (exact gives 0 to 1), so report no interval.
-  res$lower[n == 0] <- NA_real_
-  res$upper[n == 0] <- NA_real_
+  # With no cases in the denominator the proportion is undefined, so no
+  # interval is reported. Methods differ in what they return for 0/0 (exact
+  # gives 0 to 1, bayes a mean of 0.5), and some give an error.
+  defined <- n > 0
+  if (any(defined)) {
+    ci <- binom::binom.confint(x[defined], n[defined], conf.level = 0.95, methods = citype)
+    # Some methods (e.g. agresti-coull, asymptotic) can extend past 0 or 1
+    res$lower[defined] <- pmax(ci$lower, 0)
+    res$upper[defined] <- pmin(ci$upper, 1)
+  }
 
   formatted_estimate <- conf_int(
     res$mean,

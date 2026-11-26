@@ -26,6 +26,7 @@
 #'     cases.
 #' @param citype Confidence interval type for proportions: one of the methods
 #'     of [binom::binom.confint()], such as "exact" (default), "wilson", or "ac".
+#'     The estimate is always the observed proportion.
 #'
 #' @details
 #' With TP, FN, and UP the positive, negative, and ungradable results among
