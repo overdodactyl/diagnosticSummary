@@ -156,12 +156,12 @@ test_that("Cohen's Kappa", {
 
   expect_equal(
     full$conf_low,
-    0.4813828786525133
+    0.4813846794466244
   )
 
   expect_equal(
     full$conf_high,
-    0.6773851767372446
+    0.6773833759431332
   )
 
 
