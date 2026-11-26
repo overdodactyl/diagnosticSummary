@@ -311,8 +311,8 @@ dx_plot_calibration <- function(dx_obj, bins = 10) {
 #' The decision curve shows the net benefit of using the model at different
 #' threshold probabilities compared to the strategy of treating all or none.
 #'
-#' @param dx_obj A `dx` object containing a 'thresholds' data frame with columns for 'threshold' and 'net_benefit'.
-#' @param plot_range A numeric vector of length 2 specifying the lower and upper bounds for the range of threshold probabilities to be plotted. Defaults to c(0.05, .95).
+#' @param dx_obj A `dx` object.
+#' @param plot_range A numeric vector of length 2 specifying the lower and upper bounds, between 0 and 1, for the range of threshold probabilities to be plotted. Defaults to c(0.05, .95).
 #'
 #' @return A `ggplot` object representing the decision curve, which can be further customized as needed.
 #'
@@ -330,7 +330,10 @@ dx_plot_calibration <- function(dx_obj, bins = 10) {
 #' \deqn{Net Benefit = \frac{TP}{N} - Weight \times \frac{FP}{N}}
 #' where Weight = Threshold / (1 - Threshold) and N is the total number of observations.
 #' The threshold is the probability of the event, so with `poslabel = 0` it is
-#' 1 minus the threshold on the predictions.
+#' 1 minus the threshold on the predictions. Net benefit is calculated on an
+#' even grid of thresholds across `plot_range` and at each distinct prediction,
+#' so the curve is also drawn for models with few distinct predictions, such
+#' as 0/1 classes.
 #'
 #' The decision curve will typically be compared against two
 #' default strategies: treating all patients or treating none.
@@ -351,16 +354,40 @@ dx_plot_calibration <- function(dx_obj, bins = 10) {
 #' )
 #' dx_plot_decision_curve(dx_obj)
 dx_plot_decision_curve <- function(dx_obj, plot_range = c(0.05, .95)) {
-  # Net benefit is plotted against the threshold probability of the event
+  if (!is.numeric(plot_range) || length(plot_range) != 2 || anyNA(plot_range) ||
+    plot_range[1] < 0 || plot_range[2] > 1 || plot_range[1] >= plot_range[2]) {
+    stop("plot_range should be two increasing numbers between 0 and 1", call. = FALSE)
+  }
+  poslabel <- dx_obj$options$poslabel
+  truth <- pluck_truths(dx_obj)
+  predprob <- pluck_probabilities(dx_obj)
+
+  # Net benefit is plotted against the threshold probability of the event.
+  # Predictions are probabilities of outcome 1, so with poslabel = 0 the
+  # threshold on the predictions is 1 minus the event's threshold.
+  to_event <- function(threshold) if (poslabel == 1) threshold else 1 - threshold
+
+  # Net benefit changes with the threshold even between predictions, since the
+  # weight on false positives changes, so use an even grid over the plot range.
+  # Each prediction is added because the curve jumps there. This also covers
+  # models with few distinct predictions, such as 0/1 classes.
+  grid <- to_event(seq(plot_range[1], plot_range[2], length.out = 101))
+  thresholds <- unique(c(grid, dx_obj$thresholds$threshold))
+  event_threshold <- to_event(thresholds)
+  # The weight is infinite at an event threshold of 1
+  keep <- event_threshold >= plot_range[1] & event_threshold <= plot_range[2] &
+    event_threshold < 1
+  thresholds <- thresholds[keep]
+  event_threshold <- event_threshold[keep]
+
+  counts <- threshold_counts(predprob, truth, poslabel, thresholds = thresholds)
+  n <- length(truth)
+  weight <- event_threshold / (1 - event_threshold)
   data_for_plot <- data.frame(
-    threshold = dx_obj$thresholds$event_threshold,
-    net_benefit = dx_obj$thresholds$net_benefit
+    threshold = event_threshold,
+    net_benefit = counts$tp / n - weight * counts$fp / n
   )
-
-  data_for_plot <- stats::na.omit(data_for_plot)
-
-  data_for_plot <- data_for_plot[data_for_plot$threshold >= plot_range[1], ]
-  data_for_plot <- data_for_plot[data_for_plot$threshold <= plot_range[2], ]
+  data_for_plot <- data_for_plot[order(data_for_plot$threshold), ]
 
   prevalence <- dx_prevalence(dx_obj$cm, detail = "simple")
 

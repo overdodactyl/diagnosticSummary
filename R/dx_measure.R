@@ -1,9 +1,12 @@
 # Confusion matrix counts at every distinct prediction (plus 0 and 1), from
-# the highest threshold to the lowest. Predictions at or above the threshold
-# are positive; poslabel = 0 swaps the positive class.
-threshold_counts <- function(predprob, truth, poslabel) {
-  # Predictions can include 0 or 1, so remove duplicates after adding them
-  thresholds <- sort(unique(c(0, predprob, 1)), decreasing = TRUE)
+# the highest threshold to the lowest, or at the given `thresholds`.
+# Predictions at or above the threshold are positive; poslabel = 0 swaps the
+# positive class.
+threshold_counts <- function(predprob, truth, poslabel, thresholds = NULL) {
+  if (is.null(thresholds)) {
+    # Predictions can include 0 or 1, so remove duplicates after adding them
+    thresholds <- sort(unique(c(0, predprob, 1)), decreasing = TRUE)
+  }
 
   # Count predictions at or above each threshold in each outcome class
   n_at_or_above <- function(x) {
