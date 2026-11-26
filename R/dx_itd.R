@@ -94,6 +94,7 @@
 #' @export
 dx_itd <- function(data, pred_varname, true_varname, setthreshold = .5,
                    poslabel = 1, grouping_variables = NA, citype = "exact") {
+  if (not_supplied(grouping_variables)) grouping_variables <- NA
   check_dx_options(poslabel, direction = "<", setthreshold, citype = citype)
   data <- prepare_dx_data(
     data, pred_varname, true_varname, grouping_variables,
