@@ -23,7 +23,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Pat Johnson \email{Johnson.Patrick3@mayo.edu} (\href{https://orcid.org/0000-0001-8365-1375}{ORCID})
+\strong{Maintainer}: Pat Johnson \email{Johnson.Pat@mayo.edu} (\href{https://orcid.org/0000-0001-8365-1375}{ORCID})
 
 Authors:
 \itemize{
