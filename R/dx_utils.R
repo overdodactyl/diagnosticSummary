@@ -51,6 +51,86 @@ summary.dx <- function(object, thresh = object$options$setthreshold,
   }
 }
 
+#' Print a diagnostic summary
+#'
+#' Prints a short overview of a `dx`, `dx_itd`, or `dx_compare` object: the
+#' inputs and the main results. Use [summary()] or [as.data.frame()] for all
+#' of the measures.
+#'
+#' @param x An object of class "dx", "dx_itd", or "dx_compare"
+#' @param ... additional arguments to be passed to or from methods
+#' @return `x`, invisibly.
+#' @examples
+#' dx_obj <- dx(
+#'   data = dx_heart_failure,
+#'   true_varname = "truth",
+#'   pred_varname = "predicted",
+#'   setthreshold = .3,
+#'   grouping_variables = "Sex"
+#' )
+#' dx_obj
+#' @export
+print.dx <- function(x, ...) {
+  o <- x$options
+  cat("Diagnostic summary (dx)\n")
+  print_inputs(x)
+  other <- setdiff(unique(x$measures$threshold), o$setthreshold)
+  if (length(other) > 0) {
+    cat("  Other thresholds: ", paste(other, collapse = ", "), "\n", sep = "")
+  }
+  print_measures(
+    as.data.frame(x, variable = "Overall", thresh = o$setthreshold),
+    c(
+      "AUC ROC", "Sensitivity", "Specificity",
+      "Positive Predictive Value", "Negative Predictive Value"
+    )
+  )
+  cat("\nUse summary() or as.data.frame() for all measures.\n")
+  invisible(x)
+}
+
+#' @rdname print.dx
+#' @export
+print.dx_compare <- function(x, ...) {
+  cat(
+    "Comparison of ", length(x$dx_list), " models (dx_compare): ",
+    paste(names(x$dx_list), collapse = ", "), "\n\n",
+    sep = ""
+  )
+  tests <- as.data.frame(x$tests)[c("models", "test", "summary", "p_value")]
+  tests$p_value <- vapply(tests$p_value, format_pvalue, character(1), accuracy = 0.001)
+  print(tests, row.names = FALSE, right = FALSE)
+  cat("\nAll results are in the `tests` element.\n")
+  invisible(x)
+}
+
+# The inputs shared by dx and dx_itd objects, for their print methods
+print_inputs <- function(x) {
+  o <- x$options
+  truth <- x$data[[o$true_varname]]
+  n <- length(truth)
+  events <- sum(truth == o$poslabel)
+  cat("  Predictions: ", o$pred_varname, "\n", sep = "")
+  cat("  Reference standard: ", o$true_varname, " (event: ", o$poslabel, ")\n", sep = "")
+  cat(
+    "  Cases: ", comma(n), ", ", comma(events), " with the event (",
+    format_number(events / n, percent = TRUE), ")\n",
+    sep = ""
+  )
+  cat("  Threshold: ", o$setthreshold, "\n", sep = "")
+  if (!identical(o$grouping_variables, NA)) {
+    cat("  Subgroups: ", paste(o$grouping_variables, collapse = ", "), "\n", sep = "")
+  }
+}
+
+# The chosen overall measures, for the print methods
+print_measures <- function(measures, names) {
+  measures <- as.data.frame(measures)
+  measures <- measures[match(names, measures$measure), c("measure", "summary")]
+  cat("\n")
+  print(measures, row.names = FALSE, right = FALSE)
+}
+
 #' Convert to a data frame
 #' @param x An object of class "dx"
 #' @param thresh The threshold to return values from
