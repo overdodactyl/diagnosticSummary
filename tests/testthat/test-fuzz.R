@@ -446,13 +446,17 @@ direct_row_lr <- function(x, y, n1, n0) {
 }
 
 # Every dx_itd() measure calculated directly from the raw vectors: the
-# estimate and CI. Binomial CIs come from binom, truncated to [0, 1].
+# estimate and CI. Binomial CIs come from binom, truncated to [0, 1], and are
+# missing when the denominator is 0.
 direct_itd_measures <- function(pred, truth, threshold, poslabel, citype) {
   k <- as.list(direct_itd_counts(pred, truth, threshold, poslabel))
   n1 <- k$tp + k$fn + k$up
   n0 <- k$fp + k$tn + k$un
 
   binomial <- function(x, n) {
+    if (n == 0) {
+      return(c(NaN, NA, NA))
+    }
     ci <- binom::binom.confint(x, n, methods = citype)
     c(x / n, max(ci$lower, 0), min(ci$upper, 1))
   }
