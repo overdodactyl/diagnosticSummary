@@ -9,8 +9,8 @@
 #' @param ... additional arguments to be passed to or from methods
 #' @export
 summary.dx <- function(object, thresh = object$options$setthreshold,
-                       variable = NA, label = NA, show_var = T,
-                       show_label = T, measure = NA, ...) {
+                       variable = NA, label = NA, show_var = TRUE,
+                       show_label = TRUE, measure = NA, ...) {
   if (length(thresh) != 1 || is.na(thresh)) {
     stop("Must pass a numeric value to thresh")
   }
@@ -33,7 +33,7 @@ summary.dx <- function(object, thresh = object$options$setthreshold,
 
   rownames(tmp) <- NULL
   if (requireNamespace("knitr", quietly = TRUE)) {
-    knitr::kable(tmp, caption = caption, row.names = F)
+    knitr::kable(tmp, caption = caption, row.names = FALSE)
   } else {
     print(caption)
     print(tmp)

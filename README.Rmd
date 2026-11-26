@@ -54,7 +54,7 @@ dx_obj <- dx(
 
 
 ```{r dpi = 600}
-summary(dx_obj, variable = "Overall", show_var = F, show_label = F)
+summary(dx_obj, variable = "Overall", show_var = FALSE, show_label = FALSE)
 ```
 
 

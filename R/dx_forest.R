@@ -496,7 +496,7 @@ label_df <- function(data) {
   x <- lapply(x, function(x) ifelse(is.null(x), NA, x))
   data.frame(
     variable = names(x),
-    variable_label = as.character(unlist(x, use.names = F)),
+    variable_label = as.character(unlist(x, use.names = FALSE)),
     stringsAsFactors = FALSE
   )
 }

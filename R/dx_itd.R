@@ -417,8 +417,8 @@ dx_itd_table <- function(x, variable = "Overall", label = "Overall", show_ci = T
 #' @param measure Measures to include
 #' @param ... additional arguments to be passed to or from methods
 #' @export
-summary.dx_itd <- function(object, variable = NA, label = NA, show_var = T,
-                           show_label = T, measure = NA, ...) {
+summary.dx_itd <- function(object, variable = NA, label = NA, show_var = TRUE,
+                           show_label = TRUE, measure = NA, ...) {
   tmp <- as.data.frame(object, variable = variable, label = label, measure = measure)
   tmp <- tmp[, c("variable", "label", "measure", "summary")]
   rownames(tmp) <- NULL
@@ -429,7 +429,7 @@ summary.dx_itd <- function(object, variable = NA, label = NA, show_var = T,
   caption <- paste("Threshold=", object$options$setthreshold)
 
   if (requireNamespace("knitr", quietly = TRUE)) {
-    knitr::kable(tmp, caption = caption, row.names = F)
+    knitr::kable(tmp, caption = caption, row.names = FALSE)
   } else {
     print(caption)
     print(tmp)
