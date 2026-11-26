@@ -24,7 +24,7 @@ Useful links:
 
 ## Author
 
-**Maintainer**: Pat Johnson <Johnson.Patrick3@mayo.edu>
+**Maintainer**: Pat Johnson <Johnson.Pat@mayo.edu>
 ([ORCID](https://orcid.org/0000-0001-8365-1375))
 
 Authors:
