@@ -83,12 +83,19 @@ dx_plot_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
                            fraction_multiline = FALSE,
                            or_lwd = .8, or_size = .35,
                            body_or_col = "black", footer_or_col = footer_col) {
+  if (!inherits(dx_obj, "dx")) {
+    stop("`dx_plot_forest` needs a `dx` object, created with `dx()`", call. = FALSE)
+  }
   check_package(c("gridExtra", "grid", "gtable"))
 
   # NA (no transformation) is the default but isn't a string, so match.arg()
   # only accepts it as part of the default vector
   trans <- if (length(trans) == 1 && is.na(trans)) NA_character_ else match.arg(trans)
   return_type <- match.arg(return)
+  if (return_type == "ggplot") check_package("ggplot2")
+  if (!is.na(trans) && !identical(limits, NA) && any(limits <= 0)) {
+    stop("limits should be greater than 0 when trans = \"log10\"", call. = FALSE)
+  }
 
   stopifnot("Odds Ratio" %in% measures)
 

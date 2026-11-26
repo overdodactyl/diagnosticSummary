@@ -43,7 +43,7 @@ dx_plot_roc(
 
 \item{circle_ref_color}{Color of the reference circle. Default is "#E4002B".}
 
-\item{summary_stats}{A vector of integers indicating which statistics to include on the ROC curve. Default is c(1, 2, 3, 4, 5, 6, 7, 8).}
+\item{summary_stats}{A vector of integers indicating which statistics to include on the ROC curve: row numbers of the overall measures in \code{as.data.frame(dx_obj)}. Default is c(1, 2, 3, 4, 5, 6, 7, 8).}
 
 \item{filename}{File name to create on disk using \code{ggplot2::ggsave}. If left NA, no file will be created.}
 }
