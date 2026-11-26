@@ -32,6 +32,11 @@ The positive likelihood ratio is calculated as (TP / (TP + FN)) / (FP / (FP + TN
 It is used to assess the diagnostic usefulness of a test. A LR+ much greater than 1
 indicates a good diagnostic test that can confidently confirm the disease when the
 test is positive.
+
+The result is \code{NA} unless both outcome classes are present and there are both
+positive and negative predictions. If any cell of the confusion matrix is zero,
+0.5 is added to every cell before the estimate and confidence interval are
+calculated.
 }
 \examples{
 cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
