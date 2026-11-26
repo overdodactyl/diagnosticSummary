@@ -31,6 +31,16 @@ names (to syntactic names: see make.names) is optional.}
 
 \item{...}{additional arguments to be passed to or from methods}
 }
+\value{
+A data frame with one row per measure, variable, and label, with the
+estimate, confidence interval, and formatted summary.
+}
 \description{
 Convert to a data frame
+}
+\examples{
+data <- dx_heart_failure
+data$predicted[seq(5, 261, by = 20)] <- NA
+fit <- dx_itd(data, pred_varname = "predicted", true_varname = "truth")
+head(as.data.frame(fit))
 }

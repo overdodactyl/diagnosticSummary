@@ -8,8 +8,8 @@
   object,
   variable = NA,
   label = NA,
-  show_var = T,
-  show_label = T,
+  show_var = TRUE,
+  show_label = TRUE,
   measure = NA,
   ...
 )
@@ -29,6 +29,16 @@
 
 \item{...}{additional arguments to be passed to or from methods}
 }
+\value{
+A table of the measures and their summaries, made with
+\code{\link[knitr:kable]{knitr::kable()}}. If knitr is not installed, the table is printed.
+}
 \description{
 Summary
+}
+\examples{
+data <- dx_heart_failure
+data$predicted[seq(5, 261, by = 20)] <- NA
+fit <- dx_itd(data, pred_varname = "predicted", true_varname = "truth")
+summary(fit, show_var = FALSE)
 }

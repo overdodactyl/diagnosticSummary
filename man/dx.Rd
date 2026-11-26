@@ -2,7 +2,7 @@
 % Please edit documentation in R/dx_constructor.R
 \name{dx}
 \alias{dx}
-\title{Set options for diagnostic analysis}
+\title{Summarize a diagnostic test}
 \usage{
 dx(
   data,
@@ -32,16 +32,16 @@ dx(
 
 \item{outcome_label}{Deprecated; has no effect.}
 
-\item{pred_varname}{Column name containing AI prediction (string). Values
+\item{pred_varname}{Column name containing the predictions (string). Values
 should be predicted probabilities that the outcome is 1, between 0 and 1,
 with no missing values.}
 
-\item{true_varname}{Column name containing AI reference standard (string).
+\item{true_varname}{Column name containing the reference standard (string).
 Values should be 0 or 1 (numeric, logical, factor, or character), with
 no missing values, and both classes must be present.}
 
 \item{setthreshold}{A number between 0 and 1 representing the threshold used
-to identify AI prediction}
+to classify the predictions}
 
 \item{poslabel}{The outcome class that is the event: 1 (default) or 0.
 Predictions are still probabilities that the outcome is 1, so with
@@ -76,7 +76,38 @@ which hides models that perform worse than chance.}
 
 \item{...}{currently unused}
 }
+\value{
+An object of class "dx": a list with the data, the options used,
+the measures at each threshold and subgroup (\code{measures}), measures across
+all thresholds (\code{thresholds}), a prevalence analysis (\code{prevalence}), the
+ranked predictions used by the gain, lift, KS, and CAP plots (\code{rank}), the
+confusion matrix at \code{setthreshold} (\code{cm}), and the \code{\link[pROC:roc]{pROC::roc()}} object
+(\code{roc}). Use \code{\link[=summary.dx]{summary.dx()}} or \code{\link[=as.data.frame.dx]{as.data.frame.dx()}} to view the measures.
+}
 \description{
-Use this function to return a list of tuning parameters to analyze your
-diagnostic test
+Calculates diagnostic accuracy measures, with confidence intervals, for
+predicted probabilities compared to a binary reference standard: overall,
+at each threshold in \code{threshold_range}, and for each subgroup in
+\code{grouping_variables}.
+}
+\examples{
+dx_obj <- dx(
+  data = dx_heart_failure,
+  true_varname = "truth",
+  pred_varname = "predicted",
+  setthreshold = .3,
+  grouping_variables = c("AgeGroup", "Sex")
+)
+summary(dx_obj)
+
+# Bootstrapped CIs for measures without a closed-form CI
+dx_boot <- dx(
+  data = dx_heart_failure,
+  true_varname = "truth",
+  pred_varname = "predicted",
+  setthreshold = .3,
+  doboot = TRUE,
+  bootreps = 500
+)
+summary(dx_boot, measure = c("F1 Score", "Matthews Correlation Coefficient"))
 }

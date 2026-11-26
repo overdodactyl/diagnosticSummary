@@ -13,6 +13,13 @@ dx_g_test(cm, detail = "full")
 "simple" for raw estimate, "full" for detailed estimate
 including 95\% confidence intervals.}
 }
+\value{
+Depending on the \code{detail} parameter:
+- if "simple": a single numeric value representing the p-value of
+the G-test.
+- if "full": a data frame with the G-test result, including
+the p-value and method note.
+}
 \description{
 Conducts a G-test of independence to assess the goodness of fit or the association
 between two categorical variables in a 2x2 contingency table. It is an alternative to

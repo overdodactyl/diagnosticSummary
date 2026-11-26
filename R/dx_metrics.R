@@ -1609,10 +1609,11 @@ cm_from_counts <- function(tp, fn, tn, fp) {
 }
 
 #' Return an pROC::roc object for a dx object
-#' @param true_varname Column name containing AI reference standard (string)
-#' @param pred_varname Column name containing AI prediction (string)
+#' @param true_varname Column name containing the reference standard (string)
+#' @param pred_varname Column name containing the predictions (string)
 #' @param data A tbl.
 #' @param direction Direction for roc comparison.  See ?pROC::roc
+#' @noRd
 get_roc <- function(true_varname, pred_varname, data, direction) {
   # truth ~ predicted
   # Backticks allow column names that aren't syntactic, e.g. with spaces

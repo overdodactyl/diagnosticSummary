@@ -17,6 +17,29 @@ dx_edit_cell(table, row, col, name = "core-fg", ...)
 
 \item{...}{Parameters passed to grid::editGrob such as grid::gpar or hjust.}
 }
+\value{
+The table, with the matching cells edited.
+}
 \description{
 A convenient wrapper used to edit cells of a gtable.
+}
+\examples{
+\dontshow{if (requireNamespace("gridExtra", quietly = TRUE) & requireNamespace("gtable", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+dx_obj <- dx(
+  data = dx_heart_failure,
+  true_varname = "truth",
+  pred_varname = "predicted",
+  setthreshold = .3,
+  grouping_variables = "Sex"
+)
+forest <- dx_plot_forest(dx_obj, return = "grid")
+# Make the text in the "Male" row red and bold
+forest <- dx_edit_cell(
+  forest,
+  row = 4, col = 1:5,
+  gp = grid::gpar(col = "red", fontface = "bold")
+)
+grid::grid.newpage()
+grid::grid.draw(forest)
+\dontshow{\}) # examplesIf}
 }
