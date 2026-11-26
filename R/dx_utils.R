@@ -231,12 +231,14 @@ backtick <- function(x) {
 }
 
 # Stop if any of `pkgs` is not installed, naming the function that needs them
-check_package <- function(pkgs) {
+check_package <- function(pkgs, calling_func = NULL) {
   # The calling function can be a name or a call such as pkg::fun
-  calling_func <- tryCatch(
-    paste(deparse(sys.call(-1)[[1]]), collapse = ""),
-    error = function(e) NA_character_
-  )
+  if (is.null(calling_func)) {
+    calling_func <- tryCatch(
+      paste(deparse(sys.call(-1)[[1]]), collapse = ""),
+      error = function(e) NA_character_
+    )
+  }
 
   for (pkg in pkgs) {
     if (!requireNamespace(pkg, quietly = TRUE)) {

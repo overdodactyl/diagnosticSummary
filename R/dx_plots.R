@@ -31,6 +31,7 @@
 #' )
 #' dx_plot_gain(dx_obj)
 dx_plot_gain <- function(dx_obj) {
+  check_plot_input(dx_obj)
   data <- reachable_rank(dx_obj, origin = TRUE)
 
   dx_line_plot(
@@ -75,6 +76,7 @@ dx_plot_gain <- function(dx_obj) {
 #' )
 #' dx_plot_lift(dx_obj)
 dx_plot_lift <- function(dx_obj) {
+  check_plot_input(dx_obj)
   # Lift is undefined at 0% of the population, so there is no origin
   dx_line_plot(
     reachable_rank(dx_obj), "percentile", "lift",
@@ -116,6 +118,7 @@ dx_plot_lift <- function(dx_obj) {
 #' )
 #' dx_plot_ks(dx_obj)
 dx_plot_ks <- function(dx_obj) {
+  check_plot_input(dx_obj)
   data <- reachable_rank(dx_obj)
 
   long_data <- rbind(
@@ -178,6 +181,7 @@ dx_plot_ks <- function(dx_obj) {
 #' )
 #' dx_plot_pr(dx_obj)
 dx_plot_pr <- function(dx_obj) {
+  check_plot_input(dx_obj)
   th <- dx_obj$thresholds
   curve <- pr_curve_counts(
     th$tp, th$fp,
@@ -224,6 +228,7 @@ dx_plot_pr <- function(dx_obj) {
 #' )
 #' dx_plot_predictive_value(dx_obj)
 dx_plot_predictive_value <- function(dx_obj) {
+  check_plot_input(dx_obj)
   prevalence <- dx_obj$prevalence
 
   plot_data <- stats::reshape(prevalence,
@@ -286,6 +291,10 @@ dx_plot_predictive_value <- function(dx_obj) {
 #' )
 #' dx_plot_calibration(dx_obj)
 dx_plot_calibration <- function(dx_obj, bins = 10) {
+  check_plot_input(dx_obj)
+  if (!is.numeric(bins) || length(bins) != 1 || is.na(bins) || bins < 1 || bins != round(bins)) {
+    stop("bins should be a single whole number of at least 1", call. = FALSE)
+  }
   predicted_probs <- dx_obj$data[[dx_obj$options$pred_varname]]
   true_labels <- dx_obj$data[[dx_obj$options$true_varname]]
 
@@ -354,6 +363,7 @@ dx_plot_calibration <- function(dx_obj, bins = 10) {
 #' )
 #' dx_plot_decision_curve(dx_obj)
 dx_plot_decision_curve <- function(dx_obj, plot_range = c(0.05, .95)) {
+  check_plot_input(dx_obj)
   if (!is.numeric(plot_range) || length(plot_range) != 2 || anyNA(plot_range) ||
     plot_range[1] < 0 || plot_range[2] > 1 || plot_range[1] >= plot_range[2]) {
     stop("plot_range should be two increasing numbers between 0 and 1", call. = FALSE)
@@ -440,6 +450,7 @@ dx_plot_decision_curve <- function(dx_obj, plot_range = c(0.05, .95)) {
 #' )
 #' dx_plot_youden_j(dx_obj)
 dx_plot_youden_j <- function(dx_obj) {
+  check_plot_input(dx_obj)
 
   # Prepare data for plotting
   data_for_plot <- data.frame(
@@ -499,6 +510,7 @@ dx_plot_youden_j <- function(dx_obj) {
 #' )
 #' dx_plot_cap(dx_obj)
 dx_plot_cap <- function(dx_obj) {
+  check_plot_input(dx_obj)
   data <- reachable_rank(dx_obj, origin = TRUE)
 
   # Share of the population that are events. A perfect model captures every
@@ -569,6 +581,7 @@ dx_plot_cap <- function(dx_obj) {
 #' )
 #' dx_plot_cost(dx_obj, cfp = 1000, cfn = 8000)
 dx_plot_cost <- function(dx_obj, cfp, cfn, ctp = 0, ctn = 0) {
+  check_plot_input(dx_obj)
   thresholds <- dx_obj$thresholds
 
   # Calculate total cost at each threshold
@@ -603,6 +616,10 @@ dx_plot_cost <- function(dx_obj, cfp, cfn, ctp = 0, ctn = 0) {
 #' )
 #' dx_plot_cm(dx_obj)
 dx_plot_cm <- function(dx_obj, palette = c("#e5eef7", "#0057B8"), levels = c("-", "+")) {
+  check_plot_input(dx_obj)
+  if (length(levels) != 2) {
+    stop("levels should have two labels, for the negative and positive classes", call. = FALSE)
+  }
 
   metrics <- overall_measures(dx_obj)
   perfdf <- dx_obj$cm
@@ -666,7 +683,7 @@ dx_plot_cm <- function(dx_obj, palette = c("#e5eef7", "#0057B8"), levels = c("-"
 #' @param add_ref_circle Logical; if TRUE, includes a reference circle around the point of specified threshold. Default is TRUE.
 #' @param ref_lines_color Color for reference lines. Default is "#8a8887".
 #' @param circle_ref_color Color of the reference circle. Default is "#E4002B".
-#' @param summary_stats A vector of integers indicating which statistics to include on the ROC curve. Default is c(1, 2, 3, 4, 5, 6, 7, 8).
+#' @param summary_stats A vector of integers indicating which statistics to include on the ROC curve: row numbers of the overall measures in `as.data.frame(dx_obj)`. Default is c(1, 2, 3, 4, 5, 6, 7, 8).
 #' @param filename File name to create on disk using `ggplot2::ggsave`. If left NA, no file will be created.
 #'
 #' @return A ggplot object representing the ROC curve, allowing for further customization if desired.
@@ -705,6 +722,7 @@ dx_plot_roc <- function(dx_obj, curve_color = "#0057B8", fill_color = "#cfcdcb",
                         add_ref_circle = TRUE, ref_lines_color = "#8a8887",
                         circle_ref_color = "#E4002B",
                         summary_stats = c(1, 2, 3, 4, 5, 6, 7, 8), filename = NA) {
+  check_plot_input(dx_obj)
   measures <- overall_measures(dx_obj)
   sensdf <- measures$estimate[measures$measure == "Sensitivity"]
   specdf <- measures$estimate[measures$measure == "Specificity"]
@@ -771,6 +789,13 @@ dx_plot_roc <- function(dx_obj, curve_color = "#0057B8", fill_color = "#cfcdcb",
   }
 
   if (add_text) {
+    if (!is.numeric(summary_stats) || anyNA(summary_stats) ||
+      any(summary_stats < 1 | summary_stats > nrow(measures) | summary_stats != round(summary_stats))) {
+      stop(paste0(
+        "summary_stats should be whole numbers between 1 and ", nrow(measures),
+        ", the rows of the overall measures in as.data.frame(dx_obj)"
+      ), call. = FALSE)
+    }
     summary_stats <- unique(summary_stats)
     location_vector <- text_positions(length(summary_stats))
 
@@ -869,7 +894,9 @@ dx_roc_ggtheme <- function() {
 #' dx_plot_probabilities(dx_obj, plot_type = "density")
 #'
 dx_plot_probabilities <- function(dx_obj, plot_type = "histogram", bins = NULL, fill_color = "#0057B8") {
+  check_plot_input(dx_obj)
   density <- NULL # Dummy definition to avoid R CMD check warnings
+  plot_type <- match.arg(plot_type, c("histogram", "density"))
 
   # Prepare data for plotting
   data <- data.frame(Predictions = dx_obj$data[[dx_obj$options$pred_varname]])
@@ -928,6 +955,7 @@ dx_plot_probabilities <- function(dx_obj, plot_type = "histogram", bins = NULL, 
 #' )
 #' dx_plot_thresholds(dx_obj)
 dx_plot_thresholds <- function(dx_obj) {
+  check_plot_input(dx_obj)
   thresholds <- dx_obj$thresholds
 
   measures <- c(
@@ -998,6 +1026,7 @@ dx_plot_thresholds <- function(dx_obj) {
 #'          [dx_delong()] for details on DeLong's test used in comparisons.
 #' @export
 dx_plot_rocs <- function(dx_comp, add_text = TRUE, axis_color = "#333333", text_color = "black") {
+  check_plot_input(dx_comp, "dx_compare")
   delong <- dx_comp$tests
   delong <- delong[delong$test == "DeLong's test for ROC curves", ]
 
@@ -1094,3 +1123,18 @@ reachable_rank <- function(dx_obj, origin = FALSE) {
   data
 }
 
+
+# Check the object passed to a plot function, and that ggplot2 is installed
+check_plot_input <- function(x, class = "dx") {
+  calling_func <- tryCatch(
+    paste(deparse(sys.call(-1)[[1]]), collapse = ""),
+    error = function(e) NA_character_
+  )
+  if (!inherits(x, class)) {
+    stop(paste0(
+      if (is.na(calling_func)) "This function" else backtick(calling_func),
+      " needs a `", class, "` object, created with `", class, "()`"
+    ), call. = FALSE)
+  }
+  check_package("ggplot2", calling_func = calling_func)
+}
