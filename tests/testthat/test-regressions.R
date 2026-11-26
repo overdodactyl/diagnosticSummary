@@ -960,3 +960,139 @@ test_that("Z-test is undefined when both proportions are 0 or both are 1", {
     expect_true(is.na(dx_z_test(none_a, none_b, metric = metric, detail = "simple")))
   }
 })
+
+test_that("Print methods give a short overview", {
+  hf <- dx_heart_failure
+  d <- dx(hf, true_varname = "truth", pred_varname = "predicted", setthreshold = .3,
+          grouping_variables = "Sex", threshold_range = c(.1, .5))
+  out <- capture.output(res <- withVisible(print(d)))
+  expect_false(res$visible)
+  expect_identical(res$value, d)
+  expect_lt(length(out), 20)
+  expect_match(out[1], "Diagnostic summary (dx)", fixed = TRUE)
+  expect_true(any(grepl("Cases: 261, 98 with the event (37.5%)", out, fixed = TRUE)))
+  expect_true(any(grepl("Threshold: 0.3", out, fixed = TRUE)))
+  expect_true(any(grepl("Subgroups: Sex", out, fixed = TRUE)))
+  expect_true(any(grepl("Other thresholds: 0.1, 0.5", out, fixed = TRUE)))
+  m <- as.data.frame(d, variable = "Overall", thresh = .3)
+  for (measure in c("AUC ROC", "Sensitivity", "Specificity")) {
+    row <- out[grepl(paste0("^ ", measure), out)]
+    expect_length(row, 1)
+    expect_true(grepl(m$summary[m$measure == measure], row, fixed = TRUE))
+  }
+
+  # Subgroups and other thresholds are only listed when present
+  out <- capture.output(print(dx(hf, true_varname = "truth", pred_varname = "predicted")))
+  expect_false(any(grepl("Subgroups|Other thresholds", out)))
+
+  missing <- hf
+  missing$predicted[seq(5, nrow(hf), by = 20)] <- NA
+  itd <- dx_itd(missing, "predicted", "truth", poslabel = 0)
+  out <- capture.output(res <- withVisible(print(itd)))
+  expect_false(res$visible)
+  expect_lt(length(out), 20)
+  expect_match(out[1], "Intention-to-diagnose summary (dx_itd)", fixed = TRUE)
+  expect_true(any(grepl("(event: 0)", out, fixed = TRUE)))
+  expect_true(any(grepl("Ungradable (missing) predictions: 13", out, fixed = TRUE)))
+  expect_true(any(grepl("Worst-Case Sensitivity", out, fixed = TRUE)))
+
+  rf <- dx(hf, true_varname = "truth", pred_varname = "predicted_rf")
+  comp <- dx_compare(list(glm = d, rf = rf))
+  out <- capture.output(res <- withVisible(print(comp)))
+  expect_false(res$visible)
+  expect_lt(length(out), 10)
+  expect_match(out[1], "Comparison of 2 models (dx_compare): glm, rf", fixed = TRUE)
+  expect_true(any(grepl("DeLong", out)))
+  expect_true(any(grepl("McNemar", out)))
+})
+
+test_that("G-test treats empty cells as adding nothing and is NA with an empty margin", {
+  # Zero cell: compare with the formula, where 0 * log(0) is 0
+  o <- matrix(c(5, 0, 3, 7), nrow = 2)
+  e <- outer(rowSums(o), colSums(o)) / sum(o)
+  g <- 2 * sum(ifelse(o > 0, o * log(o / e), 0))
+  cm <- make_cm(tp = 5, fn = 0, fp = 3, tn = 7)
+  expect_equal(dx_g_test(cm, "simple"), stats::pchisq(g, 1, lower.tail = FALSE))
+
+  # No positive predictions: undefined, like the chi-squared test
+  none <- make_cm(tp = 0, fn = 20, fp = 0, tn = 30)
+  expect_true(is.na(dx_g_test(none, "simple")))
+  expect_equal(dx_g_test(none)$summary, "-")
+  expect_equal(dx_chi_square(none)$summary, "-")
+})
+
+test_that("Undefined kappa is not given an agreement label", {
+  res <- dx_cohens_kappa(make_cm(tp = 0, fn = 0, fp = 0, tn = 10))
+  expect_equal(res$notes, "Undefined: every case is in one cell")
+  expect_equal(res$summary, "0.00 (-, -)")
+  # A kappa of 0 that is defined keeps its label
+  expect_equal(dx_cohens_kappa(make_cm(tp = 10, fn = 10, fp = 10, tn = 10))$notes, "Slight Agreement")
+})
+
+test_that("Numbers that round to zero are not shown as negative", {
+  expect_equal(format_number(-0.001, accuracy = .01), "0.00")
+  expect_equal(format_number(-0.0001, accuracy = .1, percent = TRUE), "0.0%")
+  expect_equal(format_number(-0.4, accuracy = 1), "0")
+  expect_equal(conf_int(0, -1e-9, 1e-9, accuracy = .01), "0.00 (0.00, 0.00)")
+  # Negative numbers that don't round to zero keep their sign
+  expect_equal(format_number(-0.006, accuracy = .01), "-0.01")
+  expect_equal(format_number(-0.05, accuracy = .1, percent = TRUE), "-5.0%")
+  expect_equal(format_number(-10, accuracy = .01), "-10.00")
+})
+
+test_that("Proportions with a denominator of 0 have no interval for any citype", {
+  cm <- make_cm(tp = 0, fn = 10, fp = 0, tn = 40)
+  for (citype in c("exact", "wilson", "ac", "asymptotic", "logit")) {
+    res <- dx_ppv(cm, citype = citype)
+    expect_true(is.nan(res$estimate), info = citype)
+    expect_true(is.na(res$conf_low), info = citype)
+    expect_true(is.na(res$conf_high), info = citype)
+    expect_equal(res$summary, "- (-, -)", info = citype)
+  }
+  # Proportions of 0 with cases in the denominator keep their interval
+  res <- dx_sensitivity(cm)
+  expect_equal(res$estimate, 0)
+  expect_gt(res$conf_high, 0)
+})
+
+test_that("dx_fbeta checks beta", {
+  cm <- make_cm(tp = 40, fn = 10, fp = 20, tn = 30)
+  for (bad in list(-1, 0, NA, c(1, 2), "1")) {
+    expect_error(dx_fbeta(cm, beta = bad), "beta should be a single number greater than 0")
+  }
+  expect_equal(dx_fbeta(cm, beta = 1, detail = "simple"), dx_f1(cm, detail = "simple"))
+})
+
+test_that("Plot functions check their inputs", {
+  skip_if_not_installed("ggplot2")
+  hf <- dx_heart_failure
+  d <- dx(hf, true_varname = "truth", pred_varname = "predicted")
+  itd <- dx_itd(hf, "predicted", "truth")
+
+  # The object should come from dx(), or dx_compare() for dx_plot_rocs()
+  expect_error(dx_plot_roc(itd), "`dx_plot_roc` needs a `dx` object, created with `dx\\(\\)`")
+  expect_error(dx_plot_gain(hf), "`dx_plot_gain` needs a `dx` object")
+  expect_error(dx_plot_rocs(d), "`dx_plot_rocs` needs a `dx_compare` object, created with `dx_compare\\(\\)`")
+
+  expect_error(dx_plot_probabilities(d, plot_type = "bogus"), "should be one of")
+  for (bad in list(40, 0, 1.5, NA, "1")) {
+    expect_error(dx_plot_roc(d, summary_stats = bad), "summary_stats should be whole numbers between 1 and 27")
+  }
+  for (bad in list(0, 2.5, NA, c(5, 10))) {
+    expect_error(dx_plot_calibration(d, bins = bad), "bins should be a single whole number of at least 1")
+  }
+  expect_no_warning(ggplot2::ggplot_build(dx_plot_calibration(d, bins = 1)))
+  expect_error(dx_plot_cm(d, levels = c("a", "b", "c")), "levels should have two labels")
+})
+
+test_that("Forest plot checks its inputs", {
+  skip_if_not_installed("ggplot2")
+  skip_if_not_installed("gridExtra")
+  skip_if_not_installed("gtable")
+  expect_error(dx_plot_forest(dx_heart_failure), "`dx_plot_forest` needs a `dx` object")
+  expect_error(
+    dx_plot_forest(dx_grp, trans = "log10", limits = c(0, 100)),
+    "limits should be greater than 0 when trans = \"log10\""
+  )
+  expect_no_error(dx_plot_forest(dx_grp, trans = "log10", limits = c(.1, 100)))
+})
