@@ -80,7 +80,8 @@ at each threshold in <code>threshold_range</code>, and for each subgroup in
 
 
 <dt id="arg-threshold-range">threshold_range<a class="anchor" aria-label="anchor" href="#arg-threshold-range"></a></dt>
-<dd><p>Optional. A numeric vector of thresholds to loop over.</p></dd>
+<dd><p>Optional. A numeric vector of thresholds between 0
+and 1 to loop over.</p></dd>
 
 
 <dt id="arg-outcome-label">outcome_label<a class="anchor" aria-label="anchor" href="#arg-outcome-label"></a></dt>
@@ -112,16 +113,19 @@ Predictions are still probabilities that the outcome is 1, so with
 
 <dt id="arg-grouping-variables">grouping_variables<a class="anchor" aria-label="anchor" href="#arg-grouping-variables"></a></dt>
 <dd><p>Character vector of variable names to
-be summarized by.  Variables are converted to factors if not already one.</p></dd>
+be summarized by.  Variables are converted to factors if not already one.
+A column can't be named "Overall", which is used for the results of all
+cases.</p></dd>
 
 
 <dt id="arg-prevalence">prevalence<a class="anchor" aria-label="anchor" href="#arg-prevalence"></a></dt>
-<dd><p>Numeric value between 0 and 1, representing a target
-prevalence for additional NPV and PPV calculations.</p></dd>
+<dd><p>A single number greater than 0 and less than 1,
+representing a target prevalence for additional NPV and PPV calculations.</p></dd>
 
 
 <dt id="arg-citype">citype<a class="anchor" aria-label="anchor" href="#arg-citype"></a></dt>
-<dd><p>Confidence interval type.</p></dd>
+<dd><p>Confidence interval type for proportions: one of the methods
+of <code><a href="https://rdrr.io/pkg/binom/man/binom.confint.html" class="external-link">binom::binom.confint()</a></code>, such as "exact" (default), "wilson", or "ac".</p></dd>
 
 
 <dt id="arg-bootreps">bootreps<a class="anchor" aria-label="anchor" href="#arg-bootreps"></a></dt>

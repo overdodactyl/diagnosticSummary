@@ -45,6 +45,11 @@ exposure and outcome. Note that a value of 1 indicates no association,
 greater than 1 indicates increased odds of the outcome with exposure,
 and less than 1 indicates decreased odds.
 
+The result is `NA` unless both outcome classes are present and there are
+both positive and negative predictions. If any cell of the confusion
+matrix is zero, 0.5 is added to every cell before the estimate and
+confidence interval are calculated.
+
 ## Examples
 
 ``` r

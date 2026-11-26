@@ -40,7 +40,7 @@ dx(
 
 - threshold_range:
 
-  Optional. A numeric vector of thresholds to loop over.
+  Optional. A numeric vector of thresholds between 0 and 1 to loop over.
 
 - outcome_label:
 
@@ -72,16 +72,19 @@ dx(
 - grouping_variables:
 
   Character vector of variable names to be summarized by. Variables are
-  converted to factors if not already one.
+  converted to factors if not already one. A column can't be named
+  "Overall", which is used for the results of all cases.
 
 - prevalence:
 
-  Numeric value between 0 and 1, representing a target prevalence for
-  additional NPV and PPV calculations.
+  A single number greater than 0 and less than 1, representing a target
+  prevalence for additional NPV and PPV calculations.
 
 - citype:
 
-  Confidence interval type.
+  Confidence interval type for proportions: one of the methods of
+  [`binom::binom.confint()`](https://rdrr.io/pkg/binom/man/binom.confint.html),
+  such as "exact" (default), "wilson", or "ac".
 
 - bootreps:
 

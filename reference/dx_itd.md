@@ -55,12 +55,14 @@ dx_itd(
 - grouping_variables:
 
   Character vector of variable names to be summarized by. Variables are
-  converted to factors if not already one.
+  converted to factors if not already one. A column can't be named
+  "Overall", which is used for the results of all cases.
 
 - citype:
 
-  Confidence interval type for proportions (see
-  [`binom::binom.confint()`](https://rdrr.io/pkg/binom/man/binom.confint.html)).
+  Confidence interval type for proportions: one of the methods of
+  [`binom::binom.confint()`](https://rdrr.io/pkg/binom/man/binom.confint.html),
+  such as "exact" (default), "wilson", or "ac".
 
 ## Value
 
