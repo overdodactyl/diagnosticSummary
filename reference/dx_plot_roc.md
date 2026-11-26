@@ -30,8 +30,8 @@ dx_plot_roc(
 
 - dx_obj:
 
-  An object of class `dx` containing the necessary data and statistics
-  for generating the ROC curve.
+  A `dx` object, created with
+  [`dx()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx.md).
 
 - curve_color:
 
@@ -108,9 +108,9 @@ accuracy of the test. With `poslabel = 0`, sensitivity and specificity
 are for outcome 0 as the event, so the curve is drawn for that event and
 the reference circle marks the threshold on it.
 
-The `dx_roc` function allows for extensive customization of the ROC
-curve, including color schemes, reference lines, text annotations, and
-more, to accommodate a variety of visualization needs and preferences.
+`dx_plot_roc()` allows for extensive customization of the ROC curve,
+including color schemes, reference lines, text annotations, and more, to
+accommodate a variety of visualization needs and preferences.
 
 The area under the ROC curve (AUC) provides a single scalar value
 summarizing the performance of the test. The AUC can be interpreted as

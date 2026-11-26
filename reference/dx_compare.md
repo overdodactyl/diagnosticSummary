@@ -14,9 +14,11 @@ dx_compare(dx_list, paired = TRUE)
 
 - dx_list:
 
-  A list of `dx` objects representing the models to be compared. Each
-  `dx` object should be the result of a call to
-  [`dx()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx.md).
+  A list of two or more `dx` objects, created with
+  [`dx()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx.md),
+  representing the models to be compared. Name the list to label the
+  models; names must be unique. Unnamed models are called "Model 1",
+  "Model 2", and so on.
 
 - paired:
 
@@ -32,10 +34,18 @@ of pairwise comparison results for each test conducted.
 
 ## Details
 
-This function is a utility to perform a comprehensive comparison between
-multiple classification models. Based on the value of `paired`, it will
-perform appropriate tests. The resulting object can be used it further
-functions like `dx_plot_rocs.`
+Every pair of models is compared. With `paired = TRUE`, the tests are
+DeLong's test for paired ROC curves
+([`dx_delong()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_delong.md))
+and McNemar's test
+([`dx_mcnemars()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_mcnemars.md)).
+With `paired = FALSE`, they are DeLong's test for unpaired ROC curves
+and a test of two proportions
+([`dx_z_test()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_z_test.md))
+for accuracy, PPV, NPV, FNR, FPR, FDR, sensitivity, and specificity.
+P-values are not adjusted for multiple comparisons. The resulting object
+can be passed to
+[`dx_plot_rocs()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_rocs.md).
 
 ## See also
 

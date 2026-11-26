@@ -48,8 +48,8 @@ where:
 
 - \\N\\ is the number of predictions,
 
-- \\f_i\\ is the predicted probability of the occurrence of the positive
-  class for the ith prediction,
+- \\f_i\\ is the predicted probability that the outcome is 1 for the ith
+  prediction,
 
 - \\o_i\\ is the actual outcome for the ith prediction, 0 or 1.
 

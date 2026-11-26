@@ -1,7 +1,20 @@
 # diagnosticSummary
 
-`diagnosticSummary` is designed to quickly create diagnostic summaries
-and reports for binary classification data.
+`diagnosticSummary` summarizes how well predicted probabilities agree
+with a binary reference standard. One call to
+[`dx()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx.md)
+gives:
+
+- sensitivity, specificity, predictive values, likelihood ratios, the
+  AUC, and other measures, with confidence intervals
+- the same measures at other thresholds and by subgroup
+- plots such as ROC, precision-recall, calibration, and decision curves,
+  and a forest plot of subgroups (`dx_plot_*()`)
+
+[`dx_compare()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_compare.md)
+compares models, and
+[`dx_itd()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_itd.md)
+handles missing predictions.
 
 ## Installation
 
@@ -47,6 +60,33 @@ dx_obj <- dx(
 )
 ```
 
+Printing the object gives a short overview:
+
+``` r
+
+dx_obj
+#> Diagnostic summary (dx)
+#>   Predictions: predicted
+#>   Reference standard: truth (event: 1)
+#>   Cases: 261, 98 with the event (37.5%)
+#>   Threshold: 0.3
+#>   Subgroups: AgeGroup, Sex, AgeSex
+#>   Other thresholds: 0.1, 0.2
+#> 
+#>  measure                   summary             
+#>  AUC ROC                   0.904 (0.864, 0.943)
+#>  Sensitivity               84.7% (76.0%, 91.2%)
+#>  Specificity               76.1% (68.8%, 82.4%)
+#>  Positive Predictive Value 68.0% (59.0%, 76.2%)
+#>  Negative Predictive Value 89.2% (82.8%, 93.8%)
+#> 
+#> Use summary() or as.data.frame() for all measures.
+```
+
+[`summary()`](https://rdrr.io/r/base/summary.html) shows every measure,
+and [`as.data.frame()`](https://rdrr.io/r/base/as.data.frame.html)
+returns them with unformatted estimates and confidence limits:
+
 ``` r
 
 summary(dx_obj, variable = "Overall", show_var = FALSE, show_label = FALSE)
@@ -83,6 +123,39 @@ summary(dx_obj, variable = "Overall", show_var = FALSE, show_label = FALSE)
 | G-Test                                    | p\<0.01              |
 
 Threshold= 0.3
+
+## Plots
+
+``` r
+
+dx_plot_roc(dx_obj)
+```
+
+![](reference/figures/README-roc-1.svg)
+
+## Comparing models
+
+``` r
+
+dx_rf <- dx(
+  data = dx_heart_failure,
+  true_varname = "truth",
+  pred_varname = "predicted_rf",
+  setthreshold = .3
+)
+
+dx_compare(list(Logistic = dx_obj, `Random forest` = dx_rf), paired = TRUE)
+#> Comparison of 2 models (dx_compare): Logistic, Random forest
+#> 
+#>  models                     test                         summary          
+#>  Logistic vs. Random forest DeLong's test for ROC curves 0.04 (0.02, 0.06)
+#>  Logistic vs. Random forest McNemar's Chi-squared Test   p=0.15           
+#>  p_value
+#>  p<0.001
+#>  p=0.151
+#> 
+#> All results are in the `tests` element.
+```
 
 ## Missing predictions
 

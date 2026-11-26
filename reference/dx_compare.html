@@ -52,8 +52,10 @@ comparisons.</p>
 
 
 <dl><dt id="arg-dx-list">dx_list<a class="anchor" aria-label="anchor" href="#arg-dx-list"></a></dt>
-<dd><p>A list of <code>dx</code> objects representing the models to be compared.
-Each <code>dx</code> object should be the result of a call to <code><a href="dx.html">dx()</a></code>.</p></dd>
+<dd><p>A list of two or more <code>dx</code> objects, created with <code><a href="dx.html">dx()</a></code>,
+representing the models to be compared. Name the list to label
+the models; names must be unique. Unnamed models are called
+"Model 1", "Model 2", and so on.</p></dd>
 
 
 <dt id="arg-paired">paired<a class="anchor" aria-label="anchor" href="#arg-paired"></a></dt>
@@ -69,10 +71,13 @@ pairwise comparison results for each test conducted.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>This function is a utility to perform a comprehensive comparison between
-multiple classification models. Based on the value of <code>paired</code>, it will
-perform appropriate tests.  The resulting object can be used it further
-functions like <code>dx_plot_rocs.</code></p>
+    <p>Every pair of models is compared. With <code>paired = TRUE</code>, the tests
+are DeLong's test for paired ROC curves (<code><a href="dx_delong.html">dx_delong()</a></code>) and McNemar's
+test (<code><a href="dx_mcnemars.html">dx_mcnemars()</a></code>). With <code>paired = FALSE</code>, they are DeLong's test
+for unpaired ROC curves and a test of two proportions
+(<code><a href="dx_z_test.html">dx_z_test()</a></code>) for accuracy, PPV, NPV, FNR, FPR, FDR, sensitivity,
+and specificity. P-values are not adjusted for multiple comparisons.
+The resulting object can be passed to <code><a href="dx_plot_rocs.html">dx_plot_rocs()</a></code>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

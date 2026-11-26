@@ -15,8 +15,8 @@ dx_plot_thresholds(dx_obj)
 
 - dx_obj:
 
-  A `dx` object containing threshold-based statistics, including values
-  for various diagnostic measures at different thresholds.
+  A `dx` object, created with
+  [`dx()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx.md).
 
 ## Value
 

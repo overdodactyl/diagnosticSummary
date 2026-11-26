@@ -17,13 +17,15 @@ Shared Parameters for Diagnostic Metrics
 
 - ...:
 
-  Additional arguments to pass to metric_binomial function, such as
-  `citype` for type of confidence interval method.
+  Additional arguments, such as `citype`, the confidence interval method
+  for proportions (see
+  [`dx()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx.md)).
 
 - boot:
 
   Logical specifying if confidence intervals should be generated via a
-  percentile bootstrap of the confusion matrix cell counts. Call
+  percentile bootstrap of the confusion matrix cell counts. With the
+  default, `FALSE`, no confidence interval is reported. Call
   [`set.seed()`](https://rdrr.io/r/base/Random.html) first for
   reproducible intervals.
 

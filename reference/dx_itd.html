@@ -69,7 +69,7 @@ reference standard in the columns (Schuetz et al., 2012).</p>
 
 
 <dl><dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
-<dd><p>A tbl.</p></dd>
+<dd><p>A data frame.</p></dd>
 
 
 <dt id="arg-pred-varname">pred_varname<a class="anchor" aria-label="anchor" href="#arg-pred-varname"></a></dt>
@@ -97,10 +97,11 @@ Predictions are still probabilities that the outcome is 1, so with
 
 
 <dt id="arg-grouping-variables">grouping_variables<a class="anchor" aria-label="anchor" href="#arg-grouping-variables"></a></dt>
-<dd><p>Character vector of variable names to
-be summarized by.  Variables are converted to factors if not already one.
+<dd><p>Optional. Character vector of variable names to
+be summarized by. Each variable is summarized separately, in addition to
+all cases. Variables are converted to factors if not already one.
 A column can't be named "Overall", which is used for the results of all
-cases.</p></dd>
+cases. <code>NA</code> (default) or <code>NULL</code> for no subgroups.</p></dd>
 
 
 <dt id="arg-citype">citype<a class="anchor" aria-label="anchor" href="#arg-citype"></a></dt>

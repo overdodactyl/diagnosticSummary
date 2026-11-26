@@ -27,7 +27,8 @@ dx_balanced_accuracy(cm, detail = "full", boot = FALSE, bootreps = 2000)
 - boot:
 
   Logical specifying if confidence intervals should be generated via a
-  percentile bootstrap of the confusion matrix cell counts. Call
+  percentile bootstrap of the confusion matrix cell counts. With the
+  default, `FALSE`, no confidence interval is reported. Call
   [`set.seed()`](https://rdrr.io/r/base/Random.html) first for
   reproducible intervals.
 

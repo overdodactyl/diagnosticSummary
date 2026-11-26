@@ -44,8 +44,8 @@ dx_z_test(
 ## Value
 
 Depending on the `detail` parameter, returns the p-value of the test or
-a more detailed list including the test statistic, confidence interval,
-and p-value.
+a data frame with the difference in proportions, its confidence
+interval, the test statistic, and the p-value.
 
 ## Details
 
@@ -57,7 +57,9 @@ two groups are statistically significantly different. The function
 automatically adjusts for continuity and provides confidence intervals
 for the difference in proportions. The difference is calculated as the
 metric of `dx1` minus the metric of `dx2`, so a negative estimate
-indicates that `dx2` has the higher value.
+indicates that `dx2` has the higher value. When both proportions are 0
+or both are 1, the test is undefined: the estimate is 0 and the p-value
+is `NA`, with a note.
 
 The Z-test for two proportions is appropriate when comparing the success
 rates (proportions) of two independent samples. Here are some
@@ -66,8 +68,8 @@ considerations for using this test:
 - Independence: The samples should be independent. This test is not
   appropriate for paired or matched data.
 
-- Sample Size\*\*: Both groups should have a sufficiently large number
-  of trials. As a rule of thumb, the test assumes that the number of
+- Sample Size: Both groups should have a sufficiently large number of
+  trials. As a rule of thumb, the test assumes that the number of
   successes and failures in each group should be at least 5. However,
   for more accurate results, especially in cases with extreme
   proportions (close to 0 or 1), larger sample sizes may be necessary.

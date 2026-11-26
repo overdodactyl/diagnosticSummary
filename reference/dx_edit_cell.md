@@ -1,6 +1,8 @@
-# Edit a cell within an object returned from dx_forest
+# Edit cells of a forest plot table
 
-A convenient wrapper used to edit cells of a gtable.
+A convenient wrapper used to edit cells of the gtable returned by
+[`dx_plot_forest()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_forest.md)
+with `return = "grid"`.
 
 ## Usage
 
@@ -12,7 +14,7 @@ dx_edit_cell(table, row, col, name = "core-fg", ...)
 
 - table:
 
-  a table returned from dx_forest
+  A gtable returned by `dx_plot_forest(return = "grid")`
 
 - row:
 

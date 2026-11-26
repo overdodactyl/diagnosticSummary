@@ -119,7 +119,7 @@ Figures summarizing diagnostic statistics
 - [`dx_plot_decision_curve()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_decision_curve.md)
   : Plot Decision Curve
 - [`dx_plot_forest()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_forest.md)
-  : Create table with odds ratios displayed graphically
+  : Forest plot of odds ratios by subgroup
 - [`dx_plot_gain()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_gain.md)
   : Plot Gain Chart
 - [`dx_plot_ks()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_ks.md)
@@ -141,7 +141,7 @@ Figures summarizing diagnostic statistics
 - [`dx_plot_youden_j()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_youden_j.md)
   : Plot Youden's J Index Curve
 - [`dx_edit_cell()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_edit_cell.md)
-  : Edit a cell within an object returned from dx_forest
+  : Edit cells of a forest plot table
 
 ## Utilities
 
@@ -152,13 +152,13 @@ Helper functions and S3 methods
   [`print(`*`<dx_compare>`*`)`](https://overdodactyl.github.io/diagnosticSummary/reference/print.dx.md)
   : Print a diagnostic summary
 - [`as.data.frame(`*`<dx>`*`)`](https://overdodactyl.github.io/diagnosticSummary/reference/as.data.frame.dx.md)
-  : Convert to a data frame
+  : Convert a diagnostic summary to a data frame
 - [`summary(`*`<dx>`*`)`](https://overdodactyl.github.io/diagnosticSummary/reference/summary.dx.md)
-  : Summary
+  : Summarize a diagnostic test
 - [`as.data.frame(`*`<dx_itd>`*`)`](https://overdodactyl.github.io/diagnosticSummary/reference/as.data.frame.dx_itd.md)
-  : Convert to a data frame
+  : Convert an intention-to-diagnose analysis to a data frame
 - [`summary(`*`<dx_itd>`*`)`](https://overdodactyl.github.io/diagnosticSummary/reference/summary.dx_itd.md)
-  : Summary
+  : Summarize an intention-to-diagnose analysis
 
 ## Data
 

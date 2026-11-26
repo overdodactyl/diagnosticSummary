@@ -52,14 +52,15 @@ including 95% confidence intervals.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Additional arguments to pass to metric_binomial function, such as
-<code>citype</code> for type of confidence interval method.</p></dd>
+<dd><p>Additional arguments, such as <code>citype</code>, the confidence interval
+method for proportions (see <code><a href="dx.html">dx()</a></code>).</p></dd>
 
 
 <dt id="arg-boot">boot<a class="anchor" aria-label="anchor" href="#arg-boot"></a></dt>
 <dd><p>Logical specifying if confidence intervals should be generated
-via a percentile bootstrap of the confusion matrix cell counts. Call
-<code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code> first for reproducible intervals.</p></dd>
+via a percentile bootstrap of the confusion matrix cell counts. With the
+default, <code>FALSE</code>, no confidence interval is reported. Call <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code>
+first for reproducible intervals.</p></dd>
 
 
 <dt id="arg-bootreps">bootreps<a class="anchor" aria-label="anchor" href="#arg-bootreps"></a></dt>

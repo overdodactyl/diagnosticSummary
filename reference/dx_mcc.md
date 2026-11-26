@@ -4,8 +4,8 @@ Calculates the Matthews Correlation Coefficient (MCC), a measure of the
 quality of binary classifications. It returns a value between -1 and +1
 where +1 indicates perfect prediction, 0 no better than random
 prediction, and -1 indicates total disagreement between prediction and
-observation. The function can also return a confidence interval for the
-MCC value using bootstrapping if detail is set to "full".
+observation. A bootstrapped confidence interval is included when
+`boot = TRUE`.
 
 ## Usage
 
@@ -29,7 +29,8 @@ dx_mcc(cm, detail = "full", boot = FALSE, bootreps = 2000)
 - boot:
 
   Logical specifying if confidence intervals should be generated via a
-  percentile bootstrap of the confusion matrix cell counts. Call
+  percentile bootstrap of the confusion matrix cell counts. With the
+  default, `FALSE`, no confidence interval is reported. Call
   [`set.seed()`](https://rdrr.io/r/base/Random.html) first for
   reproducible intervals.
 
@@ -41,8 +42,8 @@ dx_mcc(cm, detail = "full", boot = FALSE, bootreps = 2000)
 ## Value
 
 If `detail` is "simple", returns a single numeric value of MCC. If
-`detail` is "full", returns a data frame that includes MCC, its
-bootstrapped confidence interval, and other key details
+`detail` is "full", returns a data frame that includes MCC and, when
+`boot = TRUE`, its bootstrapped confidence interval.
 
 ## Details
 
@@ -56,9 +57,8 @@ FN)}}\$\$ where TP, TN, FP, and FN represent the counts of true
 positives, true negatives, false positives, and false negatives,
 respectively.
 
-For "full" details, bootstrap methods are used to estimate the
-confidence interval for the MCC value, providing a more robust
-understanding of its stability.
+MCC is reported as 0 when a row or column of the confusion matrix is
+empty, where the formula divides by zero.
 
 ## Examples
 

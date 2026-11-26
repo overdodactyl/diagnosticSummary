@@ -28,8 +28,9 @@ dx_npv(cm, detail = "full", ...)
 
 - ...:
 
-  Additional arguments to pass to metric_binomial function, such as
-  `citype` for type of confidence interval method.
+  Additional arguments, such as `citype`, the confidence interval method
+  for proportions (see
+  [`dx()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx.md)).
 
 ## Value
 

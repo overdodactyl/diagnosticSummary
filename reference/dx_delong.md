@@ -64,8 +64,8 @@ Welch-Satterthwaite degrees of freedom, and the t distribution. The
 [`pROC::roc.test()`](https://rdrr.io/pkg/pROC/man/roc.test.html) for the
 underlying test implementation.
 
-[`dx_cm()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_cm.md)
-to understand how to create a `dx` object.
+[`dx()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx.md)
+to create a `dx` object.
 
 ## Examples
 

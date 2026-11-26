@@ -20,7 +20,9 @@ dx_fbeta(cm, beta = 1, detail = "full", boot = FALSE, bootreps = 2000)
 
 - beta:
 
-  The beta value determining the weight of precision in the F-score.
+  A single number greater than 0. Recall is weighted `beta` times as
+  much as precision: values above 1 favor recall and values below 1
+  favor precision.
 
 - detail:
 
@@ -31,7 +33,8 @@ dx_fbeta(cm, beta = 1, detail = "full", boot = FALSE, bootreps = 2000)
 - boot:
 
   Logical specifying if confidence intervals should be generated via a
-  percentile bootstrap of the confusion matrix cell counts. Call
+  percentile bootstrap of the confusion matrix cell counts. With the
+  default, `FALSE`, no confidence interval is reported. Call
   [`set.seed()`](https://rdrr.io/r/base/Random.html) first for
   reproducible intervals.
 
@@ -43,7 +46,15 @@ dx_fbeta(cm, beta = 1, detail = "full", boot = FALSE, bootreps = 2000)
 ## Value
 
 Depending on the `detail` parameter, returns a single numeric value of
-F-beta or a data frame with the F-beta and its confidence intervals.
+F-beta or a data frame with the F-beta and, when `boot = TRUE`, its
+confidence interval.
+
+## Details
+
+\$\$F\_\beta = (1 + \beta^2) \frac{Precision \times Recall}{\beta^2
+\times Precision + Recall}\$\$
+
+The score is 0 when precision and recall are both 0 or undefined.
 
 ## See also
 

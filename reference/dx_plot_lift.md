@@ -16,10 +16,8 @@ dx_plot_lift(dx_obj)
 
 - dx_obj:
 
-  A `dx` object containing diagnostic measurements, including a rank
-  data frame with percentile and lift columns. The rank data frame
-  should be the result of a diagnostic process that scores and ranks
-  each instance based on the likelihood of being a true positive.
+  A `dx` object, created with
+  [`dx()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx.md).
 
 ## Value
 

@@ -35,8 +35,8 @@ dx_cm(predprob, truth, threshold, poslabel = 1)
 
 ## Value
 
-A dataframe object of class "dx_cm" containing the components of the
-confusion matrix and additional metrics:
+A data frame of class "dx_cm" with one row, containing the components of
+the confusion matrix and additional metrics:
 
 - `tp`: True Positives
 
@@ -63,7 +63,8 @@ confusion matrix and additional metrics:
 The function takes predicted probabilities and a threshold to create
 binary predictions which are then compared to the true labels to create
 a confusion matrix. It is useful for evaluating the performance of a
-binary classification model.
+binary classification model. With `poslabel = 0`, outcome 0 is the
+event, so a prediction below the threshold is a positive test.
 
 ## Examples
 

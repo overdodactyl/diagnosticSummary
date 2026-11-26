@@ -31,8 +31,9 @@ dx_ppv_prevalence(cm, prevalence, detail = "full", ...)
 
 - ...:
 
-  Additional arguments to pass to metric_binomial function, such as
-  `citype` for type of confidence interval method.
+  Additional arguments, such as `citype`, the confidence interval method
+  for proportions (see
+  [`dx()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx.md)).
 
 ## Value
 
@@ -50,8 +51,14 @@ the true positive rate and `Specificity` is the true negative rate.
 Adjusting PPV for prevalence allows a more accurate assessment of the
 classifier’s performance in different population settings.
 
-Confidence intervales are calucated using a simple logit (Mercaldo et
-al, 2007)
+Confidence intervals are calculated on the logit scale (Mercaldo et al.,
+2007).
+
+## References
+
+Mercaldo ND, Lau KF, Zhou XH. Confidence intervals for predictive values
+with an emphasis to case-control studies. Statistics in Medicine.
+2007;26(10):2170-2183.
 
 ## See also
 

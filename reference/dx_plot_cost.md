@@ -15,8 +15,8 @@ dx_plot_cost(dx_obj, cfp, cfn, ctp = 0, ctn = 0)
 
 - dx_obj:
 
-  A `dx` object containing threshold-based statistics including false
-  positives (fp) and false negatives (fn) for each threshold.
+  A `dx` object, created with
+  [`dx()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx.md).
 
 - cfp:
 

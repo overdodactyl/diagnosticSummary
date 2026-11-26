@@ -16,10 +16,8 @@ dx_plot_ks(dx_obj)
 
 - dx_obj:
 
-  A `dx` object containing diagnostic measurements, including a rank
-  data frame with columns for cumulative true positive rate (TPR) and
-  false positive rate (FPR), as well as the predicted probabilities
-  associated with each instance.
+  A `dx` object, created with
+  [`dx()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx.md).
 
 ## Value
 

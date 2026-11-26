@@ -16,7 +16,8 @@ dx_plot_decision_curve(dx_obj, plot_range = c(0.05, 0.95))
 
 - dx_obj:
 
-  A `dx` object.
+  A `dx` object, created with
+  [`dx()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx.md).
 
 - plot_range:
 

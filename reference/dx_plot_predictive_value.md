@@ -15,8 +15,8 @@ dx_plot_predictive_value(dx_obj)
 
 - dx_obj:
 
-  A `dx` object containing the prevalence analysis data, including
-  calculated PPV and NPV for various prevalence levels.
+  A `dx` object, created with
+  [`dx()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx.md).
 
 ## Value
 

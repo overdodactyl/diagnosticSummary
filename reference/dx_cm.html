@@ -75,7 +75,7 @@ are classified as outcome 1.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A dataframe object of class "dx_cm" containing the components of the confusion matrix and additional metrics:</p><ul><li><p><code>tp</code>: True Positives</p></li>
+    <p>A data frame of class "dx_cm" with one row, containing the components of the confusion matrix and additional metrics:</p><ul><li><p><code>tp</code>: True Positives</p></li>
 <li><p><code>fn</code>: False Negatives</p></li>
 <li><p><code>tn</code>: True Negatives</p></li>
 <li><p><code>fp</code>: False Positives</p></li>
@@ -90,7 +90,9 @@ are classified as outcome 1.</p></dd>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The function takes predicted probabilities and a threshold to create binary
 predictions which are then compared to the true labels to create a confusion matrix.
-It is useful for evaluating the performance of a binary classification model.</p>
+It is useful for evaluating the performance of a binary classification model.
+With <code>poslabel = 0</code>, outcome 0 is the event, so a prediction below the
+threshold is a positive test.</p>
     </div>
 
     <div class="section level2">

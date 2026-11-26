@@ -26,7 +26,8 @@ dx_f2(cm, detail = "full", boot = FALSE, bootreps = 2000)
 - boot:
 
   Logical specifying if confidence intervals should be generated via a
-  percentile bootstrap of the confusion matrix cell counts. Call
+  percentile bootstrap of the confusion matrix cell counts. With the
+  default, `FALSE`, no confidence interval is reported. Call
   [`set.seed()`](https://rdrr.io/r/base/Random.html) first for
   reproducible intervals.
 
@@ -38,7 +39,8 @@ dx_f2(cm, detail = "full", boot = FALSE, bootreps = 2000)
 ## Value
 
 Depending on the `detail` parameter, returns a single numeric value of
-F2 or a data frame with the F2 and its confidence intervals.
+F2 or a data frame with the F2 and, when `boot = TRUE`, its confidence
+interval.
 
 ## See also
 

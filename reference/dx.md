@@ -32,7 +32,7 @@ dx(
 
 - data:
 
-  A tbl.
+  A data frame.
 
 - classlabels:
 
@@ -40,7 +40,9 @@ dx(
 
 - threshold_range:
 
-  Optional. A numeric vector of thresholds between 0 and 1 to loop over.
+  Optional. A numeric vector of thresholds between 0 and 1 to calculate
+  the measures at, in addition to `setthreshold`. `NA` (default) or
+  `NULL` for none.
 
 - outcome_label:
 
@@ -71,14 +73,17 @@ dx(
 
 - grouping_variables:
 
-  Character vector of variable names to be summarized by. Variables are
-  converted to factors if not already one. A column can't be named
-  "Overall", which is used for the results of all cases.
+  Optional. Character vector of variable names to be summarized by. Each
+  variable is summarized separately, in addition to all cases. Variables
+  are converted to factors if not already one. A column can't be named
+  "Overall", which is used for the results of all cases. `NA` (default)
+  or `NULL` for no subgroups.
 
 - prevalence:
 
-  A single number greater than 0 and less than 1, representing a target
-  prevalence for additional NPV and PPV calculations.
+  Optional. A single number greater than 0 and less than 1, representing
+  a target prevalence for additional NPV and PPV calculations. `NA`
+  (default) or `NULL` for none.
 
 - citype:
 
@@ -126,11 +131,19 @@ all thresholds (`thresholds`), a prevalence analysis (`prevalence`), the
 ranked predictions used by the gain, lift, KS, and CAP plots (`rank`),
 the confusion matrix at `setthreshold` (`cm`), and the
 [`pROC::roc()`](https://rdrr.io/pkg/pROC/man/roc.html) object (`roc`).
-Use
+Printing the object shows a short overview. Use
 [`summary.dx()`](https://overdodactyl.github.io/diagnosticSummary/reference/summary.dx.md)
 or
 [`as.data.frame.dx()`](https://overdodactyl.github.io/diagnosticSummary/reference/as.data.frame.dx.md)
 to view the measures.
+
+## See also
+
+[`dx_itd()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_itd.md)
+when some predictions are missing,
+[`dx_compare()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_compare.md)
+to compare models, and the `dx_plot_*()` functions, such as
+[`dx_plot_roc()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_roc.md).
 
 ## Examples
 

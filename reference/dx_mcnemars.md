@@ -31,8 +31,7 @@ dx_mcnemars(dx1, dx2, detail = "full")
 ## Value
 
 Depending on the `detail` parameter, returns either the p-value (simple)
-or a more comprehensive list including the test statistic and p-value
-(full).
+or a data frame with the test statistic and p-value (full).
 
 ## Details
 
@@ -54,8 +53,10 @@ table.
 
 ## See also
 
-[`dx_cm()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_cm.md),
-[`mcnemar.test()`](https://rdrr.io/r/stats/mcnemar.test.html)
+[`dx()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx.md)
+to create a `dx` object,
+[`stats::mcnemar.test()`](https://rdrr.io/r/stats/mcnemar.test.html) for
+the underlying test.
 
 ## Examples
 

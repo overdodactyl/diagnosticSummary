@@ -20,8 +20,8 @@ dx_plot_rocs(
 
 - dx_comp:
 
-  A `dx_compare` object containing the results of pairwise model
-  comparisons and the list of `dx` objects with ROC data.
+  A `dx_compare` object, created with
+  [`dx_compare()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_compare.md).
 
 - add_text:
 
@@ -50,10 +50,6 @@ TRUE.
 This function is a visualization tool that plots ROC curves for multiple
 models to facilitate comparison. It uses DeLong's test to statistically
 compare AUC values and, if desired, annotates the plot with the results.
-The function expects a `dx_compare` object as input, which should
-contain the necessary ROC and test comparison data. Ensure that the ROC
-data and DeLong's test results are appropriately generated and stored in
-the `dx_compare` object before using this function.
 
 ## See also
 

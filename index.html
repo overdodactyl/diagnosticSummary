@@ -58,7 +58,13 @@
 </div>
 <!-- badges: start -->
 
-<p><code>diagnosticSummary</code> is designed to quickly create diagnostic summaries and reports for binary classification data.</p>
+<p><code>diagnosticSummary</code> summarizes how well predicted probabilities agree with a binary reference standard. One call to <code><a href="reference/dx.html">dx()</a></code> gives:</p>
+<ul>
+<li>sensitivity, specificity, predictive values, likelihood ratios, the AUC, and other measures, with confidence intervals</li>
+<li>the same measures at other thresholds and by subgroup</li>
+<li>plots such as ROC, precision-recall, calibration, and decision curves, and a forest plot of subgroups (<code>dx_plot_*()</code>)</li>
+</ul>
+<p><code><a href="reference/dx_compare.html">dx_compare()</a></code> compares models, and <code><a href="reference/dx_itd.html">dx_itd()</a></code> handles missing predictions.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -95,7 +101,27 @@
 <span>  bootreps <span class="op">=</span> <span class="fl">1000</span>,</span>
 <span>  grouping_variables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AgeGroup"</span>, <span class="st">"Sex"</span>, <span class="st">"AgeSex"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
+<p>Printing the object gives a short overview:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">dx_obj</span></span>
+<span><span class="co">#&gt; Diagnostic summary (dx)</span></span>
+<span><span class="co">#&gt;   Predictions: predicted</span></span>
+<span><span class="co">#&gt;   Reference standard: truth (event: 1)</span></span>
+<span><span class="co">#&gt;   Cases: 261, 98 with the event (37.5%)</span></span>
+<span><span class="co">#&gt;   Threshold: 0.3</span></span>
+<span><span class="co">#&gt;   Subgroups: AgeGroup, Sex, AgeSex</span></span>
+<span><span class="co">#&gt;   Other thresholds: 0.1, 0.2</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  measure                   summary             </span></span>
+<span><span class="co">#&gt;  AUC ROC                   0.904 (0.864, 0.943)</span></span>
+<span><span class="co">#&gt;  Sensitivity               84.7% (76.0%, 91.2%)</span></span>
+<span><span class="co">#&gt;  Specificity               76.1% (68.8%, 82.4%)</span></span>
+<span><span class="co">#&gt;  Positive Predictive Value 68.0% (59.0%, 76.2%)</span></span>
+<span><span class="co">#&gt;  Negative Predictive Value 89.2% (82.8%, 93.8%)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Use summary() or as.data.frame() for all measures.</span></span></code></pre></div>
+<p><code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> shows every measure, and <code><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame()</a></code> returns them with unformatted estimates and confidence limits:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">dx_obj</span>, variable <span class="op">=</span> <span class="st">"Overall"</span>, show_var <span class="op">=</span> <span class="cn">FALSE</span>, show_label <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr>
@@ -216,10 +242,40 @@
 <p>Threshold= 0.3</p>
 </div>
 <div class="section level2">
+<h2 id="plots">Plots<a class="anchor" aria-label="anchor" href="#plots"></a>
+</h2>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/dx_plot_roc.html">dx_plot_roc</a></span><span class="op">(</span><span class="va">dx_obj</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/README-roc-1.svg" width="60%"></p>
+</div>
+<div class="section level2">
+<h2 id="comparing-models">Comparing models<a class="anchor" aria-label="anchor" href="#comparing-models"></a>
+</h2>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">dx_rf</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dx.html">dx</a></span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">dx_heart_failure</span>,</span>
+<span>  true_varname <span class="op">=</span> <span class="st">"truth"</span>,</span>
+<span>  pred_varname <span class="op">=</span> <span class="st">"predicted_rf"</span>,</span>
+<span>  setthreshold <span class="op">=</span> <span class="fl">.3</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="reference/dx_compare.html">dx_compare</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Logistic <span class="op">=</span> <span class="va">dx_obj</span>, `Random forest` <span class="op">=</span> <span class="va">dx_rf</span><span class="op">)</span>, paired <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Comparison of 2 models (dx_compare): Logistic, Random forest</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  models                     test                         summary          </span></span>
+<span><span class="co">#&gt;  Logistic vs. Random forest DeLong's test for ROC curves 0.04 (0.02, 0.06)</span></span>
+<span><span class="co">#&gt;  Logistic vs. Random forest McNemar's Chi-squared Test   p=0.15           </span></span>
+<span><span class="co">#&gt;  p_value</span></span>
+<span><span class="co">#&gt;  p&lt;0.001</span></span>
+<span><span class="co">#&gt;  p=0.151</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; All results are in the `tests` element.</span></span></code></pre></div>
+</div>
+<div class="section level2">
 <h2 id="missing-predictions">Missing predictions<a class="anchor" aria-label="anchor" href="#missing-predictions"></a>
 </h2>
 <p>If some predictions are missing, for example because a case failed quality control, <code><a href="reference/dx_itd.html">dx_itd()</a></code> keeps those cases as ungradable results in a 3x2 intention-to-diagnose analysis. It reports the diagnostic yield, post-test disease risks and likelihood ratios for each result, and worst-case performance, which counts every ungradable result as incorrect.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data_missing</span> <span class="op">&lt;-</span> <span class="va">dx_heart_failure</span></span>
 <span><span class="va">data_missing</span><span class="op">$</span><span class="va">predicted</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">261</span>, by <span class="op">=</span> <span class="fl">20</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
 <span></span>

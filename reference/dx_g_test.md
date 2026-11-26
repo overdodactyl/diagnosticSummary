@@ -39,6 +39,9 @@ contains small expected frequencies, which might make the chi-squared
 test less accurate. A low p-value indicates a significant association
 between the variables or a significant difference from the expected
 distribution. Caution is needed with zero counts or very small samples.
+The p-value is `NA` when a row or column of the table is empty, since
+the test is undefined. An empty cell otherwise contributes 0 to the
+statistic.
 
 ## Examples
 

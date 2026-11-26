@@ -2,7 +2,7 @@
 
 Calculates the proportion of true positives out of the total predicted
 positives (true positives + false positives). PPV is also known as
-precision.Note that PPV can be influenced by the prevalence of the
+precision. Note that PPV can be influenced by the prevalence of the
 condition and should be used alongside other metrics.
 
 ## Usage
@@ -28,8 +28,9 @@ dx_precision(cm, detail = "full", ...)
 
 - ...:
 
-  Additional arguments to pass to metric_binomial function, such as
-  `citype` for type of confidence interval method.
+  Additional arguments, such as `citype`, the confidence interval method
+  for proportions (see
+  [`dx()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx.md)).
 
 ## Value
 

@@ -1,6 +1,7 @@
-# Summary
+# Summarize a diagnostic test
 
-Summary
+Shows the formatted estimate and confidence interval of each measure in
+a `dx` object at one threshold.
 
 ## Usage
 
@@ -26,31 +27,36 @@ summary(
 
 - thresh:
 
-  The threshold to return values from
+  The threshold to show: `setthreshold` (default) or a value in
+  `threshold_range`.
 
 - variable:
 
-  Variable to include in returned values
+  Variables to include: "Overall" for all cases, or names in
+  `grouping_variables`. Defaults to all.
 
 - label:
 
-  Labels to include in returned values
+  Subgroups to include: levels of the grouping variables, or "Overall".
+  Defaults to all.
 
 - show_var:
 
-  Include variable column in returned data?
+  Include the variable column?
 
 - show_label:
 
-  Include label in returned data?
+  Include the label (subgroup) column?
 
 - measure:
 
-  Measures to include
+  Names of the measures to include, as in the `measure` column of
+  [`as.data.frame.dx()`](https://overdodactyl.github.io/diagnosticSummary/reference/as.data.frame.dx.md),
+  such as "Sensitivity". Defaults to all.
 
 - ...:
 
-  additional arguments to be passed to or from methods
+  Not used.
 
 ## Value
 

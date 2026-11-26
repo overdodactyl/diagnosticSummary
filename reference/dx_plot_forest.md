@@ -1,6 +1,8 @@
-# Create table with odds ratios displayed graphically
+# Forest plot of odds ratios by subgroup
 
-Generate a table of diagnostic measures
+Draws a table of diagnostic measures for each subgroup and for all
+cases, with the odds ratios and their 95% confidence intervals plotted
+beside it. The `dx` object must be created with `grouping_variables`.
 
 ## Usage
 
@@ -34,7 +36,7 @@ dx_plot_forest(
 
 - dx_obj:
 
-  An object of class dx
+  An object of class dx, created with `grouping_variables`.
 
 - fraction:
 
@@ -62,11 +64,16 @@ dx_plot_forest(
 
 - measures:
 
-  Measures to be included in the plot
+  Names of the measures to show as columns. "Odds Ratio" is required.
+  Add "Breslow-Day" to show the p-value of the Breslow-Day test of
+  homogeneous odds ratios in the odds ratio column of each variable's
+  header row.
 
 - return:
 
-  Should a grid or ggplot object be returned?
+  Type of object to return: "ggplot" (default) or "grid" (a gtable,
+  which can be edited with
+  [`dx_edit_cell()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_edit_cell.md)).
 
 - filename:
 
@@ -89,7 +96,7 @@ dx_plot_forest(
 
 - footer_bg:
 
-  Background color if the footer row.
+  Background color of the footer row.
 
 - footer_col:
 
@@ -126,6 +133,18 @@ dx_plot_forest(
 ## Value
 
 A ggplot object, or a gtable if `return = "grid"`.
+
+## Details
+
+Odds ratios are `NA` for a subgroup where every prediction is on one
+side of the threshold or only one outcome class is present. Those
+subgroups are listed without a point. If no odds ratio can be calculated
+at all, the function gives an error.
+
+## See also
+
+[`breslow_day_test()`](https://overdodactyl.github.io/diagnosticSummary/reference/breslow_day_test.md),
+[`dx_odds_ratio()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_odds_ratio.md)
 
 ## Examples
 

@@ -18,7 +18,8 @@ dx_plot_probabilities(
 
 - dx_obj:
 
-  A `dx` object
+  A `dx` object, created with
+  [`dx()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx.md).
 
 - plot_type:
 
@@ -28,7 +29,7 @@ dx_plot_probabilities(
 - bins:
 
   Optional; number of bins for the histogram (relevant if plot_type =
-  "histogram").
+  "histogram"). If `NULL` (default), ggplot2 chooses.
 
 - fill_color:
 

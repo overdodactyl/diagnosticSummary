@@ -80,7 +80,7 @@ metrics relevant to understanding the metric.</p>
     <p>The formula for the Brier score in a binary classification is:</p>
 <p>$$BS = \frac{1}{N} \sum_{i=1}^{N} (f_i - o_i)^2$$</p>
 <p>where:</p><ul><li><p>\(N\) is the number of predictions,</p></li>
-<li><p>\(f_i\) is the predicted probability of the occurrence of the positive class for the ith prediction,</p></li>
+<li><p>\(f_i\) is the predicted probability that the outcome is 1 for the ith prediction,</p></li>
 <li><p>\(o_i\) is the actual outcome for the ith prediction, 0 or 1.</p></li>
 </ul><p>The Brier score ranges from 0 to 1, where 0 represents a perfect model and 1 represents the worst model.
 It is equivalent to the mean squared error used in regression and can be decomposed into calibration loss,

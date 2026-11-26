@@ -72,7 +72,7 @@ at each threshold in <code>threshold_range</code>, and for each subgroup in
 
 
 <dl><dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
-<dd><p>A tbl.</p></dd>
+<dd><p>A data frame.</p></dd>
 
 
 <dt id="arg-classlabels">classlabels<a class="anchor" aria-label="anchor" href="#arg-classlabels"></a></dt>
@@ -81,7 +81,8 @@ at each threshold in <code>threshold_range</code>, and for each subgroup in
 
 <dt id="arg-threshold-range">threshold_range<a class="anchor" aria-label="anchor" href="#arg-threshold-range"></a></dt>
 <dd><p>Optional. A numeric vector of thresholds between 0
-and 1 to loop over.</p></dd>
+and 1 to calculate the measures at, in addition to <code>setthreshold</code>.
+<code>NA</code> (default) or <code>NULL</code> for none.</p></dd>
 
 
 <dt id="arg-outcome-label">outcome_label<a class="anchor" aria-label="anchor" href="#arg-outcome-label"></a></dt>
@@ -112,15 +113,17 @@ Predictions are still probabilities that the outcome is 1, so with
 
 
 <dt id="arg-grouping-variables">grouping_variables<a class="anchor" aria-label="anchor" href="#arg-grouping-variables"></a></dt>
-<dd><p>Character vector of variable names to
-be summarized by.  Variables are converted to factors if not already one.
+<dd><p>Optional. Character vector of variable names to
+be summarized by. Each variable is summarized separately, in addition to
+all cases. Variables are converted to factors if not already one.
 A column can't be named "Overall", which is used for the results of all
-cases.</p></dd>
+cases. <code>NA</code> (default) or <code>NULL</code> for no subgroups.</p></dd>
 
 
 <dt id="arg-prevalence">prevalence<a class="anchor" aria-label="anchor" href="#arg-prevalence"></a></dt>
-<dd><p>A single number greater than 0 and less than 1,
-representing a target prevalence for additional NPV and PPV calculations.</p></dd>
+<dd><p>Optional. A single number greater than 0 and less than 1,
+representing a target prevalence for additional NPV and PPV calculations.
+<code>NA</code> (default) or <code>NULL</code> for none.</p></dd>
 
 
 <dt id="arg-citype">citype<a class="anchor" aria-label="anchor" href="#arg-citype"></a></dt>
@@ -167,7 +170,13 @@ the measures at each threshold and subgroup (<code>measures</code>), measures ac
 all thresholds (<code>thresholds</code>), a prevalence analysis (<code>prevalence</code>), the
 ranked predictions used by the gain, lift, KS, and CAP plots (<code>rank</code>), the
 confusion matrix at <code>setthreshold</code> (<code>cm</code>), and the <code><a href="https://rdrr.io/pkg/pROC/man/roc.html" class="external-link">pROC::roc()</a></code> object
-(<code>roc</code>). Use <code><a href="summary.dx.html">summary.dx()</a></code> or <code><a href="as.data.frame.dx.html">as.data.frame.dx()</a></code> to view the measures.</p>
+(<code>roc</code>). Printing the object shows a short overview. Use <code><a href="summary.dx.html">summary.dx()</a></code>
+or <code><a href="as.data.frame.dx.html">as.data.frame.dx()</a></code> to view the measures.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
+    <div class="dont-index"><p><code><a href="dx_itd.html">dx_itd()</a></code> when some predictions are missing, <code><a href="dx_compare.html">dx_compare()</a></code> to
+compare models, and the <code>dx_plot_*()</code> functions, such as <code><a href="dx_plot_roc.html">dx_plot_roc()</a></code>.</p></div>
     </div>
 
     <div class="section level2">

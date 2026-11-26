@@ -60,8 +60,7 @@ the ROC Curve (AUC).</p>
 
 
 <dl><dt id="arg-dx-comp">dx_comp<a class="anchor" aria-label="anchor" href="#arg-dx-comp"></a></dt>
-<dd><p>A <code>dx_compare</code> object containing the results of pairwise model
-comparisons and the list of <code>dx</code> objects with ROC data.</p></dd>
+<dd><p>A <code>dx_compare</code> object, created with <code><a href="dx_compare.html">dx_compare()</a></code>.</p></dd>
 
 
 <dt id="arg-add-text">add_text<a class="anchor" aria-label="anchor" href="#arg-add-text"></a></dt>
@@ -89,11 +88,7 @@ includes annotations for DeLong's test p-values if <code>add_text</code> is TRUE
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>This function is a visualization tool that plots ROC curves for multiple
 models to facilitate comparison. It uses DeLong's test to statistically
-compare AUC values and, if desired, annotates the plot with the results.
-The function expects a <code>dx_compare</code> object as input, which should contain
-the necessary ROC and test comparison data. Ensure that the ROC data and
-DeLong's test results are appropriately generated and stored in the
-<code>dx_compare</code> object before using this function.</p>
+compare AUC values and, if desired, annotates the plot with the results.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

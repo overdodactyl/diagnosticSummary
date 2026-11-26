@@ -66,7 +66,7 @@ the true positive rate (sensitivity) and the false positive rate (1 - specificit
 
 
 <dl><dt id="arg-dx-obj">dx_obj<a class="anchor" aria-label="anchor" href="#arg-dx-obj"></a></dt>
-<dd><p>An object of class <code>dx</code> containing the necessary data and statistics for generating the ROC curve.</p></dd>
+<dd><p>A <code>dx</code> object, created with <code><a href="dx.html">dx()</a></code>.</p></dd>
 
 
 <dt id="arg-curve-color">curve_color<a class="anchor" aria-label="anchor" href="#arg-curve-color"></a></dt>
@@ -129,7 +129,7 @@ rate (sensitivity) against the false positive rate (1 - specificity) for various
 Therefore the closer the ROC curve is to the upper left corner, the higher the overall accuracy of the test.
 With <code>poslabel = 0</code>, sensitivity and specificity are for outcome 0 as the event, so the curve
 is drawn for that event and the reference circle marks the threshold on it.</p>
-<p>The <code>dx_roc</code> function allows for extensive customization of the ROC curve, including color schemes, reference lines, text annotations,
+<p><code>dx_plot_roc()</code> allows for extensive customization of the ROC curve, including color schemes, reference lines, text annotations,
 and more, to accommodate a variety of visualization needs and preferences.</p>
 <p>The area under the ROC curve (AUC) provides a single scalar value summarizing the performance of the test. The AUC can be interpreted as
 the probability that a classifier will rank a randomly chosen positive instance higher than a randomly chosen negative instance.</p>

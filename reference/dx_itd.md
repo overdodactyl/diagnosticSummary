@@ -26,7 +26,7 @@ dx_itd(
 
 - data:
 
-  A tbl.
+  A data frame.
 
 - pred_varname:
 
@@ -54,9 +54,11 @@ dx_itd(
 
 - grouping_variables:
 
-  Character vector of variable names to be summarized by. Variables are
-  converted to factors if not already one. A column can't be named
-  "Overall", which is used for the results of all cases.
+  Optional. Character vector of variable names to be summarized by. Each
+  variable is summarized separately, in addition to all cases. Variables
+  are converted to factors if not already one. A column can't be named
+  "Overall", which is used for the results of all cases. `NA` (default)
+  or `NULL` for no subgroups.
 
 - citype:
 

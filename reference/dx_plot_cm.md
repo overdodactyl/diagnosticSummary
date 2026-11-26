@@ -16,7 +16,8 @@ dx_plot_cm(dx_obj, palette = c("#e5eef7", "#0057B8"), levels = c("-", "+"))
 
 - dx_obj:
 
-  An object of class "dx" containing the diagnostic measurements.
+  A `dx` object, created with
+  [`dx()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx.md).
 
 - palette:
 

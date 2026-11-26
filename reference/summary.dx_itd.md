@@ -1,6 +1,7 @@
-# Summary
+# Summarize an intention-to-diagnose analysis
 
-Summary
+Shows the formatted estimate and confidence interval of each measure in
+a `dx_itd` object.
 
 ## Usage
 
@@ -25,27 +26,31 @@ summary(
 
 - variable:
 
-  Variable to include in returned values
+  Variables to include: "Overall" for all cases, or names in
+  `grouping_variables`. Defaults to all.
 
 - label:
 
-  Labels to include in returned values
+  Subgroups to include: levels of the grouping variables, or "Overall".
+  Defaults to all.
 
 - show_var:
 
-  Include variable column in returned data?
+  Include the variable column?
 
 - show_label:
 
-  Include label in returned data?
+  Include the label (subgroup) column?
 
 - measure:
 
-  Measures to include
+  Names of the measures to include, as in the `measure` column of
+  [`as.data.frame.dx_itd()`](https://overdodactyl.github.io/diagnosticSummary/reference/as.data.frame.dx_itd.md).
+  Defaults to all.
 
 - ...:
 
-  additional arguments to be passed to or from methods
+  Not used.
 
 ## Value
 

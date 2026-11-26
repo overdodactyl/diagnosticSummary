@@ -15,8 +15,8 @@ dx_plot_youden_j(dx_obj)
 
 - dx_obj:
 
-  A `dx` object containing a 'thresholds' data frame with columns for
-  'threshold' and 'informedness'.
+  A `dx` object, created with
+  [`dx()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx.md).
 
 ## Value
 

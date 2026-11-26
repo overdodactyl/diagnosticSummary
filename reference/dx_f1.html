@@ -63,8 +63,9 @@ including 95% confidence intervals.</p></dd>
 
 <dt id="arg-boot">boot<a class="anchor" aria-label="anchor" href="#arg-boot"></a></dt>
 <dd><p>Logical specifying if confidence intervals should be generated
-via a percentile bootstrap of the confusion matrix cell counts. Call
-<code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code> first for reproducible intervals.</p></dd>
+via a percentile bootstrap of the confusion matrix cell counts. With the
+default, <code>FALSE</code>, no confidence interval is reported. Call <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code>
+first for reproducible intervals.</p></dd>
 
 
 <dt id="arg-bootreps">bootreps<a class="anchor" aria-label="anchor" href="#arg-bootreps"></a></dt>
@@ -74,7 +75,8 @@ via a percentile bootstrap of the confusion matrix cell counts. Call
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>Depending on the <code>detail</code> parameter, returns a single numeric value of
-F1 or a data frame with the F1 and its confidence intervals.</p>
+F1 or a data frame with the F1 and, when <code>boot = TRUE</code>, its
+confidence interval.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

@@ -15,13 +15,13 @@ dx_plot_calibration(dx_obj, bins = 10)
 
 - dx_obj:
 
-  A list or object containing the model's predicted probabilities
-  (`predicted_probs`) and the actual binary outcomes (`true_labels`).
+  A `dx` object, created with
+  [`dx()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx.md).
 
 - bins:
 
-  An integer specifying the number of bins to divide the predicted
-  probabilities into. Default is 10 (deciles).
+  A whole number of at least 1: the number of bins to divide the
+  predicted probabilities into. Default is 10 (deciles).
 
 ## Value
 

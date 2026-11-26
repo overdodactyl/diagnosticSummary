@@ -1,6 +1,7 @@
-# Convert to a data frame
+# Convert an intention-to-diagnose analysis to a data frame
 
-Convert to a data frame
+Returns the measures in a `dx_itd` object, with unformatted estimates
+and confidence limits.
 
 ## Usage
 
@@ -23,31 +24,28 @@ as.data.frame(
 
   An object of class "dx_itd"
 
-- row.names:
+- row.names, optional:
 
-  NULL or a character vector giving the row names for the data frame.
-  Missing values are not allowed.
-
-- optional:
-
-  logical. If TRUE, setting row names and converting column names (to
-  syntactic names: see make.names) is optional.
+  Not used. Included for compatibility with
+  [`as.data.frame()`](https://rdrr.io/r/base/as.data.frame.html).
 
 - variable:
 
-  Variable to include in returned values
+  Variables to include: "Overall" for all cases, or names in
+  `grouping_variables`. Defaults to all.
 
 - label:
 
-  Labels to include in returned values
+  Subgroups to include: levels of the grouping variables, or "Overall".
+  Defaults to all.
 
 - measure:
 
-  Measures to include
+  Names of the measures to include. Defaults to all.
 
 - ...:
 
-  additional arguments to be passed to or from methods
+  Not used.
 
 ## Value
 

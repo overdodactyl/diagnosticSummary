@@ -15,9 +15,8 @@ dx_plot_pr(dx_obj)
 
 - dx_obj:
 
-  A `dx` object containing diagnostic measurements, including a data
-  frame with sensitivity (recall) and precision values at various
-  thresholds.
+  A `dx` object, created with
+  [`dx()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx.md).
 
 ## Value
 

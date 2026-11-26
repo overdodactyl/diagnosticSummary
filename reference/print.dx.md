@@ -27,7 +27,7 @@ print(x, ...)
 
 - ...:
 
-  additional arguments to be passed to or from methods
+  Not used.
 
 ## Value
 

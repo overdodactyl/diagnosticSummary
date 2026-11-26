@@ -67,8 +67,8 @@ including 95% confidence intervals.</p></dd>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>If <code>detail</code> is "simple", returns a single numeric value of Cohen's Kappa.
-If <code>detail</code> is "full", returns a list or data frame that includes Cohen's Kappa,
-its standard error, 95% confidence intervals, and interpretative notes.</p>
+If <code>detail</code> is "full", returns a data frame that includes Cohen's Kappa,
+its 95% confidence interval, and a note with the interpretation.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -81,13 +81,16 @@ hypothetical probability of chance agreement. The value of kappa can range from 
 agreement that can be expected from random chance.</p>
 <p>Interpretation of Cohen's Kappa varies, but generally, a higher value indicates
 better agreement. Typical benchmarks for interpreting Cohen's Kappa are:</p><ul><li><p>&lt;0: Less than chance agreement</p></li>
-<li><p>0.-0.2: Slight agreement</p></li>
+<li><p>0-0.2: Slight agreement</p></li>
 <li><p>0.2-0.4: Fair agreement</p></li>
 <li><p>0.4-0.6: Moderate agreement</p></li>
 <li><p>0.6-0.8: Substantial agreement</p></li>
 <li><p>0.8-1.0: Almost perfect agreement</p></li>
 </ul><p>The 95% confidence interval uses the large sample variance of Fleiss, Cohen,
 and Everitt (1969) with a normal approximation, and is limited to -1 to 1.</p>
+<p>Kappa is undefined when every case is in one cell of the confusion matrix,
+since chance agreement is then 100%. It is reported as 0 with no confidence
+interval, and the note says it is undefined.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
@@ -97,8 +100,7 @@ weighted kappa. Psychological Bulletin. 1969;72(5):323-327.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Assuming you have a confusion matrix cm with appropriate structure</span></span></span>
-<span class="r-in"><span><span class="va">cm</span> <span class="op">&lt;-</span> <span class="fu"><a href="dx_cm.html">dx_cm</a></span><span class="op">(</span><span class="va">dx_heart_failure</span><span class="op">$</span><span class="va">predicted</span>, <span class="va">dx_heart_failure</span><span class="op">$</span><span class="va">truth</span>,</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">cm</span> <span class="op">&lt;-</span> <span class="fu"><a href="dx_cm.html">dx_cm</a></span><span class="op">(</span><span class="va">dx_heart_failure</span><span class="op">$</span><span class="va">predicted</span>, <span class="va">dx_heart_failure</span><span class="op">$</span><span class="va">truth</span>,</span></span>
 <span class="r-in"><span>  threshold <span class="op">=</span></span></span>
 <span class="r-in"><span>    <span class="fl">0.5</span>, poslabel <span class="op">=</span> <span class="fl">1</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>

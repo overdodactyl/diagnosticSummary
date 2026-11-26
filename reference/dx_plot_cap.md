@@ -14,9 +14,8 @@ dx_plot_cap(dx_obj)
 
 - dx_obj:
 
-  A `dx` object containing rank-based statistics, including cumulative
-  true positives and percentiles. It's expected to have a 'rank' element
-  with the necessary data.
+  A `dx` object, created with
+  [`dx()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx.md).
 
 ## Value
 
