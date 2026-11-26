@@ -43,8 +43,8 @@ If left empty, breaks are chosen within the axis limits.}
 
 \item{tick_label_size}{Font size for axis labels.}
 
-\item{trans}{Method to transform the odds ratio by.
-Currently, only log10 is supported.}
+\item{trans}{Method to transform the odds ratio by: \code{NA} (default) for none,
+or "log10".}
 
 \item{measures}{Measures to be included in the plot}
 
