@@ -20,7 +20,13 @@ knitr::opts_chunk$set(
 [![R-CMD-check](https://github.com/overdodactyl/diagnosticSummary/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/overdodactyl/diagnosticSummary/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-`diagnosticSummary` is designed to quickly create diagnostic summaries and reports for binary classification data.
+`diagnosticSummary` summarizes how well predicted probabilities agree with a binary reference standard. One call to `dx()` gives:
+
+- sensitivity, specificity, predictive values, likelihood ratios, the AUC, and other measures, with confidence intervals
+- the same measures at other thresholds and by subgroup
+- plots such as ROC, precision-recall, calibration, and decision curves, and a forest plot of subgroups (`dx_plot_*()`)
+
+`dx_compare()` compares models, and `dx_itd()` handles missing predictions.
 
 ## Installation
 
@@ -52,9 +58,35 @@ dx_obj <- dx(
 )
 ```
 
+Printing the object gives a short overview:
 
-```{r dpi = 600}
+```{r print}
+dx_obj
+```
+
+`summary()` shows every measure, and `as.data.frame()` returns them with unformatted estimates and confidence limits:
+
+```{r summary}
 summary(dx_obj, variable = "Overall", show_var = FALSE, show_label = FALSE)
+```
+
+## Plots
+
+```{r roc, fig.width = 6, fig.height = 6, out.width = "60%", dpi = 150}
+dx_plot_roc(dx_obj)
+```
+
+## Comparing models
+
+```{r compare}
+dx_rf <- dx(
+  data = dx_heart_failure,
+  true_varname = "truth",
+  pred_varname = "predicted_rf",
+  setthreshold = .3
+)
+
+dx_compare(list(Logistic = dx_obj, `Random forest` = dx_rf), paired = TRUE)
 ```
 
 
