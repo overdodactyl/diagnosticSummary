@@ -1,6 +1,6 @@
 Package: diagnosticSummary
 Title: Diagnostic Accuracy Summaries for Binary Classifiers
-Version: 0.0.2.17
+Version: 0.0.2.18
 Authors@R: 
   c(person(given = "Pat",
            family = "Johnson",

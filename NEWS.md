@@ -1,3 +1,13 @@
+# diagnosticSummary 0.0.2.18
+
+**Dependencies**
+
+* Requires R >= 3.5.0
+
+**Bug fixes**
+
+* `summary()` for `dx` and `dx_itd` objects returns a data frame when knitr isn't installed, instead of printing the table and returning it invisibly. The documentation for `dx_heart_failure` now cites its source, the Hungarian records in the UCI Heart Disease data set, in place of a dead link.
+
 # diagnosticSummary 0.0.2.17
 
 **Breaking changes**
