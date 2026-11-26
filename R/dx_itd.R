@@ -22,8 +22,10 @@
 #'     `poslabel = 0` a prediction below the threshold is a positive test.
 #' @param grouping_variables Character vector of variable names to
 #'     be summarized by.  Variables are converted to factors if not already one.
-#' @param citype Confidence interval type for proportions (see
-#'     [binom::binom.confint()]).
+#'     A column can't be named "Overall", which is used for the results of all
+#'     cases.
+#' @param citype Confidence interval type for proportions: one of the methods
+#'     of [binom::binom.confint()], such as "exact" (default), "wilson", or "ac".
 #'
 #' @details
 #' With TP, FN, and UP the positive, negative, and ungradable results among
@@ -92,7 +94,7 @@
 #' @export
 dx_itd <- function(data, pred_varname, true_varname, setthreshold = .5,
                    poslabel = 1, grouping_variables = NA, citype = "exact") {
-  check_dx_options(poslabel, direction = "<", setthreshold)
+  check_dx_options(poslabel, direction = "<", setthreshold, citype = citype)
   data <- prepare_dx_data(
     data, pred_varname, true_varname, grouping_variables,
     allow_missing_pred = TRUE

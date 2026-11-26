@@ -34,10 +34,12 @@ Predictions are still probabilities that the outcome is 1, so with
 \code{poslabel = 0} a prediction below the threshold is a positive test.}
 
 \item{grouping_variables}{Character vector of variable names to
-be summarized by.  Variables are converted to factors if not already one.}
+be summarized by.  Variables are converted to factors if not already one.
+A column can't be named "Overall", which is used for the results of all
+cases.}
 
-\item{citype}{Confidence interval type for proportions (see
-\code{\link[binom:binom.confint]{binom::binom.confint()}}).}
+\item{citype}{Confidence interval type for proportions: one of the methods
+of \code{\link[binom:binom.confint]{binom::binom.confint()}}, such as "exact" (default), "wilson", or "ac".}
 }
 \value{
 An object of class \code{dx_itd}, a list with \code{data}, \code{options},
