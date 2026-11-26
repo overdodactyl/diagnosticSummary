@@ -40,7 +40,7 @@ specify detail = "full".
 \examples{
 cm <- dx_cm(
   dx_heart_failure$predicted,
-  dx_heart_failure$predicted,
+  dx_heart_failure$truth,
   threshold = 0.3, poslabel = 1
 )
 simple_accuracy <- dx_accuracy(cm, detail = "simple")

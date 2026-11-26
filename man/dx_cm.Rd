@@ -4,16 +4,19 @@
 \alias{dx_cm}
 \title{Create a Confusion Matrix from Predictions and Truth}
 \usage{
-dx_cm(predprob, truth, threshold, poslabel)
+dx_cm(predprob, truth, threshold, poslabel = 1)
 }
 \arguments{
-\item{predprob}{Numeric vector of prediction probabilities.}
+\item{predprob}{Numeric vector of predicted probabilities that the outcome
+is 1, between 0 and 1, with no missing values.}
 
-\item{truth}{Numeric vector of true binary class outcomes.}
+\item{truth}{Vector of true binary class outcomes (0 and 1), the same length
+as \code{predprob}, with no missing values.}
 
-\item{threshold}{Numeric value to determine the cutoff for classifying predictions as positive.}
+\item{threshold}{A single number between 0 and 1. Predictions at or above it
+are classified as outcome 1.}
 
-\item{poslabel}{The label of the positive class in the truth data.}
+\item{poslabel}{The outcome class that is the event: 1 (default) or 0.}
 }
 \value{
 A dataframe object of class "dx_cm" containing the components of the confusion matrix and additional metrics:

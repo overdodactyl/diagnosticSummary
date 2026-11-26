@@ -7,9 +7,10 @@
 dx_auc(truth, predprob, detail = "full", direction = "<")
 }
 \arguments{
-\item{truth}{Vector of true binary class outcomes (0 and 1).}
+\item{truth}{Vector of true binary class outcomes (0 and 1), with no missing values.}
 
-\item{predprob}{Vector of prediction probabilities corresponding to the true outcomes.}
+\item{predprob}{Numeric vector of predictions corresponding to the true outcomes,
+with no missing values.}
 
 \item{detail}{Character string specifying the level of detail in the output: "simple"
 for just the AUC value, "full" for the AUC value along with confidence intervals.}
