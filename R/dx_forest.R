@@ -39,8 +39,8 @@ rescale <- function(x, to = c(0, 1), from = range(x, na.rm = TRUE, finite = TRUE
 #'     `breaks` is used, or limits are chosen from the 95% CIs.
 #' @param tick_label_size Font size for axis labels.
 #' @param return Should a grid or ggplot object be returned?
-#' @param trans Method to transform the odds ratio by.
-#'     Currently, only log10 is supported.
+#' @param trans Method to transform the odds ratio by: `NA` (default) for none,
+#'     or "log10".
 #' @param measures Measures to be included in the plot
 #' @param filename File name to create on disk using `ggplot2::ggsave`.
 #'     If left NA, no file will be created.
@@ -85,7 +85,9 @@ dx_plot_forest <- function(dx_obj, fraction = FALSE, breaks = NA, limits = NA,
                            body_or_col = "black", footer_or_col = footer_col) {
   check_package(c("gridExtra", "grid", "gtable"))
 
-  trans <- match.arg(trans)
+  # NA (no transformation) is the default but isn't a string, so match.arg()
+  # only accepts it as part of the default vector
+  trans <- if (length(trans) == 1 && is.na(trans)) NA_character_ else match.arg(trans)
   return_type <- match.arg(return)
 
   stopifnot("Odds Ratio" %in% measures)
@@ -495,7 +497,8 @@ dx_prep_variable <- function(dx_obj, data,
     res <- rbind_all(empty_df, res)
 
     if (nrow(bd_test) == 1) {
-      res$`Odds Ratio`[res$group == var] <- bd_test$summary
+      # Use the header row, since a subgroup can have the same name as its variable
+      res$`Odds Ratio`[res$header] <- bd_test$summary
     }
   }
 
