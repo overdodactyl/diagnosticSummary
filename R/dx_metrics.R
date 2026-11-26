@@ -816,6 +816,11 @@ ci_binomial <- function(x, n, citype = "exact", ...) {
   res$lower <- pmax(res$lower, 0)
   res$upper <- pmin(res$upper, 1)
 
+  # With no cases in the denominator the proportion is undefined. Methods
+  # differ in what they return (exact gives 0 to 1), so report no interval.
+  res$lower[n == 0] <- NA_real_
+  res$upper[n == 0] <- NA_real_
+
   formatted_estimate <- conf_int(
     res$mean,
     res$lower,
