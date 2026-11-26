@@ -210,12 +210,15 @@ format_pvalue <- function(p, accuracy = 0.01) {
 # optionally as a percent. Missing values are shown as "-".
 format_number <- function(num, accuracy = .1, percent = FALSE) {
   if (is.na(num)) {
-    "-"
-  } else if (percent) {
+    return("-")
+  }
+  out <- if (percent) {
     paste0(formatC(num * 100, format = "f", digits = -log10(accuracy)), "%")
   } else {
     formatC(num, format = "f", digits = -log10(accuracy), big.mark = ",")
   }
+  # A small negative number rounds to "-0.00"; show it as zero
+  sub("^-(0(\\.0+)?%?)$", "\\1", out)
 }
 
 conf_int <- function(est, lower, upper, accuracy = .1, percent = FALSE) {
