@@ -16,6 +16,15 @@
 #' @references
 #' Breslow NE, Day NE. Statistical methods in cancer research. Volume I -
 #' The analysis of case-control studies. IARC Sci Publ. 1980;(32):5-338.
+#' @examples
+#' # Test result by outcome, stratified by sex
+#' tab <- table(
+#'   test = dx_heart_failure$predicted >= .3,
+#'   truth = dx_heart_failure$truth,
+#'   sex = dx_heart_failure$Sex
+#' )
+#' breslow_day_test(tab)
+#' breslow_day_test(tab, correct = TRUE)
 breslow_day_test <- function(contingency_table, odds_ratio = NA, correct = FALSE) {
   if (!is.array(contingency_table) || length(dim(contingency_table)) != 3) {
     stop("The input 'contingency_table' must be a 2x2xK array.")
@@ -222,6 +231,11 @@ dx_fishers_exact <- function(cm, detail = "full") {
 #' make the chi-squared test less accurate. A low p-value indicates a significant
 #' association between the variables or a significant difference from the expected
 #' distribution. Caution is needed with zero counts or very small samples.
+#' @return Depending on the `detail` parameter:
+#'         - if "simple": a single numeric value representing the p-value of
+#'           the G-test.
+#'         - if "full": a data frame with the G-test result, including
+#'           the p-value and method note.
 #' @examples
 #' cm <- dx_cm(dx_heart_failure$predicted, dx_heart_failure$truth,
 #'   threshold = 0.3, poslabel = 1

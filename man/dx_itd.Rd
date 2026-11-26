@@ -17,16 +17,16 @@ dx_itd(
 \arguments{
 \item{data}{A tbl.}
 
-\item{pred_varname}{Column name containing AI prediction (string). Values
+\item{pred_varname}{Column name containing the predictions (string). Values
 should be predicted probabilities that the outcome is 1, between 0 and 1.
 Missing values (\code{NA}) are ungradable results.}
 
-\item{true_varname}{Column name containing AI reference standard (string).
+\item{true_varname}{Column name containing the reference standard (string).
 Values should be 0 or 1 (numeric, logical, factor, or character), with
 no missing values, and both classes must be present.}
 
 \item{setthreshold}{A number between 0 and 1 representing the threshold used
-to identify AI prediction. Predictions at or above the threshold
+to classify the predictions. Predictions at or above the threshold
 predict outcome 1.}
 
 \item{poslabel}{The outcome class that is the event: 1 (default) or 0.

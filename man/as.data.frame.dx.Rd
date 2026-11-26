@@ -34,6 +34,20 @@ names (to syntactic names: see make.names) is optional.}
 
 \item{...}{additional arguments to be passed to or from methods}
 }
+\value{
+A data frame with one row per measure, variable, label, and threshold,
+with the estimate, confidence interval, and formatted summary.
+}
 \description{
 Convert to a data frame
+}
+\examples{
+dx_obj <- dx(
+  data = dx_heart_failure,
+  true_varname = "truth",
+  pred_varname = "predicted",
+  setthreshold = .3
+)
+head(as.data.frame(dx_obj))
+as.data.frame(dx_obj, measure = c("Sensitivity", "Specificity"))
 }

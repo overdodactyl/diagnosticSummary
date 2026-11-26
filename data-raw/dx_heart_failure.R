@@ -1,7 +1,9 @@
 library(dplyr)
 set.seed(20191104)
 
-# Originally obtained from Kaggle: https://www.kaggle.com/imnikhilanand/heart-attack-prediction
+# Hungarian records from the UCI Heart Disease data set (CC BY 4.0),
+# https://doi.org/10.24432/C52P4X. Originally obtained from a Kaggle copy that
+# is no longer available.
 ha_data <- readr::read_csv("data-raw/heart_failure.csv", na = c("", " ", "?", -9))
 
 # Select variables for prediction and keep compltete cases

@@ -50,7 +50,7 @@ Currently, only log10 is supported.}
 
 \item{return}{Should a grid or ggplot object be returned?}
 
-\item{filename}{File bane to create on disk.
+\item{filename}{File name to create on disk using \code{ggplot2::ggsave}.
 If left NA, no file will be created.}
 
 \item{header_bg}{Background color of the header}
@@ -77,6 +77,9 @@ number of rows, values are repeated.}
 \item{body_or_col}{Color of odds ratios in the table body}
 
 \item{footer_or_col}{Color of odds ratios in the table footer}
+}
+\value{
+A ggplot object, or a gtable if \code{return = "grid"}.
 }
 \description{
 Generate a table of diagnostic measures

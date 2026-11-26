@@ -1,17 +1,19 @@
-#' Set options for diagnostic analysis
+#' Summarize a diagnostic test
 #'
-#' Use this function to return a list of tuning parameters to analyze your
-#' diagnostic test
+#' Calculates diagnostic accuracy measures, with confidence intervals, for
+#' predicted probabilities compared to a binary reference standard: overall,
+#' at each threshold in `threshold_range`, and for each subgroup in
+#' `grouping_variables`.
 #'
 #' @param data A tbl.
 #' @param classlabels Deprecated; has no effect.
-#' @param pred_varname Column name containing AI prediction (string). Values
+#' @param pred_varname Column name containing the predictions (string). Values
 #'     should be predicted probabilities that the outcome is 1, between 0 and 1,
 #'     with no missing values.
 #' @param setthreshold A number between 0 and 1 representing the threshold used
-#'     to identify AI prediction
+#'     to classify the predictions
 #' @param threshold_range Optional. A numeric vector of thresholds to loop over.
-#' @param true_varname Column name containing AI reference standard (string).
+#' @param true_varname Column name containing the reference standard (string).
 #'     Values should be 0 or 1 (numeric, logical, factor, or character), with
 #'     no missing values, and both classes must be present.
 #' @param poslabel The outcome class that is the event: 1 (default) or 0.
@@ -40,6 +42,32 @@
 #'     which hides models that perform worse than chance.
 #' @param ... currently unused
 #'
+#' @return An object of class "dx": a list with the data, the options used,
+#'     the measures at each threshold and subgroup (`measures`), measures across
+#'     all thresholds (`thresholds`), a prevalence analysis (`prevalence`), the
+#'     ranked predictions used by the gain, lift, KS, and CAP plots (`rank`), the
+#'     confusion matrix at `setthreshold` (`cm`), and the [pROC::roc()] object
+#'     (`roc`). Use [summary.dx()] or [as.data.frame.dx()] to view the measures.
+#' @examples
+#' dx_obj <- dx(
+#'   data = dx_heart_failure,
+#'   true_varname = "truth",
+#'   pred_varname = "predicted",
+#'   setthreshold = .3,
+#'   grouping_variables = c("AgeGroup", "Sex")
+#' )
+#' summary(dx_obj)
+#'
+#' # Bootstrapped CIs for measures without a closed-form CI
+#' dx_boot <- dx(
+#'   data = dx_heart_failure,
+#'   true_varname = "truth",
+#'   pred_varname = "predicted",
+#'   setthreshold = .3,
+#'   doboot = TRUE,
+#'   bootreps = 500
+#' )
+#' summary(dx_boot, measure = c("F1 Score", "Matthews Correlation Coefficient"))
 #' @export
 
 dx <- function(data,

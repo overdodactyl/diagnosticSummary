@@ -8,14 +8,14 @@
 #' reference standard in the columns (Schuetz et al., 2012).
 #'
 #' @param data A tbl.
-#' @param pred_varname Column name containing AI prediction (string). Values
+#' @param pred_varname Column name containing the predictions (string). Values
 #'     should be predicted probabilities that the outcome is 1, between 0 and 1.
 #'     Missing values (`NA`) are ungradable results.
-#' @param true_varname Column name containing AI reference standard (string).
+#' @param true_varname Column name containing the reference standard (string).
 #'     Values should be 0 or 1 (numeric, logical, factor, or character), with
 #'     no missing values, and both classes must be present.
 #' @param setthreshold A number between 0 and 1 representing the threshold used
-#'     to identify AI prediction. Predictions at or above the threshold
+#'     to classify the predictions. Predictions at or above the threshold
 #'     predict outcome 1.
 #' @param poslabel The outcome class that is the event: 1 (default) or 0.
 #'     Predictions are still probabilities that the outcome is 1, so with
@@ -416,9 +416,16 @@ dx_itd_table <- function(x, variable = "Overall", label = "Overall", show_ci = T
 #' @param show_label Include label in returned data?
 #' @param measure Measures to include
 #' @param ... additional arguments to be passed to or from methods
+#' @return A table of the measures and their summaries, made with
+#'     [knitr::kable()]. If knitr is not installed, a data frame.
+#' @examples
+#' data <- dx_heart_failure
+#' data$predicted[seq(5, 261, by = 20)] <- NA
+#' fit <- dx_itd(data, pred_varname = "predicted", true_varname = "truth")
+#' summary(fit, show_var = FALSE)
 #' @export
-summary.dx_itd <- function(object, variable = NA, label = NA, show_var = T,
-                           show_label = T, measure = NA, ...) {
+summary.dx_itd <- function(object, variable = NA, label = NA, show_var = TRUE,
+                           show_label = TRUE, measure = NA, ...) {
   tmp <- as.data.frame(object, variable = variable, label = label, measure = measure)
   tmp <- tmp[, c("variable", "label", "measure", "summary")]
   rownames(tmp) <- NULL
@@ -429,10 +436,9 @@ summary.dx_itd <- function(object, variable = NA, label = NA, show_var = T,
   caption <- paste("Threshold=", object$options$setthreshold)
 
   if (requireNamespace("knitr", quietly = TRUE)) {
-    knitr::kable(tmp, caption = caption, row.names = F)
+    knitr::kable(tmp, caption = caption, row.names = FALSE)
   } else {
-    print(caption)
-    print(tmp)
+    tmp
   }
 }
 
@@ -446,6 +452,13 @@ summary.dx_itd <- function(object, variable = NA, label = NA, show_var = T,
 #' @param label Labels to include in returned values
 #' @param measure Measures to include
 #' @param ... additional arguments to be passed to or from methods
+#' @return A data frame with one row per measure, variable, and label, with the
+#'     estimate, confidence interval, and formatted summary.
+#' @examples
+#' data <- dx_heart_failure
+#' data$predicted[seq(5, 261, by = 20)] <- NA
+#' fit <- dx_itd(data, pred_varname = "predicted", true_varname = "truth")
+#' head(as.data.frame(fit))
 #' @export
 as.data.frame.dx_itd <- function(x, row.names = NULL, optional = TRUE,
                                  variable = NA, label = NA, measure = NA, ...) {

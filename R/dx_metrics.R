@@ -1233,7 +1233,7 @@ dx_auc <- function(truth, predprob, detail = "full", direction = "<") {
     ))
   }
 
-  rocest <- pROC::roc(truth, predprob, ci = T, direction = direction, quiet = TRUE)
+  rocest <- pROC::roc(truth, predprob, ci = TRUE, direction = direction, quiet = TRUE)
   aucest <- pROC::auc(rocest)
   auc_raw <- as.numeric(aucest)
 
@@ -1243,7 +1243,7 @@ dx_auc <- function(truth, predprob, detail = "full", direction = "<") {
     auc_ci <- as.numeric(pROC::ci(aucest))
     auc_lci <- auc_ci[1]
     auc_uci <- auc_ci[3]
-    auc <- conf_int(auc_raw, auc_lci, auc_uci, percent = F, accuracy = .001)
+    auc <- conf_int(auc_raw, auc_lci, auc_uci, percent = FALSE, accuracy = .001)
 
     return(measure_df(
       measure = "AUC ROC",
@@ -1609,10 +1609,11 @@ cm_from_counts <- function(tp, fn, tn, fp) {
 }
 
 #' Return an pROC::roc object for a dx object
-#' @param true_varname Column name containing AI reference standard (string)
-#' @param pred_varname Column name containing AI prediction (string)
+#' @param true_varname Column name containing the reference standard (string)
+#' @param pred_varname Column name containing the predictions (string)
 #' @param data A tbl.
 #' @param direction Direction for roc comparison.  See ?pROC::roc
+#' @noRd
 get_roc <- function(true_varname, pred_varname, data, direction) {
   # truth ~ predicted
   # Backticks allow column names that aren't syntactic, e.g. with spaces

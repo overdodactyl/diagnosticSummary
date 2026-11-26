@@ -7,10 +7,22 @@
 #' @param show_label Include label in returned data?
 #' @param measure Measures to include
 #' @param ... additional arguments to be passed to or from methods
+#' @return A table of the measures and their summaries at `thresh`, made with
+#'     [knitr::kable()]. If knitr is not installed, a data frame.
+#' @examples
+#' dx_obj <- dx(
+#'   data = dx_heart_failure,
+#'   true_varname = "truth",
+#'   pred_varname = "predicted",
+#'   setthreshold = .3,
+#'   grouping_variables = "Sex"
+#' )
+#' summary(dx_obj)
+#' summary(dx_obj, variable = "Overall", show_var = FALSE)
 #' @export
 summary.dx <- function(object, thresh = object$options$setthreshold,
-                       variable = NA, label = NA, show_var = T,
-                       show_label = T, measure = NA, ...) {
+                       variable = NA, label = NA, show_var = TRUE,
+                       show_label = TRUE, measure = NA, ...) {
   if (length(thresh) != 1 || is.na(thresh)) {
     stop("Must pass a numeric value to thresh")
   }
@@ -33,10 +45,9 @@ summary.dx <- function(object, thresh = object$options$setthreshold,
 
   rownames(tmp) <- NULL
   if (requireNamespace("knitr", quietly = TRUE)) {
-    knitr::kable(tmp, caption = caption, row.names = F)
+    knitr::kable(tmp, caption = caption, row.names = FALSE)
   } else {
-    print(caption)
-    print(tmp)
+    tmp
   }
 }
 
@@ -51,6 +62,17 @@ summary.dx <- function(object, thresh = object$options$setthreshold,
 #' @param label Labels to include in returned values
 #' @param measure Measures to include
 #' @param ... additional arguments to be passed to or from methods
+#' @return A data frame with one row per measure, variable, label, and threshold,
+#'     with the estimate, confidence interval, and formatted summary.
+#' @examples
+#' dx_obj <- dx(
+#'   data = dx_heart_failure,
+#'   true_varname = "truth",
+#'   pred_varname = "predicted",
+#'   setthreshold = .3
+#' )
+#' head(as.data.frame(dx_obj))
+#' as.data.frame(dx_obj, measure = c("Sensitivity", "Specificity"))
 #' @export
 as.data.frame.dx <- function(x, row.names = NULL, optional = TRUE, thresh = NA,
                              variable = NA, label = NA, measure = NA, ...) {

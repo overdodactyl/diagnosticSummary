@@ -9,8 +9,8 @@
   thresh = object$options$setthreshold,
   variable = NA,
   label = NA,
-  show_var = T,
-  show_label = T,
+  show_var = TRUE,
+  show_label = TRUE,
   measure = NA,
   ...
 )
@@ -32,6 +32,21 @@
 
 \item{...}{additional arguments to be passed to or from methods}
 }
+\value{
+A table of the measures and their summaries at \code{thresh}, made with
+\code{\link[knitr:kable]{knitr::kable()}}. If knitr is not installed, a data frame.
+}
 \description{
 Summary
+}
+\examples{
+dx_obj <- dx(
+  data = dx_heart_failure,
+  true_varname = "truth",
+  pred_varname = "predicted",
+  setthreshold = .3,
+  grouping_variables = "Sex"
+)
+summary(dx_obj)
+summary(dx_obj, variable = "Overall", show_var = FALSE)
 }

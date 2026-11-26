@@ -40,8 +40,6 @@ reference:
 - title: internal
   contents:
   - diagnosticSummary
-  - dx_roc_ggtheme
-  - get_roc
 figures:
   dev: grDevices::png
   dpi: 96

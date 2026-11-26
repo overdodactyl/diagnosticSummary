@@ -786,6 +786,7 @@ dx_plot_roc <- function(dx_obj, curve_color = "#0057B8", fill_color = "#cfcdcb",
 }
 
 #' Theme used for dx_roc
+#' @noRd
 dx_roc_ggtheme <- function() {
   font <- "Helvetica"
   ggplot2::theme(

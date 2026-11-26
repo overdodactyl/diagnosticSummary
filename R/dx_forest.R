@@ -42,7 +42,7 @@ rescale <- function(x, to = c(0, 1), from = range(x, na.rm = TRUE, finite = TRUE
 #' @param trans Method to transform the odds ratio by.
 #'     Currently, only log10 is supported.
 #' @param measures Measures to be included in the plot
-#' @param filename File bane to create on disk.
+#' @param filename File name to create on disk using `ggplot2::ggsave`.
 #'     If left NA, no file will be created.
 #' @param header_bg Background color of the header
 #' @param header_col Color of text in the header
@@ -57,6 +57,7 @@ rescale <- function(x, to = c(0, 1), from = range(x, na.rm = TRUE, finite = TRUE
 #' @param fraction_multiline Logical. Should fractions be split onto 2 lines?
 #' @param or_lwd Line width for OR
 #' @param or_size Size of OR point
+#' @return A ggplot object, or a gtable if `return = "grid"`.
 #' @export
 #' @examplesIf requireNamespace("gridExtra", quietly = TRUE) & requireNamespace("gtable", quietly = TRUE)
 #'
@@ -336,6 +337,24 @@ dx_vline <- function(table, x, y0, y1, t, ...) {
 #' @param col Numeric vector of columns to edit
 #' @param name Name of table layer to edit
 #' @param ... Parameters passed to grid::editGrob such as grid::gpar or hjust.
+#' @return The table, with the matching cells edited.
+#' @examplesIf requireNamespace("gridExtra", quietly = TRUE) & requireNamespace("gtable", quietly = TRUE)
+#' dx_obj <- dx(
+#'   data = dx_heart_failure,
+#'   true_varname = "truth",
+#'   pred_varname = "predicted",
+#'   setthreshold = .3,
+#'   grouping_variables = "Sex"
+#' )
+#' forest <- dx_plot_forest(dx_obj, return = "grid")
+#' # Make the text in the "Male" row red and bold
+#' forest <- dx_edit_cell(
+#'   forest,
+#'   row = 4, col = 1:5,
+#'   gp = grid::gpar(col = "red", fontface = "bold")
+#' )
+#' grid::grid.newpage()
+#' grid::grid.draw(forest)
 #' @export
 dx_edit_cell <- function(table, row, col, name = "core-fg", ...) {
   l <- table$layout
@@ -496,7 +515,7 @@ label_df <- function(data) {
   x <- lapply(x, function(x) ifelse(is.null(x), NA, x))
   data.frame(
     variable = names(x),
-    variable_label = as.character(unlist(x, use.names = F)),
+    variable_label = as.character(unlist(x, use.names = FALSE)),
     stringsAsFactors = FALSE
   )
 }

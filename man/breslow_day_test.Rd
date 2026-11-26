@@ -25,6 +25,16 @@ strata of data. Optionally includes Tarone's correction. This test is useful for
 investigating whether the effect of an explanatory variable on the outcome is consistent
 across different strata.
 }
+\examples{
+# Test result by outcome, stratified by sex
+tab <- table(
+  test = dx_heart_failure$predicted >= .3,
+  truth = dx_heart_failure$truth,
+  sex = dx_heart_failure$Sex
+)
+breslow_day_test(tab)
+breslow_day_test(tab, correct = TRUE)
+}
 \references{
 Breslow NE, Day NE. Statistical methods in cancer research. Volume I -
 The analysis of case-control studies. IARC Sci Publ. 1980;(32):5-338.
