@@ -150,34 +150,22 @@ backtick <- function(x) {
   paste0("`", x, "`")
 }
 
+# Stop if any of `pkgs` is not installed, naming the function that needs them
 check_package <- function(pkgs) {
-
-  calling_func <- tryCatch({
-    as.list(sys.call(-1))[[1]]
-  }, error = function(e) {
-    NA
-  })
+  # The calling function can be a name or a call such as pkg::fun
+  calling_func <- tryCatch(
+    paste(deparse(sys.call(-1)[[1]]), collapse = ""),
+    error = function(e) NA_character_
+  )
 
   for (pkg in pkgs) {
     if (!requireNamespace(pkg, quietly = TRUE)) {
-
-
-      pkg_phrase <- ifelse(
-        is.na(calling_func),
-        " to use this function.",
-        paste0(" to use ", backtick(calling_func), ".")
-      )
-
-      phrase <- paste0(
-        backtick(pkg),
-        " must be must be installed",
-        pkg_phrase
-      )
-
-      stop(phrase)
+      stop(paste0(
+        backtick(pkg), " must be installed to use ",
+        if (is.na(calling_func)) "this function" else backtick(calling_func), "."
+      ), call. = FALSE)
     }
   }
-
 }
 
 dx_breslow_day <- function(data, options, group_varname) {
