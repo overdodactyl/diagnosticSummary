@@ -798,3 +798,165 @@ test_that("Metric aliases are exported", {
   )
   expect_true(all(aliases %in% getNamespaceExports("diagnosticSummary")))
 })
+
+test_that("dx_cm, dx_auc, and dx_brier check their inputs", {
+  pred <- c(.1, .4, .6, .9)
+  truth <- c(0, 1, 0, 1)
+
+  # poslabel defaults to 1
+  expect_equal(dx_cm(pred, truth, threshold = .5), dx_cm(pred, truth, threshold = .5, poslabel = 1))
+
+  # Truth coded as 0/1 in other types gives the same counts
+  for (other in list(truth == 1, factor(truth), as.character(truth), as.integer(truth))) {
+    expect_equal(dx_cm(pred, other, .5), dx_cm(pred, truth, .5))
+    expect_equal(dx_brier(pred, other, detail = "simple"), mean((pred - truth)^2))
+  }
+
+  for (f in list(
+    function(p, t) dx_cm(p, t, threshold = .5),
+    function(p, t) dx_brier(p, t),
+    function(p, t) dx_auc(t, p)
+  )) {
+    expect_error(f(c(.1, NA, .6, .9), truth), "predprob should be numeric, with no missing values")
+    expect_error(f(as.character(pred), truth), "predprob should be numeric, with no missing values")
+    expect_error(f(pred, c(0, 1, NA, 1)), "truth should contain only 0's and 1's")
+    expect_error(f(pred, c("no", "yes", "no", "yes")), "truth should contain only 0's and 1's")
+    expect_error(f(pred, truth[1:3]), "truth and predprob should be the same length")
+  }
+
+  # Probabilities are needed for the confusion matrix and Brier score, but the
+  # AUC only uses the order of the predictions
+  logits <- stats::qlogis(pred)
+  expect_error(dx_cm(logits, truth, .5), "predprob should contain probabilities between 0 and 1")
+  expect_error(dx_brier(logits, truth), "predprob should contain probabilities between 0 and 1")
+  expect_equal(dx_auc(truth, logits, detail = "simple"), dx_auc(truth, pred, detail = "simple"))
+
+  for (bad in list(-.1, 1.5, NA, c(.2, .5), "a")) {
+    expect_error(dx_cm(pred, truth, threshold = bad), "threshold should be a single number between 0 and 1")
+  }
+  expect_error(dx_cm(pred, truth, .5, poslabel = 2), "poslabel should be 0 or 1")
+})
+
+test_that("Decision curve is drawn for 0/1 predictions", {
+  skip_if_not_installed("ggplot2")
+  set.seed(1)
+  truth <- rep(c(0, 1), times = c(60, 40))
+  classes <- data.frame(truth = truth, predicted = ifelse(stats::runif(100) < .8, truth, 1 - truth))
+  n <- nrow(classes)
+  tp <- sum(classes$predicted == 1 & classes$truth == 1)
+  fp <- sum(classes$predicted == 1 & classes$truth == 0)
+
+  for (poslabel in c(1, 0)) {
+    d <- dx(classes, true_varname = "truth", pred_varname = "predicted", poslabel = poslabel)
+    expect_no_warning(b <- ggplot2::ggplot_build(dx_plot_decision_curve(d)))
+    model <- b$data[[1]]
+    expect_equal(range(model$x), c(.05, .95))
+
+    # The same cases are positive at every threshold, so only the weight changes
+    weight <- model$x / (1 - model$x)
+    if (poslabel == 1) {
+      expect_equal(model$y, tp / n - fp / n * weight)
+    } else {
+      tn <- sum(classes$predicted == 0 & classes$truth == 0)
+      fn <- sum(classes$predicted == 0 & classes$truth == 1)
+      expect_equal(model$y, tn / n - fn / n * weight)
+    }
+  }
+
+  d <- dx(classes, true_varname = "truth", pred_varname = "predicted")
+  # An event threshold of 1 has an infinite weight and is left out
+  full <- ggplot2::ggplot_build(dx_plot_decision_curve(d, plot_range = c(0, 1)))$data[[1]]
+  expect_true(all(is.finite(full$y)))
+  expect_equal(min(full$x), 0)
+  expect_lt(max(full$x), 1)
+  for (bad in list(c(.5, .2), c(-1, .5), c(.1, 2), .5, c(.1, NA), c("a", "b"))) {
+    expect_error(dx_plot_decision_curve(d, plot_range = bad), "plot_range should be two increasing numbers")
+  }
+})
+
+test_that("Forest plot accepts trans = NA", {
+  skip_if_not_installed("ggplot2")
+  skip_if_not_installed("gridExtra")
+  skip_if_not_installed("gtable")
+  expect_no_error(explicit <- dx_plot_forest(dx_grp, trans = NA, return = "grid"))
+  default <- dx_plot_forest(dx_grp, return = "grid")
+  expect_equal(explicit$layout, default$layout)
+  expect_error(dx_plot_forest(dx_grp, trans = "sqrt"), "should be one of")
+})
+
+test_that("Forest table keeps the odds ratio of a subgroup named like its variable", {
+  hf <- dx_heart_failure
+  hf$group <- ifelse(hf$Sex == "Male", "group", "other")
+  d <- dx(hf, true_varname = "truth", pred_varname = "predicted", setthreshold = .3,
+          grouping_variables = "group")
+  tbl <- dx_prep_forest(d, fraction = FALSE, fraction_multiline = FALSE,
+                        measures = c("Odds Ratio", "Breslow-Day"))
+
+  m <- d$measures
+  or <- m$summary[m$variable == "group" & m$label == "group" & m$measure == "Odds Ratio"]
+  bd <- m$summary[m$variable == "group" & m$measure == "Breslow-Day"]
+  expect_equal(tbl$`Odds Ratio`[tbl$group == "group" & tbl$header], bd)
+  expect_equal(tbl$`Odds Ratio`[tbl$group == "group" & !tbl$header], or)
+})
+
+test_that("check_package names the missing package and the calling function", {
+  needs_package <- function() check_package("notARealPackage")
+  expect_error(needs_package(), "^`notARealPackage` must be installed to use `needs_package`\\.$")
+  expect_no_warning(try(needs_package(), silent = TRUE))
+  expect_silent(check_package("stats"))
+})
+
+test_that("Model comparison tests check detail", {
+  a <- dx(dx_heart_failure, true_varname = "truth", pred_varname = "predicted")
+  b <- dx(dx_heart_failure, true_varname = "truth", pred_varname = "predicted_rf")
+  for (f in list(dx_delong, dx_z_test, dx_mcnemars)) {
+    expect_error(f(a, b, detail = "bogus"), "should be one of")
+    expect_type(f(a, b, detail = "simple"), "double")
+  }
+})
+
+test_that("Breslow-Day checks its table", {
+  ok <- array(c(10, 5, 7, 12, 20, 9, 11, 20), dim = c(2, 2, 2))
+  expect_error(breslow_day_test(array(1:18, dim = c(3, 3, 2))), "must be a 2x2xK array")
+  expect_error(breslow_day_test(ok[, , 1, drop = FALSE]), "at least 2 strata")
+  expect_error(breslow_day_test(ok[, , 1]), "must be a 2x2xK array")
+  expect_error(breslow_day_test(replace(ok, 1, NA)), "non-negative counts")
+  expect_error(breslow_day_test(replace(ok, 1, -1)), "non-negative counts")
+
+  # A stratum with an empty row or column has no odds ratio
+  empty <- ok
+  empty[, 1, 2] <- 0
+  expect_error(breslow_day_test(empty), "non-zero row and column totals. Remove stratum 2\\.")
+
+  # Names from the Mantel-Haenszel estimate are dropped
+  tab <- table(dx_heart_failure$predicted >= .3, dx_heart_failure$truth, dx_heart_failure$Sex)
+  res <- breslow_day_test(tab)
+  expect_null(names(res$statistic))
+  expect_null(names(res$p_value))
+  # The data name is the argument as it was passed, not the table's contents
+  expect_equal(res$data_name, "tab")
+
+  # Very small p-values are not rounded to 0
+  extreme <- array(c(100, 10, 10, 100, 10, 100, 100, 10), dim = c(2, 2, 2))
+  res <- breslow_day_test(extreme, odds_ratio = 1)
+  expect_gt(res$p_value, 0)
+  expect_lt(res$p_value, 1e-20)
+  expect_equal(res$p_value, stats::pchisq(res$statistic, 1, lower.tail = FALSE))
+})
+
+test_that("Z-test is undefined when both proportions are 0 or both are 1", {
+  hf <- dx_heart_failure
+  none_a <- dx(hf, true_varname = "truth", pred_varname = "predicted", setthreshold = 1)
+  none_b <- dx(hf, true_varname = "truth", pred_varname = "predicted_rf", setthreshold = 1)
+  expect_equal(c(none_a$cm$tp, none_b$cm$tp), c(0, 0))
+
+  # Sensitivity is 0 in both models and specificity is 1 in both
+  for (metric in c("sensitivity", "specificity")) {
+    expect_no_warning(res <- dx_z_test(none_a, none_b, metric = metric))
+    expect_equal(res$estimate, 0)
+    expect_equal(res$summary, "0.00")
+    expect_true(is.na(res$p_value))
+    expect_equal(res$notes, "Undefined: both proportions are 0 or both are 1")
+    expect_true(is.na(dx_z_test(none_a, none_b, metric = metric, detail = "simple")))
+  }
+})
