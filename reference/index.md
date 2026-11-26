@@ -5,7 +5,7 @@
 Generate a dx object
 
 - [`dx()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx.md)
-  : Set options for diagnostic analysis
+  : Summarize a diagnostic test
 - [`dx_cm()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_cm.md)
   : Create a Confusion Matrix from Predictions and Truth
 - [`dx_compare()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_compare.md)
@@ -161,4 +161,4 @@ Helper functions and S3 methods
 Test data sets
 
 - [`dx_heart_failure`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_heart_failure.md)
-  : Heart attack outcomes and predictions
+  : Heart disease outcomes and predictions

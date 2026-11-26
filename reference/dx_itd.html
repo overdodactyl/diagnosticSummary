@@ -73,20 +73,20 @@ reference standard in the columns (Schuetz et al., 2012).</p>
 
 
 <dt id="arg-pred-varname">pred_varname<a class="anchor" aria-label="anchor" href="#arg-pred-varname"></a></dt>
-<dd><p>Column name containing AI prediction (string). Values
+<dd><p>Column name containing the predictions (string). Values
 should be predicted probabilities that the outcome is 1, between 0 and 1.
 Missing values (<code>NA</code>) are ungradable results.</p></dd>
 
 
 <dt id="arg-true-varname">true_varname<a class="anchor" aria-label="anchor" href="#arg-true-varname"></a></dt>
-<dd><p>Column name containing AI reference standard (string).
+<dd><p>Column name containing the reference standard (string).
 Values should be 0 or 1 (numeric, logical, factor, or character), with
 no missing values, and both classes must be present.</p></dd>
 
 
 <dt id="arg-setthreshold">setthreshold<a class="anchor" aria-label="anchor" href="#arg-setthreshold"></a></dt>
 <dd><p>A number between 0 and 1 representing the threshold used
-to identify AI prediction. Predictions at or above the threshold
+to classify the predictions. Predictions at or above the threshold
 predict outcome 1.</p></dd>
 
 

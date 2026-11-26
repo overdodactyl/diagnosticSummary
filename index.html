@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Diagnostic Summaries • diagnosticSummary</title>
+<title>Diagnostic Accuracy Summaries for Binary Classifiers • diagnosticSummary</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
@@ -14,9 +14,9 @@
 <link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Diagnostic Summaries">
-<meta name="description" content="Quickly create diagnostic summaries for binary classification data.">
-<meta property="og:description" content="Quickly create diagnostic summaries for binary classification data.">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Diagnostic Accuracy Summaries for Binary Classifiers">
+<meta name="description" content="Summarizes the diagnostic accuracy of predicted probabilities against a binary reference standard. Reports sensitivity, specificity, predictive values, likelihood ratios, the area under the receiver operating characteristic (ROC) curve, and other measures with confidence intervals, overall, across thresholds, and by subgroup. Includes tests to compare models, such as DeLong et al. (1988) &lt;doi:10.2307/2531595&gt; for ROC curves, an intention-to-diagnose analysis for tests with ungradable results (Schuetz et al. 2012 &lt;doi:10.1136/bmj.e6717&gt;), and plots such as ROC, precision-recall, calibration, and decision curves (Vickers and Elkin 2006 &lt;doi:10.1177/0272989X06295361&gt;).">
+<meta property="og:description" content="Summarizes the diagnostic accuracy of predicted probabilities against a binary reference standard. Reports sensitivity, specificity, predictive values, likelihood ratios, the area under the receiver operating characteristic (ROC) curve, and other measures with confidence intervals, overall, across thresholds, and by subgroup. Includes tests to compare models, such as DeLong et al. (1988) &lt;doi:10.2307/2531595&gt; for ROC curves, an intention-to-diagnose analysis for tests with ungradable results (Schuetz et al. 2012 &lt;doi:10.1136/bmj.e6717&gt;), and plots such as ROC, precision-recall, calibration, and decision curves (Vickers and Elkin 2006 &lt;doi:10.1177/0272989X06295361&gt;).">
 <meta property="og:image" content="https://overdodactyl.github.io/diagnosticSummary/logo.png">
 </head>
 <body>
@@ -96,7 +96,7 @@
 <span>  grouping_variables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AgeGroup"</span>, <span class="st">"Sex"</span>, <span class="st">"AgeSex"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">dx_obj</span>, variable <span class="op">=</span> <span class="st">"Overall"</span>, show_var <span class="op">=</span> <span class="cn">F</span>, show_label <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">dx_obj</span>, variable <span class="op">=</span> <span class="st">"Overall"</span>, show_var <span class="op">=</span> <span class="cn">FALSE</span>, show_label <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr>
 <th align="left">measure</th>

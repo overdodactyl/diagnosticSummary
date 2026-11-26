@@ -49,7 +49,7 @@ dx_obj <- dx(
 
 ``` r
 
-summary(dx_obj, variable = "Overall", show_var = F, show_label = F)
+summary(dx_obj, variable = "Overall", show_var = FALSE, show_label = FALSE)
 ```
 
 | measure                                   | summary              |

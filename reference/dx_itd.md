@@ -30,20 +30,20 @@ dx_itd(
 
 - pred_varname:
 
-  Column name containing AI prediction (string). Values should be
+  Column name containing the predictions (string). Values should be
   predicted probabilities that the outcome is 1, between 0 and 1.
   Missing values (`NA`) are ungradable results.
 
 - true_varname:
 
-  Column name containing AI reference standard (string). Values should
+  Column name containing the reference standard (string). Values should
   be 0 or 1 (numeric, logical, factor, or character), with no missing
   values, and both classes must be present.
 
 - setthreshold:
 
-  A number between 0 and 1 representing the threshold used to identify
-  AI prediction. Predictions at or above the threshold predict outcome
+  A number between 0 and 1 representing the threshold used to classify
+  the predictions. Predictions at or above the threshold predict outcome
   1.
 
 - poslabel:

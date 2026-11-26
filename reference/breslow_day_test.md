@@ -37,3 +37,48 @@ stratum.
 
 Breslow NE, Day NE. Statistical methods in cancer research. Volume I -
 The analysis of case-control studies. IARC Sci Publ. 1980;(32):5-338.
+
+## Examples
+
+``` r
+# Test result by outcome, stratified by sex
+tab <- table(
+  test = dx_heart_failure$predicted >= .3,
+  truth = dx_heart_failure$truth,
+  sex = dx_heart_failure$Sex
+)
+breslow_day_test(tab)
+#> $statistic
+#>    FALSE 
+#> 2.369975 
+#> 
+#> $p_value
+#>     FALSE 
+#> 0.1236891 
+#> 
+#> $method
+#> [1] "Breslow-Day"
+#> 
+#> $data_name
+#> [1] "structure(c(49, 8, 6, 6, 75, 31, 9, 77), dim = c(2L, 2L, 2L), dimnames = list("  
+#> [2] "    test = c(\"FALSE\", \"TRUE\"), truth = c(\"0\", \"1\"), sex = c(\"Female\", "
+#> [3] "    \"Male\")), class = \"table\")"                                              
+#> 
+breslow_day_test(tab, correct = TRUE)
+#> $statistic
+#>   FALSE 
+#> 2.36099 
+#> 
+#> $p_value
+#>     FALSE 
+#> 0.1244032 
+#> 
+#> $method
+#> [1] "Tarone's corrected Breslow-Day"
+#> 
+#> $data_name
+#> [1] "structure(c(49, 8, 6, 6, 75, 31, 9, 77), dim = c(2L, 2L, 2L), dimnames = list("  
+#> [2] "    test = c(\"FALSE\", \"TRUE\"), truth = c(\"0\", \"1\"), sex = c(\"Female\", "
+#> [3] "    \"Male\")), class = \"table\")"                                              
+#> 
+```

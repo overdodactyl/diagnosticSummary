@@ -44,8 +44,8 @@
 <span>  thresh <span class="op">=</span> <span class="va">object</span><span class="op">$</span><span class="va">options</span><span class="op">$</span><span class="va">setthreshold</span>,</span>
 <span>  variable <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  label <span class="op">=</span> <span class="cn">NA</span>,</span>
-<span>  show_var <span class="op">=</span> <span class="cn">T</span>,</span>
-<span>  show_label <span class="op">=</span> <span class="cn">T</span>,</span>
+<span>  show_var <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  show_label <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  measure <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -87,7 +87,146 @@
 <dd><p>additional arguments to be passed to or from methods</p></dd>
 
 </dl></div>
+    <div class="section level2">
+    <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
+    <p>A table of the measures and their summaries at <code>thresh</code>, made with
+<code><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">knitr::kable()</a></code>. If knitr is not installed, a data frame.</p>
+    </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">dx_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="dx.html">dx</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  data <span class="op">=</span> <span class="va">dx_heart_failure</span>,</span></span>
+<span class="r-in"><span>  true_varname <span class="op">=</span> <span class="st">"truth"</span>,</span></span>
+<span class="r-in"><span>  pred_varname <span class="op">=</span> <span class="st">"predicted"</span>,</span></span>
+<span class="r-in"><span>  setthreshold <span class="op">=</span> <span class="fl">.3</span>,</span></span>
+<span class="r-in"><span>  grouping_variables <span class="op">=</span> <span class="st">"Sex"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">dx_obj</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Table: Threshold= 0.3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |variable |label   |measure                                   |summary              |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |:--------|:-------|:-----------------------------------------|:--------------------|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Female  |AUC ROC                                   |0.860 (0.765, 0.954) |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Female  |Accuracy                                  |79.7% (68.3%, 88.4%) |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Female  |Sensitivity                               |50.0% (21.1%, 78.9%) |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Female  |Specificity                               |86.0% (74.2%, 93.7%) |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Female  |Positive Predictive Value                 |42.9% (17.7%, 71.1%) |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Female  |Negative Predictive Value                 |89.1% (77.8%, 95.9%) |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Female  |LRT+                                      |3.56 (1.51, 8.39)    |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Female  |LRT-                                      |0.58 (0.33, 1.03)    |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Female  |Odds Ratio                                |6.12 (1.58, 23.77)   |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Female  |F1 Score                                  |0.46                 |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Female  |F2 Score                                  |0.48                 |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Female  |Prevalence                                |17.4% (9.3%, 28.4%)  |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Female  |False Negative Rate                       |50.0% (21.1%, 78.9%) |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Female  |False Positive Rate                       |14.0% (6.3%, 25.8%)  |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Female  |False Discovery Rate                      |57.1% (28.9%, 82.3%) |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Female  |AUC PR                                    |0.612                |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Female  |Cohen's Kappa                             |0.34 (0.06, 0.61)    |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Female  |Matthews Correlation Coefficient          |0.34                 |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Female  |Balanced Accuracy                         |0.68                 |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Female  |Informedness                              |0.36                 |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Female  |Markedness                                |0.32                 |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Female  |G-mean                                    |0.66                 |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Female  |Fowlkes-Mallows Index                     |0.46                 |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Female  |Brier Score                               |0.109                |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Female  |Pearson's Chi-squared (Yates' correction) |p=0.02               |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Female  |Fisher's Exact                            |p=0.01               |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Female  |G-Test                                    |p&lt;0.01               |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Male    |AUC ROC                                   |0.907 (0.862, 0.953) |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Male    |Accuracy                                  |79.2% (72.7%, 84.7%) |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Male    |Sensitivity                               |89.5% (81.1%, 95.1%) |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Male    |Specificity                               |70.8% (61.1%, 79.2%) |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Male    |Positive Predictive Value                 |71.3% (61.8%, 79.6%) |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Male    |Negative Predictive Value                 |89.3% (80.6%, 95.0%) |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Male    |LRT+                                      |3.06 (2.26, 4.15)    |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Male    |LRT-                                      |0.15 (0.08, 0.28)    |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Male    |Odds Ratio                                |20.70 (9.23, 46.41)  |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Male    |F1 Score                                  |0.79                 |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Male    |F2 Score                                  |0.85                 |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Male    |Prevalence                                |44.8% (37.6%, 52.1%) |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Male    |False Negative Rate                       |10.5% (4.9%, 18.9%)  |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Male    |False Positive Rate                       |29.2% (20.8%, 38.9%) |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Male    |False Discovery Rate                      |28.7% (20.4%, 38.2%) |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Male    |AUC PR                                    |0.900                |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Male    |Cohen's Kappa                             |0.59 (0.48, 0.70)    |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Male    |Matthews Correlation Coefficient          |0.60                 |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Male    |Balanced Accuracy                         |0.80                 |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Male    |Informedness                              |0.60                 |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Male    |Markedness                                |0.61                 |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Male    |G-mean                                    |0.80                 |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Male    |Fowlkes-Mallows Index                     |0.80                 |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Male    |Brier Score                               |0.115                |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Male    |Pearson's Chi-squared (Yates' correction) |p&lt;0.01               |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Male    |Fisher's Exact                            |p&lt;0.01               |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Male    |G-Test                                    |p&lt;0.01               |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Sex      |Overall |Breslow-Day                               |p=0.12               |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall  |Overall |AUC ROC                                   |0.904 (0.864, 0.943) |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall  |Overall |Accuracy                                  |79.3% (73.9%, 84.1%) |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall  |Overall |Sensitivity                               |84.7% (76.0%, 91.2%) |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall  |Overall |Specificity                               |76.1% (68.8%, 82.4%) |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall  |Overall |Positive Predictive Value                 |68.0% (59.0%, 76.2%) |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall  |Overall |Negative Predictive Value                 |89.2% (82.8%, 93.8%) |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall  |Overall |LRT+                                      |3.54 (2.66, 4.71)    |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall  |Overall |LRT-                                      |0.20 (0.13, 0.32)    |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall  |Overall |Odds Ratio                                |17.59 (9.12, 33.94)  |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall  |Overall |F1 Score                                  |0.75                 |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall  |Overall |F2 Score                                  |0.81                 |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall  |Overall |Prevalence                                |37.5% (31.7%, 43.7%) |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall  |Overall |False Negative Rate                       |15.3% (8.8%, 24.0%)  |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall  |Overall |False Positive Rate                       |23.9% (17.6%, 31.2%) |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall  |Overall |False Discovery Rate                      |32.0% (23.8%, 41.0%) |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall  |Overall |AUC PR                                    |0.873                |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall  |Overall |Cohen's Kappa                             |0.58 (0.48, 0.68)    |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall  |Overall |Matthews Correlation Coefficient          |0.59                 |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall  |Overall |Balanced Accuracy                         |0.80                 |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall  |Overall |Informedness                              |0.61                 |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall  |Overall |Markedness                                |0.57                 |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall  |Overall |G-mean                                    |0.80                 |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall  |Overall |Fowlkes-Mallows Index                     |0.76                 |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall  |Overall |Brier Score                               |0.114                |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall  |Overall |Pearson's Chi-squared (Yates' correction) |p&lt;0.01               |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall  |Overall |Fisher's Exact                            |p&lt;0.01               |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall  |Overall |G-Test                                    |p&lt;0.01               |</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">dx_obj</span>, variable <span class="op">=</span> <span class="st">"Overall"</span>, show_var <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Table: Threshold= 0.3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |label   |measure                                   |summary              |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |:-------|:-----------------------------------------|:--------------------|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall |AUC ROC                                   |0.904 (0.864, 0.943) |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall |Accuracy                                  |79.3% (73.9%, 84.1%) |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall |Sensitivity                               |84.7% (76.0%, 91.2%) |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall |Specificity                               |76.1% (68.8%, 82.4%) |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall |Positive Predictive Value                 |68.0% (59.0%, 76.2%) |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall |Negative Predictive Value                 |89.2% (82.8%, 93.8%) |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall |LRT+                                      |3.54 (2.66, 4.71)    |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall |LRT-                                      |0.20 (0.13, 0.32)    |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall |Odds Ratio                                |17.59 (9.12, 33.94)  |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall |F1 Score                                  |0.75                 |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall |F2 Score                                  |0.81                 |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall |Prevalence                                |37.5% (31.7%, 43.7%) |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall |False Negative Rate                       |15.3% (8.8%, 24.0%)  |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall |False Positive Rate                       |23.9% (17.6%, 31.2%) |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall |False Discovery Rate                      |32.0% (23.8%, 41.0%) |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall |AUC PR                                    |0.873                |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall |Cohen's Kappa                             |0.58 (0.48, 0.68)    |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall |Matthews Correlation Coefficient          |0.59                 |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall |Balanced Accuracy                         |0.80                 |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall |Informedness                              |0.61                 |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall |Markedness                                |0.57                 |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall |G-mean                                    |0.80                 |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall |Fowlkes-Mallows Index                     |0.76                 |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall |Brier Score                               |0.114                |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall |Pearson's Chi-squared (Yates' correction) |p&lt;0.01               |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall |Fisher's Exact                            |p&lt;0.01               |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Overall |G-Test                                    |p&lt;0.01               |</span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

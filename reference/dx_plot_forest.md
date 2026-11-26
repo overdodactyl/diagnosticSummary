@@ -70,7 +70,9 @@ dx_plot_forest(
 
 - filename:
 
-  File bane to create on disk. If left NA, no file will be created.
+  File name to create on disk using
+  [`ggplot2::ggsave`](https://ggplot2.tidyverse.org/reference/ggsave.html).
+  If left NA, no file will be created.
 
 - header_bg:
 
@@ -120,6 +122,10 @@ dx_plot_forest(
 - footer_or_col:
 
   Color of odds ratios in the table footer
+
+## Value
+
+A ggplot object, or a gtable if `return = "grid"`.
 
 ## Examples
 

@@ -24,6 +24,12 @@ dx_g_test(cm, detail = "full")
   raw estimate, "full" for detailed estimate including 95% confidence
   intervals.
 
+## Value
+
+Depending on the `detail` parameter: - if "simple": a single numeric
+value representing the p-value of the G-test. - if "full": a data frame
+with the G-test result, including the p-value and method note.
+
 ## Details
 
 The test compares the observed frequencies to the expected frequencies
