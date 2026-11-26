@@ -1096,3 +1096,85 @@ test_that("Forest plot checks its inputs", {
   )
   expect_no_error(dx_plot_forest(dx_grp, trans = "log10", limits = c(.1, 100)))
 })
+
+test_that("Optional arguments can be NULL or a missing value of any type", {
+  hf <- dx_heart_failure
+  base <- dx(hf, true_varname = "truth", pred_varname = "predicted")
+  for (none in list(NULL, NA, NA_real_, NA_character_)) {
+    d <- dx(
+      hf,
+      true_varname = "truth", pred_varname = "predicted",
+      prevalence = none, threshold_range = none, grouping_variables = none
+    )
+    expect_identical(plain_df(d$measures), plain_df(base$measures))
+    expect_identical(d$options, base$options)
+
+    itd <- dx_itd(hf, "predicted", "truth", grouping_variables = none)
+    expect_identical(itd$options$grouping_variables, NA)
+  }
+  # Checks still apply to values that are supplied
+  expect_error(dx(hf, true_varname = "truth", pred_varname = "predicted", prevalence = c(NA, .2)), "prevalence should be")
+  expect_error(dx(hf, true_varname = "truth", pred_varname = "predicted", threshold_range = c(NA, .2)), "threshold_range should be")
+})
+
+test_that("Proportions with a denominator of 0 work for every citype", {
+  hf <- dx_heart_failure
+  citypes <- c(
+    "exact", "ac", "asymptotic", "wilson", "prop.test", "bayes", "logit",
+    "cloglog", "probit", "profile", "lrt"
+  )
+  for (citype in citypes) {
+    res <- suppressWarnings(ci_binomial(0, 0, citype = citype, measure = "m"))
+    expect_equal(res$summary, "- (-, -)", info = citype)
+    expect_true(is.na(res$conf_low) && is.na(res$conf_high), info = citype)
+
+    # No prediction is ungradable, so the ungradable measures are 0/0
+    expect_no_error(suppressWarnings(dx_itd(hf, "predicted", "truth", citype = citype)))
+  }
+})
+
+test_that("The estimate of a proportion is the observed proportion for every citype", {
+  for (citype in c("exact", "wilson", "bayes", "profile")) {
+    res <- ci_binomial(83, 98, citype = citype, measure = "m")
+    expect_equal(res$estimate, 83 / 98, info = citype)
+    expect_lt(res$conf_low, 83 / 98)
+    expect_gt(res$conf_high, 83 / 98)
+  }
+  d <- dx(dx_heart_failure, true_varname = "truth", pred_varname = "predicted", citype = "bayes")
+  sens <- d$measures[d$measures$measure == "Sensitivity", ]
+  expect_equal(sens$estimate, dx_sensitivity(d$cm, detail = "simple"))
+})
+
+test_that("Forest plot stops when no odds ratio is defined", {
+  skip_if_not_installed("ggplot2")
+  skip_if_not_installed("gridExtra")
+  skip_if_not_installed("gtable")
+  # Every prediction is below the threshold
+  d <- suppressWarnings(dx(
+    dx_heart_failure,
+    true_varname = "truth", pred_varname = "predicted",
+    setthreshold = .9999, grouping_variables = "Sex"
+  ))
+  expect_error(dx_plot_forest(d), "No odds ratio could be calculated")
+  expect_error(dx_plot_forest(d, trans = "log10"), "No odds ratio could be calculated")
+})
+
+test_that("Decision curve covers the whole plot range for either poslabel", {
+  skip_if_not_installed("ggplot2")
+  for (poslabel in 0:1) {
+    d <- dx(dx_heart_failure, true_varname = "truth", pred_varname = "predicted", poslabel = poslabel)
+    for (plot_range in list(c(.1, .6), c(.2, .7), c(.05, .95))) {
+      thresholds <- dx_plot_decision_curve(d, plot_range = plot_range)$data$threshold
+      expect_identical(range(thresholds), plot_range, info = paste(poslabel, plot_range[1]))
+      expect_false(anyDuplicated(thresholds) > 0)
+    }
+  }
+})
+
+test_that("Messages name the function only when it was called by name", {
+  skip_if_not_installed("ggplot2")
+  expect_error(dx_plot_roc("x"), "^`dx_plot_roc` needs a `dx` object")
+  expect_error(diagnosticSummary::dx_plot_roc("x"), "^`diagnosticSummary::dx_plot_roc` needs a `dx` object")
+  expect_error(do.call(dx_plot_roc, list("x")), "^This function needs a `dx` object")
+  expect_error(lapply(list("x"), dx_plot_gain), "^This function needs a `dx` object")
+})
