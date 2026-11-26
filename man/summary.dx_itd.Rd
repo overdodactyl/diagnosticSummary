@@ -31,7 +31,7 @@
 }
 \value{
 A table of the measures and their summaries, made with
-\code{\link[knitr:kable]{knitr::kable()}}. If knitr is not installed, the table is printed.
+\code{\link[knitr:kable]{knitr::kable()}}. If knitr is not installed, a data frame.
 }
 \description{
 Summary

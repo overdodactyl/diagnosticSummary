@@ -8,7 +8,7 @@
 #' @param measure Measures to include
 #' @param ... additional arguments to be passed to or from methods
 #' @return A table of the measures and their summaries at `thresh`, made with
-#'     [knitr::kable()]. If knitr is not installed, the table is printed.
+#'     [knitr::kable()]. If knitr is not installed, a data frame.
 #' @examples
 #' dx_obj <- dx(
 #'   data = dx_heart_failure,
@@ -47,8 +47,7 @@ summary.dx <- function(object, thresh = object$options$setthreshold,
   if (requireNamespace("knitr", quietly = TRUE)) {
     knitr::kable(tmp, caption = caption, row.names = FALSE)
   } else {
-    print(caption)
-    print(tmp)
+    tmp
   }
 }
 

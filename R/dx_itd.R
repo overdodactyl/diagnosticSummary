@@ -417,7 +417,7 @@ dx_itd_table <- function(x, variable = "Overall", label = "Overall", show_ci = T
 #' @param measure Measures to include
 #' @param ... additional arguments to be passed to or from methods
 #' @return A table of the measures and their summaries, made with
-#'     [knitr::kable()]. If knitr is not installed, the table is printed.
+#'     [knitr::kable()]. If knitr is not installed, a data frame.
 #' @examples
 #' data <- dx_heart_failure
 #' data$predicted[seq(5, 261, by = 20)] <- NA
@@ -438,8 +438,7 @@ summary.dx_itd <- function(object, variable = NA, label = NA, show_var = TRUE,
   if (requireNamespace("knitr", quietly = TRUE)) {
     knitr::kable(tmp, caption = caption, row.names = FALSE)
   } else {
-    print(caption)
-    print(tmp)
+    tmp
   }
 }
 
