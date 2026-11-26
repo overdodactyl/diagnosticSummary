@@ -275,13 +275,18 @@ dx_g_test <- function(cm, detail = "full") {
   col_totals <- apply(conf_matrix, 2, sum)
   expected <- outer(row_totals, col_totals) / sum(conf_matrix)
 
-  # Calculate observed frequencies and ensure no zero counts for log calculation
-  observed <- as.vector(conf_matrix)
-  observed[observed == 0] <- 1e-5 # small constant to avoid log(0)
-  expected[expected == 0] <- 1e-5 # small constant to avoid log(0)
+  # With every prediction on one side of the threshold an expected count is 0
+  # and the statistic is undefined, as for the chi-squared test
+  if (any(expected == 0)) {
+    return(association_result(NA_real_, "G-Test", detail))
+  }
 
-  # Calculate G statistic
-  G <- 2 * sum(observed * log(observed / expected))
+  # Calculate G statistic. Empty cells add nothing, since x * log(x) goes to
+  # 0 as x goes to 0.
+  observed <- as.vector(conf_matrix)
+  expected <- as.vector(expected)
+  terms <- ifelse(observed == 0, 0, observed * log(observed / expected))
+  G <- 2 * sum(terms)
 
   # Degrees of freedom for 2x2 table
   df <- 1
