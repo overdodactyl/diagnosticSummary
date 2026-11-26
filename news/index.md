@@ -1,5 +1,34 @@
 # Changelog
 
+## diagnosticSummary 0.0.2.20
+
+**Changes that affect results**
+
+- The estimate of a proportion is the observed proportion for every
+  `citype`. With `citype = "bayes"` it was the posterior mean, which
+  disagreed with the fraction shown beside it. Intervals are unchanged.
+
+**Bug fixes**
+
+- `prevalence`, `threshold_range`, and `grouping_variables` accept
+  `NULL` or a missing value of any type, such as `NA_real_`, as not
+  supplied, which gave an error in 0.0.2.19. Proportions with a
+  denominator of 0 gave an error with `citype = "profile"` or
+  `"prop.test"`, so
+  [`dx_itd()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_itd.md)
+  failed when no prediction was missing, and were reported as 50% with
+  `"bayes"`.
+  [`dx_plot_forest()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_forest.md)
+  gives a clear error when no odds ratio can be calculated, and
+  [`dx_plot_decision_curve()`](https://overdodactyl.github.io/diagnosticSummary/reference/dx_plot_decision_curve.md)
+  with `poslabel = 0` could miss the first point of `plot_range`. Errors
+  that name a function no longer print its code when it is called with
+  [`do.call()`](https://rdrr.io/r/base/do.call.html).
+
+**Dependencies**
+
+- The plot functions give an error when ggplot2 is older than 3.4.0
+
 ## diagnosticSummary 0.0.2.19
 
 **Breaking changes**

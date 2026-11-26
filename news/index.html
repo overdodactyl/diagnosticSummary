@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">diagnosticSummary</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2.19</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2.20</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,6 +31,16 @@
       <small>Source: <a href="https://github.com/overdodactyl/diagnosticSummary/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.0.2.20" id="diagnosticsummary-00220">diagnosticSummary 0.0.2.20<a class="anchor" aria-label="anchor" href="#diagnosticsummary-00220"></a></h2>
+<p><strong>Changes that affect results</strong></p>
+<ul><li>The estimate of a proportion is the observed proportion for every <code>citype</code>. With <code>citype = "bayes"</code> it was the posterior mean, which disagreed with the fraction shown beside it. Intervals are unchanged.</li>
+</ul><p><strong>Bug fixes</strong></p>
+<ul><li>
+<code>prevalence</code>, <code>threshold_range</code>, and <code>grouping_variables</code> accept <code>NULL</code> or a missing value of any type, such as <code>NA_real_</code>, as not supplied, which gave an error in 0.0.2.19. Proportions with a denominator of 0 gave an error with <code>citype = "profile"</code> or <code>"prop.test"</code>, so <code><a href="../reference/dx_itd.html">dx_itd()</a></code> failed when no prediction was missing, and were reported as 50% with <code>"bayes"</code>. <code><a href="../reference/dx_plot_forest.html">dx_plot_forest()</a></code> gives a clear error when no odds ratio can be calculated, and <code><a href="../reference/dx_plot_decision_curve.html">dx_plot_decision_curve()</a></code> with <code>poslabel = 0</code> could miss the first point of <code>plot_range</code>. Errors that name a function no longer print its code when it is called with <code><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call()</a></code>.</li>
+</ul><p><strong>Dependencies</strong></p>
+<ul><li>The plot functions give an error when ggplot2 is older than 3.4.0</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.2.19" id="diagnosticsummary-00219">diagnosticSummary 0.0.2.19<a class="anchor" aria-label="anchor" href="#diagnosticsummary-00219"></a></h2>
 <p><strong>Breaking changes</strong></p>
